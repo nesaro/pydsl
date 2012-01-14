@@ -10,7 +10,6 @@ __email__ = "nesaro@colonymbus.com"
 import logging
 LOG = logging.getLogger("Abstract")
 from abc import ABCMeta, abstractmethod, abstractproperty
-from .TypeCheck import typecheck
 
 class Singleton(type):
     """singleton pattern metaclass"""
@@ -64,18 +63,7 @@ class Indexable(metaclass = ABCMeta):
                     result += x.ancestors()
         return tuple(result)
 
-class Type(Indexable, metaclass = ABCMeta):
-    """ Ensures information follows a rule, protocol or has a shape.
-    Provides only check function, for complex operations, use Grammar"""
-    def __init__(self, identifier):
-        Indexable.__init__(self, identifier)
-
-    @abstractmethod
-    def check(self, value):
-        pass
-
 class Event:
-    @typecheck
     def __init__(self, source, destination, msgid:int, content):
         self.source = source 
         self.destination = destination 
@@ -100,11 +88,6 @@ class TypeCheckList(list):
         for element in item:
             assert(isinstance(element, self.instancetype))
         return list.__iadd__(self, item)
-
-class Searcher(metaclass=ABCMeta):
-    @abstractmethod
-    def search(self, query):
-        pass
 
 class HostInterface(metaclass = ABCMeta):
     pass
