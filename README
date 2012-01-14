@@ -1,0 +1,27 @@
+REQUIREMENTS
+============
+ * python >= 3.0
+
+INSTALL
+=======
+
+python setup.py install
+
+USAGE
+=====
+
+TODO: binary description list
+
+
+LICENSE
+=======
+
+see LICENSE file
+
+ABOUT
+=====
+
+colony is a formal and natural language framework.
+Copyright (C) 2008-2012 Néstor Arocha Rodríguez (nesaro@colonymbus.com)
+
+
