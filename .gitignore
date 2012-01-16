@@ -1,0 +1,13 @@
+*.py[co]
+tags
+pylintrc
+tlistsession
+.*.swp
+*.png
+*~
+build
+.coverage
+htmlcov
+comp
+dist
+*.egg-info
