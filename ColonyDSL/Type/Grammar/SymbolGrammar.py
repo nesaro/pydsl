@@ -87,3 +87,7 @@ class SymbolGrammar(Grammar):
         return DiscreteGrammarResult(False)
 
 
+    def genealogy(self, information, index) -> list:
+        """Given a word(token) index, will tell all parent symbols  until root node"""
+        pass
+

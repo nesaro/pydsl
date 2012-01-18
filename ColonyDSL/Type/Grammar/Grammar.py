@@ -32,8 +32,8 @@ class Grammar(Type, metaclass = ABCMeta):
     It can also have functions to extract elements or guess information about the sentence or production rule """
     def get_groups(self, information, propertyname = None) -> list:
         """  
-        returns [wordgroup1, wordgroup2] (list). A list of tokens
-        dict like access
+        returns [wordgroup1, wordgroup2] (list). A list of tokens. 
+        provides dict like access.
         if propertyname == none: returns all input groups 
         """
         return []
@@ -51,11 +51,7 @@ class Grammar(Type, metaclass = ABCMeta):
         """Returns the alphabet of this grammar, a list of values (if possible) else return {}"""
         return set()
 
-    def genealogy(self, information, index) -> list:
-        """Given a word(token) index, will tell all parent symbols  until root node"""
-        pass
-
-    #@abstractmethod
+    @abstractmethod
     def iterate(self, information):
         """Iterates through all tokens of the input (from left to right)"""
         pass
