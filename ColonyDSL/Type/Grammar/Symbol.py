@@ -22,7 +22,7 @@ __email__ = "nesaro@colonymbus.com"
 
 import logging
 from .Grammar import Grammar
-LOG = logging.getLogger("SymbolGrammar")
+LOG = logging.getLogger("Grammar.Symbol")
 
 class SymbolGrammar(Grammar):
     """Ask sentences to other grammars. Works with tokens"""
