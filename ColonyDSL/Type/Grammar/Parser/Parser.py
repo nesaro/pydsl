@@ -192,7 +192,7 @@ def locate_result_borders(results):
 
 class Parser(metaclass = ABCMeta):
     """Parser abstract class"""
-    from ColonyDSL.Type.Grammar.Production import ProductionSet
+    from .Production import ProductionSet
     def __init__(self, productionruleset:ProductionSet):
         self._productionset = productionruleset
 
