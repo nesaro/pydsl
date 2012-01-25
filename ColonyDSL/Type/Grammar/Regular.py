@@ -31,14 +31,44 @@ ALLSYMBOLS = CHARACTERS.union({".",","})
 
 #TODO: What if Terminal symbols in current grammar scope is a language-grammar-accepted word? We need to tell what terminal symbols mean
 
-class RegularExpression:
-    def __init__(self, regexpstring):
-        self._regexpstring = regexpstring
+def regexp_alphabet_helper(string, endchar = None) -> set:
+    index = 0
+    result = set()
+    while index < len(string):
+        if string[index] == '\\':
+            if string[index+1] == '\\':
+                result.add('\\')
+            elif string[index+1] == 'w':
+                result = result.union(CHARACTERS)
+            else:
+                result.add(string[index+1])
+            index += 2
+            continue
+        elif string[index] == endchar:
+            return result, index
+        elif string[index] == '.':
+            result = result.union(ALLSYMBOLS)
+        elif string[index] == '*':  
+            pass
+        elif string[index] == '?':  
+            pass
+        elif string[index] == '<':
+            newresult, newindex = regexp_alphabet_helper(string[index+1:], ">")
+            index += newindex + 1
+        elif string[index] == '(':
+            if string[index+1:index+3] == "?P":
+                index += 2
+            newresult, newindex =regexp_alphabet_helper(string[index+1:], ")")
+            result = result.union(newresult)
+            index += newindex + 1
+        else:
+            result.add(string[index])
+        index += 1
+    return result, index
 
-class RegularExpressionGrammar(PythonGrammar, RegularExpression):
+class RegularExpressionGrammar(PythonGrammar):
     def __init__(self, name, regexp, flags = ""):
         PythonGrammar.__init__(self, name, self._process_word)
-        RegularExpression.__init__(self, regexp)
         import re
         self.__regexpstr = regexp
         myflags = 0
@@ -82,26 +112,7 @@ class RegularExpressionGrammar(PythonGrammar, RegularExpression):
 
     def alphabet(self):
         #FIXME:It is not working with groups
-        index = 0
-        result = set()
-        while index < len(self.__regexpstr):
-            if self.__regexpstr[index] == '\\':
-                if self.__regexpstr[index+1] == '\\':
-                    result.add('\\')
-                elif self.__regexpstr[index+1] == 'w':
-                    result = result.union(CHARACTERS)
-                else:
-                    result.add(self.__regexpstr[index+1])
-                index += 2
-                continue
-            elif self.__regexpstr[index] == '.':
-                result = result.union(ALLSYMBOLS)
-            elif self.__regexpstr[index] == '*':  #TODO
-                pass
-            else:
-                result.add(self.__regexpstr[index])
-            index += 1
-        return result
+        return regexp_alphabet_helper(self.__regexpstr)[0]
 
     @property
     def summary(self):
