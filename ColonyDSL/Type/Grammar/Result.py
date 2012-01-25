@@ -58,7 +58,7 @@ class DiscreteGrammarResult(GrammarResult):
         #a list of (begin, end, group=None) 
         return {}
 
-class ProbabilityGrammarResult(GrammarResult):
+class ContinuousGrammarResult(GrammarResult):
     """Returns an ordered list with most probable status"""
     def __init__(self, isvalid, threshold = 0.5):
         GrammarResult.__init__(self, isvalid)
