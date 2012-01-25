@@ -17,7 +17,7 @@
 
 """Production rules (SymbolGrammars)"""
 
-from ColonyDSL.Type.Grammar.Symbol import Symbol, TerminalSymbol
+from ColonyDSL.Type.Grammar.Parser.Symbol import Symbol, TerminalSymbol
 from abc import ABCMeta 
 
 __author__ = "Néstor Arocha Rodríguez"
