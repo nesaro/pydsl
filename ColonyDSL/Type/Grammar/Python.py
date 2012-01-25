@@ -52,6 +52,11 @@ class PythonGrammar(Grammar):
             return set(self._enumFun())
         return set()
 
+    def iterate(self, data):
+        if self._iterFun != None:
+            for x in self._iterFun(data):
+                yield x
+
     @property
     def alphabet(self) -> set:
         if self._alphabetFun != None:

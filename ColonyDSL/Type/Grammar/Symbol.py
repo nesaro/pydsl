@@ -91,3 +91,6 @@ class SymbolGrammar(Grammar):
         """Given a word(token) index, will tell all parent symbols  until root node"""
         pass
 
+    def iterate(self, information):
+        #gets tree, then iterates through leaf nodes
+        raise NotImplementedError
