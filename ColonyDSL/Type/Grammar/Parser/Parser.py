@@ -191,7 +191,7 @@ def locate_result_borders(results):
     return (leftborder, rightborder)
 
 class Parser(metaclass = ABCMeta):
-    """Parser abstract class"""
+    """Parser abstract class. At this time, all parsers are tree based"""
     from .Production import ProductionSet
     def __init__(self, productionruleset:ProductionSet):
         self._productionset = productionruleset
