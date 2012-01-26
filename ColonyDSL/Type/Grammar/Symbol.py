@@ -56,8 +56,8 @@ class SymbolGrammar(Grammar):
         """ Allow to ask for a grammar property of a valid sentence. Example: (English)ask for verb in a phrase: askProperty("verb","desk is clean") Maybe there is a method to pass it through __init__ (like _matchFun) """
         treelist = self.__parser.get_trees(word)
         for tree in treelist:
-            from ColonyDSL.Type.Grammar.Tree import parser_to_post_node
-            posttree = parser_to_post_node(tree)
+            from ColonyDSL.Type.Grammar.Tree import parser_to_post_tree
+            posttree = parser_to_post_tree(tree)
             if propertyname in posttree:
                 return posttree[propertyname] 
             else:
