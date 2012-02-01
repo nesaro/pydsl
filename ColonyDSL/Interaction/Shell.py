@@ -25,6 +25,8 @@ from abc import ABCMeta, abstractmethod
 import logging
 LOG = logging.getLogger("Shell")
 
+promptstr = "Insert data (q to exit)"
+
 def escapedsplitby(inputstring, separator):
     """Splits inputstring with separator and using "\" as a escape character"""
     #TODO check alternatives (shlex and csv)
@@ -128,7 +130,7 @@ class CommandLineToTransformerInteraction(ContinuousInteraction):
         self._tinstance = gt
     
     def start(self):
-        print("Input: " + str(self._tinstance.inputchanneldic.keys()))
+        print("Input: " + ",".join(self._tinstance.inputchanneldic.keys()))
         value = self._getInput()
         while value != None:
             resultdic = self._tinstance.call(value)
@@ -145,7 +147,7 @@ class CommandLineToTransformerInteraction(ContinuousInteraction):
         print("Bye Bye")
         
     def _getInput(self):
-        print("Insert sentence (q to exit)")
+        print(promptstr)
         var = "Anything"
         while True:
             inputdic = {}
@@ -164,7 +166,7 @@ class CommandLineToTransformerInteraction(ContinuousInteraction):
             for channel in self._tinstance.inputchanneldic.keys():
                 if channel not in inputdic:
                     print("Invalid python dict. Example: {\"key\":\"value1\",...}")
-                    var = input("Insert sentence (q to exit)")
+                    var = input(promptstr)
                 continue
             return inputdic
 
@@ -265,7 +267,7 @@ class CommandLineToSchemeInteraction(ContinuousInteraction, SchemeMixin):
         print("Bye Bye")
         
     def _getInput(self):
-        print("Insert sentence (q to exit)")
+        print(promptstr)
         var = "Anything"
         while True:
             var = input("What?:\n")
