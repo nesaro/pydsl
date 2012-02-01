@@ -71,16 +71,16 @@ class ContinuousInteraction(metaclass = ABCMeta):
     def start(self):
         pass
 
-from ColonyDSL.Cognition.Memory import Actor
-class SchemeMixin(Actor, metaclass = ABCMeta):
-    from ColonyDSL.Cognition.Scheme import Scheme
-    def __init__(self, schemeinstance:Scheme):
-        Actor.__init__(self, "main")
-        self.scheme = schemeinstance
-        from ColonyDSL.Cognition.Memory import WorkingMemory, Connection
-        self.rep = WorkingMemory()
-        self.inputcon = Connection(self.rep, self)
-        self.maincon = Connection(self.rep, self.scheme)
+#from ColonyDSL.Cognition.Memory import Actor
+#class SchemeMixin(Actor, metaclass = ABCMeta):
+#    from ColonyDSL.Cognition.Scheme import Scheme
+#    def __init__(self, schemeinstance:Scheme):
+#        Actor.__init__(self, "main")
+#        self.scheme = schemeinstance
+#        from ColonyDSL.Cognition.Memory import WorkingMemory, Connection
+#        self.rep = WorkingMemory()
+#        self.inputcon = Connection(self.rep, self)
+#        self.maincon = Connection(self.rep, self.scheme)
 
 def open_files_dict(inputdic) -> dict:
     """Converts a all str filename values into file objects"""
