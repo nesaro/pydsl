@@ -40,10 +40,6 @@ class FileFunction(Function):
     """Function restricted to work with file://* URI"""
     pass
 
-class Procedure(Function):
-    """Function restricted to work with no input """
-    pass
-
 class Error:
     """Error Transformation result"""
     def __init__(self, errortype, bt = []):
