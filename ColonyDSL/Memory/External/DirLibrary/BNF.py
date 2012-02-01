@@ -56,8 +56,7 @@ def __generateWordSymbol(rightside):
 def read_nonterminal_production(line, symboldict):
     sidesarray = line.split("::=")
     if len(sidesarray) < 2 or len(sidesarray) > 3:
-        from ColonyDSL.Exceptions import ColonyException
-        raise ColonyException
+        raise ValueError
     leftside = sidesarray[0].strip()
     #leftside contains at least one NonTerminalSymbol
     #FIXME supports only one symbol
@@ -77,15 +76,14 @@ def read_nonterminal_production(line, symboldict):
 
 def read_terminal_production(line):
     sidesarray = line.split(":=")
-    from ColonyDSL.Exceptions import ColonyException
     if len(sidesarray) != 2:
-        raise ColonyException
+        raise ValueError
     leftside = sidesarray[0]
     leftside = leftside.strip()
     symbolnames = leftside.split(" ")
     if len(symbolnames) != 1:
         LOG.error("Error generating terminal rule: " + line + "At left side")
-        raise ColonyException
+        raise ValueError
     #leftside is symbolname
     rightside = sidesarray[1]
     rightside = rightside.strip()
@@ -98,7 +96,7 @@ def read_terminal_production(line):
     elif re.search("^Word", rightside):
         newsymbol = __generateWordSymbol(rightside)
     else:
-        raise ColonyException
+        raise ValueError
     return (symbolnames[0], newsymbol)
 
 
@@ -125,9 +123,8 @@ def strlist_to_production_set(linelist):
         elif re.search ("^\s*$", cleanline):
             pass #Empty line
         else:
-            from ColonyDSL.Exceptions import ColonyException
             LOG.error("Unknown line at bnf input file")
-            raise ColonyException #TODO find proper exception
+            raise Exception #TODO find proper exception
 
     #then read nonterminalsymbols
     while len(nonterminalrulelist) > 0:
@@ -144,8 +141,7 @@ def strlist_to_production_set(linelist):
         linestodrop.reverse()
         if len(linestodrop) == 0:
             LOG.error("No rule found: ")
-            from ColonyDSL.Exceptions import ColonyException
-            raise ColonyException
+            raise Exception
         for myindex in linestodrop:
             del nonterminalrulelist[myindex]
     from ColonyDSL.Type.Grammar.Parser.Production import ProductionSet

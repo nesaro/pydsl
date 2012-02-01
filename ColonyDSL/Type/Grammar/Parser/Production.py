@@ -98,21 +98,20 @@ class ProductionSet: #Only stores a ruleset, and methods to ask properties or va
         self._initialsymbol = initialsymbol
         for rule in productionrulelist:
             if productionrulelist.count(rule) >1:
-                from ColonyDSL.Exceptions import ColonyException
-                raise ColonyException
+                raise ValueError
         self.productionlist = productionrulelist
 
     @property
     def left_recursive(self) -> bool:
         """Tests if exists left recursion"""
         #TODO
-        pass
+        raise NotImplementedError
 
     @property
     def right_recursive(self) -> bool:
         """Tests if exists right recursion"""
         #TODO
-        pass
+        raise NotImplementedError
 
     def __eq__(self, other):
         if self._initialsymbol != other.initialsymbol:

@@ -41,8 +41,7 @@ class SymbolGrammar(Grammar):
             self.__parser = RecursiveDescentParser(productionset)
         else:
             LOG.error("Wrong parser name: " + parser)
-            from ColonyDSL.Exceptions import ColonyException
-            raise ColonyException
+            raise Exception
 
     @property
     def productionset(self):
@@ -89,7 +88,7 @@ class SymbolGrammar(Grammar):
 
     def genealogy(self, information, index) -> list:
         """Given a word(token) index, will tell all parent symbols  until root node"""
-        pass
+        raise NotImplementedError
 
     def iterate(self, information):
         #gets tree, then iterates through leaf nodes

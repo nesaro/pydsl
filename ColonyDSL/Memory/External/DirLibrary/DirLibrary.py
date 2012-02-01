@@ -104,8 +104,7 @@ def load_python_file(moduleobject, identifier = None, ecuid = None, server = Non
         from ColonyDSL.Concept.Concept import Concept
         return Concept(**resultdic)
     else:
-        from ColonyDSL.Exceptions import ColonyException
-        raise ColonyException
+        raise ValueError
 
 class DirLibrary(Library, metaclass = ABCMeta):
     """A collection of elements stored inside a directory"""

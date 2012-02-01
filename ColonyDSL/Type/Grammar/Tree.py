@@ -235,9 +235,8 @@ class ParserTree(Tree):
             childlist = self.childlist + other.childlist
             return ParserTree(leftpos, rightpos, symbollist, content, production, childlist)
         else:
-            from ColonyDSL.Exceptions import  ColonyException
             LOG.warning("Unable to add parser results")
-            raise ColonyException
+            raise Exception
 
     def split(self):
         """splits a result"""

@@ -43,9 +43,8 @@ def colonyRELfileToGrammarInstance(filepath):
                 flagstr = cleanline[1:]
                 continue
             if regexp != None: 
-                from ColonyDSL.Exceptions import ColonyException
                 LOG.error("Regular expression file format error")
-                raise ColonyException #TODO find proper exception
+                raise Exception #TODO find proper exception
             else:
                 regexp = cleanline.rstrip('\n')
     from ColonyDSL.Type.Grammar.Regular import RegularExpressionGrammar
