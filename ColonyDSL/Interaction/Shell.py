@@ -137,7 +137,7 @@ class CommandLineToTransformerInteraction(ContinuousInteraction):
             else:
                 for key in resultdic.keys():
                     try:
-                        resultdic[key] = resultdic[key].string
+                        resultdic[key] = str(resultdic[key])
                     except UnicodeDecodeError:
                         resultdic[key] = "Unprintable"
                 command_line_output(resultdic)
