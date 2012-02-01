@@ -53,7 +53,7 @@ class Checker(UnixProgram):
         #ColonyDSL.GlobalConfig.GLOBALCONFIG.strictgrammar = True
         self.__maingt = HostPythonTransformer("Main",{"input":"dummy"},{"output":"TrueFalse"},{"checker":"GrammarChecker"}, checkfun) 
         UnixProgram.__init__(self, optionsdict)
-     data
+    
     def execute(self):
         #Generating and connecting output
         #listen to user, open read file, or other
