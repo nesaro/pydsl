@@ -16,7 +16,7 @@
 #along with ColonyDSL.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Gives information about an element retrieved from Memory
+Shows information about an element retrieved from Memory
 """
 
 __author__ = "Néstor Arocha Rodríguez"
