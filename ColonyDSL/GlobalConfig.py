@@ -58,7 +58,7 @@ class GlobalConfig(metaclass = Singleton):
     def __init__(self, strictgrammar = False, persistent_dir:str = None, debuglevel = 40):
         self.strictgrammar = strictgrammar #Allows to replace an unknown grammar to DummyGrammar
         self.persistent_dir = persistent_dir
-        self.__memorylist = None #Lista de memorias accesibles Ordenadas por preferencia #Carga bajo demanda
+        self.__memorylist = None #All known memories, sorted by preference  #Loaded when required
         self.__debuglevel = debuglevel
         self.lang = "es"
         if self.persistent_dir is None:
