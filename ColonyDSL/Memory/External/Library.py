@@ -111,10 +111,11 @@ class PersistentLibrary(Library):
     def provided_iclasses(self):
         if self.allowedclass:
             return [self.allowedclass.__class__.__name__]
-        return [] #FIXME: Deberian ser todos
-from ColonyDSL.Concept.Relation import ConceptRelation 
-from ColonyDSL.Concept.Concept import Concept 
-CONCEPTPERSISTENTMEMORY = PersistentLibrary("concept", Concept)
-RELATIONPERSISTENTMEMORY = PersistentLibrary("relation", ConceptRelation)
+        return [] #FIXME: Default implementation should include all classes
+
+#from ColonyDSL.Concept.Relation import ConceptRelation 
+#from ColonyDSL.Concept.Concept import Concept 
+#CONCEPTPERSISTENTMEMORY = PersistentLibrary("concept", Concept)
+#RELATIONPERSISTENTMEMORY = PersistentLibrary("relation", ConceptRelation)
 
 
