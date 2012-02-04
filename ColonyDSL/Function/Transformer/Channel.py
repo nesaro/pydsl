@@ -19,7 +19,7 @@
 
 __author__ = "Néstor Arocha Rodríguez"
 __copyright__ = "Copyright 2008-2012, Néstor Arocha Rodríguez"
-__email__ = "nesaro@colonymbus.com"
+__email__ = "nesaro@gmail.com"
 
 
 from abc import ABCMeta, abstractmethod, abstractproperty
@@ -69,15 +69,14 @@ class HostChannel(metaclass = ABCMeta):
                 self._processsequences(sequencestoprocess)
             self._dropSequences(sequencestodrop) #FIXME find the right place to clean sequences
 
-    def _processsequences(self, sequencestoprocess):
+    def _processsequences(self, sequencestoprocess) -> bool:
         for sequence in sequencestoprocess:
             from ColonyDSL.Exceptions import TProcessingError
             try:
-                from ColonyDSL.Function.Transformer.Python import CDicToWDic
-                mylist = list(filter(lambda x:x["data"].msgid == sequence, self._seq_cache))
+                mylist = list(filter(lambda x:x["msgid"] == sequence, self._seq_cache))
                 mydic = {}
                 for x in mylist:
-                    mydic[x["channel"]] = x["data"].word
+                    mydic[x["channel"]] = x["data"]
                 result = self.call(mydic)
             except TProcessingError:
                 LOG.exception("run: Error while processing input")
@@ -87,9 +86,9 @@ class HostChannel(metaclass = ABCMeta):
                 self._dropSequences(sequence)
                 from ColonyDSL.Function.Function import Error
                 if isinstance(result, Error):
-                    result.appendSource(str(self.identifier))
+                    result.appendSource(str(self.ecuid.name))
                     self.emitToServer(sequence, result) #FIXME: this sequence number must be checked
-                    return                                        
+                    return False
                 if not isinstance(result, dict):
                     LOG.error("run: __process returned bad type")
                     raise TypeError                
@@ -99,6 +98,8 @@ class HostChannel(metaclass = ABCMeta):
                     self.emitToServer(sequence, result)
                     for outputchannel in self._connections.keys():
                         self.send(outputchannel, sequence, result[outputchannel])
+                    self.emitToSelf(sequence, result) #TODO: Only Boards requires it
+        return True
 
 
     def _dropSequences(self, sequencestodrop):
