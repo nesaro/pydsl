@@ -101,9 +101,9 @@ def load_board(identifier, eventmanager = None, name = None, memorylist = []):
     from ColonyDSL.Exceptions import LibraryException
     raise LibraryException("Grammar", name)
 
-def load_grammartransformer(identifier, eventmanager = None, name = "", memorylist = []):
-    from .DirLibrary.Function import GrammarTransformerFileLibrary
-    lib = GrammarTransformerFileLibrary()
+def load_transformer(identifier, eventmanager = None, name = "", memorylist = []):
+    from .DirLibrary.Function import TransformerDirLibrary
+    lib = TransformerDirLibrary()
     return lib.load(identifier, eventmanager, name)
 
 def load_concept(identifier, memorylist = []):

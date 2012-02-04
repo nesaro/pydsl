@@ -30,14 +30,14 @@ def generate_memory_list() -> list:
     "", "/usr/share/ColonyDSL/"
     result = []
     from ColonyDSL.Memory.External.DirLibrary.Type import GrammarFileLibrary
-    from ColonyDSL.Memory.External.DirLibrary.Function import BoardFileLibrary, GrammarTransformerFileLibrary, ProcedureFileLibrary
+    from ColonyDSL.Memory.External.DirLibrary.Function import BoardFileLibrary, TransformerDirLibrary, ProcedureFileLibrary
     from ColonyDSL.Memory.External.DictLibrary import FileTypeDictLibrary, ConceptDictLibrary, ConceptRelationDictLibrary
     from ColonyDSL.Memory.External.ListLibrary import ConceptRelationshipListLibrary
     from ColonyDSL.Memory.External.DirLibrary.Concept import ConceptFileLibrary
     from ColonyDSL.Memory.External.DirLibrary.Scheme import SchemeFileLibrary
     result.append(GrammarFileLibrary("/usr/share/ColonyDSL/lib_contrib/grammar/"))
     result.append(BoardFileLibrary("/usr/share/ColonyDSL/lib_contrib/board/"))
-    result.append(GrammarTransformerFileLibrary("/usr/share/ColonyDSL/lib_contrib/transformer/"))
+    result.append(TransformerDirLibrary("/usr/share/ColonyDSL/lib_contrib/transformer/"))
     result.append(ProcedureFileLibrary("/usr/share/ColonyDSL/lib_contrib/procedure/"))
     result.append(FileTypeDictLibrary("/usr/share/ColonyDSL/lib_contrib/dict/filetype.dict"))
     result.append(SchemeFileLibrary("/usr/share/ColonyDSL/lib_contrib/scheme/"))
@@ -46,7 +46,7 @@ def generate_memory_list() -> list:
         result.append(SchemeFileLibrary("./lib_contrib/scheme/"))
         result.append(FileTypeDictLibrary("./lib_contrib/dict/filetype.dict"))
         result.append(ProcedureFileLibrary("./lib_contrib/procedure/"))
-        result.append(GrammarTransformerFileLibrary("./lib_contrib/transformer/"))
+        result.append(TransformerDirLibrary("./lib_contrib/transformer/"))
         result.append(BoardFileLibrary("./lib_contrib/board/"))
     except IOError:
         pass
