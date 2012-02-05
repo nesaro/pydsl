@@ -50,7 +50,7 @@ if __name__ == "__main__":
     logging.basicConfig(level = DEBUGLEVEL)
     from ColonyDSL.Interaction.Translate import Translate
     MANAGER = Translate(ARGS)
-    elif (ARGS.gname):
+    if (ARGS.gname):
         try: 
             MANAGER.readTR(ARGS.gname)
         except BadFileFormat:
