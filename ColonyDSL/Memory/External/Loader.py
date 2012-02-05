@@ -79,6 +79,7 @@ def load_procedure(identifier, eventmanager = None , name = "", memorylist = [])
     raise LibraryException("Procedure", identifier)
 
 def load_transformer(identifier, eventmanager = None, name = None, memorylist = []):
+    #FIXME: Can return any type of element
     if not memorylist:
         from ColonyDSL.GlobalConfig import GLOBALCONFIG
         memorylist = GLOBALCONFIG.memorylist
@@ -100,11 +101,6 @@ def load_board(identifier, eventmanager = None, name = None, memorylist = []):
             return memory.load(name)
     from ColonyDSL.Exceptions import LibraryException
     raise LibraryException("Grammar", name)
-
-def load_transformer(identifier, eventmanager = None, name = "", memorylist = []):
-    from .DirLibrary.Function import TransformerDirLibrary
-    lib = TransformerDirLibrary()
-    return lib.load(identifier, eventmanager, name)
 
 def load_concept(identifier, memorylist = []):
     pass
