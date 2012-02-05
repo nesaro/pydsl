@@ -19,7 +19,7 @@
 
 __author__ = "Néstor Arocha Rodríguez"
 __copyright__ = "Copyright 2008-2012, Néstor Arocha Rodríguez"
-__email__ = "nesaro@colonymbus.com"
+__email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger("Abstract")
@@ -102,7 +102,4 @@ class TypeCheckList(list):
         for element in item:
             assert(isinstance(element, self.instancetype))
         return list.__iadd__(self, item)
-
-class HostInterface(metaclass = ABCMeta):
-    pass
 
