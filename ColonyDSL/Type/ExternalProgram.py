@@ -39,7 +39,7 @@ class ExternalProgramType(Type):
             element = self.checkprogramcommandlinelist[index]
             if element.find("#{block}") != -1:
                 try:
-                    calllist[index] = element.replace("#{block}", information.string)
+                    calllist[index] = element.replace("#{block}", str(information))
                 except UnicodeDecodeError:
                     return False
         import subprocess
