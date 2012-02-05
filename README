@@ -13,6 +13,10 @@ USAGE
 check.py: Checks if input data belongs to type
 info.py: Retrieves an element from memory and show a summary
 search.py: Searchs memory 
+translate.py: Process user input using a function
+convert.py: Same as translate, but restricted for files
+guess:py: Determines input data type
+validate.py: Perform a validation routine for user data according to a grammar
 
 LICENSE
 =======
