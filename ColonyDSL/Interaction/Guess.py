@@ -29,19 +29,35 @@ __email__ = "nesaro@gmail.com"
 import logging
 LOG = logging.getLogger("Guess")
 
+def guess_filename(inputfile, memorylist = []) -> set:
+    from ColonyDSL.Memory.Search.Searcher import MemorySearcher
+    from ColonyDSL.Memory.External.DictLibrary import FileTypeDictLibrary
+    if not memorylist:
+        memorylist.append(FileTypeDictLibrary("/usr/share/ColonyDSL/lib_contrib/dict/filetype.dict"))
+    searcher = MemorySearcher([x.indexer() for x in memorylist])
+    result = set()
+    for summary in searcher.search():
+        typ = None
+        name = None
+        try:
+            for mem in memorylist:
+                if summary["identifier"] in mem:
+                    name = summary["identifier"]
+                    typ = mem.load(name)
+                    break
+            if typ.check(inputfile):
+                result.add(str(name))
+        except TypeError:
+            continue
+    return result
+
+
+
 def guess(inputstring, memorylist = []) -> set:
     from ColonyDSL.Memory.Search.Searcher import MemorySearcher
     from ColonyDSL.Memory.External.DirLibrary.Type import GrammarFileLibrary 
     from ColonyDSL.Memory.External.DictLibrary import FileTypeDictLibrary
     if not memorylist:
-        try:
-            glib1 = GrammarFileLibrary("./lib_contrib/grammar/")
-            ftdl1 = FileTypeDictLibrary("./lib_contrib/dict/filetype.dict")
-        except IOError:
-            pass
-        else:
-            memorylist.append(glib1)
-            memorylist.append(ftdl1)
         memorylist.append(GrammarFileLibrary("/usr/share/ColonyDSL/lib_contrib/grammar/"))
         memorylist.append(FileTypeDictLibrary("/usr/share/ColonyDSL/lib_contrib/dict/filetype.dict"))
     searcher = MemorySearcher([x.indexer() for x in memorylist])

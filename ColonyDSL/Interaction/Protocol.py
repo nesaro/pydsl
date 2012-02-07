@@ -52,33 +52,19 @@ class ConnectionInteraction(Interaction):
     def disconnect(self):
         pass
 
-class Protocol(metaclass=Singleton):
-    """ A method for data interaction with system. http://, file:// socket://, audio://"""
-    def __init__(self, protocolstr:str):
-        self.protocolstr = protocolstr
-        self.modes = ["direct"]
 
-    def check(self, uri)-> bool:
-        """Check if the URI is handled by this protocol"""
-        return str(uri).startswith(self.protocolstr)
-
-
-from ColonyDSL.Identifier import Identifier
-
-class URI(Identifier):
-    """Unified resource information"""
-    def __init__(self, name):
-        Identifier.__init__(self)
-        self.name = name
-
-    def __dict__(self):
-        protocol, path = self.name.split("://")
-        result =  {"protocol":protocol}
-        if "?" in path:
-            npath, identifier = rest.split("?")
-            result["path"] = npath
-            result["identifier"] = identifier
-        else:
-            result["path"] = path
-        return result
+def protocol_split(content):
+    """Splits a protocol string"""
+    try:
+        protocol, path = content.split("://")
+    except ValueError:
+        return {"protocol":""}
+    result =  {"protocol":protocol}
+    if "?" in path:
+        npath, identifier = rest.split("?")
+        result["path"] = npath
+        result["identifier"] = identifier
+    else:
+        result["path"] = path
+    return result
 

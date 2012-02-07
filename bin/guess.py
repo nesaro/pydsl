@@ -29,11 +29,10 @@ import logging
 
 if __name__ == "__main__":
     import argparse
-    TUSAGE = "usage: %(prog)s [options] [filename]"
+    TUSAGE = "usage: %(prog)s [options]"
     PARSER = argparse.ArgumentParser(usage = TUSAGE)
     PARSER.add_argument("-d", "--debuglevel", action="store", type=int, dest="debuglevel", help="Sets debug level")
     PARSER.add_argument("-i", "--inputfile", action="store", dest="inputfile", help="input filename dict")
-    PARSER.add_argument("-u", "--url", action="store", dest="inputurl", help="input filename url") #TODO inputfile and urlfile can follow protocol specs
     PARSER.add_argument("-e", "--expression", action="store", dest="expression", help="input expression")
     ARGS = PARSER.parse_args()
     import sys
@@ -46,20 +45,35 @@ if __name__ == "__main__":
         DEBUGLEVEL = ARGS.debuglevel
     logging.basicConfig(level = DEBUGLEVEL)    
     inputstr = ""
+    from ColonyDSL.Interaction.Guess import guess, guess_filename
     if (ARGS.inputfile):
-        with open(ARGS.inputfile, "rb") as f:
-            inputstr = f.read() #FIXME: Protocol support
+        from ColonyDSL.Interaction.Protocol import protocol_split
+        pdict = protocol_split(ARGS.inputfile)
+        if pdict["protocol"] == "file":
+            try:
+                with open(pdict["path"], "rb") as f:
+                    inputstr = f.read() 
+            except IOError:
+                inputstr = ""
+            result = guess(inputstr)
+            result = result.union(guess_filename(ARGS.inputfile))
+        elif pdict["protocol"] == "http":
+            import urllib.request
+            f = urllib.request.urlopen(ARGS.inputfile);
+            inputstr = f.read()
+            f.close()
+            result = guess(inputstr)
+        else:
+            try:
+                with open(ARGS.inputfile, "rb") as f:
+                    inputstr = f.read() 
+            except IOError:
+                inputstr = ""
+            result = guess(inputstr)
     elif (ARGS.expression):
-        inputstr = ARGS.expression
-    elif (ARGS.inputurl):
-        import urllib.request
-        f = urllib.request.urlopen(ARGS.inputurl);
-        inputstr = f.read()
-        f.close()
+        result = guess(ARGS.expression)
     else:
         print(TUSAGE)
         sys.exit(0)
-    from ColonyDSL.Interaction.Guess import guess
-    result = guess(inputstr)
     print(result)
     sys.exit(0)

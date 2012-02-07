@@ -35,18 +35,15 @@ class FileType(Type):
         self.regexp = re.compile(regexp)
         Type.__init__(self)
 
-    def check(self, data, synonymgrammar = None):
-        from ColonyDSL.Interaction.Protocol import URI, Protocol
-        fp = Protocol("file")
+    def check(self, data):
+        from ColonyDSL.Interaction.Protocol import protocol_split
         filename = None
-        if isinstance(data, URI) :
-            filename = vars(data)()["path"]
-        elif fp.check(data):
-            filename = vars(URI(data))()["path"]
+        if protocol_split(data)["protocol"] == "file":
+            filename = protocol_split(data)["path"]
         else:
             import tempfile
             tmpfile = tempfile.NamedTemporaryFile()
-            tmpfile.write(data.encode())
+            tmpfile.write(data)
             filename = tmpfile.name
         import subprocess
         proc = subprocess.Popen(["file", "-b",  filename], stdout=subprocess.PIPE)
