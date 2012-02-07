@@ -48,11 +48,16 @@ def guess(inputstring, memorylist = []) -> set:
     result = set()
     for summary in searcher.search():
         typ = None
-        for mem in memorylist:
-            if summary["identifier"] in mem:
-                typ = mem.load(summary["identifier"])
-                break
-        if typ.check(inputstring):
-            result.add(str(typ.identifier))
+        name = None
+        try:
+            for mem in memorylist:
+                if summary["identifier"] in mem:
+                    name = summary["identifier"]
+                    typ = mem.load(name)
+                    break
+            if typ.check(inputstring):
+                result.add(str(name))
+        except TypeError:
+            continue
     return result
 
