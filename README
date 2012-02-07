@@ -1,6 +1,7 @@
 REQUIREMENTS
 ============
  * python >= 3.0
+ * colony archive package ( https://github.com/nesaro/carchive )
 
 INSTALL
 =======
