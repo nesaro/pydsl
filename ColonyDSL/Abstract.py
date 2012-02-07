@@ -57,13 +57,6 @@ class InmutableDict(dict):
 
 class Indexable(metaclass = ABCMeta):
     """ This class is searchable """
-    def __init__(self, identifier):
-        self.identifier = identifier
-
-    def rename(self, identifier):
-        """Permite renombrar un elemento indexable"""
-        self.identifier = identifier
-
     @abstractproperty
     def summary(self) -> InmutableDict:
         pass

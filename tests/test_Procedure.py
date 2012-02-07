@@ -28,9 +28,8 @@ class TestProcedure(unittest.TestCase):
     """Test procedure"""
     def setUp(self):
         from ColonyDSL.Function.Procedure import PythonProcedure
-        #instance = PythonProcedure(identifier, outputdic, server, moduleobject.function, title, description)
         fun = lambda: {"output":"Hello World"}
-        self.pr = PythonProcedure(identifier = "identifier", outputdic = {"output":"cstring"}, function = fun)
+        self.pr = PythonProcedure(outputdic = {"output":"cstring"}, function = fun)
     
     def testInstance(self):
         self.assertTrue(self.pr.call())

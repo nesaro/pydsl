@@ -44,8 +44,8 @@ class TestTransformer(unittest.TestCase):
     def setUp(self):
         from ColonyDSL.Function.Transformer.Python import PythonTransformer
         from ColonyDSL.Function.Transformer.ExternalProgram import ExternalProgramTransformer
-        self.__gt1 = PythonTransformer("test",{"input":"integerop"},{"output":"cstring"},integerextractor)
-        self.__text = ExternalProgramTransformer("test",{"input":"cstring"},{"output":"cstring"}, ["echo","#{input}"])
+        self.__gt1 = PythonTransformer({"input":"integerop"},{"output":"cstring"},integerextractor)
+        self.__text = ExternalProgramTransformer({"input":"cstring"},{"output":"cstring"}, ["echo","#{input}"])
 
     def testProperty(self):
         result = self.__gt1.call({"input":"1+1"})
@@ -59,7 +59,7 @@ class TestHostTransformer(unittest.TestCase):
     """Test recursive transformer"""
     def setUp(self):
         from ColonyDSL.Function.Transformer.Python import HostPythonTransformer
-        self.__gt1 = HostPythonTransformer("test",{"input":"cstring"},{"output":"cstring"},{"myadder":"simple-adder"},recursivecall)
+        self.__gt1 = HostPythonTransformer({"input":"cstring"},{"output":"cstring"},{"myadder":"simple-adder"},recursivecall)
 
     def testError(self):
         result = self.__gt1.call({"input":"1"})
@@ -69,7 +69,7 @@ class TestHostTransformer(unittest.TestCase):
 class TestSyntaxDirectedTransformer(unittest.TestCase):
     def setUp(self):
         from ColonyDSL.Function.Transformer.SyntaxDirected import SyntaxDirectedTransformer
-        self.__gt1 = SyntaxDirectedTransformer("test",{"input":"LogicalExpression"},{"output":"cstring"}, {"OperatorExpression1":ope1, "Expression0":ope1 , "S0":ope1, "Expression2":ope1, "RestExpression0":ope1, "finally":opefinal})
+        self.__gt1 = SyntaxDirectedTransformer({"input":"LogicalExpression"},{"output":"cstring"}, {"OperatorExpression1":ope1, "Expression0":ope1 , "S0":ope1, "Expression2":ope1, "RestExpression0":ope1, "finally":opefinal})
 
     def testError(self):
         pass

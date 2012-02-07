@@ -30,10 +30,10 @@ from .Type import Type
 
 class FileType(Type):
     """subclass of type used for fast filetype recognition"""
-    def __init__(self, identifier, regexp):
+    def __init__(self, regexp):
         import re
         self.regexp = re.compile(regexp)
-        Type.__init__(self, identifier)
+        Type.__init__(self)
 
     def check(self, data, synonymgrammar = None):
         from ColonyDSL.Interaction.Protocol import URI, Protocol
@@ -57,4 +57,4 @@ class FileType(Type):
 
     @property
     def summary(self):
-        return {"iclass":"FileType", "identifier":self.identifier}
+        return {"iclass":"FileType"}

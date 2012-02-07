@@ -25,7 +25,7 @@ from ColonyDSL.Abstract import Indexable
 
 class Texto(Indexable):
     def summary(self):
-        return {"identifier":self.identifier}
+        return {"iclass":"Texto"}
 
 
 class TestMemory(unittest.TestCase):
@@ -35,10 +35,10 @@ class TestMemory(unittest.TestCase):
         self.mem = LocalMemory()
         
     def testSaveLoadAndDelete(self):
-        texto1 = Texto("id1")
-        texto2 = Texto("id2")
-        self.mem.save(texto1)
-        self.mem.save(texto2)
+        texto1 = Texto()
+        texto2 = Texto()
+        self.mem.save(texto1,"id1")
+        self.mem.save(texto2, "id2")
         newdg = self.mem["id1"]
         self.assertTrue(newdg == texto1)
         del self.mem["id1"]
@@ -59,7 +59,7 @@ class TestPersistentMemory(unittest.TestCase):
         dg = DummyType()
         if "DummyType" in self.mem:
             del self.mem["DummyType"]
-        self.mem.save(dg)
+        self.mem.save(dg, "DummyType")
         newdg = self.mem["DummyType"]
         self.assertTrue(newdg == dg)
         del self.mem["DummyType"]

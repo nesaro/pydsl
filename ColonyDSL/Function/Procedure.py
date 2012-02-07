@@ -31,8 +31,8 @@ class PythonProcedure(Procedure):
     """ Python function implementation of procedure.
     As a procedure it doesn't have input. Output is a Word dictionary that follows output type definition 
     """
-    def __init__(self, identifier, outputdic, function):
-        Procedure.__init__(self, identifier)
+    def __init__(self, outputdic, function):
+        Procedure.__init__(self)
         self.__function = function
         self.outputchanneldic = outputdic
 

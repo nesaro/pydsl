@@ -26,8 +26,8 @@ import logging
 LOG = logging.getLogger("Grammar.Python")
 
 class PythonGrammar(Grammar):
-    def __init__(self, identifier, matchFun, propFun = None, enumFun = None, alphabetFun = None):
-        Grammar.__init__(self, identifier)
+    def __init__(self, matchFun, propFun = None, enumFun = None, alphabetFun = None):
+        Grammar.__init__(self)
         self._matchFun = matchFun
         self._askprop = propFun
         self._enumFun = enumFun
@@ -65,11 +65,11 @@ class PythonGrammar(Grammar):
 
     @property
     def summary(self):
-        return {"iclass":"PythonGrammar", "identifier":self.identifier, "ancestors":self.ancestors() }
+        return {"iclass":"PythonGrammar", "ancestors":self.ancestors() }
 
 class HostPythonGrammar(PythonGrammar):
-    def __init__(self, identifier, matchFun, auxdic, propFun = None):
-        PythonGrammar.__init__(self, identifier, matchFun, propFun)
+    def __init__(self, matchFun, auxdic, propFun = None):
+        PythonGrammar.__init__(self, matchFun, propFun)
         self.auxgrammar = {}
         from ColonyDSL.Memory.External.Loader import load_grammar
         for key, value in auxdic.items():

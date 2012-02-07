@@ -153,7 +153,7 @@ class HostFunctionNetwork(metaclass = ABCMeta):
         from ColonyDSL.Memory.External.Loader import load_transformer
         for title, gttype in namedic.items():
             self._hostT[title] = load_transformer(gttype, self._server, title) 
-            LOG.debug(str(self.identifier) + ":loaded " + str(title) + "auxT")
+            LOG.debug("loaded " + str(title) + "auxT")
 
     @abstractmethod
     def handleEvent(self, event):

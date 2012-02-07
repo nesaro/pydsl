@@ -52,7 +52,7 @@ def load_python_file(moduleobject, identifier = None, ecuid = None, server = Non
         from ColonyDSL.Exceptions import LibraryException
         raise LibraryException("Element", identifier)
     iclass = getattr(moduleobject, "iclass")
-    resultdic = {"identifier":identifier}
+    resultdic = {}
     mylist = list(filter(lambda x:x[:1] != "_" and x != "iclass", (dir(moduleobject))))
     for x in mylist:
         resultdic[x] = getattr(moduleobject, x)

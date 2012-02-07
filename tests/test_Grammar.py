@@ -25,7 +25,7 @@ class TestRegExpGrammars(unittest.TestCase):
     """Funcionamiento basico de las gramaticas"""
     def setUp(self):
         from ColonyDSL.Type.Grammar.Regular import RegularExpressionGrammar
-        self.g1 = RegularExpressionGrammar("test", "(?P<tone>1)23")
+        self.g1 = RegularExpressionGrammar("(?P<tone>1)23")
 
     def testCheck(self):
         self.assertTrue(self.g1.check("123"))
@@ -51,7 +51,7 @@ class TestPythonGrammars(unittest.TestCase):
     """Funcionamiento basico de las gramaticas"""
     def setUp(self):
         from ColonyDSL.Type.Grammar.Python import PythonGrammar
-        self.g1 = PythonGrammar("test", lambda x:int(str(x))>6)
+        self.g1 = PythonGrammar(lambda x:int(str(x))>6)
 
     def testCheck(self):
         self.assertTrue(self.g1.check("7"))
@@ -78,10 +78,10 @@ class TestHostPythonGrammars(unittest.TestCase):
     """HostPythonGrammar test"""
     def setUp(self):
         from ColonyDSL.Type.Grammar.Python import HostPythonGrammar
-        self.g1 = HostPythonGrammar("test2",lambda x,aux: aux["ext"].check(x), {"ext":"email"})
+        self.g1 = HostPythonGrammar(lambda x,aux: aux["ext"].check(x), {"ext":"email"})
 
     def testCheck(self):
-        self.assertTrue(self.g1.check("NESARO@COLONYMBUS.COM"))
+        self.assertTrue(self.g1.check("NESARO@GMAIL.COM"))
 
     def testBadCheck(self):
         self.assertTrue(not self.g1.check("777"))
@@ -137,7 +137,7 @@ class TestSymbolGrammars(unittest.TestCase):
 class ExternalProgramType(unittest.TestCase):
     def setUp(self):
         from ColonyDSL.Type.ExternalProgram import ExternalProgramType
-        self.g1 = ExternalProgramType("externalExample", ["echo"," "])
+        self.g1 = ExternalProgramType(["echo"," "])
 
     def testCheck(self):
         self.assertTrue(self.g1.check("123"))

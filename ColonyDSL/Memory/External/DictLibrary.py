@@ -76,7 +76,7 @@ class FileTypeDictLibrary(DictLibrary):
 
     def load(self, index):
         from ColonyDSL.Type.FileType import FileType
-        return FileType(index, self._content[index])
+        return FileType(self._content[index])
 
     def provided_iclasses(self) -> list:
         return ["FileType"]

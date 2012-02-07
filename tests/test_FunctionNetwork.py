@@ -44,8 +44,8 @@ class TestServer(unittest.TestCase):
         self._server = FunctionNetworkServer()
         #Create a child Manager
         from ColonyDSL.Function.Transformer.Python import PythonTransformer, HostPythonTransformer
-        self._child = PythonTransformer("childTest", {"input":"cstring"}, {"output":"cstring"}, childfunction)
-        self._parentManager = HostPythonTransformer("parentTest", {"input":"cstring"}, {"output":"cstring"}, {}, parentfunction, server = self._server)
+        self._child = PythonTransformer({"input":"cstring"}, {"output":"cstring"}, childfunction)
+        self._parentManager = HostPythonTransformer({"input":"cstring"}, {"output":"cstring"}, {}, parentfunction, server = self._server)
         self._parentManager.registerInstance("client", self._child)
         #load special Transformer that generates client messages
         #load special Transformer that listen client messages

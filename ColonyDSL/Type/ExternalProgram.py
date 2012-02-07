@@ -28,8 +28,8 @@ from .Type import Type
 
 class ExternalProgramType(Type):
     """Calls another program to perform checking. Args are always filenames"""
-    def __init__(self, identifier, checkprogramcommandlinelist, checkpropertycommandlinelist = None):
-        Type.__init__(self, identifier)
+    def __init__(self, checkprogramcommandlinelist, checkpropertycommandlinelist = None):
+        Type.__init__(self)
         self.checkpropertycommandlinelist = checkpropertycommandlinelist
         self.checkprogramcommandlinelist = checkprogramcommandlinelist
 

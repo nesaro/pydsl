@@ -28,7 +28,7 @@ class SymbolGrammar(Grammar):
     """Ask sentences to other grammars. Works with tokens"""
     def __init__(self, identifier, productionset, parser = "auto"):
         LOG.debug("SymbolGrammar.__init__: Begin")
-        Grammar.__init__(self, identifier)
+        Grammar.__init__(self)
         if parser == "descent":
             from .Parser.RecursiveDescent import RecursiveDescentParser
             self.__parser = RecursiveDescentParser(productionset)
@@ -70,6 +70,7 @@ class SymbolGrammar(Grammar):
         return self.__parser.get_trees(word, showErrors)
     
     def alphabet(self):
+        #TODO
         return set()
     
     @property

@@ -17,8 +17,8 @@
 
 
 __author__ = "Néstor Arocha Rodríguez"
-__copyright__ = "Copyright 2008-2011, Néstor Arocha Rodríguez"
-__email__ = "nesaro@colonymbus.com"
+__copyright__ = "Copyright 2008-2012, Néstor Arocha Rodríguez"
+__email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger("Memory")
@@ -48,6 +48,9 @@ class Memory(metaclass = ABCMeta):
     def __getitem__(self, index):
         return self.load(index)
 
+    def __setitem__(self, index, value):
+        return self.save(value, index)
+
     def indexer(self):
         from ColonyDSL.Memory.Search.Indexer import Indexer
         return Indexer(self)
@@ -67,8 +70,8 @@ class LocalMemory(Memory):
             index = str(index)
         return self.content[index]
     
-    def save(self, element:Indexable):
-        self.content[str(element.identifier)] = element
+    def save(self, element:Indexable, identifier):
+        self.content[str(identifier)] = element
     
     def __delitem__(self, key):
         del self.content[key]

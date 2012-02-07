@@ -30,18 +30,12 @@ from ColonyDSL.Abstract import Indexable
 class Type(Indexable, metaclass = ABCMeta):
     """ Ensures information follows a rule, protocol or has a shape.
     Provides only check function, for complex operations, use Grammar"""
-    def __init__(self, identifier):
-        Indexable.__init__(self, identifier)
-
     @abstractmethod
     def check(self, value):
         pass
 
 class DummyType(Type):
     """ Calls another program to perform checking"""
-    def __init__(self):
-        Type.__init__(self, "DummyType")
-
     def check(self, word):
         return True
         

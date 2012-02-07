@@ -28,8 +28,8 @@ LOG = logging.getLogger("PythonTransformer")
 
 class PythonTransformer(Transformer):
     """ Python function based transformer """
-    def __init__(self, identifier, inputdic, outputdic, function, ecuid = None, server = None, handleeventfunction = None):
-        Transformer.__init__(self, identifier, inputdic, outputdic, ecuid = ecuid, server = server)
+    def __init__(self, inputdic, outputdic, function, ecuid = None, server = None, handleeventfunction = None):
+        Transformer.__init__(self, inputdic, outputdic, ecuid = ecuid, server = server)
         self._function = function
         self._evfunctiondic = {"client":self.emit, "server":self.emitToServer} #arg passed to wrapper
         if handleeventfunction == None:
@@ -45,24 +45,24 @@ class PythonTransformer(Transformer):
             if inputkey not in ibdic:
                 LOG.error("Key not found in inputdic")
                 newerror = Error("Transformer")
-                newerror.appendSource(self.identifier)
+                newerror.appendSource(self.ecuid)
                 return newerror
         for dickey in ibdic.keys():
             if not self.inputchanneldic[dickey].check(ibdic[dickey]):
                 newerror = Error("Grammar") #FIXME: Should be Type error
-                newerror.appendSource(self.identifier)
+                newerror.appendSource(self.ecuid)
                 return newerror
         from ColonyDSL.Exceptions import TProcessingError
         try:
             result = self._functionwrapper(ibdic)
         except TProcessingError: #TODO: Extract exception source
-            newerror = Error("Transformer", [self.identifier])
+            newerror = Error("Transformer", [self.ecuid])
             return newerror
         if isinstance(result, Error):
-            result.appendSource(self.identifier)
+            result.appendSource(self.ecuid)
             return result
         if not result:
-            newerror = Error("Transformer", [self.identifier])
+            newerror = Error("Transformer", [self.ecuid])
             return newerror
         return result
 
@@ -73,12 +73,12 @@ class PythonTransformer(Transformer):
         from ColonyDSL.Function.Function import Error
         from ColonyDSL.Exceptions import TProcessingError
         if not result or isinstance(result, Error):
-            raise TProcessingError(self.identifier,"Transformer")
+            raise TProcessingError(self.ecuid,"Transformer")
         for outputgrammarname in self.outputchanneldic.keys():
             LOG.debug("Verifying Grammar name: " + outputgrammarname)
             if not outputgrammarname in result:
                 LOG.error("Error while verifying Grammar name:" + outputgrammarname)
-                raise TProcessingError(self.identifier,"Transformer")
+                raise TProcessingError(self.ecuid,"Transformer")
 
         #Converting to words
         #TODO Process errors like HostPythonTransformer
@@ -133,16 +133,16 @@ class PythonTransformer(Transformer):
     @property
     def summary(self):
         from ColonyDSL.Abstract import InmutableDict
-        inputdic = [ x.identifier for x in self.inputchanneldic.values() ]
-        outputdic = [ x.identifier for x in self.outputchanneldic.values() ]
-        result = {"iclass":"PythonTransformer","identifier":str(self.identifier),"input":tuple(inputdic),"output":tuple(outputdic)}
+        inputdic = tuple(self.inputdefinition.values())
+        outputdic = tuple(self.outputdefinition.values())
+        result = {"iclass":"PythonTransformer", "input":inputdic,"output":outputdic}
         return InmutableDict(result)
 
 class HostPythonTransformer(PythonTransformer, HostFunctionNetwork):
     """Python Function Transformer which can call to other functions"""
-    def __init__(self, identifier, inputdic, outputdic, auxdic:dict, function, ecuid = None, server = None, handleeventfunction = None):
+    def __init__(self, inputdic, outputdic, auxdic:dict, function, ecuid = None, server = None, handleeventfunction = None):
         HostFunctionNetwork.__init__(self)
-        PythonTransformer.__init__(self, identifier, inputdic, outputdic, function, ecuid = ecuid, server = server, handleeventfunction = handleeventfunction)
+        PythonTransformer.__init__(self, inputdic, outputdic, function, ecuid = ecuid, server = server, handleeventfunction = handleeventfunction)
         self._initHostT(auxdic)
         self._server.start()
 

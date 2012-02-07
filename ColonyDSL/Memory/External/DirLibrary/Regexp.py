@@ -32,7 +32,6 @@ def colonyRELfileToGrammarInstance(filepath):
     """Converts a re file to Regular Grammar instance"""
     regexp = None
     from ColonyDSL.Memory.External.DirLibrary.DirLibrary import getFileTuple
-    _,_, name,_ = getFileTuple(filepath)
     with open(filepath,'r', encoding='utf-8') as mlfile:
         flagstr = ""
         for line in mlfile:
@@ -48,5 +47,5 @@ def colonyRELfileToGrammarInstance(filepath):
             else:
                 regexp = cleanline.rstrip('\n')
     from ColonyDSL.Type.Grammar.Regular import RegularExpressionGrammar
-    return RegularExpressionGrammar(name, regexp, flagstr)
+    return RegularExpressionGrammar(regexp, flagstr)
 

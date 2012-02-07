@@ -21,7 +21,7 @@
 
 __author__ = "Néstor Arocha Rodríguez"
 __copyright__ = "Copyright 2008-2012, Néstor Arocha Rodríguez"
-__email__ = "nesaro@colonymbus.com"
+__email__ = "nesaro@gmail.com"
 
 
 from abc import abstractmethod, ABCMeta
@@ -88,13 +88,13 @@ class PersistentLibrary(Library):
         self.index += 1
         return result
     
-    def save(self, instance):
+    def save(self, instance, identifier):
         if self.allowedclass and not isinstance(instance, self.allowedclass):
             raise TypeError
         with self.lock:
             a = shelve.open(self.filename)
             with contextlib.closing(a):
-                a[str(instance.identifier)] = instance
+                a[str(identifier)] = instance
         
     def __delitem__(self, element):
         with self.lock:

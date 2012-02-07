@@ -32,7 +32,7 @@ class Board(Transformer, HostFunctionNetwork):
 
     from ColonyDSL.Abstract import Event
 
-    def __init__(self, name, gtenvdefinitionslist:list, ecuid = None, server = None, timeout = 10):
+    def __init__(self, gtenvdefinitionslist:list, ecuid = None, server = None, timeout = 10):
         if ecuid != None:
             from .Network import FunctionNetworkServer
             assert(not isinstance(ecuid, FunctionNetworkServer))
@@ -42,7 +42,7 @@ class Board(Transformer, HostFunctionNetwork):
         self.__outputGTDict = {} #{"channelname":GTinstance,}
         HostFunctionNetwork.__init__(self)
         inputgrammars, outputgrammars = self.__extractExternalChannelGrammarsFromDefinitions()
-        Transformer.__init__(self, name, inputgrammars, outputgrammars, ecuid, server)
+        Transformer.__init__(self, inputgrammars, outputgrammars, ecuid, server)
         import threading
         self.__event = threading.Event()
         self.__loadTfromDefinitionList()
@@ -55,11 +55,11 @@ class Board(Transformer, HostFunctionNetwork):
         from ColonyDSL.Abstract import InmutableDict
         inputdic = [ x.identifier for x in self.inputchanneldic.values() ]
         outputdic = [ x.identifier for x in self.outputchanneldic.values() ]
-        result = {"iclass":"Board", "identifier":self.identifier, "input":inputdic, "output":outputdic, "ancestors":self.ancestors()}
+        result = {"iclass":"Board", "input":inputdic, "output":outputdic, "ancestors":self.ancestors()}
         return InmutableDict(result)
 
     def call(self, inputdict:dict):
-        LOG.debug(str(self.identifier) + " received dic:" + str(inputdict))
+        LOG.debug(" received dic:" + str(inputdict))
         if not inputdict:
             LOG.error("No input")
             return None
@@ -68,13 +68,13 @@ class Board(Transformer, HostFunctionNetwork):
             rand = random.randint(1, 999999)
             self.__event.clear()
             for channel, strcontent in inputdict.items():
-                LOG.debug("Board:" + str(self.identifier) + ":Receiving: " + channel + " " + str(strcontent))
+                LOG.debug("Board Receiving: " + channel + " " + str(strcontent))
                 self.__sendToChannel(channel, rand, strcontent)
             # ctime = now()
             while True:
                 self.__event.wait(self.__timeout)
                 if not self.__event.isSet():
-                    LOG.error("Board:" + str(self.identifier) + " TIMEOUT")
+                    LOG.error("Board: TIMEOUT")
                     #emit error to parent
                     #delete rand in msgqueue
                     from ColonyDSL.Function.Function import Error
@@ -131,9 +131,7 @@ class Board(Transformer, HostFunctionNetwork):
                     #FIXME: Is better to avoid loading the instance to obtain grammar name
                     from ColonyDSL.Memory.External.Loader import load_transformer
                     gtinstance = load_transformer(definition.type)
-                    icd = gtinstance.inputchanneldic
-                    grammar= icd[gtcondef.internalchannelname]
-                    inputtypedict[gtcondef.externalchannelname] = grammar.identifier
+                    inputtypedict[gtcondef.externalchannelname] = gtinstance.inputdefinition[gtcondef.internalchannelname]
                     self.__inputGTDict[gtcondef.externalchannelname] = (gtcondef.basename, gtcondef.internalchannelname) #Prepares self.__inputGTDict
             for gtcondef in definition.outputConnectionDefinitions:
                 if gtcondef.externalgtname == "Main":
@@ -143,8 +141,7 @@ class Board(Transformer, HostFunctionNetwork):
                     from ColonyDSL.Memory.External.Loader import load_transformer
                     gtinstance = load_transformer(definition.type)
                     ocd = gtinstance.outputchanneldic
-                    grammar = ocd[gtcondef.internalchannelname]
-                    outputtypedict[gtcondef.externalchannelname] = grammar.identifier
+                    outputtypedict[gtcondef.externalchannelname] = gtinstance.outputdefinition[gtcondef.internalchannelname]
                     self.__outputGTDict[gtcondef.externalchannelname] = (gtcondef.basename, gtcondef.internalchannelname) #Prepares self.__outputGTDict
         return (inputtypedict, outputtypedict)
 
@@ -176,7 +173,6 @@ class Board(Transformer, HostFunctionNetwork):
 
     def __sendToChannel(self, inputchannel, msgid, data):
         """Sends communication to an internal Transformer"""
-        LOG.debug(str(self.identifier) + ": receive: sending: " + str(data) + " to channel "  + inputchannel)
         internalt, internalchannel = self.__inputGTDict[inputchannel]
         self._hostT[internalt].receive(internalchannel, msgid, data)
 
@@ -203,7 +199,7 @@ class Board(Transformer, HostFunctionNetwork):
 
     def __receiveEventAsServer(self, event:Event):
         """Receives message as server"""
-        LOG.debug(str(self.identifier) + ":__receiveEventAsServer: Begin")
+        #LOG.debug(str(self.identifier) + ":__receiveEventAsServer: Begin")
         from ColonyDSL.Function.Function import Error
         if event.msg:
             if event.source != self.ecuid and event.source != self._server.ecuid:

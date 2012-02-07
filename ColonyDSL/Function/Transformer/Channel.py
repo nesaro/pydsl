@@ -58,14 +58,14 @@ class HostChannel(metaclass = ABCMeta):
         """Receives an content through channel"""
         LOG.debug("Received:" + str(channel) + " : " + str(content))
         if not channel in self.inputchanneldic.keys():
-            LOG.critical(str(self.identifier) + ":Channel not found: " + str(channel)) 
+            LOG.critical("Channel not found: " + str(channel)) 
             raise IndexError
         with self._appendlock:
             self._seq_cache.append({"channel":channel, "msgid":msgid, "data":content})
         with self._worklock:
             sequencestoprocess, sequencestodrop = self._checkSequences()
             if sequencestoprocess:
-                LOG.debug("run: " + str(self.identifier) + " after finished: sequence list" + str(sequencestoprocess))
+                LOG.debug("run: " + " after finished: sequence list" + str(sequencestoprocess))
                 self._processsequences(sequencestoprocess)
             self._dropSequences(sequencestodrop) #FIXME find the right place to clean sequences
 
@@ -123,7 +123,7 @@ class HostChannel(metaclass = ABCMeta):
         for entry in self._seq_cache: #Grab every sequence
             if not entry["msgid"] in seqlist:
                 seqlist.append(entry["msgid"])
-        LOG.debug("__checkSequences: " + str(self.identifier) + " inputCommunications text list:" + str([x["data"] for x in self._seq_cache])) 
+        LOG.debug("__checkSequences: " + " inputCommunications text list:" + str([x["data"] for x in self._seq_cache])) 
         checkdic = {} #To check valid sequences
         for sequence in seqlist:
             checkdic[sequence] = {}
@@ -135,17 +135,17 @@ class HostChannel(metaclass = ABCMeta):
                 for communication in self._seq_cache:
                     if communication["channel"] == inputgrammarname and communication["msgid"] == sequence:
                         if not inputgrammar.check(communication["data"]):
-                            LOG.warning("__checkSequences: " + str(self.identifier) + " Grammar " + str(inputgrammar.identifier) + " check failed:" + inputgrammarname + " communication: " + str(communication["data"])) 
+                            LOG.warning("__checkSequences: " + " Grammar " + " check failed:" + inputgrammarname + " communication: " + str(communication["data"])) 
                             from ColonyDSL.Function.Function import Error
                             self.emitToServer(sequence,Error("Grammar",[self.ecuid.name])) #FIXME: which id should use?
                             if not sequence in sequencestodrop:
                                 sequencestodrop.append(sequence)
                         else:
-                            LOG.debug("__checkSequences: " + str(self.identifier) + "sequence :" + str(sequence) + " ok in channel: " +communication["channel"]) 
+                            LOG.debug("__checkSequences: " + "sequence :" + str(sequence) + " ok in channel: " +communication["channel"]) 
                             checkdic[sequence][communication["channel"]] = True
                     else:
-                        LOG.debug("__checkSequences: " + str(self.identifier) + " communication[channel]: " + str(communication["channel"]) + " inputgrammarname: " + inputgrammarname) 
-                        LOG.debug("__checkSequences: " + str(self.identifier) + "sequence  from data:" + str(communication["msgid"]) + " and from list:" + str(sequence) )
+                        LOG.debug("__checkSequences: " + " communication[channel]: " + str(communication["channel"]) + " inputgrammarname: " + inputgrammarname) 
+                        LOG.debug("__checkSequences: " + "sequence  from data:" + str(communication["msgid"]) + " and from list:" + str(sequence) )
 
 
         for sequence in sequencestodrop:
@@ -157,7 +157,7 @@ class HostChannel(metaclass = ABCMeta):
             for value in checkdic[sequence].values():
                 if not value:
                     validsequence = False
-                    LOG.debug("__checkSequences: " + str(self.identifier) + " not valid sequence:" + str(sequence))
+                    LOG.debug("__checkSequences: " +  " not valid sequence:" + str(sequence))
                     break
             if validsequence:
                 with self._appendlock:
@@ -218,6 +218,8 @@ class TypeChannelHost(HostChannel):
         for key in outputtypedict:
             if not isinstance(key, str):
                 raise TypeError
+        self.inputdefinition = inputtypedict
+        self.outputdefinition = outputtypedict
         self.__inputchanneldic = _loadTypeInstances(inputtypedict)
         self.__outputchanneldic = _loadTypeInstances(outputtypedict)
         self._connections = {}

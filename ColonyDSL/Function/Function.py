@@ -28,9 +28,6 @@ from ColonyDSL.Abstract import Indexable
 
 class Function(Indexable, metaclass = ABCMeta):
     """ data transformation or translation performed"""
-    def __init__(self, name):
-        Indexable.__init__(self, name)
-
     @abstractmethod
     def call(self, data):
         """ Non threaded, all input as parameter ibdic contains ("channel",data) pairs. Returns a TransformResult """

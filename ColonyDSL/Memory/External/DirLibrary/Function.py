@@ -62,10 +62,9 @@ def load_board_file(filename, server = None , name = None):
     if len(config.sections()) == 0:
         from ColonyDSL.Exceptions import BadFileFormat
         raise BadFileFormat(filename)
-    identifier = getFileTuple(filename)[2]
     GTDefinitionList = parseRegularSections(config)
     from ColonyDSL.Function.Transformer.Board import Board
-    return Board(identifier, GTDefinitionList, ecuid = name, server = server) 
+    return Board(GTDefinitionList, ecuid = name, server = server) 
 
 def load_gt_from_file(modulepath, name, server):
     (_, _, fileBaseName, _) = getFileTuple(modulepath)

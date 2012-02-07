@@ -67,8 +67,8 @@ def regexp_alphabet_helper(string, endchar = None) -> set:
     return result, index
 
 class RegularExpressionGrammar(PythonGrammar):
-    def __init__(self, name, regexp, flags = ""):
-        PythonGrammar.__init__(self, name, self._process_word)
+    def __init__(self, regexp, flags = ""):
+        PythonGrammar.__init__(self, self._process_word)
         import re
         self.__regexpstr = regexp
         myflags = 0
@@ -116,4 +116,4 @@ class RegularExpressionGrammar(PythonGrammar):
 
     @property
     def summary(self):
-        return {"iclass":"RegularExpressionGrammar", "identifier":self.identifier, "groups":self.groups(), "regexp":self.__regexpstr}
+        return {"iclass":"RegularExpressionGrammar", "groups":self.groups(), "regexp":self.__regexpstr}

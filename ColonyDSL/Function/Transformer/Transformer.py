@@ -30,11 +30,9 @@ from abc import ABCMeta
 
 class Transformer(TypeChannelHost, FunctionNetworkClient, Function, metaclass = ABCMeta):
     """Channel and Network enabled Function"""
-    def __init__(self, name, inputgrammars, outputgrammars, ecuid = None, server = None):
-        if ecuid == None:
-            ecuid = name
+    def __init__(self, inputgrammars, outputgrammars, ecuid, server = None):
         TypeChannelHost.__init__(self, inputgrammars, outputgrammars)
-        Function.__init__(self, name)
+        Function.__init__(self)
         FunctionNetworkClient.__init__(self, ecuid, server)
 
     def receive(self, channel, msgid, content):
