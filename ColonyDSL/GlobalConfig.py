@@ -41,15 +41,6 @@ def generate_memory_list() -> list:
     result.append(ProcedureFileLibrary("/usr/share/ColonyDSL/lib_contrib/procedure/"))
     result.append(FileTypeDictLibrary("/usr/share/ColonyDSL/lib_contrib/dict/filetype.dict"))
     result.append(SchemeFileLibrary("/usr/share/ColonyDSL/lib_contrib/scheme/"))
-    try:
-        result.append(GrammarFileLibrary("./lib_contrib/grammar/"))
-        result.append(SchemeFileLibrary("./lib_contrib/scheme/"))
-        result.append(FileTypeDictLibrary("./lib_contrib/dict/filetype.dict"))
-        result.append(ProcedureFileLibrary("./lib_contrib/procedure/"))
-        result.append(TransformerDirLibrary("./lib_contrib/transformer/"))
-        result.append(BoardFileLibrary("./lib_contrib/board/"))
-    except IOError:
-        pass
     result.append(RegexpDictLibrary("/usr/share/ColonyDSL/lib_contrib/dict/regexp.dict"))
     return result
 
