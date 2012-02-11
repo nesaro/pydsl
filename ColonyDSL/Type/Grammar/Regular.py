@@ -19,7 +19,7 @@
 
 __author__ = "Néstor Arocha Rodríguez"
 __copyright__ = "Copyright 2008-2012, Néstor Arocha Rodríguez"
-__email__ = "nesaro@colonymbus.com"
+__email__ = "nesaro@gmail.com"
 
 #There are at least three ways to define a regular grammar. Regexp, FSM table, production rules. At this time, I'm going to combine several regexp rules, each one with a name.
 

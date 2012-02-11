@@ -21,8 +21,8 @@ Runs a program developed with ColonyDSL language
 """
 
 __author__ = "Néstor Arocha Rodríguez"
-__copyright__ = "Copyright 2008-2011, Néstor Arocha Rodríguez"
-__email__ = "nesaro@colonymbus.com"
+__copyright__ = "Copyright 2008-2012, Néstor Arocha Rodríguez"
+__email__ = "nesaro@gmail.com"
 
 from ColonyDSL.Interaction.Shell import parse_shell_dict, open_files_dict
 from ColonyDSL.Interaction.Program import UnixProgram

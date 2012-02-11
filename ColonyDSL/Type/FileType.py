@@ -23,7 +23,7 @@ FileType
 
 __author__ = "Néstor Arocha Rodríguez"
 __copyright__ = "Copyright 2008-2012, Néstor Arocha Rodríguez"
-__email__ = "nesaro@colonymbus.com"
+__email__ = "nesaro@gmail.com"
 
 
 from .Type import Type 

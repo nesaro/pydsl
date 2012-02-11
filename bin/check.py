@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+
 # -*- coding: utf-8 -*-
 #This file is part of ColonyDSL.
 #
@@ -21,7 +22,7 @@ check if input data belongs to a Type
 
 __author__ = "Néstor Arocha Rodríguez"
 __copyright__ = "Copyright 2008-2012, Néstor Arocha Rodríguez"
-__email__ = "nesaro@colonymbus.com"
+__email__ = "nesaro@gmail.com"
 
 import logging
 from ColonyDSL.Exceptions import BadFileFormat, LibraryException
