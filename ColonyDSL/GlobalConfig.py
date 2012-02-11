@@ -31,7 +31,7 @@ def generate_memory_list() -> list:
     result = []
     from ColonyDSL.Memory.External.DirLibrary.Type import GrammarFileLibrary
     from ColonyDSL.Memory.External.DirLibrary.Function import BoardFileLibrary, TransformerDirLibrary, ProcedureFileLibrary
-    from ColonyDSL.Memory.External.DictLibrary import FileTypeDictLibrary, ConceptDictLibrary, ConceptRelationDictLibrary
+    from ColonyDSL.Memory.External.DictLibrary import FileTypeDictLibrary, ConceptDictLibrary, ConceptRelationDictLibrary, RegexpDictLibrary
     from ColonyDSL.Memory.External.ListLibrary import ConceptRelationshipListLibrary
     from ColonyDSL.Memory.External.DirLibrary.Concept import ConceptFileLibrary
     from ColonyDSL.Memory.External.DirLibrary.Scheme import SchemeFileLibrary
@@ -50,6 +50,7 @@ def generate_memory_list() -> list:
         result.append(BoardFileLibrary("./lib_contrib/board/"))
     except IOError:
         pass
+    result.append(RegexpDictLibrary("/usr/share/ColonyDSL/lib_contrib/dict/regexp.dict"))
     return result
 
 

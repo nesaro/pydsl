@@ -65,6 +65,26 @@ class DictLibrary(Library, metaclass = ABCMeta):
     def __contains__(self, index):
         return index in self._content
 
+class RegexpDictLibrary(DictLibrary):
+    def generate_all_summaries(self) -> list:
+        result = []
+        from ColonyDSL.Abstract import InmutableDict
+        from ColonyDSL.Type.FileType import FileType
+        for key in self._content:
+            result.append(InmutableDict({"identifier":key, "regexp":self._content[key]["regexp"], "iclass":"RegularExpressionGrammar" , "ancestors":FileType.ancestors()}))
+        return result
+
+    def load(self, index):
+        from ColonyDSL.Type.Grammar.Regular import RegularExpressionGrammar
+        flags = ""
+        if "flags" in self._content[index]:
+            return RegularExpressionGrammar(self._content[index]["regexp"], self._content[index]["flags"])
+        return RegularExpressionGrammar(self._content[index]["regexp"])
+
+    def provided_iclasses(self) -> list:
+        return ["RegularExpressionGrammar"]
+
+
 class FileTypeDictLibrary(DictLibrary):
     def generate_all_summaries(self) -> list:
         result = []
@@ -80,6 +100,7 @@ class FileTypeDictLibrary(DictLibrary):
 
     def provided_iclasses(self) -> list:
         return ["FileType"]
+
 
 class ConceptDictLibrary(DictLibrary):
     def generate_all_summaries(self) -> list:
