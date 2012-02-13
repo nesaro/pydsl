@@ -43,9 +43,9 @@ class TestTransformer(unittest.TestCase):
     """Tests Transformers"""
     def setUp(self):
         from ColonyDSL.Function.Transformer.Python import PythonTransformer
-        from ColonyDSL.Function.Transformer.ExternalProgram import ExternalProgramTransformer
+        from ColonyDSL.Function.ExternalProgram import ExternalProgramFunction #FIXME: Not a transformer
         self.__gt1 = PythonTransformer({"input":"integerop"},{"output":"cstring"},integerextractor)
-        self.__text = ExternalProgramTransformer({"input":"cstring"},{"output":"cstring"}, ["echo","#{input}"])
+        self.__text = ExternalProgramFunction({"input":"cstring"},{"output":"cstring"}, ["echo","#{input}"])
 
     def testProperty(self):
         result = self.__gt1.call({"input":"1+1"})
