@@ -24,7 +24,7 @@ __email__ = "nesaro@gmail.com"
 import logging
 from ColonyDSL.Function.Function import Function 
 from .Network import FunctionNetworkClient
-from .Channel import TypeChannelHost 
+from ..Channel import TypeChannelHost 
 LOG = logging.getLogger("Transformer")
 from abc import ABCMeta
 
