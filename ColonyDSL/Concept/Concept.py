@@ -27,6 +27,9 @@ from abc import ABCMeta
 from ColonyDSL.Abstract import Indexable
 
 class Concept(Indexable, metaclass = ABCMeta):
+    def __init__(self, identifier):
+        self.identifier = identifier
+
     @property
     def summary(self):
         return {"iclass":"Concept", "identifier":str(self.identifier)}
