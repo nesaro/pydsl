@@ -71,6 +71,27 @@ class ListLibrary(Library, metaclass = ABCMeta):
     def __contains__(self, index):
         return index in self._content
 
+class ConceptListLibrary(ListLibrary):
+    def generate_all_summaries(self) -> list:
+        result = []
+        from ColonyDSL.Abstract import InmutableDict
+        for key in self._content:
+            result.append(InmutableDict({"identifier":key, "iclass":"Concept" }))
+        return result
+
+    def load(self, index):
+        if index in self._content:
+            from ColonyDSL.Concept.Concept import Concept
+            return Concept(index)
+        else:
+            raise KeyError
+
+    def _generatekey(self, element):
+        return element
+
+    def provided_iclasses(self):
+        return ["Concept"]
+
 class ConceptRelationshipListLibrary(ListLibrary):
     def generate_all_summaries(self) -> list:
         result = []
