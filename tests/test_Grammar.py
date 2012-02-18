@@ -134,11 +134,3 @@ class TestSymbolGrammars(unittest.TestCase):
     def testSerialize(self):
         pass
 
-class ExternalProgramType(unittest.TestCase):
-    def setUp(self):
-        from ColonyDSL.Type.ExternalProgram import ExternalProgramType
-        self.g1 = ExternalProgramType(["echo"," "])
-
-    def testCheck(self):
-        self.assertTrue(self.g1.check("123"))
-
