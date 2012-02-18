@@ -36,7 +36,7 @@ if __name__ == "__main__":
     PARSER.add_argument("-e", "--expression", action="store", dest="expression", help="input expression")
     ARGS = PARSER.parse_args()
     import sys
-    if not ARGS.inputfile and not ARGS.expression and not ARGS.inputurl:
+    if not ARGS.inputfile and not ARGS.expression:
         PARSER.error("options -i, -u or -e are required")
     if ARGS.inputfile and ARGS.expression:
         PARSER.error("options -i and -e can't be together")
