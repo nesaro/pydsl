@@ -30,7 +30,7 @@ from ColonyDSL.Exceptions import BadFileFormat, LibraryException
 
 if __name__ == "__main__":
     import argparse
-    from ColonyDSL.GlobalConfig import VERSION
+    from ColonyDSL.Config import VERSION
     TUSAGE = "usage: %(prog)s [options] [filename]"
     PARSER = argparse.ArgumentParser(usage = TUSAGE)
     PARSER.add_argument("-d", "--debuglevel", action="store", type=int, dest="debuglevel", help="Sets debug level")

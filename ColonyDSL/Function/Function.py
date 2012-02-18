@@ -40,7 +40,7 @@ class FileFunction(Function):
 class Error:
     """Error Transformation result"""
     def __init__(self, errortype, bt = []):
-        from ColonyDSL.GlobalConfig import ERRORLIST
+        from ColonyDSL.Config import ERRORLIST
         self.__bt = bt
         assert(errortype in ERRORLIST)
         self.errortype = errortype

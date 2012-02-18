@@ -38,7 +38,7 @@ if __name__ == "__main__":
     DEBUGLEVEL = ARGS.debuglevel or logging.WARNING
     logging.basicConfig(level = DEBUGLEVEL)
     if ARGS.lang:
-        from ColonyDSL.GlobalConfig import GLOBALCONFIG
+        from ColonyDSL.Config import GLOBALCONFIG
         GLOBALCONFIG.lang = ARGS.lang
     if ARGS.identifier:
         from ColonyDSL.Memory.External.Loader import load_information

@@ -11,7 +11,7 @@ class TestLoader(unittest.TestCase):
     def setUp(self):
         from ColonyDSL.Memory.External.DirLibrary.Type import GrammarFileLibrary
         self.glibrary = GrammarFileLibrary("/usr/share/ColonyDSL/lib_contrib/grammar")
-        from ColonyDSL.GlobalConfig import GLOBALCONFIG
+        from ColonyDSL.Config import GLOBALCONFIG
         GLOBALCONFIG.strictgrammar = False 
     
     def test_grammars(self):

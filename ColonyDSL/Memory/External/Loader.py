@@ -26,7 +26,7 @@ def load_type(name:str, memorylist = []):
         from ColonyDSL.Type.Type import DummyType
         return DummyType()
     if not memorylist:
-        from ColonyDSL.GlobalConfig import GLOBALCONFIG
+        from ColonyDSL.Config import GLOBALCONFIG
         memorylist = GLOBALCONFIG.memorylist
     import os
     from ColonyDSL.Memory.External.DirLibrary.DirLibrary import load_python_file
@@ -58,7 +58,7 @@ def load_function(name, memorylist = []):
 
 def load_grammar(name, memorylist = []):
     if not memorylist:
-        from ColonyDSL.GlobalConfig import GLOBALCONFIG
+        from ColonyDSL.Config import GLOBALCONFIG
         memorylist = GLOBALCONFIG.memorylist
     for memory in memorylist:
         #if memory.provided_iclasses() and "Grammar" not in memory.provided_iclasses():
@@ -70,7 +70,7 @@ def load_grammar(name, memorylist = []):
 
 def load_procedure(identifier, eventmanager = None , name = "", memorylist = []):
     if not memorylist:
-        from ColonyDSL.GlobalConfig import GLOBALCONFIG
+        from ColonyDSL.Config import GLOBALCONFIG
         memorylist = GLOBALCONFIG.memorylist
     for memory in memorylist:
         if identifier in memory:
@@ -81,7 +81,7 @@ def load_procedure(identifier, eventmanager = None , name = "", memorylist = [])
 def load_transformer(identifier, eventmanager = None, name = None, memorylist = []):
     #FIXME: Can return any type of element
     if not memorylist:
-        from ColonyDSL.GlobalConfig import GLOBALCONFIG
+        from ColonyDSL.Config import GLOBALCONFIG
         memorylist = GLOBALCONFIG.memorylist
 
     for memory in memorylist:
@@ -92,7 +92,7 @@ def load_transformer(identifier, eventmanager = None, name = None, memorylist = 
 
 def load_board(identifier, eventmanager = None, name = None, memorylist = []):
     if not memorylist:
-        from ColonyDSL.GlobalConfig import GLOBALCONFIG
+        from ColonyDSL.Config import GLOBALCONFIG
         memorylist = GLOBALCONFIG.memorylist
     for memory in memorylist:
         if "Board" not in memory.provided_iclasses():
@@ -107,7 +107,7 @@ def load_concept(identifier, memorylist = []):
 
 def load_scheme(identifier, memorylist = []):
     if not memorylist:
-        from ColonyDSL.GlobalConfig import GLOBALCONFIG
+        from ColonyDSL.Config import GLOBALCONFIG
         memorylist = GLOBALCONFIG.memorylist
     for memory in memorylist:
         if "Scheme" not in memory.provided_iclasses():
@@ -119,7 +119,7 @@ def load_scheme(identifier, memorylist = []):
 
 def load_information(name:str, memorylist = []):
     if not memorylist:
-        from ColonyDSL.GlobalConfig import GLOBALCONFIG
+        from ColonyDSL.Config import GLOBALCONFIG
         memorylist = GLOBALCONFIG.memorylist
     import os
     from ColonyDSL.Memory.External.DirLibrary.DirLibrary import load_python_file

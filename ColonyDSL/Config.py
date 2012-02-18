@@ -23,7 +23,7 @@ __email__ = "nesaro@gmail.com"
 
 from ColonyDSL.Abstract import Singleton
 import logging
-LOG = logging.getLogger("GlobalConfig")
+LOG = logging.getLogger("Config")
 
 def generate_memory_list() -> list:
     """loads default memories"""

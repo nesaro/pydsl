@@ -68,7 +68,7 @@ class GrammarFileLibrary(DirLibrary):
         for value in resultdic: 
             filename = value["filepath"]
             return load_grammar_file(filename)
-        from ColonyDSL.GlobalConfig import GLOBALCONFIG
+        from ColonyDSL.Config import GLOBALCONFIG
         if strictgrammar != True and not GLOBALCONFIG.strictgrammar:
             from ColonyDSL.Type.Type import DummyType
             LOG.warning("Unable to load:" + identifier)

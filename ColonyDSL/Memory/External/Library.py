@@ -52,7 +52,7 @@ class PersistentLibrary(Library):
         self.identifier = dbname
         #store shelve path list
         #load/create each shelve path
-        from ColonyDSL.GlobalConfig import GLOBALCONFIG
+        from ColonyDSL.Config import GLOBALCONFIG
         if GLOBALCONFIG.persistent_dir:
             self.filename = GLOBALCONFIG.persistent_dir + "/" + dbname
         import threading

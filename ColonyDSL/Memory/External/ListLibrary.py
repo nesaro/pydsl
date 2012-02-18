@@ -36,8 +36,8 @@ class ListLibrary(Library, metaclass = ABCMeta):
         self._content = {}
         from ColonyDSL.Memory.Search.Searcher import MemorySearcher
         self._searcher = MemorySearcher(self)
-        from ColonyDSL.GlobalConfig import GLOBALCONFIG
-        from ColonyDSL.Memory.External.FileLibrary.FileLibrary import getFileTuple
+        from ColonyDSL.Config import GLOBALCONFIG
+        from ColonyDSL.Memory.External.DirLibrary.DirLibrary import getFileTuple
         (_, _, fileBaseName, _) = getFileTuple(fullpath)
         import imp
         myobj = imp.load_source(fileBaseName, fullpath)

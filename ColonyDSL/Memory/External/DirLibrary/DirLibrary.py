@@ -110,7 +110,7 @@ class DirLibrary(Library, metaclass = ABCMeta):
     """A collection of elements stored inside a directory"""
     def __init__(self, dirpath:str, allowedextensions:list = []):
         self.identifier = dirpath
-        from ColonyDSL.GlobalConfig import GLOBALCONFIG
+        from ColonyDSL.Config import GLOBALCONFIG
         resultdirpath = []
         self._allowedextensions = allowedextensions
         from ColonyDSL.Memory.Search.Searcher import MemorySearcher

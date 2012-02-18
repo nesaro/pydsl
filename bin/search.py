@@ -52,7 +52,7 @@ def filterset(inputset: set, filterlist = None) -> set:
 
 if __name__ == "__main__":
     import argparse
-    from ColonyDSL.GlobalConfig import VERSION, GLOBALCONFIG
+    from ColonyDSL.Config import VERSION, GLOBALCONFIG
     TUSAGE = "usage: %(prog)s [options] query"
     PARSER = argparse.ArgumentParser(usage = TUSAGE)
     PARSER.add_argument("search", metavar="search", help="Query to search")

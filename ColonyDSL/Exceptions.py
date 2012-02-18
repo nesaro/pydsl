@@ -33,7 +33,7 @@ class TProcessingError(Exception):
     def __init__(self, source, errortype):
         Exception.__init__(self)
         self.source = source
-        from .GlobalConfig import ERRORLIST
+        from .Config import ERRORLIST
         assert(errortype in ERRORLIST)
         self.errortype = errortype
 

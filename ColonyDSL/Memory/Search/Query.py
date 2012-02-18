@@ -78,7 +78,7 @@ def str_to_memoryquery(string:str, escape = '\\') -> Query:
             pos += 1
     elementlist.append(currentword)
     if len(elementlist) == 1: #Only one str received
-        from ColonyDSL.GlobalConfig import GLOBALCONFIG
+        from ColonyDSL.Config import GLOBALCONFIG
         likestr = "/.*" + string + ".*/"
         return Query(QueryEquality("identifier",string))
     else:
