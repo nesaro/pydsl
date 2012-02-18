@@ -54,19 +54,18 @@ class Validate(UnixProgram):
     
     def execute(self):
         resulttrees = None
+        from ColonyDSL.Interaction.Validate import validate
         if self._opt["expression"]: 
-            resulttrees = self.__sgrammar.get_trees(self._opt["expression"], True)
+            resulttrees = validate(self.__sgrammar, self._opt["expression"])
         elif self._opt["inputfile"]:
             with open(self._opt["inputfile"], "rb") as f:
-                resulttrees = self.__sgrammar.get_trees(f.read(), True)
+                resulttrees = validate(self.__sgrammar, f.read())
         else:
             raise Exception #No input method
         jsonlist = []
-        for index, tree in enumerate(resulttrees):
+        for index, posttree in enumerate(resulttrees):
             if self._opt["outputformat"] == "str":
                 print("Tree: " + str(index) + "\n")
-            from ColonyDSL.Type.Grammar.Tree import parser_to_post_node
-            posttree = parser_to_post_node(tree)
             if self._opt["outputformat"] == "str":
                 if posttree.valid:
                     print("Result OK")
