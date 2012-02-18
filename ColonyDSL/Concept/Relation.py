@@ -8,9 +8,20 @@ __email__ = "nesaro@gmail.com"
 
 from ColonyDSL.Abstract import Indexable
 
+class Rel:
+    """Relation class or whatever"""
+    def __init__(self, identifier, content):
+        self.content = content
+        self.identifier = identifier
+
+    def __contains__(self, key):
+        return key in self.content
+
 class Relation:
-    """A concept"""
-    def __init__(self, relation:"Concept", roledict:dict):
+    """Relation instance"""
+    def __init__(self, relation:"Rel", roledict:dict):
+        for key in roledict:
+            assert(key in relation)
         self.roledict = roledict #which concepts compounds the relations (and their roles) {"noun":Person,"object":blabla}
         self.relation = relation 
         self.identifier = self.__identifier()
@@ -24,7 +35,7 @@ class Relation:
         newroledic = {}
         for key in roledict:
             newroledic[key] = str(roledict[key])
-        return str(newroledic) + str(relation)
+        return str(newroledic) + str(relation.identifier)
 
     def __identifier(self) -> str:
         """Returns a unique identifier"""
