@@ -52,7 +52,7 @@ class Checker(UnixProgram):
         from ColonyDSL.Function.Transformer.Python import HostPythonTransformer
         #import ColonyDSL.GlobalConfig
         #ColonyDSL.GlobalConfig.GLOBALCONFIG.strictgrammar = True
-        self.__maingt = HostPythonTransformer("Main",{"input":"dummy"},{"output":"TrueFalse"},{"checker":"GrammarChecker"}, checkfun) 
+        self.__maingt = HostPythonTransformer({"input":"dummy"},{"output":"TrueFalse"},{"checker":"GrammarChecker"}, checkfun) 
         UnixProgram.__init__(self, optionsdict)
     
     def execute(self):
@@ -127,18 +127,14 @@ if __name__ == "__main__":
     
     logging.basicConfig(level = DEBUGLEVEL)
     program = Checker(ARGS)
-    if (ARGS.tname):
-        try: 
-            program.readT(ARGS.tname)
-        except BadFileFormat:
-            print("Error reading input file")
-            sys.exit(1)
-        except LibraryException as le:
-            print("Unable to load " + le.elementname + " " + le.elementtype)
-            sys.exit(1)
-    else:
-        print(TUSAGE)
-        sys.exit(0)
+    try: 
+        program.readT(ARGS.tname)
+    except BadFileFormat:
+        print("Error reading input file")
+        sys.exit(1)
+    except LibraryException as le:
+        print("Unable to load " + le.elementname + " " + le.elementtype)
+        sys.exit(1)
     try:
         result = program.execute()
     except EOFError:
