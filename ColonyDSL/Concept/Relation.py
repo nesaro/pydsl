@@ -20,11 +20,13 @@ class Rel:
 class Relation:
     """Relation instance"""
     def __init__(self, relation:"Rel", roledict:dict):
+        if isinstance(relation, str):
+            #call load_rel
+            raise NotImplementedError
         for key in roledict:
             assert(key in relation)
         self.roledict = roledict #which concepts compounds the relations (and their roles) {"noun":Person,"object":blabla}
         self.relation = relation 
-        self.identifier = self.__identifier()
         
     def __str__(self):
         return "(" + str(self.identifier) + "," + str(self.rules) + ")"
@@ -35,11 +37,7 @@ class Relation:
         newroledic = {}
         for key in roledict:
             newroledic[key] = str(roledict[key])
-        return str(newroledic) + str(relation.identifier)
-
-    def __identifier(self) -> str:
-        """Returns a unique identifier"""
-        return self.generate_identifier(self.relation, self.roledict)
+        return str(newroledic) + str(relation) #FIXME: Random order makes identifier unpredictable
 
     @property
     def summary(self):
@@ -47,5 +45,5 @@ class Relation:
         newdic = {}
         for key in self.roledict:
             newdic[key] = str(self.roledict[key])
-        result =  {"iclass":"Relation", "identifier":str(self.identifier) ,"relation":str(self.relation), "concepts":tuple(self.roledict.values()), "roledict":InmutableDict(newdic)}
+        result =  {"iclass":"Relation", "rel":str(self.relation), "concepts":tuple(self.roledict.values()), "roledict":InmutableDict(newdic)}
         return result
