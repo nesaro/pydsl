@@ -63,7 +63,7 @@ class TestHostTransformer(unittest.TestCase):
 
     def testError(self):
         result = self.__gt1.call({"input":"1"})
-        assert(str(result.bt[0]) == 'separator' and str(result.bt[1]) == "myadder" and str(result.bt[2]) == "test")
+        assert(str(result.bt[0]) == 'separator' and str(result.bt[1]) == "myadder" and str(result.bt[2]) == "Main")
 
 
 class TestSyntaxDirectedTransformer(unittest.TestCase):
