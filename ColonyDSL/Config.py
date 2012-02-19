@@ -31,8 +31,8 @@ def generate_memory_list() -> list:
     result = []
     from ColonyDSL.Memory.External.DirLibrary.Type import GrammarFileLibrary
     from ColonyDSL.Memory.External.DirLibrary.Function import BoardFileLibrary, TransformerDirLibrary, ProcedureFileLibrary
-    from ColonyDSL.Memory.External.DictLibrary import FileTypeDictLibrary, ConceptDictLibrary, ConceptRelationDictLibrary, RegexpDictLibrary
-    from ColonyDSL.Memory.External.ListLibrary import ConceptRelationshipListLibrary
+    from ColonyDSL.Memory.External.DictLibrary import FileTypeDictLibrary, RegexpDictLibrary
+    from ColonyDSL.Memory.External.ListLibrary import RelListLibrary, RelationListLibrary
     from ColonyDSL.Memory.External.DirLibrary.Concept import ConceptFileLibrary
     from ColonyDSL.Memory.External.DirLibrary.Scheme import SchemeFileLibrary
     result.append(GrammarFileLibrary("/usr/share/ColonyDSL/lib_contrib/grammar/"))

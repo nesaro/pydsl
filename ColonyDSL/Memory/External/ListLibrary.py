@@ -92,34 +92,39 @@ class ConceptListLibrary(ListLibrary):
     def provided_iclasses(self):
         return ["Concept"]
 
-class ConceptRelationshipListLibrary(ListLibrary):
+class RelationListLibrary(ListLibrary):
     def generate_all_summaries(self) -> list:
         result = []
         from ColonyDSL.Abstract import InmutableDict
         for key in self._content:
-            result.append(InmutableDict({"identifier":key, "title":InmutableDict(self._content[key]["title"]),"description":InmutableDict(self._content[key]["description"]), "relation":self._content[key]["relation"], "roledict":InmutableDict(self._content[key]["roledict"]), "iclass":"ConceptRelationship" }))
+            result.append(InmutableDict({"identifier":key, "rel":self._content[key]["rel"], "roledict":InmutableDict(self._content[key]["roledict"]), "iclass":"Relation" }))
         return result
 
     def load(self, index):
-        from ColonyDSL.Concept.Relation import ConceptRelationship
-        return ConceptRelationship(index, self._content[index]["relation"], self._content[index]["roledict"], self._content[index]["title"], self._content[index]["description"])
+        from ColonyDSL.Concept.Relation import Relation
+        return Relation(self._content[index]["rel"], self._content[index]["roledict"])
 
     def _generatekey(self, element):
-        from ColonyDSL.Concept.Relation import ConceptRelationship
-        return ConceptRelationship.generate_identifier(element["relation"], element["roledict"])
+        from ColonyDSL.Concept.Relation import Relation
+        return Relation.generate_identifier(element["rel"], element["roledict"])
 
-class ConceptTypeRelationListLibrary(ListLibrary):
+    def provided_iclasses(self):
+        return ["Relation"]
+
+class RelListLibrary(ListLibrary):
     def generate_all_summaries(self) -> list:
         result = []
         from ColonyDSL.Abstract import InmutableDict
         for key in self._content:
-            result.append(InmutableDict({"identifier":key, "title":InmutableDict(self._content[key]["title"]),"description":InmutableDict(self._content[key]["description"]), "type":self._content[key]["typeid"], "concept":self._content[key]["conceptuid"], "iclass":"ConceptTypeRelation" }))
+            result.append(InmutableDict({"identifier":key, "content":tuple(self._content[key]["content"]), "iclass":"Rel" }))
         return result
 
     def load(self, index):
-        from ColonyDSL.Concept.Relation import ConceptTypeRelation
-        return ConceptTypeRelation(index, self._content[index]["relation"], self._content[index]["roledict"], self._content[index]["title"], self._content[index]["description"])
+        from ColonyDSL.Concept.Relation import Rel
+        return Rel(self._content[index]["identifier"], self._content[index]["content"])
 
     def _generatekey(self, element):
-        from ColonyDSL.Concept.Relation import ConceptTypeRelation
-        return ConceptTypeRelation.generate_identifier(element["conceptuid"], element["typeid"])
+        return element["identifier"]
+
+    def provided_iclasses(self):
+        return ["Rel"]

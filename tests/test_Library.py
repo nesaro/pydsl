@@ -33,3 +33,30 @@ class TestConceptListLibrary(unittest.TestCase):
     
     def test_generate_all_summaries(self):
         self._cll.generate_all_summaries()
+
+class TestRelListLibrary(unittest.TestCase):
+    def setUp(self):
+        from ColonyDSL.Memory.External.ListLibrary import RelListLibrary
+        self._cll = RelListLibrary("tests/rellibrary.list")
+
+    def test_load(self):
+        self.assertTrue(self._cll.load("ISA"))
+        with self.assertRaises(KeyError):
+            self._cll.load("WHAT")
+    
+    def test_generate_all_summaries(self):
+        self._cll.generate_all_summaries()
+
+class TestRelationListLibrary(unittest.TestCase):
+    def setUp(self):
+        from ColonyDSL.Memory.External.ListLibrary import RelationListLibrary
+        self._cll = RelationListLibrary("tests/relationlibrary.list")
+
+    def test_load(self):
+        self.assertTrue(self._cll.load("{'object': 'concept2', 'subject': 'concept1'}ISA"))
+        with self.assertRaises(KeyError):
+            self._cll.load("WHAT")
+    
+    def test_generate_all_summaries(self):
+        self._cll.generate_all_summaries()
+
