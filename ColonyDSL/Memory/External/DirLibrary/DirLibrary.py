@@ -98,7 +98,7 @@ def load_python_file(moduleobject, identifier = None, ecuid = None, server = Non
         from ColonyDSL.Type.FileType import FileType
         return FileType(**resultdic)
     elif iclass == "Scheme":
-        from ColonyDSL.Cognition.Scheme import Scheme
+        from ColonyDSL.Abstraction.Scheme import Scheme
         return Scheme(**resultdic)
     elif iclass == "Concept":
         from ColonyDSL.Concept.Concept import Concept

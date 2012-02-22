@@ -1,5 +1,20 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+#This file is part of ColonyDSL.
+#
+#ColonyDSL is free software: you can redistribute it and/or modify
+#it under the terms of the GNU General Public License as published by
+#the Free Software Foundation, either version 3 of the License, or
+#(at your option) any later version.
+#
+#ColonyDSL is distributed in the hope that it will be useful,
+#but WITHOUT ANY WARRANTY; without even the implied warranty of
+#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#GNU General Public License for more details.
+#
+#You should have received a copy of the GNU General Public License
+#along with ColonyDSL.  If not, see <http://www.gnu.org/licenses/>.
+
 
 __author__ = "Néstor Arocha Rodríguez"
 __copyright__ = "Copyright 2008-2012, Néstor Arocha Rodríguez"
@@ -7,7 +22,6 @@ __email__ = "nesaro@gmail.com"
 
 from ColonyDSL.Abstract import Indexable
 from abc import abstractmethod, ABCMeta
-
 
 class WorkingMemoryElement(Indexable):
     def __init__(self, rep, source:str, content, taglist = []):
@@ -22,20 +36,23 @@ class WorkingMemoryElement(Indexable):
         from ColonyDSL.Abstract import InmutableDict
         return InmutableDict(mydict)
 
+#Objeto teorico a realizar:
+##Scheme MatchConcept: Intentar cuadrar el contenido de la representacion con un concepto conocido. 
+### Pepe y Sus podria ser un concepto "Conjunto de Personas"
+
 from ColonyDSL.Memory.Memory import LocalMemory
 class WorkingMemory(LocalMemory): 
+    """
+    Holds concepts (and maybe relations)
+    It holds a DOM like struct where all concepts are linked with known concepts or new ones
+    It kepts timestamps for allelements
+    """
     def __init__(self):
         LocalMemory.__init__(self)
-        self.connections = {} 
         self.totalseq = 0
     
-    def register(self, connection, slot, identifier):
-        if not identifier in self.connections:
-            self.connections[identifier] = []
-        self.connections[identifier].append((connection, slot))
-        connection.actor.register(connection, slot)
-
     def save(self, content, source) -> int:
+        """adds a new element. Returns sequence number"""
         element = WorkingMemoryElement(self, source, content)
         LocalMemory.save(self, element)
         for conn, slot in self.connections[source]:
@@ -47,6 +64,7 @@ class WorkingMemory(LocalMemory):
         return self.totalseq - 1
 
     def last_element(self):
+        """Returns last element"""
         i = -1 
         element = None
         for key, value in self.content.items():

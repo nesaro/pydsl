@@ -5,18 +5,16 @@ __author__ = "Néstor Arocha Rodríguez"
 __copyright__ = "Copyright 2008-2012, Néstor Arocha Rodríguez"
 __email__ = "nesaro@gmail.com"
 
-from ColonyDSL.Abstract import Indexable
 from .Memory import Actor
 from threading import Thread
 
-class Scheme(Indexable, Actor, Thread):
+class Scheme(Actor, Thread):
     """A machine that receives representations from Interactors, sends representations to them, can ask for internal vars, concepts an relations
     and which goal is perform actions. An scheme can inhibit another scheme.
     It works with threshold like ANNs
     """
     def __init__(self, identifier, slots, activation_func, call_func):
         Thread.__init__(self)
-        Indexable.__init__(self, identifier)
         Actor.__init__(self, slots)
         self.activation_func = activation_func #signature: connection
         self.call_func = call_func #signature: connection
@@ -33,7 +31,7 @@ class Scheme(Indexable, Actor, Thread):
         self.queue.put((connection, slot, element))
 
     def summary(self):
-        return {"iclass":"Scheme", "identifier":self.identifier}
+        return {"iclass":"Scheme"}
 
     def run(self):
         while True:
