@@ -24,11 +24,12 @@ from ColonyDSL.Abstract import Indexable
 from abc import abstractmethod, ABCMeta
 
 class WorkingMemoryElement(Indexable):
-    def __init__(self, rep, source:str, content, taglist = []):
-        Indexable.__init__(self, rep.request_id())
+    def __init__(self, wm, source:str, content, taglist = []):
+        Indexable.__init__(self)
         self.source = source
-        self.content = content
+        self.content = content #concept or relation
         self.taglist = taglist
+        self.identifier = wm.request_id()
 
     @property
     def summary(self):
@@ -46,6 +47,7 @@ class WorkingMemory(LocalMemory):
     Holds concepts (and maybe relations)
     It holds a DOM like struct where all concepts are linked with known concepts or new ones
     It kepts timestamps for allelements
+    Only Accepts WorkingMemoryElement
     """
     def __init__(self):
         LocalMemory.__init__(self)
@@ -54,9 +56,7 @@ class WorkingMemory(LocalMemory):
     def save(self, content, source) -> int:
         """adds a new element. Returns sequence number"""
         element = WorkingMemoryElement(self, source, content)
-        LocalMemory.save(self, element)
-        for conn, slot in self.connections[source]:
-            conn.actor.receive(conn, slot, element)
+        LocalMemory.save(self, element, element.identifier)
         return element.identifier
     
     def request_id(self):
