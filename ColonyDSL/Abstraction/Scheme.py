@@ -16,7 +16,7 @@
 #along with ColonyDSL.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#TODO: Mecanismos de espera para la respuesta de otros. Decision en caso de que no este la respuesta
+#TODO: Methods to connect schemes for syncronization and inhibition
 
 __author__ = "Néstor Arocha Rodríguez"
 __copyright__ = "Copyright 2008-2012, Néstor Arocha Rodríguez"
@@ -42,20 +42,7 @@ class Scheme(Actor, Thread):
     
     def __test_activation(self, connection) -> bool:
         """Should this scheme start working with current available data?"""
-        #Tiene que mirar la historia con ese callerid a ver si requiere nueva accion
-        #Llama a otros schemes. Y a variables internas del sistema para determinar si este scheme se activa y modifica la representacion
         return self.activation_func(connection, callerid)
-
-    def receive(self, connection, slot, element = None):
-        """Se notifica un nuevo elemento(element) que ya está en la representacion. El scheme evalua si debe actuar o no""" 
-        #un switch como los de eventclient
-        #Mensajes: 
-        ##Call(origen, listasecuencias) ##Es igual para las respuestas
-        ##Relatedconcept(seqid, listchoices) ##Solicitar aclarar cual es el concepto asociado más cercano al elemento seqid
-        ##ConfirmAssumption(seqid, wordOrconcept)
-        ##Requestmoreinfo(seqid)
-        #Call es un tipo de funcion especial ante un mensaje de solicitud
-        self.queue.put((connection, slot, element))
 
     def summary(self):
         return {"iclass":"Scheme"}
