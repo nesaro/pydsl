@@ -28,9 +28,9 @@ class Actor(Indexable, metaclass = ABCMeta):
         Indexable.__init__(self)
         self.inputs = {}
         self.outputs = {}
-        for ins in inputslotdefinitions::
+        for ins in inputslotdefinitions:
             self.inputs[ins] = []
-        for outs in outputslotdefinitions::
+        for outs in outputslotdefinitions:
             self.outputs[outs] = []
 
     def register_input(self, slot, wm:"WorkingMemory"):

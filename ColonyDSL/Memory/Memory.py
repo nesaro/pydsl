@@ -60,7 +60,7 @@ class Memory(metaclass = ABCMeta):
         return MemorySearcher(self.indexer())
     
 class LocalMemory(Memory):
-    """Executrion time memory"""
+    """Execution time memory"""
     def __init__(self):
         self.content = {}
     
