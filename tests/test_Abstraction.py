@@ -28,8 +28,11 @@ class TestActor(unittest.TestCase):
 class TestSense(unittest.TestCase):
     def setUp(self):
         from ColonyDSL.Abstraction.Scheme import Sense
-        self.__senser = Sense() #Loads a sense that reads from a function call
-        self.__sensew = Sense() #Loads a sense that writes in a buffer member
+        self.__senser = Sense(["input"],["output"]) #Loads a sense that reads from a function call and outputs concepts
+        self.__sensew = Sense(["input"],["output"]) #Loads a sense that reads concepts and  writes in a buffer member
+        self.__memory = WorkingMemory()
+        self.__senser.register_input("input", self.__memory)
+        self.__sensew.register_output("output", self.__memory)
 
     def testMemory(self):
         """Connects to a Memory"""

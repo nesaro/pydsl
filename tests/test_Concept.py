@@ -54,3 +54,18 @@ class TestRelation(unittest.TestCase):
         myrel = Rel("rel1", ["left","right"])
         from ColonyDSL.Concept.Relation import Relation
         myconcept = Relation(myrel, {"left":"concept2", "right":"concept3"})
+
+
+class TestConceptMemory(unittest.TestCase):
+    def setUp(self):
+        pass
+
+    def testMemoryLoadAndQuery(self):
+        #create a memory
+        #load concepts
+        #load a rel
+        #load a relationship
+        #query for concept
+        #query for rel
+        #query for relationships between concept1 and concept2
+        pass
