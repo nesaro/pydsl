@@ -92,5 +92,6 @@ class SymbolGrammar(Grammar):
         raise NotImplementedError
 
     def iterate(self, information):
-        #gets tree, then iterates through leaf nodes
+        #gets tree, then iterates through leaf nodes. 
+        #TODO think about extra parameters for tree depth
         raise NotImplementedError
