@@ -24,17 +24,35 @@ __email__ = "nesaro@gmail.com"
 
 from .Actor import Actor
 from threading import Thread
+from ColonyDSL.Function.Function import Function
 
-class Scheme(Actor, Thread):
+class Scheme(Function):
+    def __init__(self, pfunction):
+        self.call_func = pfunction
+
+    def call(self, inputconcept):
+        return self.call_func(inputconcept)
+
+    def summary(self):
+        raise NotImplementedError
+
+class Sense:
+    def __init__(self, pfunction):
+        self.call_func = pfunction
+
+    def call(self, inputconcept):
+        return self.call_func(inputconcept)
+
+class NeuralScheme(Scheme,Actor, Thread):
     """A machine that receives representations from Interactors, sends representations to them, can ask for internal vars, concepts an relations
     and which goal is perform actions. An scheme can inhibit another scheme.
     It works with threshold like ANNs
     """
-    def __init__(self, identifier, slots, activation_func, call_func):
+    def __init__(self, slots, activation_func, call_func):
         Thread.__init__(self)
         Actor.__init__(self, slots)
+        Scheme.__init__(self, call_func) #signature: connection
         self.activation_func = activation_func #signature: connection
-        self.call_func = call_func #signature: connection
         self.setDaemon(True)
         import queue
         self.queue = queue.Queue()
@@ -63,7 +81,9 @@ class Scheme(Actor, Thread):
                         self.call_func(connection)
                         wait = False
 
-class Sense(Actor, Thread):
+    
+
+class NeuralSense(Sense, Actor, Thread):
     def __init__(self):
         Thread.__init__(self)
 

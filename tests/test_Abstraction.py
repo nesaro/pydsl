@@ -20,7 +20,25 @@ __copyright__ = "Copyright 2008-2012, Néstor Arocha Rodríguez"
 __email__ = "nesaro@gmail.com"
 
 import unittest
+from ColonyDSL.Concept.Concept import Concept
 
+def funr(inputstr):
+    if inputstr == "yellow":
+        #TODO: Load Yellow Concept from Memory
+        return Concept("yellow")
+    elif inputstr == "black":
+        #TODO: Load Black Concept from Memory
+        return Concept("black")
+
+def funw(inputconcept):
+    if inputconcept == Concept("yellow"):
+        return "#CDCD00"
+    elif inputconcept == Concept("black"):
+        return "#000000"
+
+def funrecogcolor(inputconcept):
+    if inputconcept == Concept("yellow") or inputconcept == Concept("black"):
+        return True
 
 class TestActor(unittest.TestCase):
     pass
@@ -28,23 +46,13 @@ class TestActor(unittest.TestCase):
 class TestSense(unittest.TestCase):
     def setUp(self):
         from ColonyDSL.Abstraction.Scheme import Sense
-        self.__senser = Sense(["input"],["output"]) #Loads a sense that reads from a function call and outputs concepts
-        self.__sensew = Sense(["input"],["output"]) #Loads a sense that reads concepts and  writes in a buffer member
-        self.__memory = WorkingMemory()
-        self.__senser.register_input("input", self.__memory)
-        self.__sensew.register_output("output", self.__memory)
+        self.__senser = Sense(funr) #Loads a sense that reads from a function call and outputs concepts
+        self.__sensew = Sense(funw) #Loads a sense that reads concepts and  writes in a buffer member
 
-    def testMemory(self):
-        """Connects to a Memory"""
-        pass
-
-    def testMemoryWrite(self):
-        """Connects to a memory, writes in memory"""
-        pass
-
-    def testMemoryRead(self):
-        """Connects to a memory, read from memory, store in buffer"""
-        pass
+    def testCall(self):
+        myconcept = self.__senser.call("yellow")
+        mystr = self.__sensew.call(myconcept)
+        self.assertEqual(mystr, "#CDCD00")
 
 class TestWorkingMemory(unittest.TestCase):
     def setUp(self):
@@ -66,8 +74,21 @@ class TestWorkingMemory(unittest.TestCase):
         #future
         pass
 
-class TestScheme(unittest.TestCase):
-    def testJoinMemory(self):
+    def testMemoryWrite(self):
+        """Connects to a memory, writes in memory"""
         pass
+
+    def testMemoryRead(self):
+        """Connects to a memory, read from memory, store in buffer"""
+        pass
+
+class TestScheme(unittest.TestCase):
+    def testCall(self):
+        from ColonyDSL.Abstraction.Scheme import Scheme
+        myscheme = Scheme(funrecogcolor)
+        result = myscheme.call(Concept("yellow"))
+        self.assertTrue(result)
+        result = myscheme.call(Concept("dog"))
+        self.assertFalse(result)
 
 

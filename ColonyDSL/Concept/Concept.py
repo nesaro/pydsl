@@ -30,6 +30,11 @@ class Concept(Indexable, metaclass = ABCMeta):
     def __init__(self, identifier):
         self.identifier = identifier
 
+    def __eq__(self, other):
+        if isinstance(other, Concept) and other.identifier == self.identifier:
+            return True
+        return False
+    
     @property
     def summary(self):
         return {"iclass":"Concept", "identifier":str(self.identifier)}
