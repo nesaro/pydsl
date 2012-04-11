@@ -50,8 +50,8 @@ class TestSense(unittest.TestCase):
         self.__sensew = Sense(funw) #Loads a sense that reads concepts and  writes in a buffer member
 
     def testCall(self):
-        myconcept = self.__senser.call("yellow")
-        mystr = self.__sensew.call(myconcept)
+        myconcept = self.__senser("yellow")
+        mystr = self.__sensew(myconcept)
         self.assertEqual(mystr, "#CDCD00")
 
 class TestWorkingMemory(unittest.TestCase):
@@ -86,9 +86,9 @@ class TestScheme(unittest.TestCase):
     def testCall(self):
         from ColonyDSL.Abstraction.Scheme import Scheme
         myscheme = Scheme(funrecogcolor)
-        result = myscheme.call(Concept("yellow"))
+        result = myscheme(Concept("yellow"))
         self.assertTrue(result)
-        result = myscheme.call(Concept("dog"))
+        result = myscheme(Concept("dog"))
         self.assertFalse(result)
 
 

@@ -28,7 +28,7 @@ __email__ = "nesaro@gmail.com"
 import unittest
 
 def parentfunction(inputdic, auxgt, inputgt, outputgt, evfuncs):
-    result = auxgt["client"].call({"input":"HI"})
+    result = auxgt["client"]({"input":"HI"})
     return {"output":inputdic["input"]}
 
 def childfunction(inputdic, inputgt, outputgt, evfuncs):
@@ -51,7 +51,7 @@ class TestServer(unittest.TestCase):
         #load special Transformer that listen client messages
 
     def testProperty(self):
-        result = self._parentManager.call({"input":"1+1"})
+        result = self._parentManager({"input":"1+1"})
         self.assertTrue(str(result["output"]) == "1+1")
 
         #test messages to a server

@@ -60,13 +60,13 @@ class Translate(UnixProgram):
                 if not isinstance(inputdic, dict):
                     raise TypeError
                 outputdic = parse_shell_dict(self._opt["outputfiledic"])
-                resultdic = self.__mainfunc.call(inputdic)
+                resultdic = self.__mainfunc(inputdic)
                 from .Shell import file_output
                 file_output(resultdic, outputdic)
                 return resultdic
             elif self._opt["expression"] and not self._opt["outputfiledic"]:
                 myexpression = parse_shell_dict(self._opt["expression"])
-                result = self.__mainfunc.call(myexpression)
+                result = self.__mainfunc(myexpression)
                 from ColonyDSL.Function.Function import Error
                 if result:
                     for key in result.keys():
@@ -81,7 +81,7 @@ class Translate(UnixProgram):
                 inputdic = parse_shell_dict(self._opt["inputfiledic"])
                 outputdic = parse_shell_dict(self._opt["outputfiledic"])
                 stringdic = open_files_dict(inputdic)
-                resultdic = self.__mainfunc.call(stringdic)
+                resultdic = self.__mainfunc(stringdic)
                 from .Shell import file_output
                 file_output(resultdic, outputdic)
                 close_input_dic(stringdic)
@@ -104,10 +104,10 @@ class Translate(UnixProgram):
         elif self.__mode == "Procedure":
             if self._opt["pipemode"]:
                 assert(len(self.__mainfunc.outputchanneldic) == 1)
-                result = self.__mainfunc.call()
+                result = self.__mainfunc()
                 print(result[list(self.__mainfunc.outputchanneldic.keys())[0]])
             else:
-                result = self.__mainfunc.call()
+                result = self.__mainfunc()
                 print(result)
                 return result 
         return True

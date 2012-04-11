@@ -133,7 +133,7 @@ class CommandLineToTransformerInteraction(ContinuousInteraction):
         print("Input: " + ",".join(self._tinstance.inputchanneldic.keys()))
         value = self._getInput()
         while value != None:
-            resultdic = self._tinstance.call(value)
+            resultdic = self._tinstance(value)
             if not resultdic:
                 command_line_output(str(resultdic))
             else:
@@ -203,7 +203,7 @@ class StreamFileToTransformerInteraction(ContinuousInteraction):
                     break
             if endofstdin:
                 break #No se ha recibido nueva linea
-            resultdic = self._tinstance.call(stringdic)
+            resultdic = self._tinstance(stringdic)
             self._showOutput(resultdic)
             for channel, filename in self._inputfiledic.items():
                 if filename == "stdin":

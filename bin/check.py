@@ -32,7 +32,7 @@ from ColonyDSL.Interaction.Program import UnixProgram
 CURRENTGRAMMAR = ""
 
 def checkfun(inputdic, auxboarddic, inputgt, outputgt, evfunctions):
-    output = auxboarddic["checker"].call({"string":inputdic["input"], "grammar":CURRENTGRAMMAR})
+    output = auxboarddic["checker"]({"string":inputdic["input"], "grammar":CURRENTGRAMMAR})
     if not output:
         return output
     return {"output":str(output["output"])}
@@ -63,14 +63,14 @@ class Checker(UnixProgram):
         if self._opt["expression"] and self._opt["outputfiledic"]: #input type: expression #output: file
             myexpression = {"input":self._opt["expression"]}
             outputdic = parse_shell_dict(self._opt["outputfiledic"])
-            resultdic = self.__maingt.call(myexpression, outputdic)
+            resultdic = self.__maingt(myexpression, outputdic)
             resultdic = bool_dict_values(resultdic)
             from .Shell import save_result_to_output
             save_result_to_output(resultdic, outputdic)
             return resultdic
         elif self._opt["expression"] and not self._opt["outputfiledic"]:
             myexpression = {"input":self._opt["expression"]}
-            result = self.__maingt.call(myexpression)["output"]
+            result = self.__maingt(myexpression)["output"]
             #result = bool_dict_values(str(result["output"]))
             from ColonyDSL.Function.Function import Error
             if isinstance(result, Error):
@@ -84,7 +84,7 @@ class Checker(UnixProgram):
             if self._opt["outputfiledic"]:
                 outputdic = parse_shell_dict(self._opt["outputfiledic"])
             stringdic = open_files_dict(inputdic)
-            resultdic = self.__maingt.call(stringdic)
+            resultdic = self.__maingt(stringdic)
             resultdic = bool_dict_values(resultdic)
             from ColonyDSL.Interaction.Shell import save_result_to_output
             save_result_to_output(resultdic, outputdic)

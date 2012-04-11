@@ -25,7 +25,7 @@ import unittest
 
 def recursivecall(input, auxt ,inputgrammars, outputgrammars, evfunctions):
     """Ignora la entrada"""
-    return {"output":auxt["myadder"].call({"input":"1+e"})}
+    return {"output":auxt["myadder"]({"input":"1+e"})}
 
 def integerextractor(input, inputgrammars, outputgrammars, evfunctions):
     return {"output":inputgrammars["input"].get_groups(input["input"],"Operator")[0]}
@@ -48,11 +48,11 @@ class TestTransformer(unittest.TestCase):
         self.__text = ExternalProgramFunction({"input":"cstring"},{"output":"cstring"}, ["echo","#{input}"])
 
     def testProperty(self):
-        result = self.__gt1.call({"input":"1+1"})
+        result = self.__gt1({"input":"1+1"})
         assert(str(result["output"]) == "+")
 
     def testExternal(self):
-        result = self.__text.call({"input":"1+1"})
+        result = self.__text({"input":"1+1"})
         assert(str(result["output"]) == "1+1\n")
 
 class TestHostTransformer(unittest.TestCase):
@@ -62,7 +62,7 @@ class TestHostTransformer(unittest.TestCase):
         self.__gt1 = HostPythonTransformer({"input":"cstring"},{"output":"cstring"},{"myadder":"simple-adder"},recursivecall)
 
     def testError(self):
-        result = self.__gt1.call({"input":"1"})
+        result = self.__gt1({"input":"1"})
         assert(str(result.bt[0]) == 'separator' and str(result.bt[1]) == "myadder" and str(result.bt[2]) == "Main")
 
 class TestSyntaxDirectedTransformer(unittest.TestCase):

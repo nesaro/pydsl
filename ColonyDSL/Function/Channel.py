@@ -77,7 +77,7 @@ class HostChannel(metaclass = ABCMeta):
                 mydic = {}
                 for x in mylist:
                     mydic[x["channel"]] = x["data"]
-                result = self.call(mydic)
+                result = self.__call__(mydic)
             except TProcessingError:
                 LOG.exception("run: Error while processing input")
                 self.emitToServer({"type":"transformerError"}, sequence)

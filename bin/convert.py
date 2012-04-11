@@ -87,7 +87,7 @@ if __name__ == "__main__":
         firstresult = searchresult.pop()
         from ColonyDSL.Memory.External.Loader import load_transformer
         finstance = load_transformer(firstresult["identifier"])
-        result = finstance.call({"inputfile":inputfile,"outputfile":ARGS.outputfile})
+        result = finstance({"inputfile":inputfile,"outputfile":ARGS.outputfile})
         sys.exit(0)
         #sys.exit(int(str(result["output"])))
     else:

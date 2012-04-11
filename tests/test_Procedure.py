@@ -32,5 +32,5 @@ class TestProcedure(unittest.TestCase):
         self.pr = PythonProcedure(outputdic = {"output":"cstring"}, function = fun)
     
     def testInstance(self):
-        self.assertTrue(self.pr.call())
+        self.assertTrue(self.pr())
 

@@ -39,7 +39,7 @@ class PythonTransformer(Transformer):
     def _onReceiveEvent(self, event):
         return self.__receiveEvent(event)
     
-    def call(self, ibdic):
+    def __call__(self, ibdic):
         from ColonyDSL.Function.Function import Error
         for inputkey in self.inputchanneldic.keys():
             if inputkey not in ibdic:

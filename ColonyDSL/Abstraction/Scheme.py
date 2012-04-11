@@ -30,7 +30,7 @@ class Scheme(Function):
     def __init__(self, pfunction):
         self.call_func = pfunction
 
-    def call(self, inputconcept):
+    def __call__(self, inputconcept):
         return self.call_func(inputconcept)
 
     def summary(self):
@@ -40,7 +40,7 @@ class Sense:
     def __init__(self, pfunction):
         self.call_func = pfunction
 
-    def call(self, inputconcept):
+    def __call__(self, inputconcept):
         return self.call_func(inputconcept)
 
 class NeuralScheme(Scheme,Actor, Thread):

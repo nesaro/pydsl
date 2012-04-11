@@ -36,7 +36,7 @@ class PythonProcedure(Procedure):
         self.__function = function
         self.outputchanneldic = outputdic
 
-    def call(self):
+    def __call__(self):
         return self.__function()
 
     def _onReceiveEvent(self, source, msg):

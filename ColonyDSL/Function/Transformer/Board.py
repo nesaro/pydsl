@@ -58,7 +58,7 @@ class Board(Transformer, HostFunctionNetwork):
         result = {"iclass":"Board", "input":inputdic, "output":outputdic, "ancestors":self.ancestors()}
         return InmutableDict(result)
 
-    def call(self, inputdict:dict):
+    def __call__(self, inputdict:dict):
         LOG.debug(" received dic:" + str(inputdict))
         if not inputdict:
             LOG.error("No input")

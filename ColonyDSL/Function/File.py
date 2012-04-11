@@ -36,7 +36,7 @@ class ExternalProgramFileFunction(FileFunction):
         self.inputformat = inputformat #TODO
         self.outputformat = outputformat #TODO
 
-    def call(self, wdic):
+    def __call__(self, wdic):
         #fileinput, fileoutput
         #TODO: check if follows inputformat. 
         from ColonyDSL.Interaction.Protocol import FileProtocol, protocol_split
