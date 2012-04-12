@@ -56,7 +56,7 @@ def _loadGDLGrammarFromFile(filepath):
     instance = SymbolGrammar(fileBaseName, productionruleset, parser)
     return instance
 
-class GrammarFileLibrary(DirLibrary):
+class GrammarDirLibrary(DirLibrary):
     """generate instances of grammars"""
     def __init__(self, path):
         DirLibrary.__init__(self, path, [".py", ".bnf", ".re"])

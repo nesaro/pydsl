@@ -55,10 +55,10 @@ def guess_filename(inputfile, memorylist = []) -> set:
 
 def guess(inputstring, memorylist = []) -> set:
     from ColonyDSL.Memory.Search.Searcher import MemorySearcher
-    from ColonyDSL.Memory.External.DirLibrary.Type import GrammarFileLibrary 
+    from ColonyDSL.Memory.External.DirLibrary.Type import GrammarDirLibrary 
     from ColonyDSL.Memory.External.DictLibrary import FileTypeDictLibrary
     if not memorylist:
-        memorylist.append(GrammarFileLibrary("/usr/share/ColonyDSL/lib_contrib/grammar/"))
+        memorylist.append(GrammarDirLibrary("/usr/share/ColonyDSL/lib_contrib/grammar/"))
         memorylist.append(FileTypeDictLibrary("/usr/share/ColonyDSL/lib_contrib/dict/filetype.dict"))
     searcher = MemorySearcher([x.indexer() for x in memorylist])
     result = set()

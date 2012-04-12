@@ -9,8 +9,8 @@ class TestLoader(unittest.TestCase):
     #TODO
     """Test loaders"""
     def setUp(self):
-        from ColonyDSL.Memory.External.DirLibrary.Type import GrammarFileLibrary
-        self.glibrary = GrammarFileLibrary("/usr/share/ColonyDSL/lib_contrib/grammar")
+        from ColonyDSL.Memory.External.DirLibrary.Type import GrammarDirLibrary
+        self.glibrary = GrammarDirLibrary("/usr/share/ColonyDSL/lib_contrib/grammar")
         from ColonyDSL.Config import GLOBALCONFIG
         GLOBALCONFIG.strictgrammar = False 
     

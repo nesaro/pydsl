@@ -29,13 +29,13 @@ def generate_memory_list() -> list:
     """loads default memories"""
     "", "/usr/share/ColonyDSL/"
     result = []
-    from ColonyDSL.Memory.External.DirLibrary.Type import GrammarFileLibrary
+    from ColonyDSL.Memory.External.DirLibrary.Type import GrammarDirLibrary
     from ColonyDSL.Memory.External.DirLibrary.Function import BoardFileLibrary, TransformerDirLibrary, ProcedureFileLibrary
     from ColonyDSL.Memory.External.DictLibrary import FileTypeDictLibrary, RegexpDictLibrary
     from ColonyDSL.Memory.External.ListLibrary import RelListLibrary, RelationListLibrary
     #from ColonyDSL.Memory.External.DirLibrary.Concept import ConceptFileLibrary
     #from ColonyDSL.Memory.External.DirLibrary.Scheme import SchemeFileLibrary
-    result.append(GrammarFileLibrary("/usr/share/ColonyDSL/lib_contrib/grammar/"))
+    result.append(GrammarDirLibrary("/usr/share/ColonyDSL/lib_contrib/grammar/"))
     result.append(BoardFileLibrary("/usr/share/ColonyDSL/lib_contrib/board/"))
     result.append(TransformerDirLibrary("/usr/share/ColonyDSL/lib_contrib/transformer/"))
     result.append(ProcedureFileLibrary("/usr/share/ColonyDSL/lib_contrib/procedure/"))
