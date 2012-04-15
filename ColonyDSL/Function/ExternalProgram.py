@@ -20,7 +20,7 @@ class ExternalProgramFunction(Function, TypeChannelHost):
         TypeChannelHost.__init__(self, inputdic, outputdic)
         self.__programlist = programcall
 
-    def call(self, wdic):
+    def __call__(self, wdic):
         for inputkey in self.inputchanneldic.keys():
             if inputkey not in wdic:
                 LOG.error("Key not found in inputdic")
