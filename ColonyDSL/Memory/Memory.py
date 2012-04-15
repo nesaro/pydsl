@@ -59,6 +59,10 @@ class Memory(metaclass = ABCMeta):
         from ColonyDSL.Memory.Search.Searcher import MemorySearcher
         return MemorySearcher(self.indexer())
     
+    def search(self, query):
+        return self.searcher().search(query)
+
+
 class LocalMemory(Memory):
     """Execution time memory"""
     def __init__(self):
