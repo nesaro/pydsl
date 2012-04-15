@@ -64,7 +64,7 @@ class TestParsers(unittest.TestCase):
         nonterminal = NonTerminalSymbol("res")
         rulea = NonTerminalProduction ([nonterminal], [symbola, NullSymbol(), symbolb])
         self.productionset2 = ProductionSet(nonterminal, [rulea, terminala, terminalb])
-        from ColonyDSL.Memory.External.DirLibrary.BNF import strlist_to_production_set
+        from ColonyDSL.Memory.Storage.Directory.BNF import strlist_to_production_set
         self.productionsetlr,_ = strlist_to_production_set(leftrecursive)
         self.productionsetrr,_ = strlist_to_production_set(rightrecursive)
         self.productionsetcr,_ = strlist_to_production_set(centerrecursive)

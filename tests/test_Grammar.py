@@ -100,14 +100,14 @@ class TestHostPythonGrammars(unittest.TestCase):
 
     def testloadgrammar(self):
         #Load a grammar that uses a package (integerOPGrammar), call check
-        from ColonyDSL.Memory.External.Loader import load_grammar
+        from ColonyDSL.Memory.Storage.Loader import load_grammar
         grammar = load_grammar("integerop")
         self.assertTrue(grammar.check("123+3"))
 
 class TestSymbolGrammars(unittest.TestCase):
     def setUp(self):
         from ColonyDSL.Type.Grammar.Symbol import SymbolGrammar
-        from ColonyDSL.Memory.External.DirLibrary.BNF import strlist_to_production_set
+        from ColonyDSL.Memory.Storage.Directory.BNF import strlist_to_production_set
         productionset, macrodic  = strlist_to_production_set(["#parser=descent","S ::= dayofmonth separator number separator number", "separator := Char,/","number := Word,integer,max,1","dayofmonth := Word,DayOfMonth,max,1"])
         if "parser" in macrodic:
             self.g1 = SymbolGrammar("test3",productionset, macrodic["parser"])

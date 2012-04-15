@@ -9,22 +9,22 @@ class TestLoader(unittest.TestCase):
     #TODO
     """Test loaders"""
     def setUp(self):
-        from ColonyDSL.Memory.External.DirLibrary.Type import GrammarDirLibrary
-        self.glibrary = GrammarDirLibrary("/usr/share/ColonyDSL/lib_contrib/grammar")
+        from ColonyDSL.Memory.Storage.Directory.Type import GrammarDirStorage
+        self.glibrary = GrammarDirStorage("/usr/share/ColonyDSL/lib_contrib/grammar")
         from ColonyDSL.Config import GLOBALCONFIG
         GLOBALCONFIG.strictgrammar = False 
     
     def test_grammars(self):
         grammarlist = self.glibrary.all_names()
-        from ColonyDSL.Memory.External.Loader import load_grammar
+        from ColonyDSL.Memory.Storage.Loader import load_grammar
         for grammar in grammarlist:
             load_grammar(grammar)
 
-class TestConceptListLibrary(unittest.TestCase):
+class TestConceptListStorage(unittest.TestCase):
     """Requires test_concept_library"""
     def setUp(self):
-        from ColonyDSL.Memory.External.ListLibrary import ConceptListLibrary
-        self._cll = ConceptListLibrary("tests/conceptlibrary.list")
+        from ColonyDSL.Memory.Storage.List import ConceptListStorage
+        self._cll = ConceptListStorage("tests/conceptlibrary.list")
 
     def test_load(self):
         self.assertTrue(self._cll.load("person"))
@@ -34,10 +34,10 @@ class TestConceptListLibrary(unittest.TestCase):
     def test_generate_all_summaries(self):
         self._cll.generate_all_summaries()
 
-class TestRelListLibrary(unittest.TestCase):
+class TestRelListStorage(unittest.TestCase):
     def setUp(self):
-        from ColonyDSL.Memory.External.ListLibrary import RelListLibrary
-        self._cll = RelListLibrary("tests/rellibrary.list")
+        from ColonyDSL.Memory.Storage.List import RelListStorage
+        self._cll = RelListStorage("tests/rellibrary.list")
 
     def test_load(self):
         self.assertTrue(self._cll.load("ISA"))
@@ -47,10 +47,10 @@ class TestRelListLibrary(unittest.TestCase):
     def test_generate_all_summaries(self):
         self._cll.generate_all_summaries()
 
-class TestRelationListLibrary(unittest.TestCase):
+class TestRelationListStorage(unittest.TestCase):
     def setUp(self):
-        from ColonyDSL.Memory.External.ListLibrary import RelationListLibrary
-        self._cll = RelationListLibrary("tests/relationlibrary.list")
+        from ColonyDSL.Memory.Storage.List import RelationListStorage
+        self._cll = RelationListStorage("tests/relationlibrary.list")
 
     def test_load(self):
         self.assertTrue(self._cll.load("{'object': 'concept2', 'subject': 'concept1'}ISA"))

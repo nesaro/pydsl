@@ -31,9 +31,9 @@ LOG = logging.getLogger("Guess")
 
 def guess_filename(inputfile, memorylist = []) -> set:
     from ColonyDSL.Memory.Search.Searcher import MemorySearcher
-    from ColonyDSL.Memory.External.DictLibrary import FileTypeDictLibrary
+    from ColonyDSL.Memory.Storage.Dict import FileTypeDictStorage
     if not memorylist:
-        memorylist.append(FileTypeDictLibrary("/usr/share/ColonyDSL/lib_contrib/dict/filetype.dict"))
+        memorylist.append(FileTypeDictStorage("/usr/share/ColonyDSL/lib_contrib/dict/filetype.dict"))
     searcher = MemorySearcher([x.indexer() for x in memorylist])
     result = set()
     for summary in searcher.search():
@@ -55,11 +55,11 @@ def guess_filename(inputfile, memorylist = []) -> set:
 
 def guess(inputstring, memorylist = []) -> set:
     from ColonyDSL.Memory.Search.Searcher import MemorySearcher
-    from ColonyDSL.Memory.External.DirLibrary.Type import GrammarDirLibrary 
-    from ColonyDSL.Memory.External.DictLibrary import FileTypeDictLibrary
+    from ColonyDSL.Memory.Storage.Directory.Type import GrammarDirStorage 
+    from ColonyDSL.Memory.Storage.Dict import FileTypeDictStorage
     if not memorylist:
-        memorylist.append(GrammarDirLibrary("/usr/share/ColonyDSL/lib_contrib/grammar/"))
-        memorylist.append(FileTypeDictLibrary("/usr/share/ColonyDSL/lib_contrib/dict/filetype.dict"))
+        memorylist.append(GrammarDirStorage("/usr/share/ColonyDSL/lib_contrib/grammar/"))
+        memorylist.append(FileTypeDictStorage("/usr/share/ColonyDSL/lib_contrib/dict/filetype.dict"))
     searcher = MemorySearcher([x.indexer() for x in memorylist])
     result = set()
     for summary in searcher.search():

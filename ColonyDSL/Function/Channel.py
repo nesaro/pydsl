@@ -28,7 +28,7 @@ LOG = logging.getLogger("Channel")
 
 def _loadTypeInstances(originaldic):
     """Converts {"channelname","type"} into {"channelname",instance}"""
-    from ColonyDSL.Memory.External.Loader import load_type
+    from ColonyDSL.Memory.Storage.Loader import load_type
     result = {}
     for key in originaldic:
         result[key] = load_type(str(originaldic[key]))

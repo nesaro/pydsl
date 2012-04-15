@@ -71,7 +71,7 @@ class HostPythonGrammar(PythonGrammar):
     def __init__(self, matchFun, auxdic, propFun = None):
         PythonGrammar.__init__(self, matchFun, propFun)
         self.auxgrammar = {}
-        from ColonyDSL.Memory.External.Loader import load_grammar
+        from ColonyDSL.Memory.Storage.Loader import load_grammar
         for key, value in auxdic.items():
             self.auxgrammar[key] = load_grammar(value)
 

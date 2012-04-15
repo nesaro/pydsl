@@ -16,7 +16,7 @@
 #along with ColonyDSL.  If not, see <http://www.gnu.org/licenses/>.
 
 
-"""Library class"""
+"""Storage class"""
 
 
 __author__ = "Néstor Arocha Rodríguez"
@@ -29,10 +29,10 @@ from abc import abstractmethod, ABCMeta
 import contextlib
 import shelve
 import logging
-LOG = logging.getLogger("Library")
+LOG = logging.getLogger("Storage")
 from ColonyDSL.Memory.Memory import Memory
 
-class Library(Memory, metaclass = ABCMeta):
+class Storage(Memory, metaclass = ABCMeta):
     """External Memory. A Memory type which stores on physical files"""
     @abstractmethod
     def load(self, name):
@@ -46,9 +46,9 @@ class Library(Memory, metaclass = ABCMeta):
     def provided_iclasses(self) -> list:
         pass
 
-class PersistentLibrary(Library):
+class PersistentStorage(Storage):
     def __init__(self, dbname, allowedclass = None):
-        Library.__init__(self)
+        Storage.__init__(self)
         self.identifier = dbname
         #store shelve path list
         #load/create each shelve path
@@ -112,10 +112,5 @@ class PersistentLibrary(Library):
         if self.allowedclass:
             return [self.allowedclass.__class__.__name__]
         return [] #FIXME: Default implementation should include all classes
-
-#from ColonyDSL.Concept.Relation import ConceptRelation 
-#from ColonyDSL.Concept.Concept import Concept 
-#CONCEPTPERSISTENTMEMORY = PersistentLibrary("concept", Concept)
-#RELATIONPERSISTENTMEMORY = PersistentLibrary("relation", ConceptRelation)
 
 

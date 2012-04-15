@@ -26,18 +26,18 @@ __email__ = "nesaro@gmail.com"
 from abc import abstractmethod, ABCMeta
 
 import logging
-LOG = logging.getLogger("ListLibrary")
-from .Library import Library
+LOG = logging.getLogger("Storage.List")
+from .Storage import Storage
 
-class ListLibrary(Library, metaclass = ABCMeta):
+class ListStorage(Storage, metaclass = ABCMeta):
     """Stores element in a python file using a python list"""
     def __init__(self, fullpath:str):
-        Library.__init__(self)
+        Storage.__init__(self)
         self._content = {}
         from ColonyDSL.Memory.Search.Searcher import MemorySearcher
         self._searcher = MemorySearcher(self)
         from ColonyDSL.Config import GLOBALCONFIG
-        from ColonyDSL.Memory.External.DirLibrary.DirLibrary import getFileTuple
+        from ColonyDSL.Memory.Storage.Directory.DirStorage import getFileTuple
         (_, _, fileBaseName, _) = getFileTuple(fullpath)
         import imp
         myobj = imp.load_source(fileBaseName, fullpath)
@@ -71,7 +71,7 @@ class ListLibrary(Library, metaclass = ABCMeta):
     def __contains__(self, index):
         return index in self._content
 
-class ConceptListLibrary(ListLibrary):
+class ConceptListStorage(ListStorage):
     def generate_all_summaries(self) -> list:
         result = []
         from ColonyDSL.Abstract import InmutableDict
@@ -92,7 +92,7 @@ class ConceptListLibrary(ListLibrary):
     def provided_iclasses(self):
         return ["Concept"]
 
-class RelationListLibrary(ListLibrary):
+class RelationListStorage(ListStorage):
     def generate_all_summaries(self) -> list:
         result = []
         from ColonyDSL.Abstract import InmutableDict
@@ -111,7 +111,7 @@ class RelationListLibrary(ListLibrary):
     def provided_iclasses(self):
         return ["Relation"]
 
-class RelListLibrary(ListLibrary):
+class RelListStorage(ListStorage):
     def generate_all_summaries(self) -> list:
         result = []
         from ColonyDSL.Abstract import InmutableDict

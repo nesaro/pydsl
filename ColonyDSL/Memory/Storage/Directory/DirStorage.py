@@ -19,9 +19,9 @@
 """ File Library class """
 
 from abc import ABCMeta, abstractmethod
-from ..Library import Library
+from ..Storage import Storage
 import logging
-LOG = logging.getLogger("DirLibrary")
+LOG = logging.getLogger("DirStorage")
 
 def load_attr_from_module(filepath, attributename):
     (_, _, fileBaseName, _) = getFileTuple(filepath)
@@ -49,8 +49,8 @@ def load_python_file(moduleobject, identifier = None, ecuid = None, server = Non
     if isinstance(moduleobject, str):
         moduleobject, identifier = load_module(moduleobject)
     if not hasattr(moduleobject, "iclass"):
-        from ColonyDSL.Exceptions import LibraryException
-        raise LibraryException("Element", identifier)
+        from ColonyDSL.Exceptions import StorageException
+        raise StorageException("Element", identifier)
     iclass = getattr(moduleobject, "iclass")
     resultdic = {}
     mylist = list(filter(lambda x:x[:1] != "_" and x != "iclass", (dir(moduleobject))))
@@ -106,7 +106,7 @@ def load_python_file(moduleobject, identifier = None, ecuid = None, server = Non
     else:
         raise ValueError
 
-class DirLibrary(Library, metaclass = ABCMeta):
+class DirStorage(Storage, metaclass = ABCMeta):
     """A collection of elements stored inside a directory"""
     def __init__(self, dirpath:str, allowedextensions:list = []):
         self.identifier = dirpath
@@ -185,8 +185,8 @@ class DirLibrary(Library, metaclass = ABCMeta):
         if(len(resultlist) > 1):
             LOG.error("Found two or more matches, FIXME: processing the first, should raise exception")
         if len(resultlist) == 0:
-            from ColonyDSL.Exceptions import LibraryException
-            raise LibraryException(self.__class__.__name__, name)
+            from ColonyDSL.Exceptions import StorageException
+            raise StorageException(self.__class__.__name__, name)
         return load_python_file(list(resultlist)[0]["filepath"])
 
     def __contains__(self, key):
@@ -198,10 +198,10 @@ def getFileTuple(fullname):
     (fileBaseName, fileExtension) = os.path.splitext(fileName)
     return (dirName, fileName, fileBaseName, fileExtension) 
 
-class StrDirLibrary(DirLibrary):
+class StrDirStorage(DirStorage):
     """Dir library for txt files"""
     def __init__(self, dirpath:str):
-        DirLibrary.__init__(self, dirpath)
+        DirStorage.__init__(self, dirpath)
 
     def summary_from_filename(self, filename) -> dict:
         #TODO Load first characters to summary

@@ -26,18 +26,18 @@ __email__ = "nesaro@gmail.com"
 from abc import abstractmethod, ABCMeta
 
 import logging
-LOG = logging.getLogger("DictLibrary")
-from .Library import Library
+LOG = logging.getLogger("Storage.Dict")
+from .Storage import Storage
 
-class DictLibrary(Library, metaclass = ABCMeta):
+class DictStorage(Storage, metaclass = ABCMeta):
     """Stores element in a python file using a python dictionaty"""
     def __init__(self, fullpath:str):
-        Library.__init__(self)
+        Storage.__init__(self)
         self._content = {}
         from ColonyDSL.Memory.Search.Searcher import MemorySearcher
         self._searcher = MemorySearcher(self)
         from ColonyDSL.Config import GLOBALCONFIG
-        from ColonyDSL.Memory.External.DirLibrary.DirLibrary import getFileTuple
+        from ColonyDSL.Memory.Storage.Directory.DirStorage import getFileTuple
         (_, _, fileBaseName, _) = getFileTuple(fullpath)
         import imp
         myobj = imp.load_source(fileBaseName, fullpath)
@@ -65,7 +65,7 @@ class DictLibrary(Library, metaclass = ABCMeta):
     def __contains__(self, index):
         return index in self._content
 
-class RegexpDictLibrary(DictLibrary):
+class RegexpDictStorage(DictStorage):
     def generate_all_summaries(self) -> list:
         result = []
         from ColonyDSL.Abstract import InmutableDict
@@ -85,7 +85,7 @@ class RegexpDictLibrary(DictLibrary):
         return ["RegularExpressionGrammar"]
 
 
-class FileTypeDictLibrary(DictLibrary):
+class FileTypeDictStorage(DictStorage):
     def generate_all_summaries(self) -> list:
         result = []
         from ColonyDSL.Abstract import InmutableDict
@@ -102,7 +102,7 @@ class FileTypeDictLibrary(DictLibrary):
         return ["FileType"]
 
 
-class ConceptDictLibrary(DictLibrary):
+class ConceptDictStorage(DictStorage):
     def generate_all_summaries(self) -> list:
         result = []
         from ColonyDSL.Abstract import InmutableDict
@@ -114,7 +114,7 @@ class ConceptDictLibrary(DictLibrary):
         from ColonyDSL.Concept.Concept import Concept
         return Concept(index, self._content[index]["title"], self._content[index]["description"])
 
-class ConceptRelationDictLibrary(DictLibrary):
+class ConceptRelationDictStorage(DictStorage):
     def generate_all_summaries(self) -> list:
         result = []
         from ColonyDSL.Abstract import InmutableDict
@@ -126,7 +126,7 @@ class ConceptRelationDictLibrary(DictLibrary):
         from ColonyDSL.Concept.Relation import ConceptRelation
         return ConceptRelation(index, self._content[index]["rolelist"], self._content[index]["title"], self._content[index]["description"])
 
-class StrDictLibrary(DictLibrary):
+class StrDictStorage(DictStorage):
     def generate_all_summaries(self) -> list:
         result = []
         from ColonyDSL.Abstract import InmutableDict

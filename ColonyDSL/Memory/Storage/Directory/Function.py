@@ -21,9 +21,9 @@ __author__ = "Néstor Arocha Rodríguez"
 __copyright__ = "Copyright 2008-2012, Néstor Arocha Rodríguez"
 __email__ = "nesaro@gmail.com"
 
-from .DirLibrary import DirLibrary, getFileTuple
+from .DirStorage import DirStorage, getFileTuple
 import logging
-LOG = logging.getLogger("DirLibrary.Function")
+LOG = logging.getLogger("Storage.Directory.Function")
 
 def _readBoardFileRightSideArgs(thestring, basegtname):
     """Reads input or output definition, and splits it accordingly"""
@@ -70,7 +70,7 @@ def load_gt_from_file(modulepath, name, server):
     (_, _, fileBaseName, _) = getFileTuple(modulepath)
     import imp
     moduleobject = imp.load_source(fileBaseName, modulepath)
-    from .DirLibrary import load_python_file
+    from .DirStorage import load_python_file
     return load_python_file(moduleobject, fileBaseName, name, server)
 
 def load_gst_file(filepath, server = None):
@@ -78,21 +78,21 @@ def load_gst_file(filepath, server = None):
     (_, _, fileBaseName, _) = getFileTuple(filepath)
     import imp
     repobject = imp.load_source(fileBaseName, filepath)
-    from .DirLibrary import load_python_file
+    from .DirStorage import load_python_file
     return  load_python_file(repobject, fileBaseName, server)
 
 def load_procedure_file(modulepath, name, server):
-    from .DirLibrary import getFileTuple
+    from .DirStorage import getFileTuple
     (_, _, fileBaseName, _) = getFileTuple(modulepath)
     import imp
     moduleobject = imp.load_source(fileBaseName, modulepath)
-    from .DirLibrary import load_python_file
+    from .DirStorage import load_python_file
     return load_python_file(moduleobject, name, server)
 
-class TransformerDirLibrary(DirLibrary):
+class TransformerDirStorage(DirStorage):
     """generate instances of Grammar Transformers"""
     def __init__(self, path):
-        DirLibrary.__init__(self, path, [".py"])
+        DirStorage.__init__(self, path, [".py"])
 
     def provided_iclasses(self) -> list:
         return ["PythonTransformer", "HostPythonTransformer"]
@@ -109,8 +109,8 @@ class TransformerDirLibrary(DirLibrary):
             else:
                 return self.__loadPythonGT(gtid, name, server)
 
-        from ColonyDSL.Exceptions import LibraryException
-        raise LibraryException("TR", gtid)
+        from ColonyDSL.Exceptions import StorageException
+        raise StorageException("TR", gtid)
     
     def summary_from_filename(self, modulepath):
         from ColonyDSL.Function.Transformer.Python import PythonTransformer
@@ -146,24 +146,15 @@ class TransformerDirLibrary(DirLibrary):
     def __loadPythonGT(self, modulename , name, server):
         """Load a GT written in python"""
         moduleobject = self._load_module_from_library(modulename)
-        from .DirLibrary import getFileTuple
+        from .DirStorage import getFileTuple
         identifier = getFileTuple(modulename)[2]
-        from .DirLibrary import load_python_file
+        from .DirStorage import load_python_file
         return load_python_file(moduleobject, identifier , name, server)
 
-class GSTLibrary(DirLibrary):
-    """Loads GrammarSetsTransformer from Library"""
-    def __init__(self, path):
-        DirLibrary.__init__(self, path, [".py"])
-
-    def summary_from_filename(self, filename):
-        (_, _, fileBaseName, _) = getFileTuple(filename)
-        return {"iclass":"GST","identifier":fileBaseName, "filepath":filename}
-
-class BoardFileLibrary(DirLibrary):
+class BoardDirStorage(DirStorage):
     """Loads boards from library"""
     def __init__(self, path):
-        DirLibrary.__init__(self, path, [".board"])
+        DirStorage.__init__(self, path, [".board"])
 
 
     def load(self, identifier, server = None, name = None):
@@ -175,8 +166,8 @@ class BoardFileLibrary(DirLibrary):
             #TODO assert(len(self._search(gtid) == 2)) 
             return load_board_file(result["filepath"], server, name)
 
-        from ColonyDSL.Exceptions import LibraryException
-        raise LibraryException("B", gtid)
+        from ColonyDSL.Exceptions import StorageException
+        raise StorageException("B", gtid)
 
     def summary_from_filename(self, filename):
         from ColonyDSL.Function.Transformer.Board import Board
@@ -189,10 +180,10 @@ class BoardFileLibrary(DirLibrary):
 
 
 
-class ProcedureFileLibrary(DirLibrary):
+class ProcedureDirStorage(DirStorage):
     """Procedure Library"""
     def __init__(self, path):
-        DirLibrary.__init__(self, path, [".py"])
+        DirStorage.__init__(self, path, [".py"])
 
     def summary_from_filename(self, filename):
         (_, _, fileBaseName, _) = getFileTuple(filename)
@@ -209,21 +200,21 @@ class ProcedureFileLibrary(DirLibrary):
         else:
             return self.__loadPythonP(gtid, name, server)
 
-        from ColonyDSL.Exceptions import LibraryException
-        raise LibraryException("P", gtid)
+        from ColonyDSL.Exceptions import StorageException
+        raise StorageException("P", gtid)
 
     def provided_iclasses(self) -> list:
         return ["Procedure"]
 
     def all_files_generator(self):
         """Generates (inputlist, outputlist, name, description) from T list"""
-        from ColonyDSL.Exceptions import LibraryException
+        from ColonyDSL.Exceptions import StorageException
         for elementname in self.allElementStaticIdGenerator():
             try:
                 instance = self.load(elementname)
             except TypeError:
                 continue
-            except LibraryException:
+            except StorageException:
                 continue
             except ImportError:
                 continue
@@ -236,11 +227,11 @@ class ProcedureFileLibrary(DirLibrary):
     def __loadPythonP(self, modulename , name, server):
         """Load a P written in python"""
         moduleobject = self._load_module_from_library(modulename)
-        from .DirLibrary import load_python_file
+        from .DirStorage import load_python_file
         return load_python_file(moduleobject, name, server)
 
 def load_transformer_file(filepath, eventmanager = None, name = ""):
-    lib = TransformerDirLibrary()
+    lib = TransformerDirStorage()
     return lib.load_file(filepath, eventmanager, name)
 
 def load_transformer_file(filepath, eventmanager = None, name = None):

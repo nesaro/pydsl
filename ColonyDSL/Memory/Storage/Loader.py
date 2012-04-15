@@ -29,7 +29,7 @@ def load_type(name:str, memorylist = []):
         from ColonyDSL.Config import GLOBALCONFIG
         memorylist = GLOBALCONFIG.memorylist
     import os
-    from ColonyDSL.Memory.External.DirLibrary.DirLibrary import load_python_file
+    from ColonyDSL.Memory.Storage.Directory.DirStorage import load_python_file
     if os.path.exists("/usr/share/ColonyDSL/lib_contrib/grammar/protocol.py"):
         pginstance = load_python_file("/usr/share/ColonyDSL/lib_contrib/grammar/protocol.py")
     else:
@@ -50,8 +50,8 @@ def load_type(name:str, memorylist = []):
                     return memory.load(identifier)
             raise Exception("Memory not found")
 
-    from ColonyDSL.Exceptions import LibraryException
-    raise LibraryException("Type", name)
+    from ColonyDSL.Exceptions import StorageException
+    raise StorageException("Type", name)
 
 def load_function(name, memorylist = []):
     raise NotImplementedError
@@ -65,8 +65,8 @@ def load_grammar(name, memorylist = []):
         #    continue
         if name in memory:
             return memory.load(name)
-    from ColonyDSL.Exceptions import LibraryException
-    raise LibraryException("Grammar", name)
+    from ColonyDSL.Exceptions import StorageException
+    raise StorageException("Grammar", name)
 
 def load_procedure(identifier, eventmanager = None , name = "", memorylist = []):
     if not memorylist:
@@ -75,8 +75,8 @@ def load_procedure(identifier, eventmanager = None , name = "", memorylist = [])
     for memory in memorylist:
         if identifier in memory:
             return memory.load(identifier, eventmanager, name)
-    from ColonyDSL.Exceptions import LibraryException
-    raise LibraryException("Procedure", identifier)
+    from ColonyDSL.Exceptions import StorageException
+    raise StorageException("Procedure", identifier)
 
 def load_transformer(identifier, eventmanager = None, name = None, memorylist = []):
     #FIXME: Can return any type of element
@@ -87,8 +87,8 @@ def load_transformer(identifier, eventmanager = None, name = None, memorylist = 
     for memory in memorylist:
         if identifier in memory:
             return memory.load(identifier, eventmanager, name)
-    from ColonyDSL.Exceptions import LibraryException
-    raise LibraryException("Transformer", identifier)
+    from ColonyDSL.Exceptions import StorageException
+    raise StorageException("Transformer", identifier)
 
 def load_board(identifier, eventmanager = None, name = None, memorylist = []):
     if not memorylist:
@@ -99,8 +99,8 @@ def load_board(identifier, eventmanager = None, name = None, memorylist = []):
             continue
         if name in memory:
             return memory.load(name)
-    from ColonyDSL.Exceptions import LibraryException
-    raise LibraryException("Grammar", name)
+    from ColonyDSL.Exceptions import StorageException
+    raise StorageException("Grammar", name)
 
 def load_concept(identifier, memorylist = []):
     pass
@@ -114,15 +114,15 @@ def load_scheme(identifier, memorylist = []):
             continue
         if identifier in memory:
             return memory.load(identifier)
-    from ColonyDSL.Exceptions import LibraryException
-    raise LibraryException("Scheme", identifier)
+    from ColonyDSL.Exceptions import StorageException
+    raise StorageException("Scheme", identifier)
 
 def load_information(name:str, memorylist = []):
     if not memorylist:
         from ColonyDSL.Config import GLOBALCONFIG
         memorylist = GLOBALCONFIG.memorylist
     import os
-    from ColonyDSL.Memory.External.DirLibrary.DirLibrary import load_python_file
+    from ColonyDSL.Memory.Storage.Directory.DirStorage import load_python_file
     if os.path.exists("/usr/share/ColonyDSL/lib_contrib/grammar/protocol.py"):
         pginstance = load_python_file("/usr/share/ColonyDSL/lib_contrib/grammar/protocol.py")
     else:
@@ -135,7 +135,7 @@ def load_information(name:str, memorylist = []):
         protocol = pginstance.get_groups(name, "protocol")[0]
         path = pginstance.get_groups(name, "path")[0]
         if protocol == "file":
-            from ColonyDSL.Memory.External.DirLibrary.Value import load_information as lin
+            from ColonyDSL.Memory.Storage.Directory.Value import load_information as lin
             return lin(path)
         elif protocol == "memory":
             identifier = pginstance.get_groups(name, "options")
@@ -144,6 +144,6 @@ def load_information(name:str, memorylist = []):
                     return memory.load(identifier)
             raise Exception("Memory not found")
 
-    from ColonyDSL.Exceptions import LibraryException
-    raise LibraryException("Information", name)
+    from ColonyDSL.Exceptions import StorageException
+    raise StorageException("Information", name)
 

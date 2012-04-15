@@ -41,16 +41,16 @@ if __name__ == "__main__":
         from ColonyDSL.Config import GLOBALCONFIG
         GLOBALCONFIG.lang = ARGS.lang
     if ARGS.identifier:
-        from ColonyDSL.Memory.External.Loader import load_information
+        from ColonyDSL.Memory.Storage.Loader import load_information
         instance = load_information(ARGS.identifier)
         if "summary" in dir(instance):
             resultdic = instance.summary
             descmem = None
-            from ColonyDSL.Memory.External.DictLibrary import StrDictLibrary 
+            from ColonyDSL.Memory.Storage.Dict import StrDictStorage
             if ARGS.lang == "en":
-                descmem = StrDictLibrary("/usr/share/ColonyDSL/lib_contrib/dict/description_en.dict")
+                descmem = StrDictStorage("/usr/share/ColonyDSL/lib_contrib/dict/description_en.dict")
             else:
-                descmem = StrDictLibrary("/usr/share/ColonyDSL/lib_contrib/dict/description_es.dict")
+                descmem = StrDictStorage("/usr/share/ColonyDSL/lib_contrib/dict/description_es.dict")
             if ARGS.identifier in descmem:
                 resultdic["description"] = str(descmem[ARGS.identifier])
             if ARGS.outputformat == "str":

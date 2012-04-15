@@ -23,9 +23,9 @@ __email__ = "nesaro@gmail.com"
 
 
 import logging
-LOG = logging.getLogger("DirLibrary.Type")
+LOG = logging.getLogger("Storage.Directory.Type")
 from ColonyDSL.Type.Grammar.Symbol import SymbolGrammar
-from .DirLibrary import DirLibrary, getFileTuple
+from .DirStorage import DirStorage, getFileTuple
 
 def _isGDLFileName(path):
     return path.endswith(".bnf")
@@ -34,7 +34,7 @@ def _isRELFileName(path):
     return path.endswith(".re")
 
 def _loadRELGrammarFromFile(filepath):
-    from ColonyDSL.Memory.External.DirLibrary.Regexp import colonyRELfileToGrammarInstance
+    from ColonyDSL.Memory.Storage.Directory.Regexp import colonyRELfileToGrammarInstance
     instance = colonyRELfileToGrammarInstance(filepath)
     return instance
 
@@ -43,12 +43,12 @@ def load_grammar_file(filepath):
         return _loadRELGrammarFromFile(filepath)
     if _isGDLFileName(filepath):
         return _loadGDLGrammarFromFile(filepath)
-    from .DirLibrary import load_python_file 
+    from .DirStorage import load_python_file 
     return load_python_file(filepath)
     
 def _loadGDLGrammarFromFile(filepath):
     (_, _, fileBaseName, _) = getFileTuple(filepath)
-    from ColonyDSL.Memory.External.DirLibrary.BNF import bnf_file_to_productionset
+    from ColonyDSL.Memory.Storage.Directory.BNF import bnf_file_to_productionset
     productionruleset, macrodic = bnf_file_to_productionset(filepath)
     parser = "descent"
     if "parser" in macrodic:
@@ -56,13 +56,13 @@ def _loadGDLGrammarFromFile(filepath):
     instance = SymbolGrammar(fileBaseName, productionruleset, parser)
     return instance
 
-class GrammarDirLibrary(DirLibrary):
+class GrammarDirStorage(DirStorage):
     """generate instances of grammars"""
     def __init__(self, path):
-        DirLibrary.__init__(self, path, [".py", ".bnf", ".re"])
+        DirStorage.__init__(self, path, [".py", ".bnf", ".re"])
 
     def load(self, identifier:str, strictgrammar = True):
-        from ColonyDSL.Exceptions import LibraryException
+        from ColonyDSL.Exceptions import StorageException
         #TODO: What happens when we have > 1 result
         resultdic = self._searcher.search(identifier)
         for value in resultdic: 
@@ -73,7 +73,7 @@ class GrammarDirLibrary(DirLibrary):
             from ColonyDSL.Type.Type import DummyType
             LOG.warning("Unable to load:" + identifier)
             return DummyType()
-        raise LibraryException("G", identifier)
+        raise StorageException("G", identifier)
 
     def summary_from_filename(self, filename):
         (_, _, fileBaseName, ext) = getFileTuple(filename)

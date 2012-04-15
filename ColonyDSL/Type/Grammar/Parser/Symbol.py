@@ -128,7 +128,7 @@ class WordTerminalSymbol(TerminalSymbol):#boundariesrules: priority, [max,min,fi
     def __init__(self, name, definitionrequirementsdic, boundariesrules):
         TerminalSymbol.__init__(self, name, 49, boundariesrules)
         self.grammarname = definitionrequirementsdic["grammarname"]
-        from ColonyDSL.Memory.External.Loader import load_grammar
+        from ColonyDSL.Memory.Storage.Loader import load_grammar
         self.grammarinstance =  load_grammar(self.grammarname)
 
     def __eq__(self, other):

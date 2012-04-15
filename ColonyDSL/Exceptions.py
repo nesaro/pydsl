@@ -47,7 +47,7 @@ class ParserError(Exception):
 class LRConflictException(ParserError):
     pass
 
-class LibraryException(Exception):
+class StorageException(Exception):
     """Error while accessing library element"""
     def __init__(self, elementtype, elementname):
         Exception.__init__(self)

@@ -50,9 +50,9 @@ class TestMemory(unittest.TestCase):
 class TestPersistentMemory(unittest.TestCase):
     """Tests Transformers"""
     def setUp(self):
-        from ColonyDSL.Memory.External.Library import PersistentLibrary
+        from ColonyDSL.Memory.Storage.Storage import PersistentStorage
         from ColonyDSL.Type.Type import Type
-        self.mem = PersistentLibrary("tmp", Type)
+        self.mem = PersistentStorage("tmp", Type)
         
     def testSaveLoadAndDelete(self):
         from ColonyDSL.Type.Type import DummyType

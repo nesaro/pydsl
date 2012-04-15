@@ -29,19 +29,19 @@ def generate_memory_list() -> list:
     """loads default memories"""
     "", "/usr/share/ColonyDSL/"
     result = []
-    from ColonyDSL.Memory.External.DirLibrary.Type import GrammarDirLibrary
-    from ColonyDSL.Memory.External.DirLibrary.Function import BoardFileLibrary, TransformerDirLibrary, ProcedureFileLibrary
-    from ColonyDSL.Memory.External.DictLibrary import FileTypeDictLibrary, RegexpDictLibrary
-    from ColonyDSL.Memory.External.ListLibrary import RelListLibrary, RelationListLibrary
-    #from ColonyDSL.Memory.External.DirLibrary.Concept import ConceptFileLibrary
-    #from ColonyDSL.Memory.External.DirLibrary.Scheme import SchemeFileLibrary
-    result.append(GrammarDirLibrary("/usr/share/ColonyDSL/lib_contrib/grammar/"))
-    result.append(BoardFileLibrary("/usr/share/ColonyDSL/lib_contrib/board/"))
-    result.append(TransformerDirLibrary("/usr/share/ColonyDSL/lib_contrib/transformer/"))
-    result.append(ProcedureFileLibrary("/usr/share/ColonyDSL/lib_contrib/procedure/"))
-    result.append(FileTypeDictLibrary("/usr/share/ColonyDSL/lib_contrib/dict/filetype.dict"))
-    #result.append(SchemeFileLibrary("/usr/share/ColonyDSL/lib_contrib/scheme/"))
-    result.append(RegexpDictLibrary("/usr/share/ColonyDSL/lib_contrib/dict/regexp.dict"))
+    from ColonyDSL.Memory.Storage.Directory.Type import GrammarDirStorage
+    from ColonyDSL.Memory.Storage.Directory.Function import BoardDirStorage, TransformerDirStorage, ProcedureDirStorage
+    from ColonyDSL.Memory.Storage.Dict import FileTypeDictStorage, RegexpDictStorage
+    from ColonyDSL.Memory.Storage.List import RelListStorage, RelationListStorage
+    #from ColonyDSL.Memory.Storage.Directory.Concept import ConceptDirStorage
+    #from ColonyDSL.Memory.Storage.Directory.Scheme import SchemeDirStorage
+    result.append(GrammarDirStorage("/usr/share/ColonyDSL/lib_contrib/grammar/"))
+    result.append(BoardDirStorage("/usr/share/ColonyDSL/lib_contrib/board/"))
+    result.append(TransformerDirStorage("/usr/share/ColonyDSL/lib_contrib/transformer/"))
+    result.append(ProcedureDirStorage("/usr/share/ColonyDSL/lib_contrib/procedure/"))
+    result.append(FileTypeDictStorage("/usr/share/ColonyDSL/lib_contrib/dict/filetype.dict"))
+    #result.append(SchemeDirStorage("/usr/share/ColonyDSL/lib_contrib/scheme/"))
+    result.append(RegexpDictStorage("/usr/share/ColonyDSL/lib_contrib/dict/regexp.dict"))
     return result
 
 
@@ -119,8 +119,8 @@ if __name__ == "__main__":
     import ColonyDSL
     print([x.__name__ for x in all_classes(ColonyDSL)])
     print([x.__name__ for x in all_indexable_classes(ColonyDSL)])
-    from ColonyDSL.Memory.External.DirLibrary.Function import BoardFileLibrary
-    a = BoardFileLibrary("/usr/share/ColonyDSL/lib_contrib/board/")
+    from ColonyDSL.Memory.Storage.Directory.Function import BoardFileStorage
+    a = BoardFileStorage("/usr/share/ColonyDSL/lib_contrib/board/")
     a = a.load("simple-adder")
     print(a.ancestors())
 

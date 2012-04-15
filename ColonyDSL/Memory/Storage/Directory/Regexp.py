@@ -31,7 +31,7 @@ LOG = logging.getLogger("Regexp")
 def colonyRELfileToGrammarInstance(filepath):
     """Converts a re file to Regular Grammar instance"""
     regexp = None
-    from ColonyDSL.Memory.External.DirLibrary.DirLibrary import getFileTuple
+    from ColonyDSL.Memory.Storage.Directory.DirStorage import getFileTuple
     with open(filepath,'r', encoding='utf-8') as mlfile:
         flagstr = ""
         for line in mlfile:

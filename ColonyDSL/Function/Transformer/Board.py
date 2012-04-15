@@ -129,7 +129,7 @@ class Board(Transformer, HostFunctionNetwork):
                         from ColonyDSL.Exceptions import NameOverlap
                         raise NameOverlap
                     #FIXME: Is better to avoid loading the instance to obtain grammar name
-                    from ColonyDSL.Memory.External.Loader import load_transformer
+                    from ColonyDSL.Memory.Storage.Loader import load_transformer
                     gtinstance = load_transformer(definition.type)
                     inputtypedict[gtcondef.externalchannelname] = gtinstance.inputdefinition[gtcondef.internalchannelname]
                     self.__inputGTDict[gtcondef.externalchannelname] = (gtcondef.basename, gtcondef.internalchannelname) #Prepares self.__inputGTDict
@@ -138,7 +138,7 @@ class Board(Transformer, HostFunctionNetwork):
                     if gtcondef.internalchannelname in outputtypedict:
                         from ColonyDSL.Exceptions import NameOverlap
                         raise NameOverlap
-                    from ColonyDSL.Memory.External.Loader import load_transformer
+                    from ColonyDSL.Memory.Storage.Loader import load_transformer
                     gtinstance = load_transformer(definition.type)
                     ocd = gtinstance.outputchanneldic
                     outputtypedict[gtcondef.externalchannelname] = gtinstance.outputdefinition[gtcondef.internalchannelname]
@@ -147,7 +147,7 @@ class Board(Transformer, HostFunctionNetwork):
 
     def __loadTfromDefinitionList(self):
         """GTDefinitions -> Instances"""
-        from ColonyDSL.Memory.External.DirLibrary.BoardSection import BoardDefinitionSection
+        from ColonyDSL.Memory.Storage.Directory.BoardSection import BoardDefinitionSection
         auxnametype = {}
         for definition in self.__GTDefinitionlist:
             if not isinstance(definition, BoardDefinitionSection):
@@ -160,7 +160,7 @@ class Board(Transformer, HostFunctionNetwork):
 
     def __connectAllGTs(self):
         """Connect all instances"""
-        from ColonyDSL.Memory.External.DirLibrary.BoardSection import BoardConnectionDefinition
+        from ColonyDSL.Memory.Storage.Directory.BoardSection import BoardConnectionDefinition
         for definition in self.__GTDefinitionlist:
             gtname = definition.name
             outputgrammarlist = definition.outputConnectionDefinitions

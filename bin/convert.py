@@ -26,7 +26,7 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger("convert")
-from ColonyDSL.Exceptions import BadFileFormat, LibraryException
+from ColonyDSL.Exceptions import BadFileFormat, StorageException
 
 if __name__ == "__main__":
     import argparse
@@ -49,7 +49,7 @@ if __name__ == "__main__":
     #MANAGER = Interpreter(ARGS)
     destformat = ARGS.destformat
     if not destformat:
-        from ColonyDSL.Memory.Media.FileLibrary.FileLibrary import getFileTuple
+        from ColonyDSL.Memory.Storage.Directory.DirStorage import getFileTuple
         _,_,_,destformat = getFileTuple(ARGS.outputfile)
         destformat = destformat[1:] #Quitamos el punto
 
@@ -62,8 +62,8 @@ if __name__ == "__main__":
         inputfile = "file://" + ARGS.inputfile
         inputformat = ARGS.inputformat 
         if not inputformat:
-            from ColonyDSL.Memory.Media.DictLibrary import FileTypeDictLibrary
-            ftdl = FileTypeDictLibrary()
+            from ColonyDSL.Memory.Storage.Dict import FileTypeDictStorage
+            ftdl = FileTypeDictStorage()
             from ColonyDSL.Interaction.Guess import guess
             inputformat = guess(inputfile, [ftdl])
             if len(inputformat) == 0:
@@ -75,17 +75,17 @@ if __name__ == "__main__":
             inputformat = inputformat.pop()
 
         LOG.warning("Inputformat:" + inputformat)
-        from ColonyDSL.Memory.External.FileLibrary.Function import TransformerDirLibrary 
+        from ColonyDSL.Memory.Storage.Directory.Function import TransformerDirStorage 
         from ColonyDSL.Search.Searcher import MemorySearcher
         from ColonyDSL.Search.Indexer import Indexer
-        searcher = MemorySearcher([Indexer(TransformerDirLibrary())])
+        searcher = MemorySearcher([Indexer(TransformerDirStorage())])
         print(searcher.search("output="+destformat+"&&input="+inputformat))
         searchresult = searcher.search("output="+destformat+"&&input="+inputformat)
         if not searchresult:
             print("No conversion available from "+ inputformat + " to " + destformat)
             sys.exit(-1)
         firstresult = searchresult.pop()
-        from ColonyDSL.Memory.External.Loader import load_transformer
+        from ColonyDSL.Memory.Storage.Loader import load_transformer
         finstance = load_transformer(firstresult["identifier"])
         result = finstance({"inputfile":inputfile,"outputfile":ARGS.outputfile})
         sys.exit(0)
