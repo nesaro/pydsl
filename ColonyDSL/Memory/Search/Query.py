@@ -112,3 +112,27 @@ def recursive_str_to_query(query_list:list) -> QueryElement:
         return QueryGreaterThan(pair[0],pair[1])
     else:
         raise Exception
+
+def dict_to_query(querydict:dict) -> Query:
+    return Query(recursive_dict_to_query(querydict))
+
+def recursive_dict_to_query(querydict, parentkey = None) -> QueryElement:
+    if isinstance(querydict, str):
+        return querydict
+    resultlist = []
+    for key, value in querydict.items():
+        if isinstance(value, dict):
+            if key == "$in":
+                resultlist.append(QueryInclusion(parentkey,recursive_dict_to_query(value)))
+            elif value == "$gt":
+                resultlist.append(QueryGreaterThan(parentkey,recursive_str_to_query(value)))
+            elif value == "$not":
+                resultlist.append(NotQueryOperator(parentkey,recursive_str_to_query(value)))
+            else:
+                resultlist.append(recursive_dict_to_query(value, key))
+        elif isinstance(value, str):
+            resultlist.append(QueryEquality(key,value))
+    myfun = lambda x,y: AndQueryOperator(x,y)
+    return reduce(resultlist, myfun)
+    
+

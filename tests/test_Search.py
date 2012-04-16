@@ -33,3 +33,9 @@ class TestQuery(unittest.TestCase):
         str_to_memoryquery("identifier=id&&description=desc")
         str_to_memoryquery("identifier=id&&!description=desc")
         
+    def testdicttoQuery(self):
+        from ColonyDSL.Memory.Search.Query import dict_to_memoryquery
+        dict_to_memoryquery({"identifier":"id"})
+        dict_to_memoryquery({"identifier":"id","description":"desc"})
+        dict_to_memoryquery({"identifier":"id","description":{"$not":"desc"})
+
