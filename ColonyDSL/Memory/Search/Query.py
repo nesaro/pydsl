@@ -119,16 +119,16 @@ def dict_to_query(querydict:dict) -> Query:
 def recursive_dict_to_query(querydict, parentkey = None) -> QueryElement:
     if isinstance(querydict, str):
         return querydict
-    from ColonyDSL.Query import Query, QueryEquality, QueryElement, QueryInclusion, QueryGreaterThan, AndQueryOperator
+    from ColonyDSL.Query import Query, QueryEquality, QueryElement, QueryInclusion, QueryGreaterThan, AndQueryOperator, NotQueryOperator
     resultlist = []
     for key, value in querydict.items():
         if isinstance(value, dict):
-            if key == "$in":
-                resultlist.append(QueryInclusion(parentkey,recursive_dict_to_query(value)))
-            elif value == "$gt":
-                resultlist.append(QueryGreaterThan(parentkey,recursive_str_to_query(value)))
-            elif value == "$not":
-                resultlist.append(NotQueryOperator(parentkey,recursive_str_to_query(value)))
+            if len(value) == 1 and "$in" in value:
+                resultlist.append(QueryInclusion(parentkey,recursive_dict_to_query(value["$in"])))
+            elif len(value) == 1 and "$gt" in value:
+                resultlist.append(QueryGreaterThan(parentkey,recursive_dict_to_query(value["$gt"])))
+            elif len(value) == 1 and "$not" in value:
+                resultlist.append(QueryEquality(key,NotQueryOperator(recursive_dict_to_query(value["$not"]))))
             else:
                 resultlist.append(recursive_dict_to_query(value, key))
         elif isinstance(value, str):

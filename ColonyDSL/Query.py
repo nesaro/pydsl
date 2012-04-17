@@ -40,6 +40,8 @@ class QueryEquality(QueryTerm):
     """ a = b. It can use a string or a regexp"""
     def __hash__(self):
         return hash(self.left) ^ hash(self.right)
+    def __str__(self):
+        return "<" + str(self.left) + "=" + str(self.right) + ">"
 
 
 class QueryInclusion(QueryTerm):
@@ -58,7 +60,8 @@ class BinaryOperator(QueryElement):
         self.element2 = element2
 
 class AndQueryOperator(BinaryOperator):
-    pass
+    def __str__(self):
+        return "<" + str(self.element1) + "&&" + str(self.element2) + ">"
 
 class OrQueryOperator(BinaryOperator):
     pass
@@ -66,6 +69,8 @@ class OrQueryOperator(BinaryOperator):
 class NotQueryOperator(QueryElement):
     def __init__(self, element):
         self.element = element
+    def __str__(self):
+        return "<!" + str(self.element) + ">"
 
 class Query:
     """A generic query"""
@@ -78,4 +83,6 @@ class Query:
     def qor(self, element:QueryElement):
         self.content = OrQueryOperator(self.content, element)
 
+    def __str__(self):
+        return("<Query:"+str(self.content)+">")
 
