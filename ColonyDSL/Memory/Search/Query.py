@@ -119,6 +119,7 @@ def dict_to_query(querydict:dict) -> Query:
 def recursive_dict_to_query(querydict, parentkey = None) -> QueryElement:
     if isinstance(querydict, str):
         return querydict
+    from ColonyDSL.Query import Query, QueryEquality, QueryElement, QueryInclusion, QueryGreaterThan, AndQueryOperator
     resultlist = []
     for key, value in querydict.items():
         if isinstance(value, dict):
@@ -133,6 +134,7 @@ def recursive_dict_to_query(querydict, parentkey = None) -> QueryElement:
         elif isinstance(value, str):
             resultlist.append(QueryEquality(key,value))
     myfun = lambda x,y: AndQueryOperator(x,y)
-    return reduce(resultlist, myfun)
+    from functools import reduce
+    return reduce(myfun, resultlist)
     
 
