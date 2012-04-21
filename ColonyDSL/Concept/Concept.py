@@ -39,4 +39,8 @@ class Concept(Indexable, metaclass = ABCMeta):
     def summary(self):
         return {"iclass":"Concept", "identifier":str(self.identifier)}
 
-    
+    def __str__(self):
+        return str(self.identifier)
+
+    def __hash__(self):
+        return hash(self.identifier)
