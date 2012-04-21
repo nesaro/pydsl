@@ -20,6 +20,7 @@
 __author__ = "Néstor Arocha Rodríguez"
 __copyright__ = "Copyright 2008-2012, Néstor Arocha Rodríguez"
 __email__ = "nesaro@gmail.com"
+from pkg_resources import Requirement, resource_filename
 
 def load_type(name:str, memorylist = []):
     if name == "dummy":
@@ -30,8 +31,9 @@ def load_type(name:str, memorylist = []):
         memorylist = GLOBALCONFIG.memorylist
     import os
     from ColonyDSL.Memory.Storage.Directory.DirStorage import load_python_file
-    if os.path.exists("/usr/share/ColonyDSL/lib_contrib/grammar/protocol.py"):
-        pginstance = load_python_file("/usr/share/ColonyDSL/lib_contrib/grammar/protocol.py")
+    dirname = resource_filename(Requirement.parse("colony_archive"),"")
+    if os.path.exists(dirname + "/grammar/protocol.py"):
+        pginstance = load_python_file(dirname + "/grammar/protocol.py")
     else:
         pginstance = load_python_file("lib_contrib/grammar/protocol.py")
     if not pginstance.check(name):
@@ -123,8 +125,9 @@ def load_information(name:str, memorylist = []):
         memorylist = GLOBALCONFIG.memorylist
     import os
     from ColonyDSL.Memory.Storage.Directory.DirStorage import load_python_file
-    if os.path.exists("/usr/share/ColonyDSL/lib_contrib/grammar/protocol.py"):
-        pginstance = load_python_file("/usr/share/ColonyDSL/lib_contrib/grammar/protocol.py")
+    dirname = resource_filename(Requirement.parse("colony_archive"),"")
+    if os.path.exists(dirname + "/grammar/protocol.py"):
+        pginstance = load_python_file(dirname + "/grammar/protocol.py")
     else:
         pginstance = load_python_file("lib_contrib/grammar/protocol.py")
     if not pginstance.check(name):

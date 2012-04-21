@@ -28,12 +28,15 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger("Guess")
+from pkg_resources import Requirement, resource_filename
 
 def guess_filename(inputfile, memorylist = []) -> set:
     from ColonyDSL.Memory.Search.Searcher import MemorySearcher
     from ColonyDSL.Memory.Storage.Dict import FileTypeDictStorage
+
     if not memorylist:
-        memorylist.append(FileTypeDictStorage("/usr/share/ColonyDSL/lib_contrib/dict/filetype.dict"))
+        dirname = resource_filename(Requirement.parse("colony_archive"),"")
+        memorylist.append(FileTypeDictStorage(dirname + "/dict/filetype.dict"))
     searcher = MemorySearcher([x.indexer() for x in memorylist])
     result = set()
     for summary in searcher.search():

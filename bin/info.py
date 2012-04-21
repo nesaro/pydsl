@@ -47,10 +47,12 @@ if __name__ == "__main__":
             resultdic = instance.summary
             descmem = None
             from ColonyDSL.Memory.Storage.Dict import StrDictStorage
+            from pkg_resources import Requirement, resource_filename
+            dirname = resource_filename(Requirement.parse("colony_archive"),"")
             if ARGS.lang == "en":
-                descmem = StrDictStorage("/usr/share/ColonyDSL/lib_contrib/dict/description_en.dict")
+                descmem = StrDictStorage(dirname + "dict/description_en.dict")
             else:
-                descmem = StrDictStorage("/usr/share/ColonyDSL/lib_contrib/dict/description_es.dict")
+                descmem = StrDictStorage(dirname + "dict/description_es.dict")
             if ARGS.identifier in descmem:
                 resultdic["description"] = str(descmem[ARGS.identifier])
             if ARGS.outputformat == "str":

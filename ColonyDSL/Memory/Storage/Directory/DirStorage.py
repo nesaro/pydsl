@@ -154,6 +154,8 @@ class DirStorage(Storage, metaclass = ABCMeta):
                 searchstring = self.identifier + "*" + extension 
                 tmpresult = glob.glob(searchstring)
                 for result in tmpresult:
+                    if result.endswith("__init__.py"):
+                        continue
                     yield result 
         else:
             searchstring = self.identifier + "*" 

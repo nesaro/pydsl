@@ -24,10 +24,10 @@ __email__ = "nesaro@gmail.com"
 from ColonyDSL.Abstract import Singleton
 import logging
 LOG = logging.getLogger("Config")
+from pkg_resources import Requirement, resource_filename
 
 def generate_memory_list() -> list:
     """loads default memories"""
-    "", "/usr/share/ColonyDSL/"
     result = []
     from ColonyDSL.Memory.Storage.Directory.Type import GrammarDirStorage
     from ColonyDSL.Memory.Storage.Directory.Function import BoardDirStorage, TransformerDirStorage, ProcedureDirStorage
@@ -35,13 +35,13 @@ def generate_memory_list() -> list:
     from ColonyDSL.Memory.Storage.List import RelListStorage, RelationListStorage
     #from ColonyDSL.Memory.Storage.Directory.Concept import ConceptDirStorage
     #from ColonyDSL.Memory.Storage.Directory.Scheme import SchemeDirStorage
-    result.append(GrammarDirStorage("/usr/share/ColonyDSL/lib_contrib/grammar/"))
-    result.append(BoardDirStorage("/usr/share/ColonyDSL/lib_contrib/board/"))
-    result.append(TransformerDirStorage("/usr/share/ColonyDSL/lib_contrib/transformer/"))
-    result.append(ProcedureDirStorage("/usr/share/ColonyDSL/lib_contrib/procedure/"))
-    result.append(FileTypeDictStorage("/usr/share/ColonyDSL/lib_contrib/dict/filetype.dict"))
-    #result.append(SchemeDirStorage("/usr/share/ColonyDSL/lib_contrib/scheme/"))
-    result.append(RegexpDictStorage("/usr/share/ColonyDSL/lib_contrib/dict/regexp.dict"))
+    dirname = resource_filename(Requirement.parse("colony_archive"),"")
+    result.append(GrammarDirStorage(dirname + "/grammar/"))
+    result.append(BoardDirStorage(dirname + "/board/"))
+    result.append(TransformerDirStorage(dirname + "/transformer/"))
+    result.append(ProcedureDirStorage(dirname + "/procedure/"))
+    result.append(FileTypeDictStorage(dirname + "/dict/filetype.dict"))
+    result.append(RegexpDictStorage(dirname + "/dict/regexp.dict"))
     return result
 
 
