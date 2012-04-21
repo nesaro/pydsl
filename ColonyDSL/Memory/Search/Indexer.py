@@ -17,7 +17,7 @@
 
 
 from ColonyDSL.Memory.Memory import Memory
-from ColonyDSL.Query import QueryEquality, QueryInclusion, QueryTerm, QueryGreaterThan
+from ColonyDSL.Query import QueryEquality, QueryInclusion, QueryTerm, QueryGreaterThan, QueryPartial
 
 class Indexer:
     """Indexes memory content. Current implementation just copy Memory iterator (Inmutabledicts) into a cache dict. This is possible because Memory iterator format is suitable for search, but it might change in the future"""
@@ -109,7 +109,27 @@ class Indexer:
                         result.add(InmutableDict(element))
                     else:
                         result.add(element)
-
+        elif isinstance(queryterm, QueryPartial):
+            rdict = queryterm.right
+            for element in self.index:
+                ismatch = True
+                if queryterm.left not in element:
+                    continue
+                for key, value in rdict.items():
+                    try:
+                        if key not in element[queryterm.left]:
+                            ismatch = False
+                            break
+                        if element[queryterm.left][key] != value:
+                            ismatch = False
+                    except KeyError:
+                        continue
+                if ismatch:
+                    if isinstance(element, dict):
+                        from ColonyDSL.Abstract import InmutableDict
+                        result.add(InmutableDict(element))
+                    else:
+                        result.add(element)
         elif isinstance(queryterm, QueryGreaterThan):
             try:
                 qpart = int(queryterm.right)

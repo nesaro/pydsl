@@ -43,6 +43,13 @@ class QueryEquality(QueryTerm):
     def __str__(self):
         return "<" + str(self.left) + "=" + str(self.right) + ">"
 
+class QueryPartial(QueryTerm):
+    """ a = b. It can use a string or a regexp"""
+    def __hash__(self):
+        return hash(self.left) ^ hash(self.right)
+    def __str__(self):
+        return "<" + str(self.left) + "=~" + str(self.right) + ">"
+
 
 class QueryInclusion(QueryTerm):
     """ looks for an element within a list """
