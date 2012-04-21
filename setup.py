@@ -7,7 +7,7 @@ setup(name='ColonyDSL',
       author='Nestor Arocha',
       author_email='nesaro@gmail.com',
       url='https://github.com/nesaro/colony',
-      packages=['ColonyDSL', 'ColonyDSL/Type', 'ColonyDSL/Type/Grammar/' , 'ColonyDSL/Type/Grammar/Parser/', 'ColonyDSL/Interaction/', 'ColonyDSL/Memory/', 'ColonyDSL/Memory/External/', 'ColonyDSL/Memory/External/DirLibrary', 'ColonyDSL/Function/', 'ColonyDSL/Function/Transformer/', 'ColonyDSL/Concept/', 'ColonyDSL/Memory/Search/'],
+      packages=['ColonyDSL', 'ColonyDSL/Type',  'ColonyDSL/Type/Grammar/' , 'ColonyDSL/Type/Grammar/Parser/', 'ColonyDSL/Interaction/', 'ColonyDSL/Memory/', 'ColonyDSL/Memory/Storage/', 'ColonyDSL/Memory/Storage/Directory/', 'ColonyDSL/Function/', 'ColonyDSL/Function/Transformer/', 'ColonyDSL/Concept/', 'ColonyDSL/Memory/Search/'],
       scripts=['bin/translate.py','bin/check.py','bin/search.py', 'bin/guess.py', 'bin/convert.py', 'bin/info.py', 'bin/validate.py', 'bin/parts.py'],
      )
 
