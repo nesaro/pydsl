@@ -25,7 +25,7 @@ __copyright__ = "Copyright 2008-2012, Néstor Arocha Rodríguez"
 __email__ = "nesaro@gmail.com"
 
 import logging
-from ColonyDSL.Exceptions import BadFileFormat, LibraryException
+from ColonyDSL.Exceptions import BadFileFormat, StorageException
 from ColonyDSL.Interaction.Shell import parse_shell_dict, open_files_dict 
 from ColonyDSL.Interaction.Program import UnixProgram
 
@@ -132,7 +132,7 @@ if __name__ == "__main__":
     except BadFileFormat:
         print("Error reading input file")
         sys.exit(1)
-    except LibraryException as le:
+    except StorageException as le:
         print("Unable to load " + le.elementname + " " + le.elementtype)
         sys.exit(1)
     try:
