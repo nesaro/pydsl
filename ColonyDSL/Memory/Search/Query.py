@@ -124,7 +124,7 @@ def recursive_dict_to_query(querydict, parentkey = None) -> QueryElement:
     for key, value in querydict.items():
         if isinstance(value, dict):
             if len(value) == 1 and "$in" in value:
-                resultlist.append(QueryInclusion(parentkey,recursive_dict_to_query(value["$in"])))
+                resultlist.append(QueryInclusion(key, recursive_dict_to_query(value["$in"])))
             elif len(value) == 1 and "$gt" in value:
                 resultlist.append(QueryGreaterThan(parentkey,recursive_dict_to_query(value["$gt"])))
             elif len(value) == 1 and "$not" in value:
