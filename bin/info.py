@@ -45,14 +45,17 @@ if __name__ == "__main__":
         instance = load_information(ARGS.identifier)
         if "summary" in dir(instance):
             resultdic = instance.summary
-            descmem = None
+            descmem = {}
             from ColonyDSL.Memory.Storage.Dict import StrDictStorage
             from pkg_resources import Requirement, resource_filename
             dirname = resource_filename(Requirement.parse("colony_archive"),"")
-            if ARGS.lang == "en":
-                descmem = StrDictStorage(dirname + "dict/description_en.dict")
-            else:
-                descmem = StrDictStorage(dirname + "dict/description_es.dict")
+            try:
+                if ARGS.lang == "en":
+                    descmem = StrDictStorage(dirname + "dict/description_en.dict")
+                else:
+                    descmem = StrDictStorage(dirname + "dict/description_es.dict")
+            except IOError:
+                pass
             if ARGS.identifier in descmem:
                 resultdic["description"] = str(descmem[ARGS.identifier])
             if ARGS.outputformat == "str":
