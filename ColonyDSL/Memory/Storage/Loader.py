@@ -56,7 +56,15 @@ def load_type(name:str, memorylist = []):
     raise StorageException("Type", name)
 
 def load_function(name, memorylist = []):
-    raise NotImplementedError
+    try:
+        return load_board(name, memorylist)
+    except StorageException:
+        pass
+    try:
+        return load_transformer(name, memorylist)
+    except StorageException:
+        pass
+    raise StorageException
 
 def load_grammar(name, memorylist = []):
     if not memorylist:
