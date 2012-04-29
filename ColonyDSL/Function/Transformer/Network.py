@@ -27,8 +27,7 @@ from abc import ABCMeta, abstractmethod
 class FunctionNetworkClient(metaclass = ABCMeta):
     def __init__(self, idname, eventserver, parentpath = None):
         if eventserver != None and not isinstance(eventserver, FunctionNetworkServer) and not isinstance(eventserver, HostFunctionNetwork):
-            LOG.error("Type Error: eventserver is a " + str(eventserver.__class__))
-            raise TypeError
+            raise TypeError("Type Error: eventserver is a " + str(eventserver.__class__))
         self._parent = eventserver
         from .EventQueue import EventQueue
         self._queue = EventQueue()        

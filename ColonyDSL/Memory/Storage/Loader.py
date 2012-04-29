@@ -21,6 +21,7 @@ __author__ = "Néstor Arocha Rodríguez"
 __copyright__ = "Copyright 2008-2012, Néstor Arocha Rodríguez"
 __email__ = "nesaro@gmail.com"
 from pkg_resources import Requirement, resource_filename
+from ColonyDSL.Exceptions import StorageException
 
 def load_type(name:str, memorylist = []):
     if name == "dummy":
@@ -52,7 +53,6 @@ def load_type(name:str, memorylist = []):
                     return memory.load(identifier)
             raise Exception("Memory not found")
 
-    from ColonyDSL.Exceptions import StorageException
     raise StorageException("Type", name)
 
 def load_function(name, memorylist = []):
@@ -67,7 +67,6 @@ def load_grammar(name, memorylist = []):
         #    continue
         if name in memory:
             return memory.load(name)
-    from ColonyDSL.Exceptions import StorageException
     raise StorageException("Grammar", name)
 
 def load_procedure(identifier, eventmanager = None , name = "", memorylist = []):
@@ -77,7 +76,6 @@ def load_procedure(identifier, eventmanager = None , name = "", memorylist = [])
     for memory in memorylist:
         if identifier in memory:
             return memory.load(identifier, eventmanager, name)
-    from ColonyDSL.Exceptions import StorageException
     raise StorageException("Procedure", identifier)
 
 def load_transformer(identifier, eventmanager = None, name = None, memorylist = []):
@@ -89,7 +87,6 @@ def load_transformer(identifier, eventmanager = None, name = None, memorylist = 
     for memory in memorylist:
         if identifier in memory:
             return memory.load(identifier, eventmanager, name)
-    from ColonyDSL.Exceptions import StorageException
     raise StorageException("Transformer", identifier)
 
 def load_board(identifier, eventmanager = None, name = None, memorylist = []):
@@ -101,7 +98,6 @@ def load_board(identifier, eventmanager = None, name = None, memorylist = []):
             continue
         if name in memory:
             return memory.load(name)
-    from ColonyDSL.Exceptions import StorageException
     raise StorageException("Grammar", name)
 
 def load_concept(identifier, memorylist = []):
@@ -116,7 +112,6 @@ def load_scheme(identifier, memorylist = []):
             continue
         if identifier in memory:
             return memory.load(identifier)
-    from ColonyDSL.Exceptions import StorageException
     raise StorageException("Scheme", identifier)
 
 def load_information(name:str, memorylist = []):
@@ -147,6 +142,5 @@ def load_information(name:str, memorylist = []):
                     return memory.load(identifier)
             raise Exception("Memory not found")
 
-    from ColonyDSL.Exceptions import StorageException
     raise StorageException("Information", name)
 
