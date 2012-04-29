@@ -50,6 +50,9 @@ class MemorySearcher(Searcher):
         if isinstance(query, str):
             from .Query import str_to_memoryquery
             query = str_to_memoryquery(query)
+        elif isinstance(query, dict):
+            from .Query import dict_to_query
+            query = dict_to_query(query)
         if not query:
             result = set()
             for indexer in self.indexerlist:
