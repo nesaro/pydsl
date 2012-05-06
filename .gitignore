@@ -1,7 +1,6 @@
 *.py[co]
 tags
 pylintrc
-tlistsession
 .*.swp
 *.png
 *~
