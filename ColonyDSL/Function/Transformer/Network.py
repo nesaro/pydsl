@@ -23,8 +23,9 @@ import logging
 import threading
 LOG = logging.getLogger("Event")
 from abc import ABCMeta, abstractmethod
+from ..Function import FunctionInterface
 
-class FunctionNetworkClient(metaclass = ABCMeta):
+class FunctionNetworkClient(FunctionInterface):
     def __init__(self, idname, eventserver, parentpath = None):
         if eventserver != None and not isinstance(eventserver, FunctionNetworkServer) and not isinstance(eventserver, HostFunctionNetwork):
             raise TypeError("Type Error: eventserver is a " + str(eventserver.__class__))

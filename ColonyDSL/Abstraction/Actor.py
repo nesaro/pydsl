@@ -21,8 +21,9 @@ __email__ = "nesaro@gmail.com"
 
 from ColonyDSL.Abstract import Indexable
 from abc import abstractmethod, ABCMeta
+from ColonyDSL.Function.Function import FunctionInterface
 
-class Actor(Indexable, metaclass = ABCMeta):
+class Actor(Indexable, FunctionInterface):
     """WorkingMemory Actor"""
     def __init__(self, inputslotdefinitions:list, outputslotdefinitions:list):
         Indexable.__init__(self)

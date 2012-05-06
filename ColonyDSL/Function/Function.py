@@ -26,8 +26,14 @@ LOG = logging.getLogger("Function")
 from abc import ABCMeta, abstractmethod, abstractproperty
 from ColonyDSL.Abstract import Indexable 
 
+class FunctionInterface(metaclass = ABCMeta):
+    """A method applied to a function to comunicate with other functions"""
+    pass
+
 class Function(Indexable, metaclass = ABCMeta):
-    """ data transformation or translation performed"""
+    """ data transformation or translation performed
+    default interface: call -> data -> data
+    """
     @abstractmethod
     def __call__(self, data):
         """ Non threaded, all input as parameter ibdic contains ("channel",data) pairs. Returns a TransformResult """

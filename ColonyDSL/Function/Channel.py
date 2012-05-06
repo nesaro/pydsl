@@ -23,6 +23,7 @@ __email__ = "nesaro@gmail.com"
 
 
 from abc import ABCMeta, abstractmethod, abstractproperty
+from .Function import FunctionInterface
 import logging
 LOG = logging.getLogger("Channel")
 
@@ -34,7 +35,7 @@ def _loadTypeInstances(originaldic):
         result[key] = load_type(str(originaldic[key]))
     return result
 
-class HostChannel(metaclass = ABCMeta):
+class HostChannel(FunctionInterface):
     """Channel Host base class"""
     def __init__(self):
         self._seq_cache = [] #stores words received by channels but unprocessed
@@ -54,6 +55,7 @@ class HostChannel(metaclass = ABCMeta):
     def outputchanneldic(self):
         pass
 
+    #This functionality belongs to the Channel+Network interface, not the channel alone
     def receive(self, channel, msgid, content):
         """Receives an content through channel"""
         LOG.debug("Received:" + str(channel) + " : " + str(content))
