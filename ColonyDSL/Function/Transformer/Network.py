@@ -42,8 +42,7 @@ class FunctionNetworkClient(FunctionInterface):
             if eventserver == None:
                 self._ecuid = FunctionNetworkClientId("Main")
                 return
-            raise Exception
-        raise TypeError
+        raise TypeError("idname for FunctionNetworkClient: " + str(idname))
 
     @property
     def ecuid(self):
