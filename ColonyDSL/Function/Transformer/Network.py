@@ -152,7 +152,7 @@ class HostFunctionNetwork(metaclass = ABCMeta):
         """Inits aux GTs. if a requested aux GT isn't connected, This function will create it"""
         from ColonyDSL.Memory.Storage.Loader import load_transformer
         for title, gttype in namedic.items():
-            self._hostT[title] = load_transformer(gttype, self._server, title) 
+            self._hostT[title] = load_transformer(gttype, title,self._server) 
             LOG.debug("loaded " + str(title) + "auxT")
 
     @abstractmethod

@@ -68,8 +68,9 @@ def load_board_file(filename, server = None , name = None):
 
 def load_python_f(modulename , name, server):
     """Load a file written in python"""
-    moduleobject = self._load_module_from_library(modulename)
     identifier = getFileTuple(modulename)[2]
+    import imp
+    moduleobject = imp.load_source(identifier, modulename)
     from .DirStorage import load_python_file
     return load_python_file(moduleobject, name, server)
 
@@ -90,7 +91,7 @@ class TransformerDirStorage(DirStorage):
             except (ImportError, IOError):
                 LOG.exception("Exception while loading: " + identifier)
             else:
-                return load_python_f(identifier, name, server)
+                return load_python_f(value["filepath"], name, server)
 
         from ColonyDSL.Exceptions import StorageException
         raise StorageException("TR", identifier)
