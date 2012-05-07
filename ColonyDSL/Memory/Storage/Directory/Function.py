@@ -17,7 +17,7 @@
 
 """Functions Library"""
 
-__author__ = "Néstor Arocha Rodríguez"
+__author__ = "Nestor Arocha Rodriguez"
 __copyright__ = "Copyright 2008-2012, Néstor Arocha Rodríguez"
 __email__ = "nesaro@gmail.com"
 
@@ -66,26 +66,10 @@ def load_board_file(filename, server = None , name = None):
     from ColonyDSL.Function.Transformer.Board import Board
     return Board(GTDefinitionList, ecuid = name, server = server) 
 
-def load_gt_from_file(modulepath, name, server):
-    (_, _, fileBaseName, _) = getFileTuple(modulepath)
-    import imp
-    moduleobject = imp.load_source(fileBaseName, modulepath)
-    from .DirStorage import load_python_file
-    return load_python_file(moduleobject, fileBaseName, name, server)
-
-def load_gst_file(filepath, server = None):
-    #if not server, instanciate 
-    (_, _, fileBaseName, _) = getFileTuple(filepath)
-    import imp
-    repobject = imp.load_source(fileBaseName, filepath)
-    from .DirStorage import load_python_file
-    return  load_python_file(repobject, fileBaseName, server)
-
-def load_procedure_file(modulepath, name, server):
-    from .DirStorage import getFileTuple
-    (_, _, fileBaseName, _) = getFileTuple(modulepath)
-    import imp
-    moduleobject = imp.load_source(fileBaseName, modulepath)
+def load_python_f(modulename , name, server):
+    """Load a file written in python"""
+    moduleobject = self._load_module_from_library(modulename)
+    identifier = getFileTuple(modulename)[2]
     from .DirStorage import load_python_file
     return load_python_file(moduleobject, name, server)
 
@@ -99,18 +83,17 @@ class TransformerDirStorage(DirStorage):
 
     def load(self, identifier, server = None, name = None):
         """guess class, guess filename from id, and then call loadTInstance"""
-        gtid = identifier
         import imp
-        for value in self._searcher.search(gtid): 
+        for value in self._searcher.search(identifier): 
             try:
-                imp.load_source(gtid, value["filepath"])
+                imp.load_source(identifier, value["filepath"])
             except (ImportError, IOError):
-                LOG.exception("Exception while loading: " + gtid)
+                LOG.exception("Exception while loading: " + identifier)
             else:
-                return self.__loadPythonGT(gtid, name, server)
+                return load_python_f(identifier, name, server)
 
         from ColonyDSL.Exceptions import StorageException
-        raise StorageException("TR", gtid)
+        raise StorageException("TR", identifier)
     
     def summary_from_filename(self, modulepath):
         from ColonyDSL.Function.Transformer.Python import PythonTransformer
@@ -143,14 +126,6 @@ class TransformerDirStorage(DirStorage):
             LOG.exception("Error: non-indexable element while loading " + modulepath)
             return InmutableDict()
 
-    def __loadPythonGT(self, modulename , name, server):
-        """Load a GT written in python"""
-        moduleobject = self._load_module_from_library(modulename)
-        from .DirStorage import getFileTuple
-        identifier = getFileTuple(modulename)[2]
-        from .DirStorage import load_python_file
-        return load_python_file(moduleobject, identifier , name, server)
-
 class BoardDirStorage(DirStorage):
     """Loads boards from library"""
     def __init__(self, path):
@@ -158,16 +133,15 @@ class BoardDirStorage(DirStorage):
 
 
     def load(self, identifier, server = None, name = None):
-        gtid = identifier
-        searchresult = self._searcher.search(gtid)
+        searchresult = self._searcher.search(identifier)
         if not searchresult:
             raise Exception
         for result in searchresult:
-            #TODO assert(len(self._search(gtid) == 2)) 
+            #TODO assert(len(self._search(identifier) == 2)) 
             return load_board_file(result["filepath"], server, name)
 
         from ColonyDSL.Exceptions import StorageException
-        raise StorageException("B", gtid)
+        raise StorageException("B", identifier)
 
     def summary_from_filename(self, filename):
         from ColonyDSL.Function.Transformer.Board import Board
@@ -191,17 +165,16 @@ class ProcedureDirStorage(DirStorage):
 
     def load(self, identifier, server = None, name = None):
         """guess class, guess filename from id, and then call loadTInstance"""
-        gtid = identifier
         import imp
         try:
-            imp.load_source(gtid, self.identifier + "/" + gtid + ".py")
+            imp.load_source(identifier, self.identifier + "/" + identifier + ".py")
         except (ImportError, IOError):
             pass
         else:
-            return self.__loadPythonP(gtid, name, server)
+            return load_python_f(identifier, name, server)
 
         from ColonyDSL.Exceptions import StorageException
-        raise StorageException("P", gtid)
+        raise StorageException("P", identifier)
 
     def provided_iclasses(self) -> list:
         return ["Procedure"]
@@ -224,20 +197,4 @@ class ProcedureDirStorage(DirStorage):
             yield (map(exfun, elementname, instance.description))
             #instance.outputchanneldic.values()),
         
-    def __loadPythonP(self, modulename , name, server):
-        """Load a P written in python"""
-        moduleobject = self._load_module_from_library(modulename)
-        from .DirStorage import load_python_file
-        return load_python_file(moduleobject, name, server)
-
-def load_transformer_file(filepath, eventmanager = None, name = ""):
-    lib = TransformerDirStorage()
-    return lib.load_file(filepath, eventmanager, name)
-
-def load_transformer_file(filepath, eventmanager = None, name = None):
-    if filepath.endswith(".board"):
-        return load_board_file(filepath, eventmanager, name)
-    else:
-        return load_transformer_file(filepath, eventmanager, name)
-
 
