@@ -56,6 +56,18 @@ class Grammar(Type, metaclass = ABCMeta):
         """Iterates through all tokens of the input (from left to right)"""
         pass
 
+    def distance(self, input1, input2 = None):
+        """Gives a distance score between two words according to this grammar. If input2 == None, means distance from input1 to valid"""
+        pass
+
+    @property
+    def minsize(self):
+        raise NotImplementedError
+
+    @property
+    def maxsize(self):
+        raise NotImplementedError
+
 #TODO
 class NGramGrammar(Grammar):
     """Grammar defined by an ngram and a threshold"""
