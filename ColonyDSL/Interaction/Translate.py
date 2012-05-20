@@ -40,12 +40,12 @@ class Translate(UnixProgram):
         
     def readTR(self, gtname):
         self.__mode = "Transformer"
-        from ColonyDSL.Memory.External.Loader import load_transformer
+        from ColonyDSL.Memory.Storage.Loader import load_transformer
         self.__mainfunc = load_transformer(gtname) 
     
     def readP(self, pname):
         self.__mode = "Procedure"
-        from ColonyDSL.Memory.External.Loader import load_procedure
+        from ColonyDSL.Memory.Storage.Loader import load_procedure
         self.__mainfunc = load_procedure(pname)
 
     def execute(self):
