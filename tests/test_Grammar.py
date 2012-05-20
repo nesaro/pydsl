@@ -22,7 +22,7 @@ __email__ = "nesaro@gmail.com"
 import unittest
 
 class TestRegExpGrammars(unittest.TestCase):
-    """Funcionamiento basico de las gramaticas"""
+    """Regular expression method tests"""
     def setUp(self):
         from ColonyDSL.Type.Grammar.Regular import RegularExpressionGrammar
         self.g1 = RegularExpressionGrammar("(?P<tone>1)23")
@@ -31,7 +31,7 @@ class TestRegExpGrammars(unittest.TestCase):
         self.assertTrue(self.g1.check("123"))
 
     def testBadCheck(self):
-        self.assertTrue(not self.g1.check("124"))
+        self.assertFalse(self.g1.check("124"))
 
     def testAlphabet(self):
         self.assertTrue(self.g1.alphabet() == {'1','2','3'}) 
