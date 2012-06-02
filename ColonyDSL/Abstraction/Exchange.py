@@ -15,25 +15,32 @@
 #You should have received a copy of the GNU General Public License
 #along with ColonyDSL.  If not, see <http://www.gnu.org/licenses/>.
 
+
 __author__ = "Nestor Arocha Rodriguez"
 __copyright__ = "Copyright 2008-2012, Nestor Arocha Rodriguez"
 __email__ = "nesaro@gmail.com"
 
 from ColonyDSL.Abstract import Indexable
 from abc import abstractmethod, ABCMeta
-from ColonyDSL.Function.Function import FunctionInterface
-from threading import Thread
 
-class Actor(Indexable, Thread, FunctionInterface):
-    """Exchange Actor Actors writes and read an exchange """
-    def __init__(self, exchange, rolaname, workingfunction):
-        Thread.__init__(self)
-        Indexable.__init__(self)
-        exchange.register(self, rolename)
-        self.workingfunction = workingfunction
-        self.setDaemon(True)
+#Objeto teorico a realizar:
+##Scheme MatchConcept: Intentar cuadrar el contenido de la representacion con un concepto conocido. 
+### Pepe y Sus podria ser un concepto "Conjunto de Personas"
 
-    def run(self):
-        while True:
-            self.workingfunction(self.exchange, self.rolename)
+class Exchange: 
+    def __init__(self, rolelist):
+        self.totalseq = 0
+        self.content = []
+        self.rolelist = rolelist
+        self.roledict = {}
 
+    def register(self, instance, role):
+        assert(role in  self.rolelist)
+        self.roledict[instance] = role
+
+    def save(self, content, source) -> None:
+        self.content.append((self.roledict[source], content))
+    
+    def last_element(self):
+        """Returns last element"""
+        return self.content[-1]
