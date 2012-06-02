@@ -14,17 +14,17 @@ from ColonyDSL.Abstract import TypeCheckList
 def terminal_symbol_reducer(symbol, word, production):
     """ Reduces a terminal symbol """
     from ColonyDSL.Abstract import TypeCheckList
-    from ColonyDSL.Type.Grammar.Tree import ParserTree
+    from ColonyDSL.Type.Grammar.Tree import ParseTree
     if not isinstance(word, str):
         word = str(word)
-    validresults = TypeCheckList(ParserTree)
+    validresults = TypeCheckList(ParseTree)
     if symbol.boundariesrules.policy == "min":
         LOG.debug("terminal_symbol_reducer: policy: min")
         for begin in range(0, len(word)):
             for end in range(begin, len(word)+1):
                 if symbol.check(word[begin:end]):
                     LOG.debug("terminal_symbol_reducer: parsed:"+ str(word[begin:end]))
-                    validresults.append(ParserTree(begin, end, [symbol], word[begin:end], production))
+                    validresults.append(ParseTree(begin, end, [symbol], word[begin:end], production))
                     break #found the smallest valid symbol at begin
     elif symbol.boundariesrules.policy == "max":
         LOG.debug("terminal_symbol_reducer: policy: max")
@@ -35,29 +35,29 @@ def terminal_symbol_reducer(symbol, word, production):
                     LOG.debug("terminal_symbol_reducer: parsed:"+ str(word[begin:end]))
                     maxword = end
             if maxword > 0:
-                validresults.append(ParserTree(begin, maxword, [symbol], word[begin:maxword], production))
+                validresults.append(ParseTree(begin, maxword, [symbol], word[begin:maxword], production))
     elif symbol.boundariesrules.policy == "fixed":
         LOG.debug("terminal_symbol_reducer: policy: fixed")
         size = symbol.boundariesrules.size
         for begin in range(0, len(word)):
             if symbol.check(word[begin:begin + size]):
                 LOG.debug("__auxReducer: parsed:"+ str(word[begin:begin + size]))
-                validresults.append(ParserTree(begin, begin + size, [symbol], word[begin:begin + size], production))
+                validresults.append(ParseTree(begin, begin + size, [symbol], word[begin:begin + size], production))
     else:
         LOG.warning("terminal_symbol_reducer: Unknown size policy")
-        return TypeCheckList(ParserTree)
+        return TypeCheckList(ParseTree)
     return validresults
 
 def terminal_symbol_consume(symbol, word, production):
     """ Reduces a terminal symbol. Always start from left"""
     from ColonyDSL.Abstract import TypeCheckList
-    from ColonyDSL.Type.Grammar.Tree import ParserTree
-    validresults = TypeCheckList(ParserTree)
+    from ColonyDSL.Type.Grammar.Tree import ParseTree
+    validresults = TypeCheckList(ParseTree)
     begin = 0
     if symbol.boundariesrules.policy == "min":
         for end in range(begin, len(word)+1):
             if symbol.check(word[begin:end]):
-                return [ParserTree(begin, end, [symbol], word[begin:end], production)]
+                return [ParseTree(begin, end, [symbol], word[begin:end], production)]
     elif symbol.boundariesrules.policy == "max":
         LOG.debug("terminal_symbol_reducer: policy: max")
         maxword = 0
@@ -66,23 +66,23 @@ def terminal_symbol_consume(symbol, word, production):
                 LOG.debug("terminal_symbol_reducer: parsed:"+ str(word[begin:end]))
                 maxword = end
         if maxword > 0:
-           return[ParserTree(begin, maxword, [symbol], word[begin:maxword], production)]
+           return[ParseTree(begin, maxword, [symbol], word[begin:maxword], production)]
     elif symbol.boundariesrules.policy == "fixed":
         size = symbol.boundariesrules.size
         LOG.debug("terminal_symbol_reducer: policy: fixed " + str(size))
         if len(word) >= size and symbol.check(word[:size]):
-            return [ParserTree(0, size, [symbol], word[:size], production)]
+            return [ParseTree(0, size, [symbol], word[:size], production)]
     else:
         LOG.warning("terminal_symbol_reducer: Unknown size policy")
-        return TypeCheckList(ParserTree)
+        return TypeCheckList(ParseTree)
     return validresults
 
 def mix_results(resultll:list, productionset):
     """ Mix n sets of results """
-    from ColonyDSL.Type.Grammar.Tree import ParserTree
+    from ColonyDSL.Type.Grammar.Tree import ParseTree
     production = None
     for resultl in resultll:
-        assert(isinstance(resultl, TypeCheckList) and resultl.instancetype == ParserTree)
+        assert(isinstance(resultl, TypeCheckList) and resultl.instancetype == ParseTree)
     midlist = [] #All blocks combinations are stored here
     firstindex = 0
     while firstindex < len(resultll) and len(resultll[firstindex]) == 0: 
@@ -95,7 +95,7 @@ def mix_results(resultll:list, productionset):
 
     firstresultl = resultll[firstindex]
     for result in firstresultl:
-        if not(isinstance(result, ParserTree)):
+        if not(isinstance(result, ParseTree)):
             raise TypeError
         if result.leftpos == 0:
             midlist.append([result])
@@ -120,13 +120,13 @@ def mix_results(resultll:list, productionset):
                     result.rightpos = lastresult.rightpos
                     result.leftpos = lastresult.rightpos
                 if lastresult.rightpos == None or result.leftpos == None:
-                    tmp.append(middleresult + [ParserTree(result.leftpos, result.rightpos, \
+                    tmp.append(middleresult + [ParseTree(result.leftpos, result.rightpos, \
                             result.symbollist, result.content, result.production, \
-                            TypeCheckList(ParserTree, result.childlist), result.valid)])
+                            TypeCheckList(ParseTree, result.childlist), result.valid)])
                 elif lastresult.rightpos == result.leftpos:
-                    tmp.append(middleresult + [ParserTree(result.leftpos, result.rightpos, \
+                    tmp.append(middleresult + [ParseTree(result.leftpos, result.rightpos, \
                             result.symbollist, result.content, result.production, \
-                            TypeCheckList(ParserTree, result.childlist), result.valid)])
+                            TypeCheckList(ParseTree, result.childlist), result.valid)])
             midlist += tmp
         validsets += 1
     
@@ -138,7 +138,7 @@ def mix_results(resultll:list, productionset):
 
     #Combinamos resultados en la lista final
     #We mix all results into final result
-    finallist = TypeCheckList(ParserTree)
+    finallist = TypeCheckList(ParseTree)
     for middleresult in midlist:
         if len(middleresult) == 1:
             finallist.append(middleresult[0])
@@ -149,7 +149,7 @@ def mix_results(resultll:list, productionset):
             for element in middleresult:
                 compoundword += element.content
                 symbollist += element.symbollist
-            finalresult = ParserTree(middleresult[0].leftpos, middleresult[-1].rightpos, symbollist, compoundword, middleresult[0].production, valid = result.valid)
+            finalresult = ParseTree(middleresult[0].leftpos, middleresult[-1].rightpos, symbollist, compoundword, middleresult[0].production, valid = result.valid)
             psl = middleresult[0].production
             #Add childs to result. FIXME El problema es que estamos añadiendo como hijos del nuevo los elementos ya creados
             error = False

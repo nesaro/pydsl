@@ -129,7 +129,7 @@ class Tree(metaclass = ABCMeta):
         else:
             return self
 
-class PostTree(Tree):
+class AST(Tree):
     """Una representacion más simple de la descomposicion, sin alusion a los pasos intermedios"""
     def __init__(self, content, leftpos:int, rightpos:int, production, parentnode = None, valid = True):
         Tree.__init__(self, leftpos, rightpos, content, valid)
@@ -186,7 +186,7 @@ class PostTree(Tree):
         return False
 
 
-class ParserTree(Tree):
+class ParseTree(Tree):
     """ Stores a descent parser iteration result """
     def __init__(self, leftpos, rightpos, symbollist:list, content, production, childlist:list = [], valid:bool = True):
         if not isinstance(leftpos, int) and leftpos != None:
@@ -201,13 +201,13 @@ class ParserTree(Tree):
         self.symbollist = symbollist
         self.production = production
         if not childlist:
-            childlist = TypeCheckList(ParserTree)
+            childlist = TypeCheckList(ParseTree)
         else:
-            childlist = TypeCheckList(ParserTree, childlist)
+            childlist = TypeCheckList(ParseTree, childlist)
         self.childlist = childlist #This list stores rule's rightside DescentParserResults 
 
     def __str__(self):
-        result = "<ParserTree: " 
+        result = "<ParseTree: " 
         result += "(" + str(self.leftpos) + "," + str(self.rightpos) 
         result += ") SymbolList: " 
         if len(self.symbollist) == 1:
@@ -222,10 +222,10 @@ class ParserTree(Tree):
 
     def __add__(self, other):
         """ Adds two results. Only if self.rightpos = other.leftpos and parents are the same """
-        if not isinstance(other, ParserTree):
+        if not isinstance(other, ParseTree):
             raise TypeError
         if other == []:
-            return ParserTree(self.leftpos, self.rightpos, self.symbollist, self.content, self.production, self.childlist) #FIXME: Debe devolver copia de childlist
+            return ParseTree(self.leftpos, self.rightpos, self.symbollist, self.content, self.production, self.childlist) #FIXME: Debe devolver copia de childlist
         if self.rightpos == other.leftpos and self.production == other.production:
             leftpos = self.leftpos
             rightpos = other.rightpos
@@ -233,14 +233,14 @@ class ParserTree(Tree):
             content = self.content + other.content
             symbollist = self.symbollist + other.symbollist
             childlist = self.childlist + other.childlist
-            return ParserTree(leftpos, rightpos, symbollist, content, production, childlist)
+            return ParseTree(leftpos, rightpos, symbollist, content, production, childlist)
         else:
             LOG.warning("Unable to add parser results")
             raise Exception
 
     def split(self):
         """splits a result"""
-        result = TypeCheckList(ParserTree)
+        result = TypeCheckList(ParseTree)
         for symbol in self.symbollist:
             currentlist = self.childlist
             while len(currentlist) > 1 and len(currentlist[0].symbollist) > 1 and currentlist[0].symbollist[0] != symbol:
@@ -262,9 +262,9 @@ class ParserTree(Tree):
         return result
     
 
-def parser_to_post_tree(pan:ParserTree, parent = None) -> PostTree:
+def parser_to_post_tree(pan:ParseTree, parent = None) -> AST:
     """Converts a parser temporal node into a postnode"""
-    result = PostTree(pan.content, pan.leftpos, pan.rightpos, pan.production, parent, pan.valid)
+    result = AST(pan.content, pan.leftpos, pan.rightpos, pan.production, parent, pan.valid)
     for child in pan.childlist:
         childnode = parser_to_post_tree(child, result)
         result.append_child(childnode)

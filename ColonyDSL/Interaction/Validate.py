@@ -27,7 +27,7 @@ __email__ = "nesaro@gmail.com"
 import logging
 LOG = logging.getLogger("Validate")
 
-def validate(sgrammar:"SymbolGrammar", expression) -> "[PostTreeNode]":
+def validate(sgrammar:"SymbolGrammar", expression) -> "[AST]":
     """Returns a list of postTreeNodes"""
     resulttrees = sgrammar.get_trees(expression, True)
     treelist = []

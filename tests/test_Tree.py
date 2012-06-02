@@ -23,28 +23,28 @@ import unittest
 
 class TestTrees(unittest.TestCase):
     def setUp(self):
-        from ColonyDSL.Type.Grammar.Tree import PostTree
-        a = PostTree("abcdef",0,6, None)
-        self.firstleaf1 = PostTree("a",0,1, None)
+        from ColonyDSL.Type.Grammar.Tree import AST
+        a = AST("abcdef",0,6, None)
+        self.firstleaf1 = AST("a",0,1, None)
         a.append_child(self.firstleaf1)
-        b = PostTree("bc",1,3, None)
+        b = AST("bc",1,3, None)
         a.append_child(b)
-        b.append_child(PostTree("b",1,2,None))
-        b.append_child(PostTree("c",2,3,None))
-        a.append_child(PostTree("d",3,4,None))
-        a.append_child(PostTree("e",4,5,None))
-        a.append_child(PostTree("f",5,6,None))
+        b.append_child(AST("b",1,2,None))
+        b.append_child(AST("c",2,3,None))
+        a.append_child(AST("d",3,4,None))
+        a.append_child(AST("e",4,5,None))
+        a.append_child(AST("f",5,6,None))
         self.tree1 = a
-        c = PostTree("abcdef",0,6, None)
-        self.firstleaf2 = PostTree("a",0,1, None)
+        c = AST("abcdef",0,6, None)
+        self.firstleaf2 = AST("a",0,1, None)
         c.append_child(self.firstleaf2)
-        b = PostTree("bc",1,3, None)
+        b = AST("bc",1,3, None)
         c.append_child(b)
-        b.append_child(PostTree("b",1,2,None))
-        b.append_child(PostTree("j",2,3,None))
-        c.append_child(PostTree("d",3,4,None))
-        c.append_child(PostTree("e",4,5,None))
-        c.append_child(PostTree("f",5,6,None))
+        b.append_child(AST("b",1,2,None))
+        b.append_child(AST("j",2,3,None))
+        c.append_child(AST("d",3,4,None))
+        c.append_child(AST("e",4,5,None))
+        c.append_child(AST("f",5,6,None))
         self.tree2 = c
 
     def testBasics(self):
