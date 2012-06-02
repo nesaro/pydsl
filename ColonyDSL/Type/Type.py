@@ -18,12 +18,12 @@
 
 """Abstract Classes"""
 
-__author__ = "Néstor Arocha Rodríguez"
-__copyright__ = "Copyright 2008-2012, Néstor Arocha Rodríguez"
+__author__ = "Nestor Arocha Rodriguez"
+__copyright__ = "Copyright 2008-2012, Nestor Arocha Rodriguez"
 __email__ = "nesaro@gmail.com"
 
 import logging
-LOG = logging.getLogger("Type")
+LOG = logging.getLogger(__name__)
 from abc import ABCMeta, abstractmethod
 from ColonyDSL.Abstract import Indexable
 

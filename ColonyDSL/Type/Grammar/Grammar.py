@@ -25,7 +25,7 @@ __email__ = "nesaro@gmail.com"
 import logging
 from ColonyDSL.Type.Type import Type
 from abc import ABCMeta, abstractmethod, abstractproperty
-LOG = logging.getLogger("Grammar")
+LOG = logging.getLogger(__name__)
 
 class Grammar(Type, metaclass = ABCMeta):
     """Checks if an  belongs to a language. 

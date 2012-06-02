@@ -17,13 +17,13 @@
 
 """Global (per execution) elements"""
 
-__author__ = "Néstor Arocha Rodríguez"
-__copyright__ = "Copyright 2008-2012, Néstor Arocha Rodríguez"
+__author__ = "Nestor Arocha Rodriguez"
+__copyright__ = "Copyright 2008-2012, Nestor Arocha Rodriguez"
 __email__ = "nesaro@gmail.com"
 
 from ColonyDSL.Abstract import Singleton
 import logging
-LOG = logging.getLogger("Config")
+LOG = logging.getLogger(__name__)
 from pkg_resources import Requirement, resource_filename
 
 def generate_memory_list() -> list:

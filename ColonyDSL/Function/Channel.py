@@ -25,7 +25,7 @@ __email__ = "nesaro@gmail.com"
 from abc import ABCMeta, abstractmethod, abstractproperty
 from .Function import FunctionInterface
 import logging
-LOG = logging.getLogger("Channel")
+LOG = logging.getLogger(__name__)
 
 def _loadTypeInstances(originaldic):
     """Converts {"channelname","type"} into {"channelname",instance}"""
