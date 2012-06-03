@@ -55,38 +55,38 @@ def load_type(name:str, memorylist = []):
 
     raise StorageException("Type", name)
 
-def load_function(name, memorylist = []):
+def load_function(identifier, memorylist = []):
     try:
-        return load_board(name, memorylist)
+        return load_board(identifier, memorylist)
     except StorageException:
         pass
     try:
-        return load_transformer(name, memorylist)
+        return load_transformer(identifier, memorylist)
     except StorageException:
         pass
     raise StorageException
 
-def load_grammar(name, memorylist = []):
+def load_grammar(identifier, memorylist = []):
     if not memorylist:
         from ColonyDSL.Config import GLOBALCONFIG
         memorylist = GLOBALCONFIG.memorylist
     for memory in memorylist:
         #if memory.provided_iclasses() and "Grammar" not in memory.provided_iclasses():
         #    continue
-        if name in memory:
-            return memory.load(name)
-    raise StorageException("Grammar", name)
+        if identifier in memory:
+            return memory.load(identifier)
+    raise StorageException("Grammar", identifier)
 
-def load_procedure(identifier, eventmanager = None , name = "", memorylist = []):
+def load_procedure(identifier, eventmanager = None , ecuid = "", memorylist = []):
     if not memorylist:
         from ColonyDSL.Config import GLOBALCONFIG
         memorylist = GLOBALCONFIG.memorylist
     for memory in memorylist:
         if identifier in memory:
-            return memory.load(identifier, eventmanager, name)
+            return memory.load(identifier, eventmanager, ecuid)
     raise StorageException("Procedure", identifier)
 
-def load_transformer(identifier, eventmanager = None, name = None, memorylist = []):
+def load_transformer(identifier, eventmanager = None, ecuid = None, memorylist = []):
     #FIXME: Can return any type of element
     if not memorylist:
         from ColonyDSL.Config import GLOBALCONFIG
@@ -94,7 +94,7 @@ def load_transformer(identifier, eventmanager = None, name = None, memorylist = 
 
     for memory in memorylist:
         if identifier in memory:
-            return memory.load(identifier, eventmanager, name)
+            return memory.load(identifier, server=eventmanager, ecuid=ecuid)
     raise StorageException("Transformer", identifier)
 
 def load_board(identifier, eventmanager = None, memorylist = []):

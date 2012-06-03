@@ -55,7 +55,7 @@ def parseRegularSections(configparser):
         definitionlist.append(sectionToBoardDefinition(configparser, section))
     return definitionlist
 
-def load_board_file(filename, server = None , name = None):
+def load_board_file(filename, server = None , ecuid = None):
     import configparser
     config = configparser.ConfigParser()
     config.read(filename)
