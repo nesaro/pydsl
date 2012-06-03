@@ -133,13 +133,13 @@ class BoardDirStorage(DirStorage):
         DirStorage.__init__(self, path, [".board"])
 
 
-    def load(self, identifier, server = None, name = None):
+    def load(self, identifier, server = None, ecuid = None):
         searchresult = self._searcher.search(identifier)
         if not searchresult:
             raise Exception
         for result in searchresult:
             #TODO assert(len(self._search(identifier) == 2)) 
-            return load_board_file(result["filepath"], server, name)
+            return load_board_file(result["filepath"], server = server, ecuid = ecuid)
 
         from ColonyDSL.Exceptions import StorageException
         raise StorageException("B", identifier)

@@ -79,7 +79,7 @@ class ConceptListStorage(ListStorage):
             result.append(InmutableDict({"identifier":key, "iclass":"Concept" }))
         return result
 
-    def load(self, index):
+    def load(self, index, **kwargs):
         if index in self._content:
             from ColonyDSL.Concept.Concept import Concept
             return Concept(index)
@@ -100,7 +100,7 @@ class RelationListStorage(ListStorage):
             result.append(InmutableDict({"identifier":key, "rel":self._content[key]["rel"], "roledict":InmutableDict(self._content[key]["roledict"]), "iclass":"Relation" }))
         return result
 
-    def load(self, index):
+    def load(self, index, **kwargs):
         from ColonyDSL.Concept.Relation import Relation
         return Relation(self._content[index]["rel"], self._content[index]["roledict"])
 
@@ -119,7 +119,7 @@ class RelListStorage(ListStorage):
             result.append(InmutableDict({"identifier":key, "content":tuple(self._content[key]["content"]), "iclass":"Rel" }))
         return result
 
-    def load(self, index):
+    def load(self, index, **kwargs):
         from ColonyDSL.Concept.Relation import Rel
         return Rel(self._content[index]["identifier"], self._content[index]["content"])
 

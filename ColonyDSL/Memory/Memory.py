@@ -28,7 +28,7 @@ from ColonyDSL.Abstract import Indexable
 class Memory(metaclass = ABCMeta):
     """Memory Abstraction"""
     @abstractmethod
-    def load(self, index):
+    def load(self, index, **kwargs):
         pass
     
     @abstractmethod
