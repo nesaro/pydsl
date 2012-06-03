@@ -29,16 +29,22 @@ class Actor(Indexable, Thread, FunctionInterface):
     def __init__(self, workingfunction):
         Thread.__init__(self)
         Indexable.__init__(self)
-        self.exchange = exchange
-        self.rolename = rolename
         self.exchangedict = {}
         self.workingfunction = workingfunction
         self.setDaemon(True)
         self.event = Event()
         self.lastcaller = None
 
+    def guessrole(self,caller):
+        if not caller:
+            return None
+        for key, value in self.exchangedict.items():
+            if caller in value:
+                return key
+        raise KeyError
+    
     def register(self, exchange, rolename):
-        if not rolename in exchangedict:
+        if not rolename in self.exchangedict:
             self.exchangedict[rolename] = []
         self.exchangedict[rolename].append(exchange)
         exchange.register(self, rolename)
@@ -49,7 +55,7 @@ class Actor(Indexable, Thread, FunctionInterface):
 
     def run(self):
         while self.event.wait():
-            self.workingfunction(self.exchangedict, self.lastcaller, self.rolename)
+            self.workingfunction(self.exchangedict, self.lastcaller, self.guessrole(self.lastcaller))
             self.event.clear()
 
     def summary(self):

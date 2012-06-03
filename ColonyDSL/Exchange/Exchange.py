@@ -50,7 +50,7 @@ class Exchange:
     
     def notify_all(self):
         for key in self.roledict:
-            key.notify()
+            key.notify(self)
 
     def last_element(self):
         """Returns last element"""

@@ -29,13 +29,16 @@ class TestActor(unittest.TestCase):
         from ColonyDSL.Exchange.Actor import Actor
         from ColonyDSL.Exchange.Exchange import Exchange
         self.__mem = Exchange(["input","output"])
-        self.__actor = Actor(self.__mem, "input", fun1)
+        self.__actor = Actor(fun1)
+        self.__actor.register(self.__mem, "input")
         self.__actor.start()
 
     def testCall(self):
         self.__mem.append("1234", self.__actor)
         import time
         time.sleep(1)
+        print("HI")
+        print(self.__mem.last_element()[1])
         self.assertTrue(self.__mem.last_element()[1] == "Success")
 
 
