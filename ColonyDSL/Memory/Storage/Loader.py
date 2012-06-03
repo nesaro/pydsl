@@ -111,16 +111,16 @@ def load_board(identifier, eventmanager = None, name = None, memorylist = []):
 def load_concept(identifier, memorylist = []):
     pass
 
-def load_scheme(identifier, memorylist = []):
+def load_actor(identifier, exchange, memorylist = []):
     if not memorylist:
         from ColonyDSL.Config import GLOBALCONFIG
         memorylist = GLOBALCONFIG.memorylist
     for memory in memorylist:
-        if "Scheme" not in memory.provided_iclasses():
+        if "Actor" not in memory.provided_iclasses():
             continue
         if identifier in memory:
-            return memory.load(identifier)
-    raise StorageException("Scheme", identifier)
+            return memory.load(identifier, exchange=exchange) #FIXME Pass as kwarg
+    raise StorageException("Actor", identifier)
 
 def load_information(name:str, memorylist = []):
     if not memorylist:
