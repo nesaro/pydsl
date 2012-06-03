@@ -38,9 +38,14 @@ class Exchange:
         assert(role in  self.rolelist)
         self.roledict[instance] = role
 
-    def save(self, content, source) -> None:
+    def append(self, content, source) -> None:
         self.content.append((self.roledict[source], content))
+        self.notify_all()
     
+    def notify_all(self):
+        for key in self.roledict:
+            key.notify()
+
     def last_element(self):
         """Returns last element"""
         return self.content[-1]

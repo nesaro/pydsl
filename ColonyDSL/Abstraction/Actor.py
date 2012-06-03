@@ -22,18 +22,27 @@ __email__ = "nesaro@gmail.com"
 from ColonyDSL.Abstract import Indexable
 from abc import abstractmethod, ABCMeta
 from ColonyDSL.Function.Function import FunctionInterface
-from threading import Thread
+from threading import Thread, Event
 
 class Actor(Indexable, Thread, FunctionInterface):
     """Exchange Actor Actors writes and read an exchange """
-    def __init__(self, exchange, rolaname, workingfunction):
+    def __init__(self, exchange, rolename, workingfunction):
         Thread.__init__(self)
         Indexable.__init__(self)
+        self.exchange = exchange
+        self.rolename = rolename
         exchange.register(self, rolename)
         self.workingfunction = workingfunction
         self.setDaemon(True)
+        self.event = Event()
+
+    def notify(self):
+        self.event.set()
 
     def run(self):
-        while True:
+        while self.event.wait():
             self.workingfunction(self.exchange, self.rolename)
+            self.event.clear()
 
+    def summary(self):
+        raise NotImplementedError
