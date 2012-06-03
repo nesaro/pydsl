@@ -97,16 +97,16 @@ def load_transformer(identifier, eventmanager = None, name = None, memorylist = 
             return memory.load(identifier, eventmanager, name)
     raise StorageException("Transformer", identifier)
 
-def load_board(identifier, eventmanager = None, name = None, memorylist = []):
+def load_board(identifier, eventmanager = None, memorylist = []):
     if not memorylist:
         from ColonyDSL.Config import GLOBALCONFIG
         memorylist = GLOBALCONFIG.memorylist
     for memory in memorylist:
         if "Board" not in memory.provided_iclasses():
             continue
-        if name in memory:
-            return memory.load(name)
-    raise StorageException("Grammar", name)
+        if identifier in memory:
+            return memory.load(identifier)
+    raise StorageException("Grammar", identifier)
 
 def load_concept(identifier, memorylist = []):
     pass
