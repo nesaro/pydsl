@@ -64,7 +64,7 @@ def load_board_file(filename, server = None , ecuid = None):
         raise BadFileFormat(filename)
     GTDefinitionList = parseRegularSections(config)
     from ColonyDSL.Function.Transformer.Board import Board
-    return Board(GTDefinitionList, ecuid = name, server = server) 
+    return Board(GTDefinitionList, ecuid = ecuid, server = server) 
 
 def load_python_f(modulename , server):
     """Load a file written in python"""
