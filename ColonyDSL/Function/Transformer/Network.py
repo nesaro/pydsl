@@ -21,7 +21,7 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 import threading
-LOG = logging.getLogger("Event")
+LOG = logging.getLogger(__name__)
 from abc import ABCMeta, abstractmethod
 from ..Function import FunctionInterface
 

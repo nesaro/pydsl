@@ -35,7 +35,8 @@ class Board(Transformer, HostFunctionNetwork):
     def __init__(self, gtenvdefinitionslist:list, ecuid = None, server = None, timeout = 10):
         if ecuid != None:
             from .Network import FunctionNetworkServer
-            assert(not isinstance(ecuid, FunctionNetworkServer))
+            if not isinstance(ecuid, FunctionNetworkServer):
+                raise TypeError("FunctionNetworkServer expected, got %s" % str(ecuid))
         self.__timeout = timeout
         self.__GTDefinitionlist = gtenvdefinitionslist #list to put every gt envdefinition
         self.__inputGTDict = {} #{"channelname":GTinstance,} #Inner GT that receives input
