@@ -22,6 +22,7 @@ __email__ = "nesaro@gmail.com"
 
 from ColonyDSL.Abstract import Indexable
 from abc import abstractmethod, ABCMeta
+from threading import Lock
 
 #Objeto teorico a realizar:
 ##Scheme MatchConcept: Intentar cuadrar el contenido de la representacion con un concepto conocido. 
@@ -29,18 +30,23 @@ from abc import abstractmethod, ABCMeta
 
 class Exchange: 
     def __init__(self, rolelist):
+        ###Always associated to one grammar. This exchange speaks one grammar conversation
         self.totalseq = 0
         self.content = []
         self.rolelist = rolelist
         self.roledict = {}
+        self.lock = Lock()
 
     def register(self, instance, role):
         assert(role in  self.rolelist)
         self.roledict[instance] = role
 
     def append(self, content, source) -> None:
-        self.content.append((self.roledict[source], content))
-        self.notify_all()
+        with self.lock:
+            if not isinstance(source, str):
+                source = self.roledict[source]
+            self.content.append((source, content))
+            self.notify_all()
     
     def notify_all(self):
         for key in self.roledict:
@@ -48,4 +54,5 @@ class Exchange:
 
     def last_element(self):
         """Returns last element"""
-        return self.content[-1]
+        with self.lock:
+            return self.content[-1]

@@ -26,22 +26,30 @@ from threading import Thread, Event
 
 class Actor(Indexable, Thread, FunctionInterface):
     """Exchange Actor Actors writes and read an exchange """
-    def __init__(self, exchange, rolename, workingfunction):
+    def __init__(self, workingfunction):
         Thread.__init__(self)
         Indexable.__init__(self)
         self.exchange = exchange
         self.rolename = rolename
-        exchange.register(self, rolename)
+        self.exchangedict = {}
         self.workingfunction = workingfunction
         self.setDaemon(True)
         self.event = Event()
+        self.lastcaller = None
 
-    def notify(self):
+    def register(self, exchange, rolename):
+        if not rolename in exchangedict:
+            self.exchangedict[rolename] = []
+        self.exchangedict[rolename].append(exchange)
+        exchange.register(self, rolename)
+
+    def notify(self, caller):
+        self.lastcaller = caller
         self.event.set()
 
     def run(self):
         while self.event.wait():
-            self.workingfunction(self.exchange, self.rolename)
+            self.workingfunction(self.exchangedict, self.lastcaller, self.rolename)
             self.event.clear()
 
     def summary(self):
