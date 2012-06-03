@@ -36,24 +36,79 @@ def _loadTypeInstances(originaldic):
     return result
 
 class HostChannel(FunctionInterface):
-    """Channel Host base class"""
-    def __init__(self):
+    """A class that contains input and output string-named channels. Each channel must contain a Type object
+    Any class which inherites from this must also inherit from HostChannel
+    """
+    def __init__(self, inputtypedict:dict, outputtypedict:dict):
+        FunctionInterface.__init__(self)
+        for key in inputtypedict:
+            if not isinstance(key, str):
+                raise TypeError
+        for key in outputtypedict:
+            if not isinstance(key, str):
+                raise TypeError
+        self.inputdefinition = inputtypedict
+        self.outputdefinition = outputtypedict
+        self.__inputchanneldic = _loadTypeInstances(inputtypedict)
+        self.__outputchanneldic = _loadTypeInstances(outputtypedict)
+        self._connections = {}
+
+    def connect(self, intchannel, extGT, extChannel):
+        self._connections[intchannel] = DirectedChannel(self, extGT, extChannel)
+
+    def send(self, outputchannel, msgid, content):
+        """ Sends a data block"""
+        self._connections[outputchannel].send(msgid, content)
+
+    @property
+    def inputchanneldic(self):
+        return self.__inputchanneldic
+
+    @property
+    def outputchanneldic(self):
+        return self.__outputchanneldic
+
+class Channel(metaclass = ABCMeta):
+    """ Channel base class"""
+    def __init__(self, host1:HostChannel, channel1Name, host2:HostChannel, channel2Name):
+        assert(channel1Name != channel2Name)
+        self._host1 = host1
+        self.channel1Name = channel1Name
+        self._host2 = host2
+        self.channel2Name = channel2Name
+
+    def _sendTo(self, destination, msgid, content):
+        if destination == self.channel1Name:
+            self._host1.receive(self.channel1Name, msgid, content)
+        elif destination == self.channel2Name:
+            self._host2.receive(self.channel2Name, msgid, content)
+        else:
+            raise KeyError
+
+    @abstractmethod
+    def send(self):
+        pass
+
+class DirectedChannel(Channel):
+    """ One way channel"""
+    def __init__(self, GT, extGT, extChannelName):
+        Channel.__init__(self, GT, None, extGT, extChannelName)
+
+    def send(self, msgid, content):
+        self._sendTo(self.channel2Name, msgid, content)
+
+    def __str__(self):
+        return "<DC " + str(self._host1.identifier) + " -> " + str(self._host2.identifier) + ":" + str(self.channel2Name) + ">"
+
+
+class NetworkedHostChannel(HostChannel):
+    """Network + Channel Host base class"""
+    def __init__(self, inputtypedict:dict, outputtypedict:dict):
+        HostChannel.__init__(self, inputtypedict, outputtypedict)
         self._seq_cache = [] #stores words received by channels but unprocessed
         import threading
         self._worklock = threading.Condition()
         self._appendlock = threading.Lock()
-
-    @abstractmethod
-    def connect(self, intchannel, ext, extChannel):
-        pass
-
-    @abstractproperty
-    def inputchanneldic(self):
-        pass
-
-    @abstractproperty
-    def outputchanneldic(self):
-        pass
 
     #This functionality belongs to the Channel+Network interface, not the channel alone
     def receive(self, channel, msgid, content):
@@ -166,78 +221,4 @@ class HostChannel(FunctionInterface):
                     sequencestoprocess.append(sequence)
         LOG.debug("__checkSequences: valid sequences:" + str(sequencestoprocess) + " ; dropped sequences: " + str(sequencestodrop))
         return sequencestoprocess, sequencestodrop
-
-
-class Channel(metaclass = ABCMeta):
-    """ Channel base class"""
-    def __init__(self, host1:HostChannel, channel1Name, host2:HostChannel, channel2Name):
-        assert(channel1Name != channel2Name)
-        self._host1 = host1
-        self.channel1Name = channel1Name
-        self._host2 = host2
-        self.channel2Name = channel2Name
-
-    def _sendTo(self, destination, msgid, content):
-        if destination == self.channel1Name:
-            self._host1.receive(self.channel1Name, msgid, content)
-        elif destination == self.channel2Name:
-            self._host2.receive(self.channel2Name, msgid, content)
-        else:
-            raise KeyError
-
-    @abstractmethod
-    def send(self):
-        pass
-
-class DirectedChannel(Channel):
-    """ One way channel"""
-    def __init__(self, GT, extGT, extChannelName):
-        Channel.__init__(self, GT, None, extGT, extChannelName)
-
-    def send(self, msgid, content):
-        self._sendTo(self.channel2Name, msgid, content)
-
-    def __str__(self):
-        return "<DC " + str(self._host1.identifier) + " -> " + str(self._host2.identifier) + ":" + str(self.channel2Name) + ">"
-
-
-MODELIST = ["fixed", "first", "free" , "copy" ] 
-
-#first: Use the first input grammar 
-#fixed: Always use the same grammar 
-#free: Any grammar at any time
-#copy: channel2 uses the same grammar that channel1
-
-class TypeChannelHost(HostChannel):
-    """A class that contains input and output string-named channels. Each channel must contain a Grammar object
-    Any class which inherites from this must also inherit from HostChannel
-    """
-    def __init__(self, inputtypedict:dict, outputtypedict:dict):
-        HostChannel.__init__(self)
-        for key in inputtypedict:
-            if not isinstance(key, str):
-                raise TypeError
-        for key in outputtypedict:
-            if not isinstance(key, str):
-                raise TypeError
-        self.inputdefinition = inputtypedict
-        self.outputdefinition = outputtypedict
-        self.__inputchanneldic = _loadTypeInstances(inputtypedict)
-        self.__outputchanneldic = _loadTypeInstances(outputtypedict)
-        self._connections = {}
-
-    def connect(self, intchannel, extGT, extChannel):
-        self._connections[intchannel] = DirectedChannel(self, extGT, extChannel)
-
-    def send(self, outputchannel, msgid, content):
-        """ Sends a data block"""
-        self._connections[outputchannel].send(msgid, content)
-
-    @property
-    def inputchanneldic(self):
-        return self.__inputchanneldic
-
-    @property
-    def outputchanneldic(self):
-        return self.__outputchanneldic
 

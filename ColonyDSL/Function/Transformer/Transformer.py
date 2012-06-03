@@ -24,19 +24,15 @@ __email__ = "nesaro@gmail.com"
 import logging
 from ColonyDSL.Function.Function import Function 
 from .Network import FunctionNetworkClient
-from ..Channel import TypeChannelHost 
-LOG = logging.getLogger("Transformer")
+from ..Channel import NetworkedHostChannel 
+LOG = logging.getLogger(__name__)
 from abc import ABCMeta
 
-class Transformer(TypeChannelHost, FunctionNetworkClient, Function, metaclass = ABCMeta):
+class Transformer(NetworkedHostChannel, FunctionNetworkClient, Function, metaclass = ABCMeta):
     """Channel and Network enabled Function"""
     def __init__(self, inputgrammars, outputgrammars, ecuid, server = None):
-        TypeChannelHost.__init__(self, inputgrammars, outputgrammars)
+        NetworkedHostChannel.__init__(self, inputgrammars, outputgrammars)
         Function.__init__(self)
         FunctionNetworkClient.__init__(self, ecuid, server)
 
-    def receive(self, channel, msgid, content):
-        TypeChannelHost.receive(self, channel, msgid, content)
-
-    
 

@@ -7,17 +7,17 @@
 
 import logging
 from .Function import Function
-from .Channel import TypeChannelHost
+from .Channel import HostChannel
 LOG = logging.getLogger("Function.ExternalProgram")
 
-class ExternalProgramFunction(Function, TypeChannelHost):
+class ExternalProgramFunction(Function, HostChannel):
     """returns stdout from program call"""
     def __init__(self, inputdic, outputdic, programcall:list):
         #programlist ["program","-s","#{inputchannelname1}","-e","#{inputchannelname2}"]
         if len(outputdic) != 1:
             raise ValueError
         Function.__init__(self)
-        TypeChannelHost.__init__(self, inputdic, outputdic)
+        HostChannel.__init__(self, inputdic, outputdic)
         self.__programlist = programcall
 
     def __call__(self, wdic):
