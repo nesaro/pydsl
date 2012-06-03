@@ -21,7 +21,7 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 import threading
-LOG = logging.getLogger("Event")
+LOG = logging.getLogger(__name__)
 from abc import ABCMeta, abstractmethod
 from ..Function import FunctionInterface
 
@@ -50,7 +50,7 @@ class FunctionNetworkClient(FunctionInterface):
         return self._ecuid
 
     def __str__(self):
-        return "<FunctionNetworkClient name: " + self.ecuid.name + " parent: " + str(self._parent) + ">"
+        return "<FunctionNetworkClient ecuid: " + self.ecuid.name + " parent: " + str(self._parent) + ">"
     
     def emitToServer(self, msgid:int, content):
         assert(self._parent)
@@ -109,20 +109,20 @@ class FunctionNetworkServer(threading.Thread):
             return self.parent.ecuid
         return self.__ecuid
 
-    def registerInstance(self, name, instance:FunctionNetworkClient):
-        if not name:
+    def registerInstance(self, ecuid, instance:FunctionNetworkClient):
+        if not ecuid:
             import random
-            name = str(random.randint(1, 99999999999))
-            LOG.warning("registerInstance: asigned random name")
-        LOG.debug("registerInstance: registering " + str(name))
-        if name in self.__instancedic:
-            LOG.error("RegisterInstance duplicated instance: "+ str(name))
+            ecuid = str(random.randint(1, 99999999999))
+            LOG.warning("registerInstance: asigned random ecuid")
+        LOG.debug("registerInstance: registering " + str(ecuid))
+        if ecuid in self.__instancedic:
+            LOG.error("RegisterInstance duplicated instance: "+ str(ecuid))
             raise NameError #Already exists
-        LOG.debug("registerInstance: registered " + str(name))
-        self.__instancedic[name] = instance
+        LOG.debug("registerInstance: registered " + str(ecuid))
+        self.__instancedic[ecuid] = instance
 
-    def unregisterInstance(self, name:str):
-        del self.__instancedic[name]
+    def unregisterInstance(self, ecuid:str):
+        del self.__instancedic[ecuid]
 
     def handleEvent(self, event):
         """Event sent from client"""
@@ -151,7 +151,8 @@ class HostFunctionNetwork(metaclass = ABCMeta):
         """Inits aux GTs. if a requested aux GT isn't connected, This function will create it"""
         from ColonyDSL.Memory.Storage.Loader import load_transformer
         for title, gttype in namedic.items():
-            self._hostT[title] = load_transformer(gttype, title,self._server) 
+            print(self._server)
+            self._hostT[title] = load_transformer(gttype, eventmanager = self._server, ecuid = title) 
             LOG.debug("loaded " + str(title) + "auxT")
 
     @abstractmethod
@@ -161,6 +162,6 @@ class HostFunctionNetwork(metaclass = ABCMeta):
         pass
 
     @abstractmethod
-    def registerInstance(self, name, clientinstance):
+    def registerInstance(self, ecuid, clientinstance):
         pass
 

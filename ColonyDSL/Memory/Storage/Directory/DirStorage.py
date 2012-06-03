@@ -44,7 +44,7 @@ def checkattr(moduleobject, attrlist:list) -> bool:
             return False
     return True
 
-def load_python_file(moduleobject, identifier = None, ecuid = None, server = None):
+def load_python_file(moduleobject, **kwargs):
     """ Try to create an indexable instance from a module"""
     if isinstance(moduleobject, str):
         moduleobject, identifier = load_module(moduleobject)
@@ -52,23 +52,17 @@ def load_python_file(moduleobject, identifier = None, ecuid = None, server = Non
         from ColonyDSL.Exceptions import StorageException
         raise StorageException("Element", identifier)
     iclass = getattr(moduleobject, "iclass")
-    resultdic = {}
+    resultdic = kwargs
     mylist = list(filter(lambda x:x[:1] != "_" and x != "iclass", (dir(moduleobject))))
     for x in mylist:
         resultdic[x] = getattr(moduleobject, x)
     if iclass == "PythonTransformer":
-        resultdic["ecuid"] = ecuid
-        resultdic["server"] = server
         from ColonyDSL.Function.Transformer.Python import PythonTransformer
         return PythonTransformer(**resultdic)
     elif iclass == "HostPythonTransformer":
-        resultdic["ecuid"] = ecuid
-        resultdic["server"] = server
         from ColonyDSL.Function.Transformer.Python import HostPythonTransformer
         return HostPythonTransformer(**resultdic)
     elif iclass == "ExternalProgramTransformer":
-        resultdic["ecuid"] = ecuid
-        resultdic["server"] = server
         from ColonyDSL.Function.Transformer.ExternalProgram import ExternalProgramTransformer
         return ExternalProgramTransformer(**resultdic)
     elif iclass == "PythonProcedure":
@@ -79,7 +73,6 @@ def load_python_file(moduleobject, identifier = None, ecuid = None, server = Non
         from ColonyDSL.Function.File import ExternalProgramFileFunction
         return ExternalProgramFileFunction(**resultdic)
     elif iclass == "SimpleGrammarSetTransformer":
-        resultdic["server"] = server
         from ColonyDSL.Function.GrammarSetTransformer import SimpleGrammarSetTransformer
         return SimpleGrammarSetTransformer(**resultdic)
     elif iclass == "PythonGrammar":
@@ -182,14 +175,14 @@ class DirStorage(Storage, metaclass = ABCMeta):
             return moduleobject
         raise ImportError
 
-    def load(self, name):
+    def load(self, name, **kwargs):
         resultlist = self._searcher.search(name)
         if(len(resultlist) > 1):
             LOG.error("Found two or more matches, FIXME: processing the first, should raise exception")
         if len(resultlist) == 0:
             from ColonyDSL.Exceptions import StorageException
             raise StorageException(self.__class__.__name__, name)
-        return load_python_file(list(resultlist)[0]["filepath"])
+        return load_python_file(list(resultlist)[0]["filepath"], **kwargs)
 
     def __contains__(self, key):
         return key in self.all_names()

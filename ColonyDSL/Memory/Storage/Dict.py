@@ -74,7 +74,7 @@ class RegexpDictStorage(DictStorage):
             result.append(InmutableDict({"identifier":key, "regexp":self._content[key]["regexp"], "iclass":"RegularExpressionGrammar" , "ancestors":FileType.ancestors()}))
         return result
 
-    def load(self, index):
+    def load(self, index, **kwargs):
         from ColonyDSL.Type.Grammar.Regular import RegularExpressionGrammar
         flags = ""
         if "flags" in self._content[index]:
@@ -94,7 +94,7 @@ class FileTypeDictStorage(DictStorage):
             result.append(InmutableDict({"identifier":key, "regexp":self._content[key], "iclass":"FileType" , "ancestors":FileType.ancestors()}))
         return result
 
-    def load(self, index):
+    def load(self, index, **kwargs):
         from ColonyDSL.Type.FileType import FileType
         return FileType(self._content[index])
 

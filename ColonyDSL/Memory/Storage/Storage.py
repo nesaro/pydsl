@@ -35,7 +35,7 @@ from ColonyDSL.Memory.Memory import Memory
 class Storage(Memory, metaclass = ABCMeta):
     """External Memory. A Memory type which stores on physical files"""
     @abstractmethod
-    def load(self, name):
+    def load(self, name, **kwargs):
         pass
 
     #Salvo que se implemente, no soporta guardado de elemento

@@ -55,7 +55,7 @@ def parseRegularSections(configparser):
         definitionlist.append(sectionToBoardDefinition(configparser, section))
     return definitionlist
 
-def load_board_file(filename, server = None , name = None):
+def load_board_file(filename, server = None , ecuid = None):
     import configparser
     config = configparser.ConfigParser()
     config.read(filename)
@@ -66,13 +66,13 @@ def load_board_file(filename, server = None , name = None):
     from ColonyDSL.Function.Transformer.Board import Board
     return Board(GTDefinitionList, ecuid = name, server = server) 
 
-def load_python_f(modulename , name, server):
+def load_python_f(modulename , server):
     """Load a file written in python"""
     identifier = getFileTuple(modulename)[2]
     import imp
     moduleobject = imp.load_source(identifier, modulename)
     from .DirStorage import load_python_file
-    return load_python_file(moduleobject, name, server)
+    return load_python_file(moduleobject, server = server)
 
 class TransformerDirStorage(DirStorage):
     """generate instances of Grammar Transformers"""
@@ -82,7 +82,7 @@ class TransformerDirStorage(DirStorage):
     def provided_iclasses(self) -> list:
         return ["PythonTransformer", "HostPythonTransformer"]
 
-    def load(self, identifier, server = None, name = None):
+    def load(self, identifier, server = None):
         """guess class, guess filename from id, and then call loadTInstance"""
         import imp
         for value in self._searcher.search(identifier): 
@@ -91,7 +91,7 @@ class TransformerDirStorage(DirStorage):
             except (ImportError, IOError):
                 LOG.exception("Exception while loading: " + identifier)
             else:
-                return load_python_f(value["filepath"], name, server)
+                return load_python_f(value["filepath"], server)
 
         from ColonyDSL.Exceptions import StorageException
         raise StorageException("TR", identifier)
@@ -133,13 +133,13 @@ class BoardDirStorage(DirStorage):
         DirStorage.__init__(self, path, [".board"])
 
 
-    def load(self, identifier, server = None, name = None):
+    def load(self, identifier, server = None, ecuid = None):
         searchresult = self._searcher.search(identifier)
         if not searchresult:
             raise Exception
         for result in searchresult:
             #TODO assert(len(self._search(identifier) == 2)) 
-            return load_board_file(result["filepath"], server, name)
+            return load_board_file(result["filepath"], server = server, ecuid = ecuid)
 
         from ColonyDSL.Exceptions import StorageException
         raise StorageException("B", identifier)
@@ -164,7 +164,7 @@ class ProcedureDirStorage(DirStorage):
         (_, _, fileBaseName, _) = getFileTuple(filename)
         return {"iclass":"Procedure","identifier":fileBaseName, "filepath":filename}
 
-    def load(self, identifier, server = None, name = None):
+    def load(self, identifier, server = None):
         """guess class, guess filename from id, and then call loadTInstance"""
         import imp
         try:
@@ -172,7 +172,7 @@ class ProcedureDirStorage(DirStorage):
         except (ImportError, IOError):
             pass
         else:
-            return load_python_f(identifier, name, server)
+            return load_python_f(identifier, server)
 
         from ColonyDSL.Exceptions import StorageException
         raise StorageException("P", identifier)

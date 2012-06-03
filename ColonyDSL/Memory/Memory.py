@@ -16,19 +16,19 @@
 #along with ColonyDSL.  If not, see <http://www.gnu.org/licenses/>.
 
 
-__author__ = "Néstor Arocha Rodríguez"
-__copyright__ = "Copyright 2008-2012, Néstor Arocha Rodríguez"
+__author__ = "Nestor Arocha Rodriguez"
+__copyright__ = "Copyright 2008-2012, Nestor Arocha Rodriguez"
 __email__ = "nesaro@gmail.com"
 
 import logging
-LOG = logging.getLogger("Memory")
+LOG = logging.getLogger(__name__)
 from abc import ABCMeta, abstractmethod
 from ColonyDSL.Abstract import Indexable
 
 class Memory(metaclass = ABCMeta):
     """Memory Abstraction"""
     @abstractmethod
-    def load(self, index):
+    def load(self, index, **kwargs):
         pass
     
     @abstractmethod
