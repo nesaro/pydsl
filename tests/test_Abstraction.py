@@ -26,8 +26,8 @@ def fun1(exchangedict, exchange, role):
 
 class TestActor(unittest.TestCase):
     def setUp(self):
-        from ColonyDSL.Abstraction.Actor import Actor
-        from ColonyDSL.Abstraction.Exchange import Exchange
+        from ColonyDSL.Exchange.Actor import Actor
+        from ColonyDSL.Exchange.Exchange import Exchange
         self.__mem = Exchange(["input","output"])
         self.__actor = Actor(self.__mem, "input", fun1)
         self.__actor.start()

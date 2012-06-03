@@ -90,9 +90,9 @@ def load_python_file(moduleobject, **kwargs):
     elif iclass == "FileType":
         from ColonyDSL.Type.FileType import FileType
         return FileType(**resultdic)
-    elif iclass == "Scheme":
-        from ColonyDSL.Abstraction.Scheme import Scheme
-        return Scheme(**resultdic)
+    elif iclass == "Actor":
+        from ColonyDSL.Exchange.Actor import Actor
+        return Actor(**resultdic)
     elif iclass == "Concept":
         from ColonyDSL.Concept.Concept import Concept
         return Concept(**resultdic)
