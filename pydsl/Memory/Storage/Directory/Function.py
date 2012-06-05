@@ -83,7 +83,7 @@ class TransformerDirStorage(DirStorage):
     def provided_iclasses(self) -> list:
         return ["PythonTransformer", "HostPythonTransformer"]
 
-    def load(self, identifier, server = None):
+    def load(self, identifier, server = None, ecuid=None):
         """guess class, guess filename from id, and then call loadTInstance"""
         import imp
         for value in self._searcher.search(identifier): 

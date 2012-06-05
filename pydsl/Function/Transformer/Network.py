@@ -39,7 +39,7 @@ class FunctionNetworkClient(FunctionInterface):
                 self._parent.registerInstance(self._ecuid, self)
             return
         elif idname == None:
-            if eventserver == None:
+            if True or eventserver == None: # FIXME
                 self._ecuid = FunctionNetworkClientId("Main")
                 return
         raise TypeError("idname for FunctionNetworkClient: " + str(idname))
