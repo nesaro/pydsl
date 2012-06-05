@@ -1,19 +1,19 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
-#This file is part of ColonyDSL.
+#This file is part of pydsl.
 #
-#ColonyDSL is free software: you can redistribute it and/or modify
+#pydsl is free software: you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
 #the Free Software Foundation, either version 3 of the License, or
 #(at your option) any later version.
 #
-#ColonyDSL is distributed in the hope that it will be useful,
+#pydsl is distributed in the hope that it will be useful,
 #but WITHOUT ANY WARRANTY; without even the implied warranty of
 #MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #GNU General Public License for more details.
 #
 #You should have received a copy of the GNU General Public License
-#along with ColonyDSL.  If not, see <http://www.gnu.org/licenses/>.
+#along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 """
 guess to which type can belong an input. It works like the unix file command
@@ -45,9 +45,9 @@ if __name__ == "__main__":
         DEBUGLEVEL = ARGS.debuglevel
     logging.basicConfig(level = DEBUGLEVEL)    
     inputstr = ""
-    from ColonyDSL.Interaction.Guess import guess, guess_filename
+    from pydsl.Interaction.Guess import guess, guess_filename
     if (ARGS.inputfile):
-        from ColonyDSL.Interaction.Protocol import protocol_split
+        from pydsl.Interaction.Protocol import protocol_split
         pdict = protocol_split(ARGS.inputfile)
         if pdict["protocol"] == "file":
             try:

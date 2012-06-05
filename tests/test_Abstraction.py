@@ -1,19 +1,19 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-#This file is part of ColonyDSL.
+#This file is part of pydsl.
 #
-#ColonyDSL is free software: you can redistribute it and/or modify
+#pydsl is free software: you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
 #the Free Software Foundation, either version 3 of the License, or
 #(at your option) any later version.
 #
-#ColonyDSL is distributed in the hope that it will be useful,
+#pydsl is distributed in the hope that it will be useful,
 #but WITHOUT ANY WARRANTY; without even the implied warranty of
 #MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #GNU General Public License for more details.
 #
 #You should have received a copy of the GNU General Public License
-#along with ColonyDSL.  If not, see <http://www.gnu.org/licenses/>.
+#along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 __author__ = "Néstor Arocha Rodríguez"
 __copyright__ = "Copyright 2008-2012, Néstor Arocha Rodríguez"
@@ -26,8 +26,8 @@ def fun1(exchangedict, exchange, role):
 
 class TestActor(unittest.TestCase):
     def setUp(self):
-        from ColonyDSL.Exchange.Actor import Actor
-        from ColonyDSL.Exchange.Exchange import Exchange
+        from pydsl.Exchange.Actor import Actor
+        from pydsl.Exchange.Exchange import Exchange
         self.__mem = Exchange(["input","output"])
         self.__actor = Actor(fun1)
         self.__actor.register(self.__mem, "input")

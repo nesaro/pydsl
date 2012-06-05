@@ -9,21 +9,21 @@ class TestLoader(unittest.TestCase):
     #TODO
     """Test loaders"""
     def setUp(self):
-        from ColonyDSL.Memory.Storage.Directory.Type import GrammarDirStorage
-        self.glibrary = GrammarDirStorage("/usr/share/ColonyDSL/lib_contrib/grammar")
-        from ColonyDSL.Config import GLOBALCONFIG
+        from pydsl.Memory.Storage.Directory.Type import GrammarDirStorage
+        self.glibrary = GrammarDirStorage("/usr/share/pydsl/lib_contrib/grammar")
+        from pydsl.Config import GLOBALCONFIG
         GLOBALCONFIG.strictgrammar = False 
     
     def test_grammars(self):
         grammarlist = self.glibrary.all_names()
-        from ColonyDSL.Memory.Storage.Loader import load_grammar
+        from pydsl.Memory.Storage.Loader import load_grammar
         for grammar in grammarlist:
             load_grammar(grammar)
 
 class TestConceptListStorage(unittest.TestCase):
     """Requires test_concept_library"""
     def setUp(self):
-        from ColonyDSL.Memory.Storage.List import ConceptListStorage
+        from pydsl.Memory.Storage.List import ConceptListStorage
         self._cll = ConceptListStorage("tests/conceptlibrary.list")
 
     def test_load(self):
@@ -36,7 +36,7 @@ class TestConceptListStorage(unittest.TestCase):
 
 class TestRelListStorage(unittest.TestCase):
     def setUp(self):
-        from ColonyDSL.Memory.Storage.List import RelListStorage
+        from pydsl.Memory.Storage.List import RelListStorage
         self._cll = RelListStorage("tests/rellibrary.list")
 
     def test_load(self):
@@ -49,7 +49,7 @@ class TestRelListStorage(unittest.TestCase):
 
 class TestRelationListStorage(unittest.TestCase):
     def setUp(self):
-        from ColonyDSL.Memory.Storage.List import RelationListStorage
+        from pydsl.Memory.Storage.List import RelationListStorage
         self._cll = RelationListStorage("tests/relationlibrary.list")
 
     def test_load(self):

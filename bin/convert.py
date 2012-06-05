@@ -1,19 +1,19 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-#This file is part of ColonyDSL.
+#This file is part of pydsl.
 #
-#ColonyDSL is free software: you can redistribute it and/or modify
+#pydsl is free software: you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
 #the Free Software Foundation, either version 3 of the License, or
 #(at your option) any later version.
 #
-#ColonyDSL is distributed in the hope that it will be useful,
+#pydsl is distributed in the hope that it will be useful,
 #but WITHOUT ANY WARRANTY; without even the implied warranty of
 #MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #GNU General Public License for more details.
 #
 #You should have received a copy of the GNU General Public License
-#along with ColonyDSL.  If not, see <http://www.gnu.org/licenses/>.
+#along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 """
 Converts a filetype to another filetype
@@ -26,11 +26,11 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger("convert")
-from ColonyDSL.Exceptions import BadFileFormat, StorageException
+from pydsl.Exceptions import BadFileFormat, StorageException
 
 if __name__ == "__main__":
     import argparse
-    from ColonyDSL.Config import VERSION
+    from pydsl.Config import VERSION
     TUSAGE = "usage: %(prog)s [options] [filename]"
     PARSER = argparse.ArgumentParser(usage = TUSAGE)
     PARSER.add_argument("-d", "--debuglevel", action="store", type=int, dest="debuglevel", help="Sets debug level")
@@ -45,11 +45,11 @@ if __name__ == "__main__":
     if ARGS.debuglevel:
         DEBUGLEVEL = ARGS.debuglevel
     logging.basicConfig(level = DEBUGLEVEL)
-    #from ColonyDSL.Interaction.Interpreter import Interpreter
+    #from pydsl.Interaction.Interpreter import Interpreter
     #MANAGER = Interpreter(ARGS)
     destformat = ARGS.destformat
     if not destformat:
-        from ColonyDSL.Memory.Storage.Directory.DirStorage import getFileTuple
+        from pydsl.Memory.Storage.Directory.DirStorage import getFileTuple
         _,_,_,destformat = getFileTuple(ARGS.outputfile)
         destformat = destformat[1:] #Quitamos el punto
 
@@ -62,9 +62,9 @@ if __name__ == "__main__":
         inputfile = "file://" + ARGS.inputfile
         inputformat = ARGS.inputformat 
         if not inputformat:
-            from ColonyDSL.Memory.Storage.Dict import FileTypeDictStorage
+            from pydsl.Memory.Storage.Dict import FileTypeDictStorage
             ftdl = FileTypeDictStorage()
-            from ColonyDSL.Interaction.Guess import guess
+            from pydsl.Interaction.Guess import guess
             inputformat = guess(inputfile, [ftdl])
             if len(inputformat) == 0:
                 print("Input format not found")
@@ -75,9 +75,9 @@ if __name__ == "__main__":
             inputformat = inputformat.pop()
 
         LOG.warning("Inputformat:" + inputformat)
-        from ColonyDSL.Memory.Storage.Directory.Function import TransformerDirStorage 
-        from ColonyDSL.Search.Searcher import MemorySearcher
-        from ColonyDSL.Search.Indexer import Indexer
+        from pydsl.Memory.Storage.Directory.Function import TransformerDirStorage 
+        from pydsl.Search.Searcher import MemorySearcher
+        from pydsl.Search.Indexer import Indexer
         searcher = MemorySearcher([Indexer(TransformerDirStorage())])
         print(searcher.search("output="+destformat+"&&input="+inputformat))
         searchresult = searcher.search("output="+destformat+"&&input="+inputformat)
@@ -85,7 +85,7 @@ if __name__ == "__main__":
             print("No conversion available from "+ inputformat + " to " + destformat)
             sys.exit(-1)
         firstresult = searchresult.pop()
-        from ColonyDSL.Memory.Storage.Loader import load_transformer
+        from pydsl.Memory.Storage.Loader import load_transformer
         finstance = load_transformer(firstresult["identifier"])
         result = finstance({"inputfile":inputfile,"outputfile":ARGS.outputfile})
         sys.exit(0)

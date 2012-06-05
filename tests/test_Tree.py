@@ -1,19 +1,19 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-#This file is part of ColonyDSL.
+#This file is part of pydsl.
 #
-#ColonyDSL is free software: you can redistribute it and/or modify
+#pydsl is free software: you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
 #the Free Software Foundation, either version 3 of the License, or
 #(at your option) any later version.
 #
-#ColonyDSL is distributed in the hope that it will be useful,
+#pydsl is distributed in the hope that it will be useful,
 #but WITHOUT ANY WARRANTY; without even the implied warranty of
 #MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #GNU General Public License for more details.
 #
 #You should have received a copy of the GNU General Public License
-#along with ColonyDSL.  If not, see <http://www.gnu.org/licenses/>.
+#along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 __author__ = "Néstor Arocha Rodríguez"
 __copyright__ = "Copyright 2008-2012, Néstor Arocha Rodríguez"
@@ -23,7 +23,7 @@ import unittest
 
 class TestTrees(unittest.TestCase):
     def setUp(self):
-        from ColonyDSL.Type.Grammar.Tree import AST
+        from pydsl.Grammar.Tree import AST
         a = AST("abcdef",0,6, None)
         self.firstleaf1 = AST("a",0,1, None)
         a.append_child(self.firstleaf1)
@@ -53,6 +53,6 @@ class TestTrees(unittest.TestCase):
         self.assertTrue(self.tree1.first_leaf() == self.firstleaf1)
 
     def testTreeDistance(self):
-        from ColonyDSL.Type.Grammar.Tree import zss_distance
+        from pydsl.Grammar.Tree import zss_distance
         self.assertTrue(zss_distance(self.tree1,self.tree2) == 1)
 

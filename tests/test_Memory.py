@@ -1,19 +1,19 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-#This file is part of ColonyDSL.
+#This file is part of pydsl.
 #
-#ColonyDSL is free software: you can redistribute it and/or modify
+#pydsl is free software: you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
 #the Free Software Foundation, either version 3 of the License, or
 #(at your option) any later version.
 #
-#ColonyDSL is distributed in the hope that it will be useful,
+#pydsl is distributed in the hope that it will be useful,
 #but WITHOUT ANY WARRANTY; without even the implied warranty of
 #MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #GNU General Public License for more details.
 #
 #You should have received a copy of the GNU General Public License
-#along with ColonyDSL.  If not, see <http://www.gnu.org/licenses/>.
+#along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 __author__ = "Néstor Arocha Rodríguez"
 __copyright__ = "Copyright 2008-2012, Néstor Arocha Rodríguez"
@@ -21,7 +21,7 @@ __email__ = "nesaro@gmail.com"
 
 import unittest
 
-from ColonyDSL.Abstract import Indexable
+from pydsl.Abstract import Indexable
 
 class Texto(Indexable):
     def summary(self):
@@ -31,7 +31,7 @@ class Texto(Indexable):
 class TestMemory(unittest.TestCase):
     """Tests Transformers"""
     def setUp(self):
-        from ColonyDSL.Memory.Memory import LocalMemory
+        from pydsl.Memory.Memory import LocalMemory
         self.mem = LocalMemory()
         
     def testSaveLoadAndDelete(self):
@@ -50,16 +50,16 @@ class TestMemory(unittest.TestCase):
 class TestPersistentMemory(unittest.TestCase):
     """Tests Transformers"""
     def setUp(self):
-        from ColonyDSL.Memory.Storage.Storage import PersistentStorage
-        from ColonyDSL.Type.Type import Type
-        self.mem = PersistentStorage("tmp", Type)
+        from pydsl.Memory.Storage.Storage import PersistentStorage
+        from pydsl.Grammar.Checker import Checker
+        self.mem = PersistentStorage("tmp", Checker)
         
     def testSaveLoadAndDelete(self):
-        from ColonyDSL.Type.Type import DummyType
-        dg = DummyType()
-        if "DummyType" in self.mem:
-            del self.mem["DummyType"]
-        self.mem.save(dg, "DummyType")
-        newdg = self.mem["DummyType"]
+        from pydsl.Grammar.Checker import DummyChecker
+        dg = DummyChecker()
+        if "DummyChecker" in self.mem:
+            del self.mem["DummyChecker"]
+        self.mem.save(dg, "DummyChecker")
+        newdg = self.mem["DummyChecker"]
         self.assertTrue(newdg == dg)
-        del self.mem["DummyType"]
+        del self.mem["DummyChecker"]

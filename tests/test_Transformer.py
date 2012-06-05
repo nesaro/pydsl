@@ -1,19 +1,19 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-#This file is part of ColonyDSL.
+#This file is part of pydsl.
 #
-#ColonyDSL is free software: you can redistribute it and/or modify
+#pydsl is free software: you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
 #the Free Software Foundation, either version 3 of the License, or
 #(at your option) any later version.
 #
-#ColonyDSL is distributed in the hope that it will be useful,
+#pydsl is distributed in the hope that it will be useful,
 #but WITHOUT ANY WARRANTY; without even the implied warranty of
 #MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #GNU General Public License for more details.
 #
 #You should have received a copy of the GNU General Public License
-#along with ColonyDSL.  If not, see <http://www.gnu.org/licenses/>.
+#along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 
 __author__ = "Néstor Arocha Rodríguez"
@@ -42,8 +42,8 @@ def opefinal(vardict):
 class TestTransformer(unittest.TestCase):
     """Tests Transformers"""
     def setUp(self):
-        from ColonyDSL.Function.Transformer.Python import PythonTransformer
-        from ColonyDSL.Function.ExternalProgram import ExternalProgramFunction #FIXME: Not a transformer
+        from pydsl.Function.Transformer.Python import PythonTransformer
+        from pydsl.Function.ExternalProgram import ExternalProgramFunction #FIXME: Not a transformer
         self.__gt1 = PythonTransformer({"input":"integerop"},{"output":"cstring"},integerextractor)
         self.__text = ExternalProgramFunction({"input":"cstring"},{"output":"cstring"}, ["echo","#{input}"])
 
@@ -58,7 +58,7 @@ class TestTransformer(unittest.TestCase):
 class TestHostTransformer(unittest.TestCase):
     """Test recursive transformer"""
     def setUp(self):
-        from ColonyDSL.Function.Transformer.Python import HostPythonTransformer
+        from pydsl.Function.Transformer.Python import HostPythonTransformer
         self.__gt1 = HostPythonTransformer({"input":"cstring"},{"output":"cstring"},{"myadder":"simple-adder"},recursivecall)
 
     def testError(self):
@@ -67,7 +67,7 @@ class TestHostTransformer(unittest.TestCase):
 
 class TestSyntaxDirectedTransformer(unittest.TestCase):
     def setUp(self):
-        from ColonyDSL.Function.Transformer.SyntaxDirected import SyntaxDirectedTransformer
+        from pydsl.Function.Transformer.SyntaxDirected import SyntaxDirectedTransformer
         self.__gt1 = SyntaxDirectedTransformer({"input":"LogicalExpression"},{"output":"cstring"}, {"OperatorExpression1":ope1, "Expression0":ope1 , "S0":ope1, "Expression2":ope1, "RestExpression0":ope1, "finally":opefinal})
 
     def testError(self):

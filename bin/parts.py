@@ -10,7 +10,7 @@ __copyright__ = "Copyright 2008-2012, Nestor Arocha Rodriguez"
 __email__ = "nesaro@gmail.com"
 
 import logging
-from ColonyDSL.Interaction.Program import UnixProgram
+from pydsl.Interaction.Program import UnixProgram
 
 
 def print_errors(postnode):
@@ -24,9 +24,9 @@ def print_errors(postnode):
 class Parts(UnixProgram):
     """Shows the differents components of data according to a Grammar"""
     def __init__(self, optionsdict):
-        from ColonyDSL.Memory.Storage.Loader import load_grammar
-        #import ColonyDSL.GlobalConfig
-        #ColonyDSL.GlobalConfig.GLOBALCONFIG.strictgrammar = True
+        from pydsl.Memory.Storage.Loader import load_grammar
+        #import pydsl.GlobalConfig
+        #pydsl.GlobalConfig.GLOBALCONFIG.strictgrammar = True
         UnixProgram.__init__(self, optionsdict)
         self.__sgrammar = load_grammar(optionsdict.sgrammar) 
     

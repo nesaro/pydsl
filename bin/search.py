@@ -1,19 +1,19 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
-#This file is part of ColonyDSL.
+#This file is part of pydsl.
 #
-#ColonyDSL is free software: you can redistribute it and/or modify
+#pydsl is free software: you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
 #the Free Software Foundation, either version 3 of the License, or
 #(at your option) any later version.
 #
-#ColonyDSL is distributed in the hope that it will be useful,
+#pydsl is distributed in the hope that it will be useful,
 #but WITHOUT ANY WARRANTY; without even the implied warranty of
 #MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #GNU General Public License for more details.
 #
 #You should have received a copy of the GNU General Public License
-#along with ColonyDSL.  If not, see <http://www.gnu.org/licenses/>.
+#along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 
 """This program perform searchs across library"""
@@ -39,7 +39,7 @@ def search_pp(inputset: set, filterlist = None) -> str:
 def filterset(inputset: set, filterlist = None) -> set:
     if filterlist == None:
         return inputset #Don't filter at all
-    from ColonyDSL.Abstract import InmutableDict
+    from pydsl.Abstract import InmutableDict
     result = set()
     for element in inputset:
         telement = {}
@@ -52,7 +52,7 @@ def filterset(inputset: set, filterlist = None) -> set:
 
 if __name__ == "__main__":
     import argparse
-    from ColonyDSL.Config import VERSION, GLOBALCONFIG
+    from pydsl.Config import VERSION, GLOBALCONFIG
     TUSAGE = "usage: %(prog)s [options] query"
     PARSER = argparse.ArgumentParser(usage = TUSAGE)
     PARSER.add_argument("search", metavar="search", help="Query to search")
@@ -61,8 +61,8 @@ if __name__ == "__main__":
     PARSER.add_argument('-o', dest='outputformat',nargs='?', choices=["str","json"], default="str", help="output formats")
     ARGS = PARSER.parse_args()
     import sys
-    from ColonyDSL.Memory.Search.Searcher import MemorySearcher
-    from ColonyDSL.Memory.Search.Indexer import Indexer
+    from pydsl.Memory.Search.Searcher import MemorySearcher
+    from pydsl.Memory.Search.Indexer import Indexer
     if ARGS.search:
         searcher = MemorySearcher([Indexer(x) for x in GLOBALCONFIG.memorylist])
         myfilter = None

@@ -1,20 +1,20 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-#This file is part of ColonyDSL.
+#This file is part of pydsl.
 #
-#ColonyDSL is free software: you can redistribute it and/or modify
+#pydsl is free software: you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
 #the Free Software Foundation, either version 3 of the License, or
 #(at your option) any later version.
 #
-#ColonyDSL is distributed in the hope that it will be useful,
+#pydsl is distributed in the hope that it will be useful,
 #but WITHOUT ANY WARRANTY; without even the implied warranty of
 #MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #GNU General Public License for more details.
 #
 #You should have received a copy of the GNU General Public License
-#along with ColonyDSL.  If not, see <http://www.gnu.org/licenses/>.
+#along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 
 __author__ = "Néstor Arocha Rodríguez"
@@ -33,17 +33,17 @@ def parentfunction(inputdic, auxgt, inputgt, outputgt, evfuncs):
 
 def childfunction(inputdic, inputgt, outputgt, evfuncs):
     #Send events to parent
-    #from ColonyDSL.Message import ContextRequestMsg
+    #from pydsl.Message import ContextRequestMsg
     import random
     intrandom = random.randint(0,10000)
 
 class TestServer(unittest.TestCase):
     """Tests Server"""
     def setUp(self):
-        from ColonyDSL.Function.Transformer.Network import FunctionNetworkServer
+        from pydsl.Function.Transformer.Network import FunctionNetworkServer
         self._server = FunctionNetworkServer()
         #Create a child Manager
-        from ColonyDSL.Function.Transformer.Python import PythonTransformer, HostPythonTransformer
+        from pydsl.Function.Transformer.Python import PythonTransformer, HostPythonTransformer
         self._child = PythonTransformer({"input":"cstring"}, {"output":"cstring"}, childfunction)
         self._parentManager = HostPythonTransformer({"input":"cstring"}, {"output":"cstring"}, {}, parentfunction, server = self._server)
         self._parentManager.registerInstance("client", self._child)

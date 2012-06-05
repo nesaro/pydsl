@@ -1,20 +1,20 @@
 #!/usr/bin/python3
 
 # -*- coding: utf-8 -*-
-#This file is part of ColonyDSL.
+#This file is part of pydsl.
 #
-#ColonyDSL is free software: you can redistribute it and/or modify
+#pydsl is free software: you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
 #the Free Software Foundation, either version 3 of the License, or
 #(at your option) any later version.
 #
-#ColonyDSL is distributed in the hope that it will be useful,
+#pydsl is distributed in the hope that it will be useful,
 #but WITHOUT ANY WARRANTY; without even the implied warranty of
 #MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #GNU General Public License for more details.
 #
 #You should have received a copy of the GNU General Public License
-#along with ColonyDSL.  If not, see <http://www.gnu.org/licenses/>.
+#along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 """
 extracts input slices that are a Type 
@@ -25,9 +25,9 @@ __copyright__ = "Copyright 2008-2012, Néstor Arocha Rodríguez"
 __email__ = "nesaro@gmail.com"
 
 import logging
-from ColonyDSL.Exceptions import BadFileFormat, StorageException
-from ColonyDSL.Interaction.Shell import parse_shell_dict, open_files_dict 
-from ColonyDSL.Interaction.Program import UnixProgram
+from pydsl.Exceptions import BadFileFormat, StorageException
+from pydsl.Interaction.Shell import parse_shell_dict, open_files_dict 
+from pydsl.Interaction.Program import UnixProgram
 
 CURRENTGRAMMAR = ""
 
@@ -41,9 +41,9 @@ class Extract(UnixProgram):
     """Read input file contents, creates grammar and transform objects, create connections, 
     and afterwards reads required input/launch main loop"""
     def __init__(self, optionsdict):
-        from ColonyDSL.Function.Transformer.Python import HostPythonTransformer
-        #import ColonyDSL.GlobalConfig
-        #ColonyDSL.GlobalConfig.GLOBALCONFIG.strictgrammar = True
+        from pydsl.Function.Transformer.Python import HostPythonTransformer
+        #import pydsl.GlobalConfig
+        #pydsl.GlobalConfig.GLOBALCONFIG.strictgrammar = True
         self.__maingt = HostPythonTransformer({"input":"dummy"},{"output":"TrueFalse"},{"checker":"GrammarChecker"}, checkfun) 
         UnixProgram.__init__(self, optionsdict)
     
@@ -71,11 +71,11 @@ class Extract(UnixProgram):
             stringdic = open_files_dict(inputdic)
             resultdic = self.__maingt(stringdic)
             resultdic = bool_dict_values(resultdic)
-            from ColonyDSL.Interaction.Shell import save_result_to_output
+            from pydsl.Interaction.Shell import save_result_to_output
             save_result_to_output(resultdic, outputdic)
             #close_files_dict(inputdic)
         elif self._opt["pipemode"]:
-            from ColonyDSL.Interaction.Shell import StreamFileToTransformerInteraction
+            from pydsl.Interaction.Shell import StreamFileToTransformerInteraction
             assert(len(self.__maingt.inputchanneldic) == 1)
             assert(len(self.__maingt.outputchanneldic) == 1)
             inputname = list(self.__maingt.inputchanneldic.keys())[0]
@@ -83,7 +83,7 @@ class Extract(UnixProgram):
             interactor = StreamFileToTransformerInteraction(self.__maingt, {inputname:"stdin"} , {outputname:"stdout"})
             interactor.start()
         elif not self._opt["inputfiledic"] and not self._opt["outputfiledic"] and not self._opt["expression"]:
-            from ColonyDSL.Interaction.Shell import CommandLineToTransformerInteraction
+            from pydsl.Interaction.Shell import CommandLineToTransformerInteraction
             interactor = CommandLineToTransformerInteraction(self.__maingt)
             interactor.start()
         else:
@@ -96,7 +96,7 @@ class Extract(UnixProgram):
 
     def __slice(self, inputdata):
         totallen = len(inputdata)
-        from ColonyDSL.Memory.Storage.Loader import load_type
+        from pydsl.Memory.Storage.Loader import load_type
         currenttype = load_type(CURRENTGRAMMAR)
         try:
             maxl = currenttype.maxsize

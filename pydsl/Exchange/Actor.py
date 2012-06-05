@@ -1,0 +1,62 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+#This file is part of pydsl.
+#
+#pydsl is free software: you can redistribute it and/or modify
+#it under the terms of the GNU General Public License as published by
+#the Free Software Foundation, either version 3 of the License, or
+#(at your option) any later version.
+#
+#pydsl is distributed in the hope that it will be useful,
+#but WITHOUT ANY WARRANTY; without even the implied warranty of
+#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#GNU General Public License for more details.
+#
+#You should have received a copy of the GNU General Public License
+#along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
+
+__author__ = "Nestor Arocha Rodriguez"
+__copyright__ = "Copyright 2008-2012, Nestor Arocha Rodriguez"
+__email__ = "nesaro@gmail.com"
+
+from pydsl.Abstract import Indexable
+from abc import abstractmethod, ABCMeta
+from pydsl.Function.Function import FunctionInterface
+from threading import Thread, Event
+
+class Actor(Indexable, Thread, FunctionInterface):
+    """Exchange Actor Actors writes and read an exchange """
+    def __init__(self, workingfunction):
+        Thread.__init__(self)
+        Indexable.__init__(self)
+        self.exchangedict = {}
+        self.workingfunction = workingfunction
+        self.setDaemon(True)
+        self.event = Event()
+        self.lastcaller = None
+
+    def guessrole(self,caller):
+        if not caller:
+            return None
+        for key, value in self.exchangedict.items():
+            if caller in value:
+                return key
+        raise KeyError
+    
+    def register(self, exchange, rolename):
+        if not rolename in self.exchangedict:
+            self.exchangedict[rolename] = []
+        self.exchangedict[rolename].append(exchange)
+        exchange.register(self, rolename)
+
+    def notify(self, caller):
+        self.lastcaller = caller
+        self.event.set()
+
+    def run(self):
+        while self.event.wait():
+            self.workingfunction(self.exchangedict, self.lastcaller, self.guessrole(self.lastcaller))
+            self.event.clear()
+
+    def summary(self):
+        raise NotImplementedError

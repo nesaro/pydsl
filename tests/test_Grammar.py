@@ -1,19 +1,19 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-#This file is part of ColonyDSL.
+#This file is part of pydsl.
 #
-#ColonyDSL is free software: you can redistribute it and/or modify
+#pydsl is free software: you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
 #the Free Software Foundation, either version 3 of the License, or
 #(at your option) any later version.
 #
-#ColonyDSL is distributed in the hope that it will be useful,
+#pydsl is distributed in the hope that it will be useful,
 #but WITHOUT ANY WARRANTY; without even the implied warranty of
 #MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #GNU General Public License for more details.
 #
 #You should have received a copy of the GNU General Public License
-#along with ColonyDSL.  If not, see <http://www.gnu.org/licenses/>.
+#along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 __author__ = "Néstor Arocha Rodríguez"
 __copyright__ = "Copyright 2008-2012, Néstor Arocha Rodríguez"
@@ -24,8 +24,8 @@ import unittest
 class TestRegExpGrammars(unittest.TestCase):
     """Regular expression method tests"""
     def setUp(self):
-        from ColonyDSL.Type.Grammar.Regular import RegularExpressionGrammar
-        self.g1 = RegularExpressionGrammar("(?P<tone>1)23")
+        from pydsl.Grammar.Tool.Regular import RegularExpressionGrammarTools
+        self.g1 = RegularExpressionGrammarTools("(?P<tone>1)23")
 
     def testCheck(self):
         self.assertTrue(self.g1.check("123"))
@@ -50,8 +50,8 @@ class TestRegExpGrammars(unittest.TestCase):
 class TestPythonGrammars(unittest.TestCase):
     """Funcionamiento basico de las gramaticas"""
     def setUp(self):
-        from ColonyDSL.Type.Grammar.Python import PythonGrammar
-        self.g1 = PythonGrammar(lambda x:int(str(x))>6)
+        from pydsl.Grammar.Tool.Python import PythonGrammarTools
+        self.g1 = PythonGrammarTools(lambda x:int(str(x))>6)
 
     def testCheck(self):
         self.assertTrue(self.g1.check("7"))
@@ -77,8 +77,8 @@ class TestPythonGrammars(unittest.TestCase):
 class TestHostPythonGrammars(unittest.TestCase):
     """HostPythonGrammar test"""
     def setUp(self):
-        from ColonyDSL.Type.Grammar.Python import HostPythonGrammar
-        self.g1 = HostPythonGrammar(lambda x,aux: aux["ext"].check(x), {"ext":"email"})
+        from pydsl.Grammar.Tool.Python import HostPythonGrammarTools
+        self.g1 = HostPythonGrammarTools(lambda x,aux: aux["ext"].check(x), {"ext":"email"})
 
     def testCheck(self):
         self.assertTrue(self.g1.check("NESARO@GMAIL.COM"))
@@ -100,19 +100,19 @@ class TestHostPythonGrammars(unittest.TestCase):
 
     def testloadgrammar(self):
         #Load a grammar that uses a package (integerOPGrammar), call check
-        from ColonyDSL.Memory.Storage.Loader import load_grammar
+        from pydsl.Memory.Storage.Loader import load_grammar
         grammar = load_grammar("integerop")
         self.assertTrue(grammar.check("123+3"))
 
 class TestSymbolGrammars(unittest.TestCase):
     def setUp(self):
-        from ColonyDSL.Type.Grammar.Symbol import SymbolGrammar
-        from ColonyDSL.Memory.Storage.Directory.BNF import strlist_to_production_set
+        from pydsl.Grammar.Tool.Symbol import SymbolGrammarTools
+        from pydsl.Memory.Storage.Directory.BNF import strlist_to_production_set
         productionset, macrodic  = strlist_to_production_set(["#parser=descent","S ::= dayofmonth separator number separator number", "separator := Char,/","number := Word,integer,max,1","dayofmonth := Word,DayOfMonth,max,1"])
         if "parser" in macrodic:
-            self.g1 = SymbolGrammar("test3",productionset, macrodic["parser"])
+            self.g1 = SymbolGrammarTools("test3",productionset, macrodic["parser"])
         else:
-            self.g1 = SymbolGrammar("test3",productionset)
+            self.g1 = SymbolGrammarTools("test3",productionset)
 
     def testCheck(self):
         result = self.g1.check("1/1/2001")

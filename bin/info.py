@@ -1,19 +1,19 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
-#This file is part of ColonyDSL.
+#This file is part of pydsl.
 #
-#ColonyDSL is free software: you can redistribute it and/or modify
+#pydsl is free software: you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
 #the Free Software Foundation, either version 3 of the License, or
 #(at your option) any later version.
 #
-#ColonyDSL is distributed in the hope that it will be useful,
+#pydsl is distributed in the hope that it will be useful,
 #but WITHOUT ANY WARRANTY; without even the implied warranty of
 #MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #GNU General Public License for more details.
 #
 #You should have received a copy of the GNU General Public License
-#along with ColonyDSL.  If not, see <http://www.gnu.org/licenses/>.
+#along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 """
 Shows information about an element retrieved from Memory
@@ -38,15 +38,15 @@ if __name__ == "__main__":
     DEBUGLEVEL = ARGS.debuglevel or logging.WARNING
     logging.basicConfig(level = DEBUGLEVEL)
     if ARGS.lang:
-        from ColonyDSL.Config import GLOBALCONFIG
+        from pydsl.Config import GLOBALCONFIG
         GLOBALCONFIG.lang = ARGS.lang
     if ARGS.identifier:
-        from ColonyDSL.Memory.Storage.Loader import load_information
+        from pydsl.Memory.Storage.Loader import load_information
         instance = load_information(ARGS.identifier)
         if "summary" in dir(instance):
             resultdic = instance.summary
             descmem = {}
-            from ColonyDSL.Memory.Storage.Dict import StrDictStorage
+            from pydsl.Memory.Storage.Dict import StrDictStorage
             from pkg_resources import Requirement, resource_filename
             dirname = resource_filename(Requirement.parse("colony_archive"),"")
             try:
