@@ -20,11 +20,10 @@ __copyright__ = "Copyright 2008-2012, Nestor Arocha Rodríguez"
 __email__ = "nesaro@gmail.com"
 
 import logging
-from pydsl.Grammar.Checker import Checker
 from abc import ABCMeta, abstractmethod, abstractproperty
 LOG = logging.getLogger(__name__)
 
-class GrammarTools(Checker, metaclass = ABCMeta):
+class GrammarTools(metaclass = ABCMeta):
     """Convenience class that have members for checking, groups, tokenizing"""
 
     def get_groups(self, information, propertyname = None) -> list:
