@@ -69,7 +69,7 @@ def regexp_alphabet_helper(string, endchar = None) -> set:
 
 class RegularExpressionGrammarTools(PythonGrammarTools,Indexable):
     def __init__(self, regexp, flags = ""):
-        PythonGrammarTools.__init__(self, self._process_word)
+        PythonGrammarTools.__init__(self, self._check)
         import re
         self.__regexpstr = regexp
         myflags = 0
@@ -77,7 +77,7 @@ class RegularExpressionGrammarTools(PythonGrammarTools,Indexable):
             myflags |= re.I
         self.__regexp = re.compile(regexp, myflags)
 
-    def _process_word(self, word):
+    def _check(self, word):
         """returns True if any match any regexp"""
         try:
             data = str(word)
