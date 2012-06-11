@@ -52,7 +52,7 @@ class PythonGrammarTools(GrammarTools, Indexable):
             return set(self._enumFun())
         return set()
 
-    def iterate(self, data):
+    def tokenize(self, data):
         if self._iterFun != None:
             for x in self._iterFun(data):
                 yield x

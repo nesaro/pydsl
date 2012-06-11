@@ -106,7 +106,7 @@ class RegularExpressionGrammarTools(PythonGrammarTools,Indexable):
         """inspects regexp"""
         pass
 
-    def iterate(self, information:str):
+    def tokenize(self, information:str):
         """Uses python str iteration"""
         for x in information:
             yield x

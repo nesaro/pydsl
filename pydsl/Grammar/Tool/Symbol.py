@@ -91,7 +91,7 @@ class SymbolGrammarTools(GrammarTools):
         """Given a word(token) index, will tell all parent symbols  until root node"""
         raise NotImplementedError
 
-    def iterate(self, information):
+    def tokenize(self, information):
         #gets tree, then iterates through leaf nodes. 
         #TODO think about extra parameters for tree depth
         raise NotImplementedError
