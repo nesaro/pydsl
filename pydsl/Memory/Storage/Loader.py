@@ -77,10 +77,7 @@ def load_board(identifier, eventmanager = None, memorylist = []):
             continue
         if identifier in memory:
             return memory.load(identifier)
-    raise StorageException("Grammar", identifier)
-
-def load_concept(identifier, memorylist = []):
-    pass
+    raise StorageException("Board", identifier)
 
 def load_actor(identifier, exchange, memorylist = []):
     if not memorylist:

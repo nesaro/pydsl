@@ -75,7 +75,7 @@ class GrammarDirStorage(DirStorage):
         result = None
         if _isRELFileName(filename + ext):
             from pydsl.Grammar.Tool.Regular import RegularExpressionGrammarTools
-            result =  {"iclass":"REG","identifier":fileBaseName, "filepath":filename, "ancestors":RegularExpressionGrammarTools.ancestors()}
+            result =  {"iclass":"REG","identifier":fileBaseName, "filepath":filename}
         elif _isGDLFileName(filename + ext):
             result = {"iclass":"BNF","identifier":fileBaseName, "filepath":filename}
         else:

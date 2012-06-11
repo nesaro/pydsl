@@ -29,7 +29,7 @@ from abc import abstractmethod, ABCMeta
 import contextlib
 import shelve
 import logging
-LOG = logging.getLogger("Storage")
+LOG = logging.getLogger(__name__)
 from pydsl.Memory.Memory import Memory
 
 class Storage(Memory, metaclass = ABCMeta):

@@ -17,12 +17,12 @@
 
 """Symbols"""
 
-__author__ = "Néstor Arocha Rodríguez"
-__copyright__ = "Copyright 2008-2012, Néstor Arocha Rodríguez"
+__author__ = "Nestor Arocha Rodríguez"
+__copyright__ = "Copyright 2008-2012, Nestor Arocha Rodríguez"
 __email__ = "nesaro@gmail.com"
 
 import logging
-LOG = logging.getLogger("Symbol")
+LOG = logging.getLogger(__name__)
 from abc import ABCMeta, abstractmethod
 
 class BoundariesRules:
