@@ -246,7 +246,7 @@ class BottomUpParser(Parser):
     def __init__(self, productionruleset, packagedependencies = None):
         terminalsymbollist = productionruleset.getTerminalSymbols()
         for ts in terminalsymbollist:
-            from pydsl.Grammar.Tool.Symbol import WordTerminalSymbol
+            from pydsl.Grammar.Symbol import WordTerminalSymbol
             if isinstance(ts, WordTerminalSymbol):
                 LOG.critical("BottomUp parsers can't handle WordTerminalSymbol yet")
                 raise Exception

@@ -24,9 +24,9 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 import re
-from pydsl.Grammar.Parser.Symbol import StringTerminalSymbol, CharTerminalSymbol, WordTerminalSymbol, BoundariesRules, NonTerminalSymbol, NullSymbol
-from pydsl.Grammar.Parser.Production import NonTerminalProduction
-LOG = logging.getLogger("BNF")
+from pydsl.Grammar.Symbol import StringTerminalSymbol, CharTerminalSymbol, WordTerminalSymbol, BoundariesRules, NonTerminalSymbol, NullSymbol
+from pydsl.Grammar.BNF import NonTerminalProduction
+LOG = logging.getLogger(__name__)
 
 """ Colony Grammar definition file parser """
 
@@ -114,7 +114,7 @@ def strlist_to_production_set(linelist):
         elif re.search (":=", cleanline):
             symbolname, symbolinstance = read_terminal_production(cleanline)
             symboldict[symbolname] = symbolinstance
-            from pydsl.Grammar.Parser.Production import TerminalProduction
+            from pydsl.Grammar.BNF import TerminalProduction
             terminalrulelist.append(TerminalProduction(symbolinstance))
         elif re.search ("^#.*$", cleanline):
             pair = cleanline[1:].split("=")

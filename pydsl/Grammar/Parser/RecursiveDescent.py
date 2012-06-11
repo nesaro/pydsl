@@ -22,7 +22,7 @@ __copyright__ = "Copyright 2008-2012, Néstor Arocha Rodríguez"
 __email__ = "nesaro@gmail.com"
 
 import logging
-LOG = logging.getLogger("RecursiveDescentParser")
+LOG = logging.getLogger(__name__)
 from .Parser import TopDownParser, terminal_symbol_consume, locate_result_borders, mix_results 
 from ..Tree import ParseTree
 from pydsl.Abstract import TypeCheckList
@@ -140,7 +140,7 @@ class RecursiveDescentParser(TopDownParser):
         #if(len(data) < 4):
         #    import pdb
         #    pdb.set_trace()
-        from .Symbol import TerminalSymbol, NullSymbol, NonTerminalSymbol
+        from ..Symbol import TerminalSymbol, NullSymbol, NonTerminalSymbol
         if isinstance(onlysymbol, TerminalSymbol):
             #Locate every ocurrence of word and return a set of results. Follow boundariesrules
             LOG.debug("Iteration: terminalsymbol")

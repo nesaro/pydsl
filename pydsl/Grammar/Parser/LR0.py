@@ -6,10 +6,10 @@
 """LR0 unfinished implementation"""
 
 import logging
-LOG = logging.getLogger("LR0Parser")
+LOG = logging.getLogger(__name__)
 from .Production import NonTerminalProduction
 from pydsl.Grammar.Parser.Parser import BottomUpParser
-from pydsl.Grammar.Tool.Symbol import NonTerminalSymbol, TerminalSymbol, EndSymbol, Symbol
+from pydsl.Grammar.Symbol import NonTerminalSymbol, TerminalSymbol, EndSymbol, Symbol
 
 def __check_action(action):
     """Valid actions string"""

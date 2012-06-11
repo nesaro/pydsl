@@ -31,8 +31,8 @@ centerrecursive=["S ::= E","E ::= dot E dot | dot","dot := String,."]
 
 class TestParsers(unittest.TestCase):
     def setUp(self):
-        from pydsl.Grammar.Parser.Symbol import CharTerminalSymbol, WordTerminalSymbol, NonTerminalSymbol, BoundariesRules, NullSymbol
-        from pydsl.Grammar.Parser.Production import TerminalProduction, NonTerminalProduction, ProductionSet
+        from pydsl.Grammar.Symbol import CharTerminalSymbol, WordTerminalSymbol, NonTerminalSymbol, BoundariesRules, NullSymbol
+        from pydsl.Grammar.BNF import TerminalProduction, NonTerminalProduction, ProductionSet
         br = BoundariesRules("max", 1)
 
         #productionset1 definition
