@@ -29,7 +29,7 @@ from pkg_resources import Requirement, resource_filename
 def generate_memory_list() -> list:
     """loads default memories"""
     result = []
-    from pydsl.Memory.Storage.Directory.Type import GrammarDirStorage
+    from pydsl.Memory.Storage.Directory.Grammar import GrammarDirStorage
     from pydsl.Memory.Storage.Directory.Function import BoardDirStorage, TransformerDirStorage, ProcedureDirStorage
     from pydsl.Memory.Storage.Dict import FileTypeDictStorage, RegexpDictStorage
     from pydsl.Memory.Storage.List import RelListStorage, RelationListStorage

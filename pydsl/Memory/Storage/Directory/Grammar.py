@@ -15,7 +15,7 @@
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Types FileLibraries"""
+"""Grammar FileLibraries"""
 
 __author__ = "Néstor Arocha Rodríguez"
 __copyright__ = "Copyright 2008-2012, Néstor Arocha Rodríguez"
@@ -23,8 +23,7 @@ __email__ = "nesaro@gmail.com"
 
 
 import logging
-LOG = logging.getLogger("Storage.Directory.Type")
-from pydsl.Grammar.Tool.Symbol import SymbolGrammarTools
+LOG = logging.getLogger("Storage.Directory.Grammar")
 from .DirStorage import DirStorage, getFileTuple
 
 def _isGDLFileName(path):

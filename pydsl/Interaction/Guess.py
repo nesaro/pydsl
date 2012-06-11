@@ -58,7 +58,7 @@ def guess_filename(inputfile, memorylist = []) -> set:
 
 def guess(inputstring, memorylist = []) -> set:
     from pydsl.Memory.Search.Searcher import MemorySearcher
-    from pydsl.Memory.Storage.Directory.Type import GrammarDirStorage 
+    from pydsl.Memory.Storage.Directory.Grammar import GrammarDirStorage 
     from pydsl.Memory.Storage.Dict import FileTypeDictStorage
     if not memorylist:
         memorylist.append(GrammarDirStorage("/usr/share/pydsl/lib_contrib/grammar/"))
