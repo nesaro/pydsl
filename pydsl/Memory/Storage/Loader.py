@@ -17,43 +17,11 @@
 
 """loader class"""
 
-__author__ = "Néstor Arocha Rodríguez"
-__copyright__ = "Copyright 2008-2012, Néstor Arocha Rodríguez"
+__author__ = "Nestor Arocha Rodriguez"
+__copyright__ = "Copyright 2008-2012, Nestor Arocha Rodriguez"
 __email__ = "nesaro@gmail.com"
 from pkg_resources import Requirement, resource_filename
 from pydsl.Exceptions import StorageException
-
-def load_type(name:str, memorylist = []):
-    if name == "dummy":
-        from pydsl.Grammar.Checker import DummyChecker
-        return DummyChecker()
-    if not memorylist:
-        from pydsl.Config import GLOBALCONFIG
-        memorylist = GLOBALCONFIG.memorylist
-    import os
-    from pydsl.Memory.Storage.Directory.DirStorage import load_python_file
-    dirname = resource_filename(Requirement.parse("colony_archive"),"")
-    if os.path.exists(dirname + "/grammar/protocol.py"):
-        pginstance = load_python_file(dirname + "/grammar/protocol.py")
-    else:
-        pginstance = load_python_file("lib_contrib/grammar/protocol.py")
-    if not pginstance.check(name):
-        for memory in memorylist:
-            if name in memory:
-                return memory.load(name)
-    else:
-        protocol = pginstance.get_groups(name, "protocol")
-        path = pginstance.get_groups(name, "path")
-        if protocol == "file":
-            return load_python_file(path) #FIXME: there are types that aren't  python files
-        elif protocol == "memory":
-            identifier = pginstance.get_groups(name, "options")
-            for memory in memorylist:
-                if memory.identifier == path:
-                    return memory.load(identifier)
-            raise Exception("Memory not found")
-
-    raise StorageException("Checker", name)
 
 def load_function(identifier, memorylist = []):
     try:
@@ -64,9 +32,12 @@ def load_function(identifier, memorylist = []):
         return load_transformer(identifier, memorylist)
     except StorageException:
         pass
-    raise StorageException
+    raise StorageException("Function", identifier)
 
 def load_grammar(identifier, memorylist = []):
+    if name == "dummy":
+        from pydsl.Grammar.Checker import DummyChecker
+        return DummyChecker()
     if not memorylist:
         from pydsl.Config import GLOBALCONFIG
         memorylist = GLOBALCONFIG.memorylist
