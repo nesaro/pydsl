@@ -44,3 +44,24 @@ class DummyChecker(Checker):
             return True
         return False
         
+class RegularExpressionChecker(Checker):
+    def __init__(self, regexp, flags = ""):
+        import re
+        self.__regexpstr = regexp
+        myflags = 0
+        if "i" in flags:
+            myflags |= re.I
+        self.__regexp = re.compile(regexp, myflags)
+
+    def check(self, word):
+        """returns True if any match any regexp"""
+        try:
+            data = str(word)
+        except UnicodeDecodeError:
+            return False
+        if data == "":
+            return False
+        if self.__regexp.match(data):
+            return True
+        return False
+

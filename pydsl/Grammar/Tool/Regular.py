@@ -67,27 +67,19 @@ def regexp_alphabet_helper(string, endchar = None) -> set:
         index += 1
     return result, index
 
-class RegularExpressionGrammarTools(PythonGrammarTools,Indexable):
+class RegularExpressionGrammarTools(GrammarTools):
     def __init__(self, regexp, flags = ""):
-        PythonGrammarTools.__init__(self, self._check)
-        import re
+        GrammarTools.__init__(self)
         self.__regexpstr = regexp
         myflags = 0
         if "i" in flags:
             myflags |= re.I
         self.__regexp = re.compile(regexp, myflags)
 
-    def _check(self, word):
-        """returns True if any match any regexp"""
-        try:
-            data = str(word)
-        except UnicodeDecodeError:
-            return False
-        if data == "":
-            return False
-        if self.__regexp.match(data):
-            return True
-        return False
+    def check(self, word):
+        from ..Checker import RegularExpressionChecker
+        checker = RegularExpressionChecker(self.__regexpstr)
+        return checker.check(word)
 
     def get_groups(self, word, groupname):
         """Match against specific rule"""
