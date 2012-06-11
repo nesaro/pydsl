@@ -93,13 +93,14 @@ class TerminalProduction(Production):
             return False
         return False
 
-class ProductionSet: #Only stores a ruleset, and methods to ask properties or validity check 
-    def __init__(self, initialsymbol, productionrulelist:list):
+class BNFGrammar: #Only stores a ruleset, and methods to ask properties or validity check 
+    def __init__(self, initialsymbol, productionrulelist:list, options = {}):
         self._initialsymbol = initialsymbol
         for rule in productionrulelist:
             if productionrulelist.count(rule) >1:
                 raise ValueError
         self.productionlist = productionrulelist
+        self.options = options
 
     @property
     def left_recursive(self) -> bool:
@@ -285,7 +286,7 @@ def split_production(productionset:list, production):
     return productionset
         
     
-def chomsky_normal_form(productionset:ProductionSet) -> ProductionSet:
+def chomsky_normal_form(productionset:BNFGrammar) -> BNFGrammar:
     """TODO Check is Epsilon free"""
     ntermslist = []
     from .Symbol import NonTerminalSymbol
@@ -305,7 +306,7 @@ def chomsky_normal_form(productionset:ProductionSet) -> ProductionSet:
             ntermslist += termlist
     for terminal in ntermlist:
         productionset = create_non_terminal_production(productionset, terminal)
-    #PASO 2: useless nonterminal
+    #STEP 2: useless nonterminal
     uselessnonterms = []
     for production in productionset:
         if isinstance(production, TerminalProduction):
@@ -315,7 +316,7 @@ def chomsky_normal_form(productionset:ProductionSet) -> ProductionSet:
     for nonterm in uselessnonterms:
         productionset = reduce_non_terminal_production(productionset, nonterm)
     
-    #PASO3:rightside is too long 
+    #STEP 3:rightside is too long 
     longproductions = []
     for production in productionset:
         if isinstance(production, TerminalProduction):

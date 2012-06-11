@@ -49,12 +49,8 @@ def load_grammar_file(filepath):
 def _loadGDLGrammarFromFile(filepath):
     (_, _, fileBaseName, _) = getFileTuple(filepath)
     from pydsl.Memory.Storage.Directory.BNF import bnf_file_to_productionset
-    productionruleset, macrodic = bnf_file_to_productionset(filepath)
-    parser = "descent"
-    if "parser" in macrodic:
-        parser = macrodic["parser"]
-    instance = SymbolGrammarTools(fileBaseName, productionruleset, parser)
-    return instance
+    bnfgrammar = bnf_file_to_productionset(filepath)
+    return bnfgrammar
 
 class GrammarDirStorage(DirStorage):
     """generate instances of grammars"""

@@ -208,8 +208,8 @@ def locate_result_borders(results):
 
 class Parser(metaclass = ABCMeta):
     """Parser abstract class. At this time, all parsers are tree based"""
-    from .Production import ProductionSet
-    def __init__(self, productionruleset:ProductionSet):
+    from .Production import BNFGrammar
+    def __init__(self, productionruleset:BNFGrammar):
         self._productionset = productionruleset
 
     @abstractmethod

@@ -26,19 +26,20 @@ LOG = logging.getLogger("Grammar.Symbol")
 
 class SymbolGrammarTools(GrammarTools):
     """Ask sentences to other grammars. Works with tokens"""
-    def __init__(self, identifier, productionset, parser = "auto"):
+    def __init__(self, bnf, parser = "auto"):
         LOG.debug("SymbolGrammarTools.__init__: Begin")
         GrammarTools.__init__(self)
+        parser = bnf.options.get("parser",parser)
         if parser == "descent":
             from ..Parser.RecursiveDescent import RecursiveDescentParser
-            self.__parser = RecursiveDescentParser(productionset)
+            self.__parser = RecursiveDescentParser(bnf)
         elif parser == "weighted":
-            self.__parser = WeightedParser(productionset)
+            self.__parser = WeightedParser(bnf)
             raise Exception
         elif parser == "auto" or parser == "default":
             #TODO Guess best parser
             from .Parser.Weighted import WeightedParser
-            self.__parser = RecursiveDescentParser(productionset)
+            self.__parser = RecursiveDescentParser(bnf)
         else:
             LOG.error("Wrong parser name: " + parser)
             raise Exception
@@ -75,7 +76,7 @@ class SymbolGrammarTools(GrammarTools):
     
     @property
     def summary(self):
-        return {"iclass":"SymbolGrammarTools", "identifier":self.identifier, "groups":tuple(self.groups())}
+        return {"iclass":"SymbolGrammarTools", "groups":tuple(self.groups())}
 
     def check(self, word):
         try:
