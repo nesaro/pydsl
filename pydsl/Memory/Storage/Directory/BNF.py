@@ -30,12 +30,6 @@ LOG = logging.getLogger(__name__)
 
 """ Colony Grammar definition file parser """
 
-def __generateCharSymbol(rightside):
-    args = rightside.split(",")
-    if args[0] != "Char":
-        raise TypeError
-    return CharTerminalSymbol(args[1])
-
 def __generateStringSymbol(rightside):
     args = rightside.split(",")
     if args[0] != "String":
@@ -87,11 +81,9 @@ def read_terminal_production(line):
     #leftside is symbolname
     rightside = sidesarray[1]
     rightside = rightside.strip()
-    #regexp to detect rightside: Char, String, Grammar
+    #regexp to detect rightside: String, Grammar
     newsymbol = None
-    if re.search("^Char", rightside):
-        newsymbol = __generateCharSymbol(rightside)
-    elif re.search("^String", rightside):
+    if re.search("^String", rightside):
         newsymbol = __generateStringSymbol(rightside)
     elif re.search("^Word", rightside):
         newsymbol = __generateWordSymbol(rightside)
