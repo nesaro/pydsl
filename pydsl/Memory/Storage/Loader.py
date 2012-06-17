@@ -35,7 +35,7 @@ def load_function(identifier, memorylist = []):
     raise StorageException("Function", identifier)
 
 def load_grammar(identifier, memorylist = []):
-    if name == "dummy":
+    if identifier == "dummy":
         from pydsl.Grammar.Checker import DummyChecker
         return DummyChecker()
     if not memorylist:

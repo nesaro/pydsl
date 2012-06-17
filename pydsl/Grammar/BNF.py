@@ -17,7 +17,7 @@
 
 """Production rules (SymbolGrammars)"""
 
-from pydsl.Grammar.Parser.Symbol import Symbol, TerminalSymbol
+from pydsl.Grammar.Symbol import Symbol, TerminalSymbol
 from abc import ABCMeta 
 
 __author__ = "Néstor Arocha Rodríguez"
