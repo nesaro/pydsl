@@ -9,7 +9,7 @@ class TestLoader(unittest.TestCase):
     #TODO
     """Test loaders"""
     def setUp(self):
-        from pydsl.Memory.Storage.Directory.Type import GrammarDirStorage
+        from pydsl.Memory.Storage.Directory.Grammar import GrammarDirStorage
         self.glibrary = GrammarDirStorage("/usr/share/pydsl/lib_contrib/grammar")
         from pydsl.Config import GLOBALCONFIG
         GLOBALCONFIG.strictgrammar = False 

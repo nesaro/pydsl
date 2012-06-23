@@ -22,9 +22,9 @@ __copyright__ = "Copyright 2008-2012, Nestor Arocha Rodriguez"
 __email__ = "nesaro@gmail.com"
 
 import logging
-LOG = logging.getLogger("Wrapper")
+LOG = logging.getLogger(__name__)
 from abc import ABCMeta, abstractmethod, abstractproperty
-from pydsl.Memory.Storage.Loader import load_function, load_type
+from pydsl.Memory.Storage.Loader import load_function
 
 class Cstr(str):
     """String wrapper"""
