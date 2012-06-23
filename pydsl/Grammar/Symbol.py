@@ -114,15 +114,6 @@ class StringTerminalSymbol(TerminalSymbol):
         return "<StringTS: '" + self.definition + "'>"
 
 
-class CharTerminalSymbol(StringTerminalSymbol):
-    def __init__(self, char):
-        if len(char) != 1:
-            raise TypeError
-        StringTerminalSymbol.__init__(self, char)
-
-    def __str__(self):
-        return "<CharTS: '" + self.definition + "'>"
-
 class WordTerminalSymbol(TerminalSymbol):#boundariesrules: priority, [max,min,fixedsize]
     #If token is another grammar Word, it stores its semantic info
     def __init__(self, name, definitionrequirementsdic, boundariesrules):
