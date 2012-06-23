@@ -21,21 +21,21 @@ guess which types are the input data.
 It works like the unix file command
 """
 
-__author__ = "Néstor Arocha Rodríguez"
-__copyright__ = "Copyright 2008-2012, Néstor Arocha Rodríguez"
+__author__ = "Nestor Arocha Rodriguez"
+__copyright__ = "Copyright 2008-2012, Nestor Arocha Rodriguez"
 __email__ = "nesaro@gmail.com"
 
 
 import logging
 LOG = logging.getLogger(__name__)
-from pkg_resources import Requirement, resource_filename
+from pkg_resources import Requirement, resource_filename, DistributionNotFound
 
 def guess_filename(inputfile, memorylist = []) -> set:
     from pydsl.Memory.Search.Searcher import MemorySearcher
     from pydsl.Memory.Storage.Dict import FileTypeDictStorage
 
     if not memorylist:
-        dirname = resource_filename(Requirement.parse("colony_archive"),"")
+        dirname = resource_filename(Requirement.parse("pydsl_contrib"),"")
         memorylist.append(FileTypeDictStorage(dirname + "/dict/filetype.dict"))
     searcher = MemorySearcher([x.indexer() for x in memorylist])
     result = set()
@@ -61,8 +61,13 @@ def guess(inputstring, memorylist = []) -> set:
     from pydsl.Memory.Storage.Directory.Grammar import GrammarDirStorage 
     from pydsl.Memory.Storage.Dict import FileTypeDictStorage
     if not memorylist:
-        memorylist.append(GrammarDirStorage("/usr/share/pydsl/lib_contrib/grammar/"))
-        memorylist.append(FileTypeDictStorage("/usr/share/pydsl/lib_contrib/dict/filetype.dict"))
+        try:
+            dirname = resource_filename(Requirement.parse("pydsl_contrib"),"")
+        except DistributionNotFound:
+            pass
+        else:
+            memorylist.append(GrammarDirStorage(dirname + "grammar/"))
+            memorylist.append(FileTypeDictStorage(dirname + "/dict/filetype.dict"))
     searcher = MemorySearcher([x.indexer() for x in memorylist])
     result = set()
     for summary in searcher.search():

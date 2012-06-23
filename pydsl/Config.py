@@ -24,7 +24,7 @@ __email__ = "nesaro@gmail.com"
 from pydsl.Abstract import Singleton
 import logging
 LOG = logging.getLogger(__name__)
-from pkg_resources import Requirement, resource_filename
+from pkg_resources import Requirement, resource_filename, DistributionNotFound
 
 def generate_memory_list() -> list:
     """loads default memories"""
@@ -35,14 +35,17 @@ def generate_memory_list() -> list:
     from pydsl.Memory.Storage.List import RelListStorage, RelationListStorage
     #from pydsl.Memory.Storage.Directory.Concept import ConceptDirStorage
     #from pydsl.Memory.Storage.Directory.Scheme import SchemeDirStorage
-    dirname = resource_filename(Requirement.parse("pydsl_contrib"),"")
-    result.append(GrammarDirStorage(dirname + "/grammar/"))
-    result.append(BoardDirStorage(dirname + "/board/"))
-    result.append(TransformerDirStorage(dirname + "/transformer/"))
-    result.append(ProcedureDirStorage(dirname + "/procedure/"))
-    print(dirname)
-    result.append(FileTypeDictStorage(dirname + "/dict/filetype.dict"))
-    result.append(RegexpDictStorage(dirname + "/dict/regexp.dict"))
+    try:
+        dirname = resource_filename(Requirement.parse("pydsl_contrib"),"")
+    except DistributionNotFound:
+        pass
+    else:
+        result.append(GrammarDirStorage(dirname + "/grammar/"))
+        result.append(BoardDirStorage(dirname + "/board/"))
+        result.append(TransformerDirStorage(dirname + "/transformer/"))
+        result.append(ProcedureDirStorage(dirname + "/procedure/"))
+        result.append(FileTypeDictStorage(dirname + "/dict/filetype.dict"))
+        result.append(RegexpDictStorage(dirname + "/dict/regexp.dict"))
     return result
 
 
