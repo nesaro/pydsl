@@ -94,8 +94,7 @@ class TransformerDirStorage(DirStorage):
             else:
                 return load_python_f(value["filepath"], server)
 
-        from pydsl.Exceptions import StorageException
-        raise StorageException("TR", identifier)
+        raise KeyError("Transformer" + identifier)
     
     def summary_from_filename(self, modulepath):
         from pydsl.Function.Transformer.Python import PythonTransformer
@@ -142,8 +141,7 @@ class BoardDirStorage(DirStorage):
             #TODO assert(len(self._search(identifier) == 2)) 
             return load_board_file(result["filepath"], server = server, ecuid = ecuid)
 
-        from pydsl.Exceptions import StorageException
-        raise StorageException("B", identifier)
+        raise KeyError("Board" + identifier)
 
     def summary_from_filename(self, filename):
         from pydsl.Function.Transformer.Board import Board
@@ -175,21 +173,19 @@ class ProcedureDirStorage(DirStorage):
         else:
             return load_python_f(identifier, server)
 
-        from pydsl.Exceptions import StorageException
-        raise StorageException("P", identifier)
+        raise KeyError("Procedure" + identifier)
 
     def provided_iclasses(self) -> list:
         return ["Procedure"]
 
     def all_files_generator(self):
         """Generates (inputlist, outputlist, name, description) from T list"""
-        from pydsl.Exceptions import StorageException
         for elementname in self.allElementStaticIdGenerator():
             try:
                 instance = self.load(elementname)
             except TypeError:
                 continue
-            except StorageException:
+            except KeyError:
                 continue
             except ImportError:
                 continue

@@ -49,8 +49,7 @@ def load_python_file(moduleobject, **kwargs):
     if isinstance(moduleobject, str):
         moduleobject, identifier = load_module(moduleobject)
     if not hasattr(moduleobject, "iclass"):
-        from pydsl.Exceptions import StorageException
-        raise StorageException("Element", identifier)
+        raise KeyError("Element" + identifier)
     iclass = getattr(moduleobject, "iclass")
     resultdic = kwargs
     mylist = list(filter(lambda x:x[:1] != "_" and x != "iclass", (dir(moduleobject))))
@@ -191,8 +190,7 @@ class DirStorage(Storage, metaclass = ABCMeta):
         if(len(resultlist) > 1):
             LOG.error("Found two or more matches, FIXME: processing the first, should raise exception")
         if len(resultlist) == 0:
-            from pydsl.Exceptions import StorageException
-            raise StorageException(self.__class__.__name__, name)
+            raise KeyError(self.__class__.__name__ + name)
         return load_python_file(list(resultlist)[0]["filepath"], **kwargs)
 
     def __contains__(self, key):

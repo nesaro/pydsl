@@ -25,7 +25,7 @@ __copyright__ = "Copyright 2008-2012, Néstor Arocha Rodríguez"
 __email__ = "nesaro@gmail.com"
 
 import logging
-from pydsl.Exceptions import BadFileFormat, StorageException
+from pydsl.Exceptions import BadFileFormat
 
 
 if __name__ == "__main__":
@@ -56,8 +56,8 @@ if __name__ == "__main__":
         except BadFileFormat:
             print("Error reading input file")
             sys.exit(1)
-        except StorageException as le:
-            print("Unable to load " + le.elementname + " " + le.elementtype)
+        except KeyError as le:
+            print("Unable to load " + str(le))
             sys.exit(1)
     elif (ARGS.pname):
         try: 
@@ -65,8 +65,8 @@ if __name__ == "__main__":
         except BadFileFormat:
             print("Error reading input file")
             sys.exit(1)
-        except StorageException as le:
-            print("Unable to load " + le.elementname + " " + le.elementtype)
+        except KeyError as le:
+            print("Unable to load " + str(le))
             sys.exit(1)
     else:
         print(TUSAGE)

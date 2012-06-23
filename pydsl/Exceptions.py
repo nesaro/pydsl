@@ -18,8 +18,8 @@
 
 """Exceptions definitions"""
 
-__author__ = "Néstor Arocha Rodríguez"
-__copyright__ = "Copyright 2008-2012, Néstor Arocha Rodríguez"
+__author__ = "Nestor Arocha Rodriguez"
+__copyright__ = "Copyright 2008-2012, Nestor Arocha Rodriguez"
 __email__ = "nesaro@gmail.com"
 
 
@@ -46,16 +46,6 @@ class ParserError(Exception):
 
 class LRConflictException(ParserError):
     pass
-
-class StorageException(Exception):
-    """Error while accessing library element"""
-    def __init__(self, elementtype, elementname):
-        Exception.__init__(self)
-        self.elementtype = elementtype
-        self.elementname = elementname
-
-    def __str__(self):
-        return "LIBRARY EXCEPTION: " + str(self.elementtype) + ": " + str(self.elementname)
 
 class BadFileFormat(Exception):
     def __init__(self, filename):

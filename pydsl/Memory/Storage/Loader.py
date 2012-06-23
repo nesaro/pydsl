@@ -21,18 +21,17 @@ __author__ = "Nestor Arocha Rodriguez"
 __copyright__ = "Copyright 2008-2012, Nestor Arocha Rodriguez"
 __email__ = "nesaro@gmail.com"
 from pkg_resources import Requirement, resource_filename
-from pydsl.Exceptions import StorageException
 
 def load_function(identifier, memorylist = []):
     try:
         return load_board(identifier, memorylist)
-    except StorageException:
+    except KeyError:
         pass
     try:
         return load_transformer(identifier, memorylist)
-    except StorageException:
+    except KeyError:
         pass
-    raise StorageException("Function", identifier)
+    raise KeyError("Function" + identifier)
 
 def load_grammar(identifier, memorylist = []):
     if identifier == "dummy":
@@ -46,7 +45,7 @@ def load_grammar(identifier, memorylist = []):
         #    continue
         if identifier in memory:
             return memory.load(identifier)
-    raise StorageException("Grammar", identifier)
+    raise KeyError("Grammar" + identifier)
 
 def load_procedure(identifier, eventmanager = None , ecuid = "", memorylist = []):
     if not memorylist:
@@ -55,7 +54,7 @@ def load_procedure(identifier, eventmanager = None , ecuid = "", memorylist = []
     for memory in memorylist:
         if identifier in memory:
             return memory.load(identifier, eventmanager, ecuid)
-    raise StorageException("Procedure", identifier)
+    raise KeyError("Procedure" + identifier)
 
 def load_transformer(identifier, eventmanager = None, ecuid = None, memorylist = []):
     #FIXME: Can return any type of element
@@ -66,7 +65,7 @@ def load_transformer(identifier, eventmanager = None, ecuid = None, memorylist =
     for memory in memorylist:
         if identifier in memory:
             return memory.load(identifier, server=eventmanager, ecuid=ecuid)
-    raise StorageException("Transformer", identifier)
+    raise KeyError("Transformer" + identifier)
 
 def load_board(identifier, eventmanager = None, memorylist = []):
     if not memorylist:
@@ -77,7 +76,7 @@ def load_board(identifier, eventmanager = None, memorylist = []):
             continue
         if identifier in memory:
             return memory.load(identifier)
-    raise StorageException("Board", identifier)
+    raise KeyError("Board" + identifier)
 
 def load_actor(identifier, exchange, memorylist = []):
     if not memorylist:
@@ -88,7 +87,7 @@ def load_actor(identifier, exchange, memorylist = []):
             continue
         if identifier in memory:
             return memory.load(identifier, exchange=exchange) #FIXME Pass as kwarg
-    raise StorageException("Actor", identifier)
+    raise KeyError("Actor" + identifier)
 
 def load_information(name:str, memorylist = []):
     if not memorylist:
@@ -118,5 +117,5 @@ def load_information(name:str, memorylist = []):
                     return memory.load(identifier)
             raise Exception("Memory not found")
 
-    raise StorageException("Information", name)
+    raise KeyError("Information" + name)
 

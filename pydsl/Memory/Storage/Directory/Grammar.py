@@ -57,7 +57,6 @@ class GrammarDirStorage(DirStorage):
         DirStorage.__init__(self, path, [".py", ".bnf", ".re"])
 
     def load(self, identifier:str, strictgrammar = True):
-        from pydsl.Exceptions import StorageException
         #TODO: What happens when we have > 1 result
         resultdic = self._searcher.search(identifier)
         for value in resultdic: 
@@ -68,7 +67,7 @@ class GrammarDirStorage(DirStorage):
             from pydsl.Grammar.Checker import DummyChecker
             LOG.warning("Unable to load:" + identifier)
             return DummyChecker()
-        raise StorageException("G", identifier)
+        raise KeyError("Grammar" + identifier)
 
     def summary_from_filename(self, filename):
         (_, _, fileBaseName, ext) = getFileTuple(filename)

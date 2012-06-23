@@ -25,8 +25,8 @@ __email__ = "nesaro@gmail.com"
 
 
 import logging
-LOG = logging.getLogger("convert")
-from pydsl.Exceptions import BadFileFormat, StorageException
+LOG = logging.getLogger(__name__)
+from pydsl.Exceptions import BadFileFormat
 
 if __name__ == "__main__":
     import argparse
