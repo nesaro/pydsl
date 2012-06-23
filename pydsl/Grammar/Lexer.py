@@ -15,7 +15,7 @@
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Basic Lexer implementation"""
+"""Base Lexer classes"""
 
 __author__ = "Nestor Arocha Rodriguez"
 __copyright__ = "Copyright 2008-2012, Nestor Arocha Rodriguez"
@@ -27,8 +27,8 @@ from abc import ABCMeta, abstractmethod, abstractproperty
 finalchar = "EOF"
 
 class Lexer(metaclass = ABCMeta):
-    def __init__(self, string):
-        self.string = string
+    def __init__(self):
+        self.string = None
         self.index = 0
 
     @property
@@ -49,5 +49,10 @@ class Lexer(metaclass = ABCMeta):
 
     @abstractmethod
     def nextToken(self):
+        pass
+
+    @abstractmethod
+    def __call__(self, string) -> "TokenList":
+        """Tokenizes input, generating a list of tokens"""
         pass
 
