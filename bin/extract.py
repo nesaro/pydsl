@@ -96,8 +96,8 @@ class Extract(UnixProgram):
 
     def __slice(self, inputdata):
         totallen = len(inputdata)
-        from pydsl.Memory.Storage.Loader import load_type
-        currenttype = load_type(CURRENTGRAMMAR)
+        from pydsl.Memory.Storage.Loader import load_grammartools
+        currenttype = load_grammartools(CURRENTGRAMMAR)
         try:
             maxl = currenttype.maxsize
         except NotImplementedError:
