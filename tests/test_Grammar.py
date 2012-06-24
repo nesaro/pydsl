@@ -108,7 +108,7 @@ class TestSymbolGrammars(unittest.TestCase):
     def setUp(self):
         from pydsl.Grammar.Tool.Symbol import SymbolGrammarTools
         from pydsl.Memory.Storage.Directory.BNF import strlist_to_production_set
-        productionset, macrodic  = strlist_to_production_set(["#parser=descent","S ::= dayofmonth separator number separator number", "separator := Char,/","number := Word,integer,max,1","dayofmonth := Word,DayOfMonth,max,1"])
+        productionset, macrodic  = strlist_to_production_set(["#parser=descent","S ::= dayofmonth separator number separator number", "separator := String,/","number := Word,integer,max,1","dayofmonth := Word,DayOfMonth,max,1"])
         if "parser" in macrodic:
             self.g1 = SymbolGrammarTools("test3",productionset, macrodic["parser"])
         else:
