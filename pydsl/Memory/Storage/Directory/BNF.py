@@ -50,7 +50,7 @@ def __generateWordSymbol(rightside):
 def read_nonterminal_production(line, symboldict):
     sidesarray = line.split("::=")
     if len(sidesarray) < 2 or len(sidesarray) > 3:
-        raise ValueError
+        raise ValueError("Error reading nonterminal production rule")
     leftside = sidesarray[0].strip()
     #leftside contains at least one NonTerminalSymbol
     #FIXME supports only one symbol
@@ -71,13 +71,13 @@ def read_nonterminal_production(line, symboldict):
 def read_terminal_production(line):
     sidesarray = line.split(":=")
     if len(sidesarray) != 2:
-        raise ValueError
+        raise ValueError("Error reading terminal production rule")
     leftside = sidesarray[0]
     leftside = leftside.strip()
     symbolnames = leftside.split(" ")
     if len(symbolnames) != 1:
         LOG.error("Error generating terminal rule: " + line + "At left side")
-        raise ValueError
+        raise ValueError("Error reading left side of terminal production rule")
     #leftside is symbolname
     rightside = sidesarray[1]
     rightside = rightside.strip()
@@ -88,7 +88,7 @@ def read_terminal_production(line):
     elif re.search("^Word", rightside):
         newsymbol = __generateWordSymbol(rightside)
     else:
-        raise ValueError
+        raise ValueError("Unknown terminal production type")
     return (symbolnames[0], newsymbol)
 
 
