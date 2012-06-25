@@ -18,20 +18,18 @@
 
 """Regular expression file parser"""
 
-__author__ = "Néstor Arocha Rodríguez"
-__copyright__ = "Copyright 2008-2012, Néstor Arocha Rodríguez"
+__author__ = "Nestor Arocha Rodriguez"
+__copyright__ = "Copyright 2008-2012, Nestor Arocha Rodriguez"
 __email__ = "nesaro@gmail.com"
 
 
-import logging
-
 import re
+import logging
 LOG = logging.getLogger(__name__)
 
-def colonyRELfileToGrammarInstance(filepath):
+def load_re_from_file(filepath):
     """Converts a re file to Regular Grammar instance"""
     regexp = None
-    from ColonyDSL.Memory.Storage.Directory.DirStorage import getFileTuple
     with open(filepath,'r', encoding='utf-8') as mlfile:
         flagstr = ""
         for line in mlfile:
@@ -46,6 +44,8 @@ def colonyRELfileToGrammarInstance(filepath):
                 raise Exception #TODO find proper exception
             else:
                 regexp = cleanline.rstrip('\n')
-    from ColonyDSL.Type.Grammar.Regular import RegularExpressionGrammar
-    return RegularExpressionGrammar(regexp, flagstr)
+    flagstr = 0
+    if "i" in flagstr:
+        flagstr |= re.I
+    return re.compile(regexp, flagstr)
 

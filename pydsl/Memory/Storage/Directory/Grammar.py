@@ -32,14 +32,10 @@ def _isGDLFileName(path):
 def _isRELFileName(path):
     return path.endswith(".re")
 
-def _loadRELGrammarFromFile(filepath):
-    from pydsl.Memory.Storage.Directory.Regexp import colonyRELfileToGrammarInstance
-    instance = colonyRELfileToGrammarInstance(filepath)
-    return instance
-
 def load_grammar_file(filepath):
     if _isRELFileName(filepath):
-        return _loadRELGrammarFromFile(filepath)
+        from pydsl.Memory.Storage.Directory.Regexp import load_re_from_file
+        return load_re_from_file(filepath)
     if _isGDLFileName(filepath):
         return _loadGDLGrammarFromFile(filepath)
     from .DirStorage import load_python_file 
@@ -73,10 +69,9 @@ class GrammarDirStorage(DirStorage):
         (_, _, fileBaseName, ext) = getFileTuple(filename)
         result = None
         if _isRELFileName(filename + ext):
-            from pydsl.Grammar.Tool.Regular import RegularExpressionGrammarTools
-            result =  {"iclass":"REG","identifier":fileBaseName, "filepath":filename}
+            result =  {"iclass":"re","identifier":fileBaseName, "filepath":filename}
         elif _isGDLFileName(filename + ext):
-            result = {"iclass":"BNF","identifier":fileBaseName, "filepath":filename}
+            result = {"iclass":"BNFGrammar","identifier":fileBaseName, "filepath":filename}
         else:
             from pydsl.Grammar.Tool.Python import PythonGrammarTools
             result = {"iclass":"PythonGrammarTools","identifier":fileBaseName, "filepath":filename}
@@ -84,5 +79,5 @@ class GrammarDirStorage(DirStorage):
         return InmutableDict(result)
 
     def provided_iclasses(self) -> list:
-        return ["PythonGrammarTools","REG","BNF"]
+        return ["PythonGrammarTools","re","BNFGrammar"]
 
