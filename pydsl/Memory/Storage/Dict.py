@@ -75,14 +75,16 @@ class RegexpDictStorage(DictStorage):
         return result
 
     def load(self, index, **kwargs):
-        from pydsl.Grammar.Tool.Regular import RegularExpressionGrammarTools
-        flags = ""
+        import re
         if "flags" in self._content[index]:
-            return RegularExpressionGrammarTools(self._content[index]["regexp"], self._content[index]["flags"])
-        return RegularExpressionGrammarTools(self._content[index]["regexp"])
+            flags = 0
+            if "i" in self._content[index]["flags"]:
+                flags |= re.I
+            return re.compile(self._content[index]["regexp"], flags)
+        return re.compile(self._content[index]["regexp"])
 
     def provided_iclasses(self) -> list:
-        return ["RegularExpressionGrammarTools"]
+        return ["re"]
 
 
 class FileTypeDictStorage(DictStorage):

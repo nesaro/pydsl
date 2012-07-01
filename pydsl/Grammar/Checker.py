@@ -51,7 +51,10 @@ class RegularExpressionChecker(Checker):
         myflags = 0
         if "i" in flags:
             myflags |= re.I
-        self.__regexp = re.compile(regexp, myflags)
+        if isinstance(regexp, str):
+            self.__regexp = re.compile(regexp, myflags)
+        else:
+            self.__regexp = regexp
 
     def check(self, word):
         """returns True if any match any regexp"""

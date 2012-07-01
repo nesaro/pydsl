@@ -17,8 +17,8 @@
 
 """Grammar FileLibraries"""
 
-__author__ = "Néstor Arocha Rodríguez"
-__copyright__ = "Copyright 2008-2012, Néstor Arocha Rodríguez"
+__author__ = "Nestor Arocha Rodriguez"
+__copyright__ = "Copyright 2008-2012, Nestor Arocha Rodriguez"
 __email__ = "nesaro@gmail.com"
 
 

@@ -44,8 +44,8 @@ def load_re_from_file(filepath):
                 raise Exception #TODO find proper exception
             else:
                 regexp = cleanline.rstrip('\n')
-    flagstr = 0
+    flags = 0
     if "i" in flagstr:
-        flagstr |= re.I
-    return re.compile(regexp, flagstr)
+        flags |= re.I
+    return re.compile(regexp, flags)
 
