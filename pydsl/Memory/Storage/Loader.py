@@ -21,6 +21,24 @@ __author__ = "Nestor Arocha Rodriguez"
 __copyright__ = "Copyright 2008-2012, Nestor Arocha Rodriguez"
 __email__ = "nesaro@gmail.com"
 from pkg_resources import Requirement, resource_filename
+from pydsl.Grammar.BNF import BNFGrammar
+
+def load_checker(grammar):
+    if grammar == "dummy":
+        from pydsl.Grammar.Checker import DummyChecker
+        return DummyChecker()
+    import re
+    tmp = re.compile("a")
+    if isinstance(grammar, str):
+        grammar = load_grammar(grammar)
+    if isinstance(grammar, BNFGrammar):
+        raise NotImplementedError
+        #return BNFChecker(grammar)
+    elif isinstance(grammar, type(tmp)):
+        from pydsl.Grammar.Checker import RegularExpressionChecker
+        return RegularExpressionChecker(grammar)
+    else:
+        raise ValueError(grammar)
 
 def load_function(identifier, memorylist = []):
     try:
@@ -34,9 +52,6 @@ def load_function(identifier, memorylist = []):
     raise KeyError("Function" + identifier)
 
 def load_grammar(identifier, memorylist = []):
-    if identifier == "dummy":
-        from pydsl.Grammar.Checker import DummyChecker
-        return DummyChecker()
     if not memorylist:
         from pydsl.Config import GLOBALCONFIG
         memorylist = GLOBALCONFIG.memorylist
