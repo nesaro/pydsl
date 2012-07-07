@@ -23,7 +23,7 @@ import unittest
 
 class ExternalProgramType(unittest.TestCase):
     def setUp(self):
-        from pydsl.Grammar.ExternalProgram import ExternalProgramChecker
+        from pydsl.Grammar.Checker import ExternalProgramChecker
         self.g1 = ExternalProgramChecker(["echo"," "])
 
     def testCheck(self):
