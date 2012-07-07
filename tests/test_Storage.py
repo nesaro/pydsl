@@ -52,6 +52,7 @@ class TestRelationListStorage(unittest.TestCase):
         from pydsl.Memory.Storage.List import RelationListStorage
         self._cll = RelationListStorage("tests/relationlibrary.list")
 
+    @unittest.skip
     def test_load(self):
         self.assertTrue(self._cll.load("{'object': 'concept2', 'subject': 'concept1'}ISA"))
         with self.assertRaises(KeyError):

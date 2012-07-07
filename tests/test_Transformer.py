@@ -53,7 +53,7 @@ class TestTransformer(unittest.TestCase):
 
     def testExternal(self):
         result = self.__text({"input":"1+1"})
-        assert(str(result["output"]) == "1+1\n")
+        self.assertEqual(str(result["output"]),"1+1\n")
 
 class TestHostTransformer(unittest.TestCase):
     """Test recursive transformer"""
@@ -65,6 +65,7 @@ class TestHostTransformer(unittest.TestCase):
         result = self.__gt1({"input":"1"})
         assert(str(result.bt[0]) == 'separator' and str(result.bt[1]) == "myadder" and str(result.bt[2]) == "Main")
 
+@unittest.skip
 class TestSyntaxDirectedTransformer(unittest.TestCase):
     def setUp(self):
         from pydsl.Function.Transformer.SyntaxDirected import SyntaxDirectedTransformer
