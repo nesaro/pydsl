@@ -24,6 +24,7 @@ from pkg_resources import Requirement, resource_filename
 from pydsl.Grammar.BNF import BNFGrammar
 
 def load_checker(grammar):
+    from pydsl.Grammar.Tool.Python import PythonGrammarTools
     if grammar == "dummy":
         from pydsl.Grammar.Checker import DummyChecker
         return DummyChecker()
@@ -32,11 +33,13 @@ def load_checker(grammar):
     if isinstance(grammar, str):
         grammar = load_grammar(grammar)
     if isinstance(grammar, BNFGrammar):
-        raise NotImplementedError
-        #return BNFChecker(grammar)
+        from pydsl.Grammar.Tool.Symbol import SymbolGrammarTools
+        return SymbolGrammarTools(grammar)
     elif isinstance(grammar, type(tmp)):
         from pydsl.Grammar.Checker import RegularExpressionChecker
         return RegularExpressionChecker(grammar)
+    elif isinstance(grammar, PythonGrammarTools): #FIXME!!
+        return grammar
     else:
         raise ValueError(grammar)
 

@@ -38,8 +38,8 @@ class SymbolGrammarTools(GrammarTools):
             raise Exception
         elif parser == "auto" or parser == "default":
             #TODO Guess best parser
-            from .Parser.Weighted import WeightedParser
-            self.__parser = RecursiveDescentParser(bnf)
+            from ..Parser.Weighted import WeightedParser
+            self.__parser = WeightedParser(bnf)
         else:
             LOG.error("Wrong parser name: " + parser)
             raise Exception

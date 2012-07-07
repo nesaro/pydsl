@@ -136,7 +136,7 @@ def strlist_to_production_set(linelist):
             raise Exception
         for myindex in linestodrop:
             del nonterminalrulelist[myindex]
-    from pydsl.Grammar.Parser.Production import BNFGrammar
+    from pydsl.Grammar.BNF import BNFGrammar
     for terminal in terminalrulelist:
         rulelist.append(terminal)
     return BNFGrammar(symboldict["S"], rulelist, macrodict)
