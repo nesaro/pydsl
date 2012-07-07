@@ -169,7 +169,7 @@ class AST(Tree):
         if self.production.leftside[0].name == index:
             result.append((self.leftpos, self.rightpos))
         else:
-            LOG.debug("No igual: " + str(self.production.leftside[0].name) + " comparado con :" + str(index))
+            LOG.debug("Not equal: " + str(self.production.leftside[0].name) + " and :" + str(index))
         for child in self.childlist:
             result += child.__getitem__(index)
         return result
@@ -193,7 +193,7 @@ class ParseTree(Tree):
             raise TypeError
         if not isinstance(rightpos, int) and rightpos != None:
             raise TypeError
-        from .Parser.Production import Production
+        from .BNF import Production
         if production != None and not isinstance(production, Production):
             print(production)
             raise TypeError

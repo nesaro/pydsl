@@ -108,11 +108,8 @@ class TestSymbolGrammars(unittest.TestCase):
     def setUp(self):
         from pydsl.Grammar.Tool.Symbol import SymbolGrammarTools
         from pydsl.Memory.Storage.Directory.BNF import strlist_to_production_set
-        productionset, macrodic  = strlist_to_production_set(["#parser=descent","S ::= dayofmonth separator number separator number", "separator := String,/","number := Word,integer,max,1","dayofmonth := Word,DayOfMonth,max,1"])
-        if "parser" in macrodic:
-            self.g1 = SymbolGrammarTools("test3",productionset, macrodic["parser"])
-        else:
-            self.g1 = SymbolGrammarTools("test3",productionset)
+        productionset = strlist_to_production_set(["#parser=descent","S ::= dayofmonth separator number separator number", "separator := String,/","number := Word,integer,max,1","dayofmonth := Word,DayOfMonth,max,1"])
+        self.g1 = SymbolGrammarTools(productionset)
 
     def testCheck(self):
         result = self.g1.check("1/1/2001")

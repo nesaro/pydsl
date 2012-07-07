@@ -71,9 +71,9 @@ class HostPythonGrammarTools(PythonGrammarTools):
     def __init__(self, matchFun, auxdic, propFun = None):
         PythonGrammarTools.__init__(self, matchFun, propFun)
         self.auxgrammar = {}
-        from pydsl.Memory.Storage.Loader import load_grammar
+        from pydsl.Memory.Storage.Loader import load_checker
         for key, value in auxdic.items():
-            self.auxgrammar[key] = load_grammar(value)
+            self.auxgrammar[key] = load_checker(value)
 
     def check(self, word):
         if not self._matchFun:

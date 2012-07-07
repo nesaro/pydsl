@@ -65,9 +65,9 @@ class TestParsers(unittest.TestCase):
         rulea = NonTerminalProduction ([nonterminal], [symbola, NullSymbol(), symbolb])
         self.productionset2 = BNFGrammar(nonterminal, [rulea, terminala, terminalb])
         from pydsl.Memory.Storage.Directory.BNF import strlist_to_production_set
-        self.productionsetlr,_ = strlist_to_production_set(leftrecursive)
-        self.productionsetrr,_ = strlist_to_production_set(rightrecursive)
-        self.productionsetcr,_ = strlist_to_production_set(centerrecursive)
+        self.productionsetlr = strlist_to_production_set(leftrecursive)
+        self.productionsetrr = strlist_to_production_set(rightrecursive)
+        self.productionsetcr = strlist_to_production_set(centerrecursive)
 
 
         #tokenlist definition

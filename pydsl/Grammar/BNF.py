@@ -115,6 +115,8 @@ class BNFGrammar: #Only stores a ruleset, and methods to ask properties or valid
         raise NotImplementedError
 
     def __eq__(self, other):
+        if not isinstance(other,BNFGrammar):
+            return False
         if self._initialsymbol != other.initialsymbol:
             return False
         for index in range(len(self.productionlist)):
