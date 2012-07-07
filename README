@@ -1,7 +1,7 @@
 REQUIREMENTS
 ============
  * python >= 3.0
- * colony archive package ( https://github.com/nesaro/carchive )
+ * pydsl contrib package ( https://github.com/nesaro/pydsl-contrib )
 
 INSTALL
 =======
@@ -32,7 +32,7 @@ see LICENSE file
 
 ABOUT
 =====
-colony is a formal and natural language framework.
-Copyright (C) 2008-2012 Néstor Arocha Rodríguez (nesaro@gmail.com)
+pydsl is a formal and natural language framework.
+Copyright (C) 2008-2012 Nestor Arocha Rodriguez (nesaro@gmail.com)
 
 
