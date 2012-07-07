@@ -17,15 +17,15 @@
 
 """Boards"""
 
-__author__ = "Néstor Arocha Rodríguez"
-__copyright__ = "Copyright 2008-2012, Néstor Arocha Rodríguez"
+__author__ = "Nestor Arocha Rodriguez"
+__copyright__ = "Copyright 2008-2012, Nestor Arocha Rodriguez"
 __email__ = "nesaro@gmail.com"
 
 import logging
 from pydsl.Function.Function import Function
 from .Network import HostFunctionNetwork
 from pydsl.Function.Transformer.Transformer import Transformer
-LOG = logging.getLogger("Board")
+LOG = logging.getLogger(__name__)
 
 class Board(Transformer, HostFunctionNetwork):
     """A Transformer where you can call other Transformer. Doesn't perform any computation"""
@@ -35,8 +35,8 @@ class Board(Transformer, HostFunctionNetwork):
     def __init__(self, gtenvdefinitionslist:list, ecuid = None, server = None, timeout = 10):
         if ecuid != None:
             from .Network import FunctionNetworkServer
-            if not isinstance(ecuid, FunctionNetworkServer):
-                raise TypeError("FunctionNetworkServer expected, got %s" % str(ecuid))
+            if not isinstance(server, FunctionNetworkServer):
+                raise TypeError("FunctionNetworkServer expected, got %s" % str(server))
         self.__timeout = timeout
         self.__GTDefinitionlist = gtenvdefinitionslist #list to put every gt envdefinition
         self.__inputGTDict = {} #{"channelname":GTinstance,} #Inner GT that receives input
