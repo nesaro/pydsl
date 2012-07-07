@@ -30,6 +30,8 @@ class SymbolGrammarTools(GrammarTools):
         LOG.debug("SymbolGrammarTools.__init__: Begin")
         GrammarTools.__init__(self)
         parser = bnf.options.get("parser",parser)
+        self.__bnf = bnf
+        self.__checker = None
         if parser == "descent":
             from ..Parser.RecursiveDescent import RecursiveDescentParser
             self.__parser = RecursiveDescentParser(bnf)
@@ -70,22 +72,15 @@ class SymbolGrammarTools(GrammarTools):
         """
         return self.__parser.get_trees(word, showErrors)
     
-    def alphabet(self):
-        #TODO
-        return set()
-    
     @property
     def summary(self):
         return {"iclass":"SymbolGrammarTools", "groups":tuple(self.groups())}
 
     def check(self, word):
-        try:
-            return self.__parser.check(word)
-        except IndexError:
-            LOG.exception("EXCEPTION IndexError")
-            return False 
-        return False
-
+        if not self.__checker:
+            from pydsl.Memory.Storage.Loader import load_checker
+            self.__checker = load_checker(self.__bnf)
+        return self.__checker.check(word)
 
     def genealogy(self, information, index) -> list:
         """Given a word(token) index, will tell all parent symbols  until root node"""

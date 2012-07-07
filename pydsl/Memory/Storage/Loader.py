@@ -33,8 +33,8 @@ def load_checker(grammar):
     if isinstance(grammar, str):
         grammar = load_grammar(grammar)
     if isinstance(grammar, BNFGrammar):
-        from pydsl.Grammar.Tool.Symbol import SymbolGrammarTools
-        return SymbolGrammarTools(grammar)
+        from pydsl.Grammar.Checker import BNFChecker
+        return BNFChecker(grammar)
     elif isinstance(grammar, type(tmp)):
         from pydsl.Grammar.Checker import RegularExpressionChecker
         return RegularExpressionChecker(grammar)

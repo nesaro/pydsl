@@ -94,3 +94,37 @@ class ExternalProgramChecker(Checker, Indexable):
     @property
     def summary(self):
         return {"iclass":"ExternalProgramChecker", "identifier":self.identifier, "description":self.description}
+
+
+class BNFChecker(Checker):
+    """Calls another program to perform checking. Args are always filenames"""
+    def __init__(self, bnf, parser = "auto"):
+        Checker.__init__(self)
+        parser = bnf.options.get("parser",parser)
+        if parser == "descent":
+            from .Parser.RecursiveDescent import RecursiveDescentParser
+            self.__parser = RecursiveDescentParser(bnf)
+        elif parser == "weighted":
+            self.__parser = WeightedParser(bnf)
+            raise Exception
+        elif parser == "auto" or parser == "default":
+            #TODO Guess best parser
+            from .Parser.Weighted import WeightedParser
+            self.__parser = WeightedParser(bnf)
+        else:
+            LOG.error("Wrong parser name: " + parser)
+            raise Exception
+
+    def check(self, data):
+        try:
+            return self.__parser.check(data)
+        except IndexError:
+            LOG.exception("EXCEPTION IndexError")
+            return False 
+        return False
+        
+    @property
+    def summary(self):
+        return {"iclass":"ExternalProgramChecker", "identifier":self.identifier, "description":self.description}
+
+
