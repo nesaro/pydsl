@@ -95,10 +95,6 @@ class RegularExpressionGrammarTools(GrammarTools):
     def groups(self):
         return list(self.__regexp.groupindex.keys())
 
-    def enumerate(self):
-        """inspects regexp"""
-        pass
-
     def tokenize(self, information:str):
         """Uses python str iteration"""
         for x in information:

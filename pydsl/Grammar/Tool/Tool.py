@@ -35,7 +35,7 @@ class GrammarTools(metaclass = ABCMeta):
 
     def groups(self) -> set:
         """Returns a set with all groups names"""
-        pass
+        return set() 
 
     def enumerate(self) -> set:
         """Yields a list of accepted values (if possible) else return {}"""
