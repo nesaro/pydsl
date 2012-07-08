@@ -77,8 +77,8 @@ class TestPythonGrammars(unittest.TestCase):
 class TestHostPythonGrammars(unittest.TestCase):
     """HostPythonGrammar test"""
     def setUp(self):
-        from pydsl.Grammar.Tool.Python import HostPythonGrammarTools
-        self.g1 = HostPythonGrammarTools(lambda x,aux: aux["ext"].check(x), {"ext":"email"})
+        from pydsl.Grammar.Tool.Python import PythonGrammarTools
+        self.g1 = PythonGrammarTools(lambda x,aux: aux["ext"].check(x), {"ext":"email"})
 
     def testCheck(self):
         self.assertTrue(self.g1.check("NESARO@GMAIL.COM"))

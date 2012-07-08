@@ -77,9 +77,6 @@ def load_python_file(moduleobject, **kwargs):
     elif iclass == "PythonGrammar":
         from pydsl.Grammar.Tool.Python import PythonGrammarTools
         return PythonGrammarTools(**resultdic)
-    elif iclass == "HostPythonGrammar":
-        from pydsl.Grammar.Tool.Python import HostPythonGrammarTools
-        return HostPythonGrammarTools(**resultdic)
     elif iclass == "SymbolGrammar":
         from pydsl.Grammar.Tool.Symbol import SymbolGrammarTools
         return SymbolGrammarTools(**resultdic)

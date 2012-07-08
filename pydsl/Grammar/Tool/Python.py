@@ -27,18 +27,25 @@ import logging
 LOG = logging.getLogger(__name__)
 
 class PythonGrammarTools(GrammarTools, Indexable):
-    def __init__(self, matchFun, propFun = None, enumFun = None, alphabetFun = None):
+    def __init__(self, matchFun, auxdic = {}, propFun = None, enumFun = None, alphabetFun = None):
         GrammarTools.__init__(self)
         self._matchFun = matchFun
         self._askprop = propFun
         self._enumFun = enumFun
         self._alphabetFun = alphabetFun
+        self.auxgrammar = {}
+        from pydsl.Memory.Storage.Loader import load_checker
+        for key, value in auxdic.items():
+            self.auxgrammar[key] = load_checker(value)
 
     def check(self, word):
         if not self._matchFun:
             return False #Match function isn't defined
         try:
-            return self._matchFun(word)
+            if self.auxgrammar:
+                return self._matchFun(word, self.auxgrammar)
+            else:
+                return self._matchFun(word)
         except UnicodeDecodeError:
             return False
 
@@ -66,22 +73,4 @@ class PythonGrammarTools(GrammarTools, Indexable):
     @property
     def summary(self):
         return {"iclass":"PythonGrammar", "ancestors":self.ancestors() }
-
-class HostPythonGrammarTools(PythonGrammarTools):
-    def __init__(self, matchFun, auxdic, propFun = None):
-        PythonGrammarTools.__init__(self, matchFun, propFun)
-        self.auxgrammar = {}
-        from pydsl.Memory.Storage.Loader import load_checker
-        for key, value in auxdic.items():
-            self.auxgrammar[key] = load_checker(value)
-
-    def check(self, word):
-        if not self._matchFun:
-            return False #Match function isn't defined
-        try:
-            return self._matchFun(word, self.auxgrammar)
-        except UnicodeDecodeError:
-            LOG.exception("Unicode Error while calling matchfun")
-            return False
-        
 
