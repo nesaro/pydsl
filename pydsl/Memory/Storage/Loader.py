@@ -38,8 +38,9 @@ def load_checker(grammar):
     elif isinstance(grammar, type(tmp)):
         from pydsl.Grammar.Checker import RegularExpressionChecker
         return RegularExpressionChecker(grammar)
-    elif isinstance(grammar, PythonGrammarTools): #FIXME!!
-        return grammar
+    elif isinstance(grammar, dict):
+        from pydsl.Grammar.Checker import PythonChecker
+        return PythonChecker(grammar)
     else:
         raise ValueError(grammar)
 

@@ -128,3 +128,22 @@ class BNFChecker(Checker):
         return {"iclass":"ExternalProgramChecker", "identifier":self.identifier, "description":self.description}
 
 
+class PythonChecker(Checker):
+    def __init__(self, module):
+        Checker.__init__(self)
+        self._matchFun = module["matchFun"]
+        auxdic = module.get('auxdic', {})
+        self.auxgrammar = {}
+        from pydsl.Memory.Storage.Loader import load_checker
+        for key, value in auxdic.items():
+            self.auxgrammar[key] = load_checker(value)
+
+    def check(self, data):
+        try:
+            if self.auxgrammar:
+                return self._matchFun(data, self.auxgrammar)
+            else:
+                return self._matchFun(data)
+        except UnicodeDecodeError:
+            return False
+

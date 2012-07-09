@@ -75,8 +75,7 @@ def load_python_file(moduleobject, **kwargs):
         from pydsl.Function.GrammarSetTransformer import SimpleGrammarSetTransformer
         return SimpleGrammarSetTransformer(**resultdic)
     elif iclass == "PythonGrammar":
-        from pydsl.Grammar.Tool.Python import PythonGrammarTools
-        return PythonGrammarTools(**resultdic)
+        return resultdic
     elif iclass == "SymbolGrammar":
         from pydsl.Grammar.Tool.Symbol import SymbolGrammarTools
         return SymbolGrammarTools(**resultdic)
