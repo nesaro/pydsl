@@ -17,15 +17,14 @@
 
 """Regular Expression Grammars"""
 
-__author__ = "Néstor Arocha Rodríguez"
-__copyright__ = "Copyright 2008-2012, Néstor Arocha Rodríguez"
+__author__ = "Nestor Arocha Rodriguez"
+__copyright__ = "Copyright 2008-2012, Nestor Arocha Rodriguez"
 __email__ = "nesaro@gmail.com"
 
 #There are at least three ways to define a regular grammar. Regexp, FSM table, production rules. At this time, I'm going to combine several regexp rules, each one with a name.
 
 import logging
 from .Tool import GrammarTools
-from pydsl.Abstract import Indexable
 import re
 LOG = logging.getLogger(__name__)
 CHARACTERS = {"a","b","c","d","e"}

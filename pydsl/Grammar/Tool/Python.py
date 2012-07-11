@@ -22,11 +22,10 @@ __copyright__ = "Copyright 2008-2012, Nestor Arocha Rodriguez"
 __email__ = "nesaro@gmail.com"
 
 from .Tool import GrammarTools
-from pydsl.Abstract import Indexable
 import logging
 LOG = logging.getLogger(__name__)
 
-class PythonGrammarTools(GrammarTools, Indexable):
+class PythonGrammarTools(GrammarTools):
     def __init__(self, matchFun, auxdic = {}, propFun = None, enumFun = None, alphabetFun = None):
         GrammarTools.__init__(self)
         self._matchFun = matchFun
