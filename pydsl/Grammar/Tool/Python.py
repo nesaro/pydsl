@@ -26,27 +26,19 @@ import logging
 LOG = logging.getLogger(__name__)
 
 class PythonGrammarTools(GrammarTools):
-    def __init__(self, matchFun, auxdic = {}, propFun = None, enumFun = None, alphabetFun = None):
+    def __init__(self, dictionary, auxdic = {}, propFun = None, enumFun = None, alphabetFun = None):
         GrammarTools.__init__(self)
-        self._matchFun = matchFun
+        self.dictionary = dictionary
+        self._matchFun = None
         self._askprop = propFun
         self._enumFun = enumFun
         self._alphabetFun = alphabetFun
-        self.auxgrammar = {}
-        from pydsl.Memory.Storage.Loader import load_checker
-        for key, value in auxdic.items():
-            self.auxgrammar[key] = load_checker(value)
 
     def check(self, word):
         if not self._matchFun:
-            return False #Match function isn't defined
-        try:
-            if self.auxgrammar:
-                return self._matchFun(word, self.auxgrammar)
-            else:
-                return self._matchFun(word)
-        except UnicodeDecodeError:
-            return False
+            from pydsl.Memory.Storage.Loader import load_checker
+            self._matchFun = load_checker(self.dictionary)
+        return self._matchFun.check(word)
 
     def get_groups(self, word, propertyname):
         if self._askprop != None:

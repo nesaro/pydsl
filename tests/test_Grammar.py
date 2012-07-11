@@ -51,7 +51,7 @@ class TestPythonGrammars(unittest.TestCase):
     """Funcionamiento basico de las gramaticas"""
     def setUp(self):
         from pydsl.Grammar.Tool.Python import PythonGrammarTools
-        self.g1 = PythonGrammarTools(lambda x:int(str(x))>6)
+        self.g1 = PythonGrammarTools({"matchFun":lambda x:int(str(x))>6})
 
     def testCheck(self):
         self.assertTrue(self.g1.check("7"))
@@ -78,7 +78,7 @@ class TestHostPythonGrammars(unittest.TestCase):
     """HostPythonGrammar test"""
     def setUp(self):
         from pydsl.Grammar.Tool.Python import PythonGrammarTools
-        self.g1 = PythonGrammarTools(lambda x,aux: aux["ext"].check(x), {"ext":"email"})
+        self.g1 = PythonGrammarTools({"matchFun":lambda x,aux: aux["ext"].check(x),"auxdic":{"ext":"email"}})
 
     def testCheck(self):
         self.assertTrue(self.g1.check("NESARO@GMAIL.COM"))

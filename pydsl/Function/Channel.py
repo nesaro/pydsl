@@ -27,12 +27,12 @@ from .Function import FunctionInterface
 import logging
 LOG = logging.getLogger(__name__)
 
-def _loadCheckers(originaldic):
+def _loadGrammarTools(originaldic):
     """Converts {"channelname","type"} into {"channelname",instance}"""
-    from pydsl.Memory.Storage.Loader import load_checker
+    from pydsl.Memory.Storage.Loader import load_grammar_tool
     result = {}
     for key in originaldic:
-        result[key] = load_checker(str(originaldic[key]))
+        result[key] = load_grammar_tool(str(originaldic[key]))
     return result
 
 class HostChannel(FunctionInterface):
@@ -49,8 +49,8 @@ class HostChannel(FunctionInterface):
                 raise TypeError
         self.inputdefinition = inputtypedict
         self.outputdefinition = outputtypedict
-        self.__inputchanneldic = _loadCheckers(inputtypedict)
-        self.__outputchanneldic = _loadCheckers(outputtypedict)
+        self.__inputchanneldic = _loadGrammarTools(inputtypedict)
+        self.__outputchanneldic = _loadGrammarTools(outputtypedict)
         self._connections = {}
 
     def connect(self, intchannel, extGT, extChannel):
