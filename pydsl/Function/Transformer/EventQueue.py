@@ -15,7 +15,7 @@ class EventQueue: #FIXME: May we use the memory abstraction for this class??
     def __init__(self):
         self.msgdictid = {}
 
-    from ColonyDSL.Abstract import Event
+    from pydsl.Abstract import Event
     def append(self, event:Event):
         """Adds a message to queue"""
         msgid = event.msgid
@@ -35,7 +35,7 @@ class EventQueue: #FIXME: May we use the memory abstraction for this class??
                 result.append(msgdic[source])
         return result
 
-    from ColonyDSL.Identifier import FunctionNetworkClientId
+    from pydsl.Identifier import FunctionNetworkClientId
     def getBySourceAndId(self, source:FunctionNetworkClientId, msgid):
         return self.__getitem__(msgid)[source]
 
@@ -59,7 +59,7 @@ class EventQueue: #FIXME: May we use the memory abstraction for this class??
         except KeyError:
             return None
         for element in msgdic.values():
-            from ColonyDSL.Function.Function import Error
+            from pydsl.Function.Function import Error
             if isinstance(element[0], Error):  #FIXME We assume there is only one error
                 return element[0]
         return None
