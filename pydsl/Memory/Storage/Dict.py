@@ -37,7 +37,7 @@ class DictStorage(Storage, metaclass = ABCMeta):
         from pydsl.Memory.Search.Searcher import MemorySearcher
         self._searcher = MemorySearcher(self)
         from pydsl.Config import GLOBALCONFIG
-        from pydsl.Memory.Storage.Directory.DirStorage import getFileTuple
+        from pydsl.Memory.Storage.File.Python import getFileTuple
         (_, _, fileBaseName, _) = getFileTuple(fullpath)
         import imp
         myobj = imp.load_source(fileBaseName, fullpath)

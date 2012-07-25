@@ -64,7 +64,7 @@ class TestParsers(unittest.TestCase):
         nonterminal = NonTerminalSymbol("res")
         rulea = NonTerminalProduction ([nonterminal], [symbola, NullSymbol(), symbolb])
         self.productionset2 = BNFGrammar(nonterminal, [rulea, terminala, terminalb])
-        from pydsl.Memory.Storage.Directory.BNF import strlist_to_production_set
+        from pydsl.Memory.Storage.File.BNF import strlist_to_production_set
         self.productionsetlr = strlist_to_production_set(leftrecursive)
         self.productionsetrr = strlist_to_production_set(rightrecursive)
         self.productionsetcr = strlist_to_production_set(centerrecursive)

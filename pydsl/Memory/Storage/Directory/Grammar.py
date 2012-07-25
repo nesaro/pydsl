@@ -21,31 +21,12 @@ __author__ = "Nestor Arocha Rodriguez"
 __copyright__ = "Copyright 2008-2012, Nestor Arocha Rodriguez"
 __email__ = "nesaro@gmail.com"
 
+from ..File.Grammar import _isRELFileName, _isGDLFileName, load_grammar_file
 
 import logging
 LOG = logging.getLogger("Storage.Directory.Grammar")
-from .DirStorage import DirStorage, getFileTuple
-
-def _isGDLFileName(path):
-    return path.endswith(".bnf")
-
-def _isRELFileName(path):
-    return path.endswith(".re")
-
-def load_grammar_file(filepath):
-    if _isRELFileName(filepath):
-        from pydsl.Memory.Storage.Directory.Regexp import load_re_from_file
-        return load_re_from_file(filepath)
-    if _isGDLFileName(filepath):
-        return _loadGDLGrammarFromFile(filepath)
-    from .DirStorage import load_python_file 
-    return load_python_file(filepath)
-    
-def _loadGDLGrammarFromFile(filepath):
-    (_, _, fileBaseName, _) = getFileTuple(filepath)
-    from pydsl.Memory.Storage.Directory.BNF import bnf_file_to_productionset
-    bnfgrammar = bnf_file_to_productionset(filepath)
-    return bnfgrammar
+from .DirStorage import DirStorage
+from ..File.Python import getFileTuple
 
 class GrammarDirStorage(DirStorage):
     """generate instances of grammars"""

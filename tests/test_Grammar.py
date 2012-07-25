@@ -15,8 +15,8 @@
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
-__author__ = "Néstor Arocha Rodríguez"
-__copyright__ = "Copyright 2008-2012, Néstor Arocha Rodríguez"
+__author__ = "Nestor Arocha Rodriguez"
+__copyright__ = "Copyright 2008-2012, Nestor Arocha Rodriguez"
 __email__ = "nesaro@gmail.com"
 
 import unittest
@@ -107,7 +107,7 @@ class TestHostPythonGrammars(unittest.TestCase):
 class TestSymbolGrammars(unittest.TestCase):
     def setUp(self):
         from pydsl.Grammar.Tool.Symbol import SymbolGrammarTools
-        from pydsl.Memory.Storage.Directory.BNF import strlist_to_production_set
+        from pydsl.Memory.Storage.File.BNF import strlist_to_production_set
         productionset = strlist_to_production_set(["#parser=descent","S ::= dayofmonth separator number separator number", "separator := String,/","number := Word,integer,max,1","dayofmonth := Word,DayOfMonth,max,1"])
         self.g1 = SymbolGrammarTools(productionset)
 
