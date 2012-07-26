@@ -102,7 +102,7 @@ def all_classes(module) -> set:
         if inspect.isclass(obj):
             result.add(obj)
         elif inspect.ismodule(obj):
-            if obj.__name__[:6] == "Colony":
+            if obj.__name__[:6] == "pydsl":
                 result = result.union(all_classes(obj))
     return result
 
@@ -115,7 +115,7 @@ def all_indexable_classes(module) -> set:
         if inspect.isclass(obj) and issubclass(obj, Indexable):
             result.add(obj)
         elif inspect.ismodule(obj):
-            if obj.__name__[:6] == "Colony":
+            if obj.__name__[:6] == "pydsl":
                 result = result.union(all_indexable_classes(obj))
     return result
 
