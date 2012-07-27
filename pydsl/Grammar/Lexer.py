@@ -62,7 +62,6 @@ class BNFLexer(Lexer):
 
     def nextToken(self):
         import re
-        from pydsl.Grammar.Lexer import finalchar
         while self.current != finalchar:
             if self.current == "/":
                 self.comment(tl)
@@ -100,7 +99,6 @@ class BNFLexer(Lexer):
     def name(self):
         import re
         string = ""
-        from pydsl.Grammar.Lexer import finalchar
         while self.current != finalchar and re.match("[a-zA-Z]", self.current):
             string += self.current
             self.consume()
