@@ -23,6 +23,7 @@ __email__ = "nesaro@gmail.com"
 
 from .DirStorage import DirStorage
 from ..File.Python import getFileTuple
+from pydsl.Abstract import InmutableDict
 import logging
 LOG = logging.getLogger("Storage.Directory.Function")
 
@@ -52,14 +53,11 @@ class TransformerDirStorage(DirStorage):
         (_, _, fileBaseName, _) = getFileTuple(modulepath)
         import imp
         moduleobject = imp.load_source(fileBaseName, modulepath)
-        from pydsl.Abstract import InmutableDict
         try:
             result = {"identifier":fileBaseName,"iclass":moduleobject.iclass, "filepath":modulepath, "ancestors":PythonTransformer.ancestors()}
             if hasattr(moduleobject, "title"):
-                from pydsl.Abstract import InmutableDict
                 result["title"] =  InmutableDict(moduleobject.title)
             if hasattr(moduleobject, "description"):
-                from pydsl.Abstract import InmutableDict
                 result["description"] =  InmutableDict(moduleobject.description)
             if hasattr(moduleobject, "inputdic"):
                 result["input"] = InmutableDict(moduleobject.inputdic)
@@ -96,7 +94,6 @@ class BoardDirStorage(DirStorage):
 
     def summary_from_filename(self, filename):
         from pydsl.Function.Transformer.Board import Board
-        from pydsl.Abstract import InmutableDict
         (_, _, fileBaseName, _) = getFileTuple(filename)
         return InmutableDict({"iclass":"Board", "identifier":fileBaseName, "filepath":filename, "ancestors":Board.ancestors()})
 
@@ -134,13 +131,7 @@ class ProcedureDirStorage(DirStorage):
         for elementname in self.allElementStaticIdGenerator():
             try:
                 instance = self.load(elementname)
-            except TypeError:
-                continue
-            except KeyError:
-                continue
-            except ImportError:
-                continue
-            except NameError:
+            except (TypeError, KeyError, ImportError, NameError):
                 continue
             exfun = lambda x:getattr(x,"name").split(".")[0]
             yield (map(exfun, elementname, instance.description))
