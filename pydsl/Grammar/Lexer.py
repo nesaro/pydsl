@@ -56,3 +56,53 @@ class Lexer(metaclass = ABCMeta):
         """Tokenizes input, generating a list of tokens"""
         pass
 
+class BNFLexer(Lexer):
+    def __init__(self, bnfgrammar, string = ""):
+        Lexer.__init__(self, string)
+
+    def nextToken(self):
+        import re
+        from pydsl.Grammar.Lexer import finalchar
+        while self.current != finalchar:
+            if self.current == "/":
+                self.comment(tl)
+                continue
+            elif self.current == " ":
+                self.consume()
+                continue
+            elif self.current == ",":
+                return self.comma()
+            elif self.current == "[":
+                return self.lbrack()
+            elif self.current == "]":
+                return self.rbrack()
+            elif re.match("[a-zA-Z]", self.current):
+                return self.name()
+            else:
+                raise Exception
+        return ("EOF_TYPE", "")
+
+    def comma(self):
+        current = self.current
+        self.match(",")
+        return ("COMMA", current)
+
+    def lbrack(self):
+        current = self.current
+        self.match("[")
+        return ("LBRACK", current)
+
+    def rbrack(self):
+        current = self.current
+        self.match("]")
+        return ("RBRACK", current)
+
+    def name(self):
+        import re
+        string = ""
+        from pydsl.Grammar.Lexer import finalchar
+        while self.current != finalchar and re.match("[a-zA-Z]", self.current):
+            string += self.current
+            self.consume()
+        return ("NAME", string)
+
