@@ -41,10 +41,7 @@ class EventError(Exception):
     """Event related exception"""
     pass
 
-class ParserError(Exception):
-    pass
-
-class LRConflictException(ParserError):
+class LRConflictException(Exception):
     pass
 
 class BadFileFormat(Exception):
