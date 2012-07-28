@@ -92,11 +92,6 @@ class BoardDirStorage(DirStorage):
 
         raise KeyError("Board" + identifier)
 
-    def summary_from_filename(self, filename):
-        from pydsl.Function.Transformer.Board import Board
-        (_, _, fileBaseName, _) = getFileTuple(filename)
-        return InmutableDict({"iclass":"Board", "identifier":fileBaseName, "filepath":filename, "ancestors":Board.ancestors()})
-
     def provided_iclasses(self) -> list:
         return ["Board"]
 
@@ -106,10 +101,6 @@ class ProcedureDirStorage(DirStorage):
     """Procedure Library"""
     def __init__(self, path):
         DirStorage.__init__(self, path, [".py"])
-
-    def summary_from_filename(self, filename):
-        (_, _, fileBaseName, _) = getFileTuple(filename)
-        return {"iclass":"Procedure","identifier":fileBaseName, "filepath":filename}
 
     def load(self, identifier, server = None):
         """guess class, guess filename from id, and then call loadTInstance"""
@@ -125,16 +116,4 @@ class ProcedureDirStorage(DirStorage):
 
     def provided_iclasses(self) -> list:
         return ["Procedure"]
-
-    def all_files_generator(self):
-        """Generates (inputlist, outputlist, name, description) from T list"""
-        for elementname in self.allElementStaticIdGenerator():
-            try:
-                instance = self.load(elementname)
-            except (TypeError, KeyError, ImportError, NameError):
-                continue
-            exfun = lambda x:getattr(x,"name").split(".")[0]
-            yield (map(exfun, elementname, instance.description))
-            #instance.outputchanneldic.values()),
-        
 

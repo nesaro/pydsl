@@ -21,6 +21,7 @@
 from abc import ABCMeta, abstractmethod
 from ..Storage import Storage
 from ..File.Python import getFileTuple
+from ..File.Grammar import _isRELFileName, _isGDLFileName
 import logging
 LOG = logging.getLogger(__name__)
 
@@ -51,18 +52,26 @@ class DirStorage(Storage, metaclass = ABCMeta):
         
 
     def summary_from_filename(self, modulepath):
-        (_, _, fileBaseName, _) = getFileTuple(modulepath)
-        import imp
-        moduleobject = imp.load_source(fileBaseName, modulepath)
-        from pydsl.Abstract import InmutableDict
-        result = {"identifier":fileBaseName, "iclass":moduleobject.iclass, "path":modulepath}
-        if hasattr(moduleobject, "title"):
+        (_, _, fileBaseName, ext) = getFileTuple(modulepath)
+        result = None
+        if _isRELFileName(filename + ext):
+            result =  {"iclass":"re","identifier":fileBaseName, "filepath":filename}
+        elif _isGDLFileName(filename + ext):
+            result = {"iclass":"BNFGrammar","identifier":fileBaseName, "filepath":filename}
+        elif (filename + ext).endswith(".board"):
+            from pydsl.Function.Transformer.Board import Board
+            result = {"iclass":"Board", "identifier":fileBaseName, "filepath":filename, "ancestors":Board.ancestors()}
+
+        else:
+            import imp
+            moduleobject = imp.load_source(fileBaseName, modulepath)
             from pydsl.Abstract import InmutableDict
-            result["title"] =  InmutableDict(moduleobject.title)
-        if hasattr(moduleobject, "description"):
-            from pydsl.Abstract import InmutableDict
-            result["description"] =  InmutableDict(moduleobject.description)
-        return result
+            result = {"identifier":fileBaseName, "iclass":moduleobject.iclass, "path":modulepath}
+            if hasattr(moduleobject, "title"):
+                result["title"] =  InmutableDict(moduleobject.title)
+            if hasattr(moduleobject, "description"):
+                result["description"] =  InmutableDict(moduleobject.description)
+        return InmutableDict(result)
 
     def _search_files(self, string: str, exact:bool = True):
         """Search through library"""
@@ -101,7 +110,6 @@ class DirStorage(Storage, metaclass = ABCMeta):
             yield fileBaseName.split(".")[0]
 
     def _load_module_from_library(self, identifier):
-        """ Carga un modulo desde la libreria"""
         try:
             import imp
             moduleobject = imp.load_source(identifier, self.identifier + "/" + identifier + ".py")
@@ -126,11 +134,6 @@ class StrDirStorage(DirStorage):
     """Dir library for txt files"""
     def __init__(self, dirpath:str):
         DirStorage.__init__(self, dirpath)
-
-    def summary_from_filename(self, filename) -> dict:
-        #TODO Load first characters to summary
-        _, filename, _, _ = getFileTuple(filename)
-        return {"iclass":"str", "identifier":filename}
 
     def provided_iclasses(self) -> list:
         return ["str"]
