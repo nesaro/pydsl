@@ -26,7 +26,6 @@ from ..File.Grammar import _isRELFileName, _isGDLFileName, load_grammar_file
 import logging
 LOG = logging.getLogger("Storage.Directory.Grammar")
 from .DirStorage import DirStorage
-from ..File.Python import getFileTuple
 
 class GrammarDirStorage(DirStorage):
     """generate instances of grammars"""
@@ -45,20 +44,6 @@ class GrammarDirStorage(DirStorage):
             LOG.warning("Unable to load:" + identifier)
             return DummyChecker()
         raise KeyError("Grammar" + identifier)
-
-    def summary_from_filename(self, filename):
-        (_, _, fileBaseName, ext) = getFileTuple(filename)
-        result = None
-        if _isRELFileName(filename + ext):
-            result =  {"iclass":"re","identifier":fileBaseName, "filepath":filename}
-        elif _isGDLFileName(filename + ext):
-            result = {"iclass":"BNFGrammar","identifier":fileBaseName, "filepath":filename}
-        else:
-            from pydsl.Grammar.Tool.Python import PythonGrammarTools
-            result = {"iclass":"PythonGrammarTools","identifier":fileBaseName, "filepath":filename}
-        from pydsl.Abstract import InmutableDict
-        return InmutableDict(result)
-
     def provided_iclasses(self) -> list:
         return ["PythonGrammarTools","re","BNFGrammar"]
 

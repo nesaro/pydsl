@@ -148,7 +148,7 @@ class Board(Transformer, HostFunctionNetwork):
 
     def __loadTfromDefinitionList(self):
         """GTDefinitions -> Instances"""
-        from pydsl.Memory.Storage.Directory.BoardSection import BoardDefinitionSection
+        from pydsl.Memory.Storage.File.BoardSection import BoardDefinitionSection
         auxnametype = {}
         for definition in self.__GTDefinitionlist:
             if not isinstance(definition, BoardDefinitionSection):
@@ -161,7 +161,7 @@ class Board(Transformer, HostFunctionNetwork):
 
     def __connectAllGTs(self):
         """Connect all instances"""
-        from pydsl.Memory.Storage.Directory.BoardSection import BoardConnectionDefinition
+        from pydsl.Memory.Storage.File.BoardSection import BoardConnectionDefinition
         for definition in self.__GTDefinitionlist:
             gtname = definition.name
             outputgrammarlist = definition.outputConnectionDefinitions
