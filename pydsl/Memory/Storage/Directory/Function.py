@@ -44,6 +44,7 @@ class TransformerDirStorage(DirStorage):
             except (ImportError, IOError):
                 LOG.exception("Exception while loading: " + identifier)
             else:
+                from pydsl.Memory.Storage.File.Board import load_python_f
                 return load_python_f(value["filepath"], server)
 
         raise KeyError("Transformer" + identifier)
@@ -88,6 +89,7 @@ class BoardDirStorage(DirStorage):
             raise Exception
         for result in searchresult:
             #TODO assert(len(self._search(identifier) == 2)) 
+            from pydsl.Memory.Storage.File.Board import load_board_file
             return load_board_file(result["filepath"], server = server, ecuid = ecuid)
 
         raise KeyError("Board" + identifier)

@@ -72,7 +72,7 @@ def load_python_f(modulename , server):
     import imp
     print(identifier, modulename)
     moduleobject = imp.load_source(identifier, modulename)
-    from .DirStorage import load_python_file
+    from .Python import load_python_file
     return load_python_file(moduleobject, server = server)
 
 

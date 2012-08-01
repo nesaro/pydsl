@@ -39,7 +39,10 @@ class DirStorage(Storage, metaclass = ABCMeta):
         self.index = 0
         self.cache = []
         for filename in self.all_files():
-            self.cache.append(self.summary_from_filename(filename))
+            try:
+                self.cache.append(self.summary_from_filename(filename))
+            except AttributeError:
+                pass
         return self
 
     def __next__(self):
@@ -54,19 +57,18 @@ class DirStorage(Storage, metaclass = ABCMeta):
     def summary_from_filename(self, modulepath):
         (_, _, fileBaseName, ext) = getFileTuple(modulepath)
         result = None
-        if _isRELFileName(filename + ext):
-            result =  {"iclass":"re","identifier":fileBaseName, "filepath":filename}
-        elif _isGDLFileName(filename + ext):
-            result = {"iclass":"BNFGrammar","identifier":fileBaseName, "filepath":filename}
-        elif (filename + ext).endswith(".board"):
+        if _isRELFileName(modulepath):
+            result =  {"iclass":"re","identifier":fileBaseName, "filepath":modulepath}
+        elif _isGDLFileName(modulepath):
+            result = {"iclass":"BNFGrammar","identifier":fileBaseName, "filepath":modulepath}
+        elif (modulepath).endswith(".board"):
             from pydsl.Function.Transformer.Board import Board
-            result = {"iclass":"Board", "identifier":fileBaseName, "filepath":filename, "ancestors":Board.ancestors()}
+            result = {"iclass":"Board", "identifier":fileBaseName, "filepath":modulepath, "ancestors":Board.ancestors()}
 
         else:
             import imp
             moduleobject = imp.load_source(fileBaseName, modulepath)
-            from pydsl.Abstract import InmutableDict
-            result = {"identifier":fileBaseName, "iclass":moduleobject.iclass, "path":modulepath}
+            result = {"identifier":fileBaseName, "iclass":moduleobject.iclass, "filepath":modulepath}
             if hasattr(moduleobject, "title"):
                 result["title"] =  InmutableDict(moduleobject.title)
             if hasattr(moduleobject, "description"):
