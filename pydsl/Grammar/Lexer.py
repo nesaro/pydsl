@@ -104,3 +104,51 @@ class BNFLexer(Lexer):
             self.consume()
         return ("NAME", string)
 
+class BacktracingLexer(Lexer):
+    def __init__(self):
+        Lexer.__init__(self, "")
+        self.lookahead = []
+        self.markers = []
+        self.index = 0
+
+    def LT(self, i):
+        """gets element from input"""
+        self.sync(i)
+        return self.lookahead[self.index+i-1]
+
+    def match(self, x):
+        if self.LT(1)[0] == x:
+            self.consume();
+        else:
+            raise Exception("Not matched")
+
+    def sync(self, i):
+        """Fills from index to index +i """
+        if self.index + i > len(self.lookahead):
+            n = self.index + i - len(self.lookahead)
+            self.fill(n)
+
+
+    def fill(self, n):
+        """fills n elements"""
+        for _ in range(n):
+            self.lookahead.append(self.string.nextToken())
+
+    def consume(self):
+        self.index += 1
+        if self.index == len(self.lookahead) and not self.speculating():
+            self.index = 0
+            self.lookahead = []
+        self.sync(1)
+
+    def mark(self):
+        self.markers.append(self.index)
+        return self.index
+
+    def release(self):
+        marker = self.markers.pop()
+        self.index = marker
+
+    def speculating(self):
+        return bool(self.markers) 
+

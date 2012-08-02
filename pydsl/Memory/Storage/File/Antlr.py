@@ -24,6 +24,7 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
+from pydsl.Grammar.Lexer import BacktracingLexer
 
 #manual lexer
 
@@ -31,7 +32,7 @@ reservedwords = ["grammar","options","language","output","ASTLabelType",":",";",
 
 comments = ["/**/"]
 
-class ANLTRGrammarLexer(Lexer):
+class ANLTRGrammarLexer(BacktracingLexer):
     def comma(self):
         current = self.current
         self.match(",")
@@ -47,6 +48,27 @@ class ANLTRGrammarLexer(Lexer):
         self.match("|")
         return ("VBAR", current)
 
+    def __call__(self):
+        if self.speculate_stat_1():
+            self.rlist()
+            self.match("EOF_TYPE")
+        elif self.speculate_stat_2():
+            self.assign()
+            self.match("EOF_TYPE")
+        else:
+            raise Exception("No alternative for stat")
+        
+
+def load_anltr_from_text(text):
+    lexer = ANLTRGrammarLexer()
+    return lexer(text)
+
 
 #manual parser
-#convert to instance
+def load_anltr_file(filepath):
+    """Converts an anltr .g file into a BNFGrammar instance"""
+    content = ""
+    with open(filepath,'r', encoding='utf-8') as mlfile:
+        content = mlfile.read()
+
+    

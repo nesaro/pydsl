@@ -22,6 +22,7 @@ from abc import ABCMeta, abstractmethod
 from ..Storage import Storage
 from ..File.Python import getFileTuple
 from ..File.Grammar import _isRELFileName, _isGDLFileName
+from pydsl.Abstract import InmutableDict
 import logging
 LOG = logging.getLogger(__name__)
 
