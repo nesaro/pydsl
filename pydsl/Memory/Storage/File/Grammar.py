@@ -37,14 +37,9 @@ def load_grammar_file(filepath):
         from pydsl.Memory.Storage.File.Regexp import load_re_from_file
         return load_re_from_file(filepath)
     if _isGDLFileName(filepath):
-        return _loadGDLGrammarFromFile(filepath)
+        from pydsl.Memory.Storage.File.BNF import load_bnf_file
+        return load_bnf_file(filepath)
     from .Python import load_python_file 
     return load_python_file(filepath)
     
-def _loadGDLGrammarFromFile(filepath):
-    (_, _, fileBaseName, _) = getFileTuple(filepath)
-    from pydsl.Memory.Storage.File.BNF import bnf_file_to_productionset
-    bnfgrammar = bnf_file_to_productionset(filepath)
-    return bnfgrammar
-
 

@@ -142,8 +142,8 @@ def strlist_to_production_set(linelist):
     return BNFGrammar(symboldict["S"], rulelist, macrodict)
 
 
-def bnf_file_to_productionset(filepath):
-    """Converts a metalanguage to a ProductionRuleSet"""
+def load_bnf_file(filepath):
+    """Converts a bnf file into a BNFGrammar instance"""
     linelist = []
     with open(filepath,'r', encoding='utf-8') as mlfile:
         for line in mlfile:
