@@ -73,7 +73,7 @@ def load_python_file(moduleobject, **kwargs):
         from pydsl.Concept.Concept import Concept
         return Concept(**resultdic)
     elif iclass == "MongoDict":
-        return moduleobject.spec
+        return resultdic
     else:
         raise ValueError
 

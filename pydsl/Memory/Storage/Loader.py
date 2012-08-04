@@ -41,8 +41,8 @@ def load_checker(grammar):
         from pydsl.Grammar.Checker import PythonChecker
         return PythonChecker(grammar)
     elif isinstance(grammar, dict) and "spec" in grammar:
-        from pydsl.Grammar.Tool.Python import MongoChecker
-        return MongoChecker(grammar)
+        from pydsl.Grammar.Checker import MongoChecker
+        return MongoChecker(grammar["spec"])
     else:
         raise ValueError(grammar)
 
