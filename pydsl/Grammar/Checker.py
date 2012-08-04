@@ -26,6 +26,7 @@ import logging
 LOG = logging.getLogger(__name__)
 from abc import ABCMeta, abstractmethod
 from pydsl.Abstract import Indexable
+from pydsl.Memory.Storage.Loader import load_checker
 
 class Checker(metaclass = ABCMeta):
     """ Ensures information follows a rule, protocol or has a shape.
@@ -134,7 +135,6 @@ class PythonChecker(Checker):
         self._matchFun = module["matchFun"]
         auxdic = module.get('auxdic', {})
         self.auxgrammar = {}
-        from pydsl.Memory.Storage.Loader import load_checker
         for key, value in auxdic.items():
             self.auxgrammar[key] = load_checker(value)
 
@@ -146,4 +146,37 @@ class PythonChecker(Checker):
                 return self._matchFun(data)
         except UnicodeDecodeError:
             return False
+
+
+class MongoChecker(Checker):
+    def __init__(self, dic):
+        Checker.__init__(self)
+        self.mongodic = dic
+
+    def check(self, data):
+        return self.__auxcheck(self.mongodic, data)
+
+    def __auxcheck(self, specdict, data):
+        for key, spec in specdict.items():
+            value = data.get(key)
+            if key == "$or" and len(specdict) == 1:
+                return any([self.__auxcheck(x, specdict) for x in spec])
+            elif isinstance(spec, dict) and len(spec) == 1:
+                operator = list(spec.keys())[0]
+                operand = list(spec.values())[0]
+                if operator == "$type":
+                    if not load_checker(operand).check(value):
+                        return False
+                elif operator == "$or":
+                    if not any([self.__auxcheck(x, value) for x in spec]):
+                        return False
+                else: #unknown operator
+                    return spec == value
+            else:
+                if spec != value: 
+                    return False
+        return True
+
+
+                
 

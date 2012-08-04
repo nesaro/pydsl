@@ -37,9 +37,12 @@ def load_checker(grammar):
     elif isinstance(grammar, type(tmp)):
         from pydsl.Grammar.Checker import RegularExpressionChecker
         return RegularExpressionChecker(grammar)
-    elif isinstance(grammar, dict):
+    elif isinstance(grammar, dict) and "matchFun" in grammar:
         from pydsl.Grammar.Checker import PythonChecker
         return PythonChecker(grammar)
+    elif isinstance(grammar, dict) and "spec" in grammar:
+        from pydsl.Grammar.Tool.Python import MongoChecker
+        return MongoChecker(grammar)
     else:
         raise ValueError(grammar)
 
@@ -55,7 +58,7 @@ def load_grammar_tool(grammar):
     elif isinstance(grammar, type(tmp)):
         from pydsl.Grammar.Tool.Regular import RegularExpressionGrammarTools
         return RegularExpressionGrammarTools(grammar)
-    elif isinstance(grammar, dict):
+    elif isinstance(grammar, dict) and "matchFun" in grammar:
         from pydsl.Grammar.Tool.Python import PythonGrammarTools
         return PythonGrammarTools(grammar)
     else:
