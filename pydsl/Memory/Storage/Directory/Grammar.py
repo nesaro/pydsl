@@ -38,12 +38,7 @@ class GrammarDirStorage(DirStorage):
         for value in resultdic: 
             filename = value["filepath"]
             return load_grammar_file(filename)
-        from pydsl.Config import GLOBALCONFIG
-        if strictgrammar != True and not GLOBALCONFIG.strictgrammar:
-            from pydsl.Grammar.Checker import DummyChecker
-            LOG.warning("Unable to load:" + identifier)
-            return DummyChecker()
-        raise KeyError("Grammar" + identifier)
+        raise KeyError("Grammar " + identifier)
     def provided_iclasses(self) -> list:
         return ["PythonGrammarTools","re","BNFGrammar"]
 

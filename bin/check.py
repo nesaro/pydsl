@@ -52,7 +52,7 @@ class Checker(UnixProgram):
         from pydsl.Function.Transformer.Python import HostPythonTransformer
         #import pydsl.GlobalConfig
         #pydsl.GlobalConfig.GLOBALCONFIG.strictgrammar = True
-        self.__maingt = HostPythonTransformer({"input":"dummy"},{"output":"TrueFalse"},{"checker":"GrammarChecker"}, checkfun) 
+        self.__maingt = HostPythonTransformer({"input":"cstring"},{"output":"TrueFalse"},{"checker":"GrammarChecker"}, checkfun) 
         UnixProgram.__init__(self, optionsdict)
     
     def execute(self):

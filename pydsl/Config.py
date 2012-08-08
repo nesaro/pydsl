@@ -50,8 +50,7 @@ def generate_memory_list() -> list:
 
 class GlobalConfig(metaclass = Singleton):
     """Execution time global configuration"""
-    def __init__(self, strictgrammar = False, persistent_dir:str = None, debuglevel = 40):
-        self.strictgrammar = strictgrammar #Allows to replace an unknown grammar to DummyGrammar
+    def __init__(self, persistent_dir:str = None, debuglevel = 40):
         self.persistent_dir = persistent_dir
         self.__memorylist = None #All known memories, sorted by preference  #Loaded when required
         self.__debuglevel = debuglevel

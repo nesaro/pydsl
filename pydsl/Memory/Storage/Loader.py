@@ -24,9 +24,6 @@ from pkg_resources import Requirement, resource_filename
 from pydsl.Grammar.BNF import BNFGrammar
 
 def load_checker(grammar):
-    if grammar == "dummy":
-        from pydsl.Grammar.Checker import DummyChecker
-        return DummyChecker()
     import re
     tmp = re.compile("a")
     if isinstance(grammar, str):
@@ -84,7 +81,7 @@ def load_grammar(identifier, memorylist = []):
         #    continue
         if identifier in memory:
             return memory.load(identifier)
-    raise KeyError("Grammar" + identifier)
+    raise KeyError("Grammar " + identifier)
 
 def load_transformer(identifier, eventmanager = None, ecuid = None, memorylist = []):
     #FIXME: Can return any type of element

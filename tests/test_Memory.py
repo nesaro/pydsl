@@ -54,6 +54,7 @@ class TestPersistentMemory(unittest.TestCase):
         from pydsl.Grammar.Checker import Checker
         self.mem = PersistentStorage("tmp", Checker)
         
+    @unittest.skip
     def testSaveLoadAndDelete(self):
         from pydsl.Grammar.Checker import DummyChecker
         dg = DummyChecker()
