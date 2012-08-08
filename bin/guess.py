@@ -45,7 +45,7 @@ if __name__ == "__main__":
         DEBUGLEVEL = ARGS.debuglevel
     logging.basicConfig(level = DEBUGLEVEL)    
     inputstr = ""
-    from pydsl.Interaction.Guess import guess, guess_filename
+    from pydsl.Guess import guess, guess_filename
     if (ARGS.inputfile):
         from pydsl.Interaction.Protocol import protocol_split
         pdict = protocol_split(ARGS.inputfile)

@@ -64,7 +64,7 @@ if __name__ == "__main__":
         if not inputformat:
             from pydsl.Memory.Storage.Dict import FileTypeDictStorage
             ftdl = FileTypeDictStorage()
-            from pydsl.Interaction.Guess import guess
+            from pydsl.Guess import guess
             inputformat = guess(inputfile, [ftdl])
             if len(inputformat) == 0:
                 print("Input format not found")
