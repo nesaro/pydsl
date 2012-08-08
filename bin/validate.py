@@ -20,8 +20,8 @@
 validates input against the Grammar
 """
 
-__author__ = "Néstor Arocha Rodríguez"
-__copyright__ = "Copyright 2008-2012, Néstor Arocha Rodríguez"
+__author__ = "Nestor Arocha Rodriguez"
+__copyright__ = "Copyright 2008-2012, Nestor Arocha Rodriguez"
 __email__ = "nesaro@gmail.com"
 
 import logging
@@ -54,7 +54,7 @@ class Validate(UnixProgram):
     
     def execute(self):
         resulttrees = None
-        from pydsl.Interaction.Validate import validate
+        from pydsl.Validate import validate
         if self._opt["expression"]: 
             resulttrees = validate(self.__sgrammar, self._opt["expression"])
         elif self._opt["inputfile"]:
