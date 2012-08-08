@@ -172,6 +172,9 @@ class MongoChecker(Checker):
                         return False
                 else: #unknown operator
                     return spec == value
+            elif isinstance(spec, dict):
+                if not self.__auxcheck(spec, value):
+                    return False
             else:
                 if spec != value: 
                     return False
