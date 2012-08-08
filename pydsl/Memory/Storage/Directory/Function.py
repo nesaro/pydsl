@@ -99,23 +99,3 @@ class BoardDirStorage(DirStorage):
 
 
 
-class ProcedureDirStorage(DirStorage):
-    """Procedure Library"""
-    def __init__(self, path):
-        DirStorage.__init__(self, path, [".py"])
-
-    def load(self, identifier, server = None):
-        """guess class, guess filename from id, and then call loadTInstance"""
-        import imp
-        try:
-            imp.load_source(identifier, self.identifier + "/" + identifier + ".py")
-        except (ImportError, IOError):
-            pass
-        else:
-            return load_python_f(identifier, server)
-
-        raise KeyError("Procedure" + identifier)
-
-    def provided_iclasses(self) -> list:
-        return ["Procedure"]
-

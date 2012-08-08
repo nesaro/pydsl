@@ -46,9 +46,6 @@ def load_python_file(moduleobject, **kwargs):
     elif iclass == "ExternalProgramTransformer":
         from pydsl.Function.Transformer.ExternalProgram import ExternalProgramTransformer
         return ExternalProgramTransformer(**resultdic)
-    elif iclass == "PythonProcedure":
-        from pydsl.Function.Procedure import PythonProcedure
-        return PythonProcedure(**resultdic)
     elif iclass == "ExternalProgramFileFunction":
         from pydsl.Function.File import ExternalProgramFileFunction
         return ExternalProgramFileFunction(**resultdic)

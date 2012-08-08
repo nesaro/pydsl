@@ -30,7 +30,7 @@ def generate_memory_list() -> list:
     """loads default memories"""
     result = []
     from pydsl.Memory.Storage.Directory.Grammar import GrammarDirStorage
-    from pydsl.Memory.Storage.Directory.Function import BoardDirStorage, TransformerDirStorage, ProcedureDirStorage
+    from pydsl.Memory.Storage.Directory.Function import BoardDirStorage, TransformerDirStorage
     from pydsl.Memory.Storage.Dict import FileTypeDictStorage, RegexpDictStorage
     from pydsl.Memory.Storage.List import RelListStorage, RelationListStorage
     #from pydsl.Memory.Storage.Directory.Concept import ConceptDirStorage
@@ -43,7 +43,6 @@ def generate_memory_list() -> list:
         result.append(GrammarDirStorage(dirname + "/grammar/"))
         result.append(BoardDirStorage(dirname + "/board/"))
         result.append(TransformerDirStorage(dirname + "/transformer/"))
-        result.append(ProcedureDirStorage(dirname + "/procedure/"))
         result.append(FileTypeDictStorage(dirname + "/dict/filetype.dict"))
         result.append(RegexpDictStorage(dirname + "/dict/regexp.dict"))
     return result

@@ -43,11 +43,6 @@ class Translate(UnixProgram):
         from pydsl.Memory.Storage.Loader import load_transformer
         self.__mainfunc = load_transformer(gtname) 
     
-    def readP(self, pname):
-        self.__mode = "Procedure"
-        from pydsl.Memory.Storage.Loader import load_procedure
-        self.__mainfunc = load_procedure(pname)
-
     def execute(self):
         #Generating and connecting output
         #listen to user, open read file, or other
@@ -101,13 +96,4 @@ class Translate(UnixProgram):
                 interactor.start()
             else:
                 raise Exception
-        elif self.__mode == "Procedure":
-            if self._opt["pipemode"]:
-                assert(len(self.__mainfunc.outputchanneldic) == 1)
-                result = self.__mainfunc()
-                print(result[list(self.__mainfunc.outputchanneldic.keys())[0]])
-            else:
-                result = self.__mainfunc()
-                print(result)
-                return result 
         return True

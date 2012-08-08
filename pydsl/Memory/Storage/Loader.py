@@ -86,15 +86,6 @@ def load_grammar(identifier, memorylist = []):
             return memory.load(identifier)
     raise KeyError("Grammar" + identifier)
 
-def load_procedure(identifier, eventmanager = None , ecuid = "", memorylist = []):
-    if not memorylist:
-        from pydsl.Config import GLOBALCONFIG
-        memorylist = GLOBALCONFIG.memorylist
-    for memory in memorylist:
-        if identifier in memory:
-            return memory.load(identifier, eventmanager, ecuid)
-    raise KeyError("Procedure" + identifier)
-
 def load_transformer(identifier, eventmanager = None, ecuid = None, memorylist = []):
     #FIXME: Can return any type of element
     if not memorylist:
