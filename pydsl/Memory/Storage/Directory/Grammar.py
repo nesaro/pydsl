@@ -32,7 +32,7 @@ class GrammarDirStorage(DirStorage):
     def __init__(self, path):
         DirStorage.__init__(self, path, [".py", ".bnf", ".re"])
 
-    def load(self, identifier:str, strictgrammar = True):
+    def load(self, identifier:str):
         #TODO: What happens when we have > 1 result
         resultdic = self._searcher.search(identifier)
         for value in resultdic: 
