@@ -39,11 +39,10 @@ class ExternalProgramFileFunction(FileFunction):
     def __call__(self, wdic):
         #fileinput, fileoutput
         #TODO: check if follows inputformat. 
-        from ColonyDSL.Interaction.Protocol import FileProtocol, protocol_split
-        fp = FileProtocol()
+        from ColonyDSL.Interaction.Protocol import protocol_split
         for dickey in wdic.keys():
             val = wdic[dickey]
-            if fp.check(val):
+            if val.startswith("file://"):
                 wdic[dickey] = protocol_split(val)[path]
             else:
                 wdic[dickey] = val #file object assumed
@@ -72,9 +71,6 @@ class ExternalProgramFileFunction(FileFunction):
         lines = map(lambda x: x.decode('utf-8'), lines)
         lines = "\n".join(lines)
         return {"output":lines}
-
-    def _onReceiveEvent(self, source, msg):
-        pass
 
     @property
     def summary(self):

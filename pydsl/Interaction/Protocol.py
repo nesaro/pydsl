@@ -15,7 +15,7 @@
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Protocolos"""
+"""Protocols"""
 
 __author__ = "Néstor Arocha Rodríguez"
 __copyright__ = "Copyright 2008-2012, Néstor Arocha Rodríguez"
@@ -28,30 +28,6 @@ from abc import ABCMeta, abstractmethod
 
 PROTOLIST = ["file","lib"]
 PROTOMODES = ["direct", "connection", "session", "continuous"]
-
-class Interaction(metaclass=ABCMeta):
-    """Protocol based interaction"""
-    pass
-
-class DirectInteraction(Interaction):
-    @abstractmethod
-    def get(self) -> "Information":
-        pass
-
-    @abstractmethod
-    def put(self, information):
-        pass
-
-class ConnectionInteraction(Interaction):
-    def connect(self):
-        pass
-
-    def get(self):
-        pass
-
-    def disconnect(self):
-        pass
-
 
 def protocol_split(content):
     """Splits a protocol string"""
