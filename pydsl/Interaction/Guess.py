@@ -18,7 +18,6 @@
 
 """
 guess which types are the input data. 
-It works like the unix file command
 """
 
 __author__ = "Nestor Arocha Rodriguez"
