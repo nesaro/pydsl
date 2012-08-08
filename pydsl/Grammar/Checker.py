@@ -160,7 +160,7 @@ class MongoChecker(Checker):
         for key, spec in specdict.items():
             value = data.get(key)
             if key == "$or" and len(specdict) == 1:
-                return any([self.__auxcheck(x, specdict) for x in spec])
+                return any([self.__auxcheck(x, data) for x in spec])
             elif isinstance(spec, dict) and len(spec) == 1:
                 operator = list(spec.keys())[0]
                 operand = list(spec.values())[0]
