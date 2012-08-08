@@ -93,4 +93,4 @@ class Translate(UnixProgram):
             interactor.start()
         else:
             raise Exception
-    return True
+        return True
