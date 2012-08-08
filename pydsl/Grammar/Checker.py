@@ -168,7 +168,7 @@ class MongoChecker(Checker):
                     if not load_checker(operand).check(str(value)):
                         return False
                 elif operator == "$or":
-                    if not any([self.__auxcheck(x, value) for x in spec]):
+                    if not any([self.__auxcheck({key:x}, data) for x in operand]):
                         return False
                 else: #unknown operator
                     return spec == value
