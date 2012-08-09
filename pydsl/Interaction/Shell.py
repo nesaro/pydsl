@@ -112,18 +112,9 @@ def save_result_to_output(resultdic, outputdic):
                 currentfile.write(resultdic[key].string)    
 
 def command_line_output(resultdic):
-    """Muestra el resultado en command line"""
+    """Prints result to stdout"""
     print(str(resultdic) + "\n")
 
-#FIXME: Implement Protocol 
-def fetchURLs(inputdic:dict) -> dict:
-    import urllib.request;
-    for key in inputdic:
-        f = urllib.request.urlopen(inputdic[key]);
-        inputdic[key] = f.read();
-        f.close()
-    return inputdic
-            
 class CommandLineToTransformerInteraction(ContinuousInteraction):
     """Shell interaction for functions"""
     def __init__(self, gt):
@@ -135,7 +126,7 @@ class CommandLineToTransformerInteraction(ContinuousInteraction):
         while value != None:
             resultdic = self._tinstance(value)
             if not resultdic:
-                command_line_output(str(resultdic))
+                command_line_output(resultdic)
             else:
                 for key in resultdic.keys():
                     try:
