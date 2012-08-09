@@ -22,17 +22,15 @@ __copyright__ = "Copyright 2008-2012, Néstor Arocha Rodríguez"
 __email__ = "nesaro@gmail.com"
 
 import logging
-from pydsl.Function.Function import Function 
 from .Network import FunctionNetworkClient
 from ..Channel import NetworkedHostChannel 
 LOG = logging.getLogger(__name__)
 from abc import ABCMeta
 
-class Transformer(NetworkedHostChannel, FunctionNetworkClient, Function, metaclass = ABCMeta):
+class Transformer(NetworkedHostChannel, FunctionNetworkClient, metaclass = ABCMeta):
     """Channel and Network enabled Function"""
     def __init__(self, inputgrammars, outputgrammars, ecuid, server = None):
         NetworkedHostChannel.__init__(self, inputgrammars, outputgrammars)
-        Function.__init__(self)
         FunctionNetworkClient.__init__(self, ecuid, server)
 
 

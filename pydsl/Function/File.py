@@ -17,21 +17,19 @@
 
 """External program FileType"""
 
-__author__ = "Néstor Arocha Rodríguez"
-__copyright__ = "Copyright 2008-2012, Néstor Arocha Rodríguez"
+__author__ = "Nestor Arocha Rodriguez"
+__copyright__ = "Copyright 2008-2012, Nestor Arocha Rodriguez"
 __email__ = "nesaro@gmail.com"
 
 import logging
-from .Function import FileFunction
 from ColonyDSL.TypeCheck import typecheck
 LOG = logging.getLogger("Function.File")
 
-class ExternalProgramFileFunction(FileFunction):
+class ExternalProgramFileFunction:
     """FileFunction which calls an external program"""
     @typecheck
     def __init__(self, identifier, inputformat, outputformat, programcall:list):
         #programlist ["program","-s","#{inputchannelname1}","-e","#{inputchannelname2}"]
-        FileFunction.__init__(self, identifier)
         self.__programlist = programcall
         self.inputformat = inputformat #TODO
         self.outputformat = outputformat #TODO

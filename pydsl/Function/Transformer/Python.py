@@ -24,6 +24,7 @@ __email__ = "nesaro@gmail.com"
 from .Transformer import Transformer
 from .Network import HostFunctionNetwork
 import logging
+from pydsl.Function.Function import Error
 LOG = logging.getLogger("PythonTransformer")
 
 class PythonTransformer(Transformer):
@@ -40,7 +41,6 @@ class PythonTransformer(Transformer):
         return self.__receiveEvent(event)
     
     def __call__(self, ibdic):
-        from pydsl.Function.Function import Error
         for inputkey in self.inputchanneldic.keys():
             if inputkey not in ibdic:
                 LOG.error("Key not found in inputdic")
@@ -70,7 +70,6 @@ class PythonTransformer(Transformer):
         """Wraps function call, to add parammeters if required"""
         LOG.debug("PythonTransformer._functionwrapper: begin")
         result = self._function(wdict, self.inputchanneldic, self.outputchanneldic, self._evfunctiondic)
-        from pydsl.Function.Function import Error
         from pydsl.Exceptions import TProcessingError
         if not result or isinstance(result, Error):
             raise TProcessingError(self.ecuid,"Transformer")
@@ -92,7 +91,6 @@ class PythonTransformer(Transformer):
                 result = self.__process(sequence)
             except TProcessingError:
                 LOG.exception("run: Error while processing input")
-                from pydsl.Function.Function import Error
                 self.emitToServer(sequence, Error("transformerError"))
                 self._dropSequences(sequence)
             else:
@@ -101,7 +99,6 @@ class PythonTransformer(Transformer):
                     LOG.error("run: __process returned bad type")
                     raise TypeError
                 if result == {}:
-                    from pydsl.Function.Function import Error
                     self.emitToServer(sequence, Error("transformerError"))
                 else:
                     self.emitToServer(sequence, result)
@@ -150,7 +147,6 @@ class HostPythonTransformer(PythonTransformer, HostFunctionNetwork):
         """Handle message As a server"""
         if event.destination == self._server.ecuid:
             msg = event.msg
-            from pydsl.Function.Function import Error
             if isinstance(msg, Error):
                 msg.appendSource(self.name)
                 self.emitToServer(msg.msgid, msg)
@@ -170,7 +166,6 @@ class HostPythonTransformer(PythonTransformer, HostFunctionNetwork):
         """Wraps function call, to add parammeters if required"""
         LOG.info("HostPythonTransformer._functionwrapper: begin")
         from pydsl.Exceptions import TProcessingError
-        from pydsl.Function.Function import Error
         try:
             result = self._function(worddic, self._hostT, self.inputchanneldic, self.outputchanneldic, self._evfunctiondic)
         except TProcessingError:            

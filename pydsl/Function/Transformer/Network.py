@@ -140,9 +140,6 @@ class FunctionNetworkServer(threading.Thread):
 class HostFunctionNetwork(metaclass = ABCMeta):
     """An interface for T that acts as Function Network host"""
     def __init__(self):
-        from pydsl.Function.Function import Function
-        if not isinstance(self, Function):
-            raise TypeError
         self._server = FunctionNetworkServer(self)
         self._hostT = {}
         #self._varstack = VarStack()

@@ -17,8 +17,8 @@
 
 """Function base classes"""
 
-__author__ = "Néstor Arocha Rodríguez"
-__copyright__ = "Copyright 2008-2012, Néstor Arocha Rodríguez"
+__author__ = "Nestor Arocha Rodriguez"
+__copyright__ = "Copyright 2008-2012, Nestor Arocha Rodriguez"
 __email__ = "nesaro@gmail.com"
 
 import logging
@@ -28,19 +28,6 @@ from pydsl.Abstract import Indexable
 
 class FunctionInterface(metaclass = ABCMeta):
     """A method applied to a function to comunicate with other functions"""
-    pass
-
-class Function(Indexable, metaclass = ABCMeta):
-    """ data transformation or translation performed
-    default interface: call -> data -> data
-    """
-    @abstractmethod
-    def __call__(self, data):
-        """ Non threaded, all input as parameter ibdic contains ("channel",data) pairs. Returns a TransformResult """
-        pass
-
-class FileFunction(Function):
-    """Function restricted to work with file://* URI"""
     pass
 
 class Error:

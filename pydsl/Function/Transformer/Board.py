@@ -22,10 +22,11 @@ __copyright__ = "Copyright 2008-2012, Nestor Arocha Rodriguez"
 __email__ = "nesaro@gmail.com"
 
 import logging
-from pydsl.Function.Function import Function
 from .Network import HostFunctionNetwork
 from pydsl.Function.Transformer.Transformer import Transformer
 LOG = logging.getLogger(__name__)
+from pydsl.Function.Function import Error
+from pydsl.Exceptions import EventError
 
 class Board(Transformer, HostFunctionNetwork):
     """A Transformer where you can call other Transformer. Doesn't perform any computation"""
@@ -78,7 +79,6 @@ class Board(Transformer, HostFunctionNetwork):
                     LOG.error("Board: TIMEOUT")
                     #emit error to parent
                     #delete rand in msgqueue
-                    from pydsl.Function.Function import Error
                     newerror = Error("Timeout")
                     newerror.appendSource(self.ecuid.name)
                     return newerror
@@ -187,7 +187,6 @@ class Board(Transformer, HostFunctionNetwork):
     def _onReceiveEvent(self, event:Event):
         """Receive message as a client"""
         LOG.debug(str(self.identifier) + ":__receiveMSGFunction: Begin")
-        from pydsl.Function.Function import Error
         if isinstance(event.msg, Error):
             #Grammar error, abort
             self.__event.set()
@@ -195,13 +194,11 @@ class Board(Transformer, HostFunctionNetwork):
             self.__event.set() #TODO: Check event source
             #Event sent by this element to finish waiting 
         else:
-            from pydsl.Exceptions import EventError
             raise EventError
 
     def __receiveEventAsServer(self, event:Event):
         """Receives message as server"""
         #LOG.debug(str(self.identifier) + ":__receiveEventAsServer: Begin")
-        from pydsl.Function.Function import Error
         if event.msg:
             if event.source != self.ecuid and event.source != self._server.ecuid:
                 self._queue.append(event)
@@ -211,7 +208,6 @@ class Board(Transformer, HostFunctionNetwork):
             self._queue.append(event)
             self.__event.set()
         else:
-            from pydsl.Exceptions import EventError
             LOG.error("Unknown event type")
             raise EventError
 
