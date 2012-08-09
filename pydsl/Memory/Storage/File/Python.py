@@ -66,9 +66,6 @@ def load_python_file(moduleobject, **kwargs):
     elif iclass == "Actor":
         from pydsl.Exchange.Actor import Actor
         return Actor(**resultdic)
-    elif iclass == "Concept":
-        from pydsl.Concept.Concept import Concept
-        return Concept(**resultdic)
     elif iclass == "MongoDict":
         return resultdic
     else:

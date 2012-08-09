@@ -32,7 +32,6 @@ def generate_memory_list() -> list:
     from pydsl.Memory.Storage.Directory.Grammar import GrammarDirStorage
     from pydsl.Memory.Storage.Directory.Function import BoardDirStorage, TransformerDirStorage
     from pydsl.Memory.Storage.Dict import FileTypeDictStorage, RegexpDictStorage
-    #from pydsl.Memory.Storage.Directory.Concept import ConceptDirStorage
     #from pydsl.Memory.Storage.Directory.Scheme import SchemeDirStorage
     try:
         dirname = resource_filename(Requirement.parse("pydsl_contrib"),"")

@@ -104,30 +104,6 @@ class FileTypeDictStorage(DictStorage):
         return ["FileType"]
 
 
-class ConceptDictStorage(DictStorage):
-    def generate_all_summaries(self) -> list:
-        result = []
-        from pydsl.Abstract import InmutableDict
-        for key in self._content:
-            result.append(InmutableDict({"identifier":key, "title":InmutableDict(self._content[key]["title"]),"description":InmutableDict(self._content[key]["description"]) ,"iclass":"Concept" }))
-        return result
-
-    def load(self, index):
-        from pydsl.Concept.Concept import Concept
-        return Concept(index, self._content[index]["title"], self._content[index]["description"])
-
-class ConceptRelationDictStorage(DictStorage):
-    def generate_all_summaries(self) -> list:
-        result = []
-        from pydsl.Abstract import InmutableDict
-        for key in self._content:
-            result.append(InmutableDict({"identifier":key, "title":InmutableDict(self._content[key]["title"]),"description":InmutableDict(self._content[key]["description"]) ,"rolelist":tuple(self._content[key]["rolelist"]), "iclass":"ConceptRelation" }))
-        return result
-
-    def load(self, index):
-        from pydsl.Concept.Relation import ConceptRelation
-        return ConceptRelation(index, self._content[index]["rolelist"], self._content[index]["title"], self._content[index]["description"])
-
 class StrDictStorage(DictStorage):
     def generate_all_summaries(self) -> list:
         result = []
