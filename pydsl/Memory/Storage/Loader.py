@@ -105,17 +105,6 @@ def load_board(identifier, eventmanager = None, memorylist = []):
             return memory.load(identifier)
     raise KeyError("Board" + identifier)
 
-def load_actor(identifier, exchange, memorylist = []):
-    if not memorylist:
-        from pydsl.Config import GLOBALCONFIG
-        memorylist = GLOBALCONFIG.memorylist
-    for memory in memorylist:
-        if "Actor" not in memory.provided_iclasses():
-            continue
-        if identifier in memory:
-            return memory.load(identifier, exchange=exchange) #FIXME Pass as kwarg
-    raise KeyError("Actor" + identifier)
-
 def load_information(name:str, memorylist = []):
     if not memorylist:
         from pydsl.Config import GLOBALCONFIG

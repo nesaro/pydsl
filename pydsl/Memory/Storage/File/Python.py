@@ -63,9 +63,6 @@ def load_python_file(moduleobject, **kwargs):
     elif iclass == "FileType":
         from pydsl.Grammar.FileType import FileType
         return FileType(**resultdic)
-    elif iclass == "Actor":
-        from pydsl.Exchange.Actor import Actor
-        return Actor(**resultdic)
     elif iclass == "MongoDict":
         return resultdic
     else:
