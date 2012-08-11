@@ -127,8 +127,7 @@ class Board(Transformer, HostFunctionNetwork):
             for gtcondef in definition.inputConnectionDefinitions:
                 if gtcondef.externalgtname == "Main":
                     if gtcondef.internalchannelname in inputtypedict:
-                        from pydsl.Exceptions import NameOverlap
-                        raise NameOverlap
+                        raise Exception #NameOverlap
                     #FIXME: Is better to avoid loading the instance to obtain grammar name
                     from pydsl.Memory.Storage.Loader import load_transformer
                     gtinstance = load_transformer(definition.type)
@@ -137,8 +136,7 @@ class Board(Transformer, HostFunctionNetwork):
             for gtcondef in definition.outputConnectionDefinitions:
                 if gtcondef.externalgtname == "Main":
                     if gtcondef.internalchannelname in outputtypedict:
-                        from pydsl.Exceptions import NameOverlap
-                        raise NameOverlap
+                        raise Exception #NameOverlap
                     from pydsl.Memory.Storage.Loader import load_transformer
                     gtinstance = load_transformer(definition.type)
                     ocd = gtinstance.outputchanneldic

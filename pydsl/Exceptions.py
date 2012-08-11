@@ -26,9 +26,6 @@ __email__ = "nesaro@gmail.com"
 import logging
 LOG = logging.getLogger(__name__)
 
-class NameOverlap(Exception):
-    pass
-
 class TProcessingError(Exception):
     def __init__(self, source, errortype):
         Exception.__init__(self)
