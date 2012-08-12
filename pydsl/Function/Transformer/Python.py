@@ -21,36 +21,28 @@ __author__ = "Néstor Arocha Rodríguez"
 __copyright__ = "Copyright 2008-2012, Néstor Arocha Rodríguez"
 __email__ = "nesaro@gmail.com"
 
-from .Transformer import Transformer
-from .Network import HostFunctionNetwork
+from ..Channel import HostChannel
 import logging
 from pydsl.Function.Function import Error
 LOG = logging.getLogger("PythonTransformer")
 
-class PythonTransformer(Transformer):
+class PythonTransformer(HostChannel):
     """ Python function based transformer """
-    def __init__(self, inputdic, outputdic, function, ecuid = None, server = None, handleeventfunction = None):
-        Transformer.__init__(self, inputdic, outputdic, ecuid = ecuid, server = server)
+    def __init__(self, inputdic, outputdic, function):
+        HostChannel.__init__(self, inputdic, outputdic)
         self._function = function
-        self._evfunctiondic = {"client":self.emit, "server":self.emitToServer} #arg passed to wrapper
-        if handleeventfunction == None:
-            handleeventfunction = lambda x: None
-        self.__receiveEvent = handleeventfunction
 
-    def _onReceiveEvent(self, event):
-        return self.__receiveEvent(event)
-    
     def __call__(self, ibdic):
         for inputkey in self.inputchanneldic.keys():
             if inputkey not in ibdic:
                 LOG.error("Key not found in inputdic")
                 newerror = Error("Transformer")
-                newerror.appendSource(self.ecuid)
+                newerror.appendSource("TODONAME") #TODO: append name from the source
                 return newerror
         for dickey in ibdic.keys():
             if not self.inputchanneldic[dickey].check(ibdic[dickey]):
                 newerror = Error("Grammar") #FIXME: Should be Type error
-                newerror.appendSource(self.ecuid)
+                newerror.appendSource("TODONAME") #TODO: append name from the source
                 return newerror
         from pydsl.Exceptions import TProcessingError
         try:
@@ -69,7 +61,7 @@ class PythonTransformer(Transformer):
     def _functionwrapper(self, wdict):
         """Wraps function call, to add parammeters if required"""
         LOG.debug("PythonTransformer._functionwrapper: begin")
-        result = self._function(wdict, self.inputchanneldic, self.outputchanneldic, self._evfunctiondic)
+        result = self._function(wdict, self.inputchanneldic, self.outputchanneldic)
         from pydsl.Exceptions import TProcessingError
         if not result or isinstance(result, Error):
             raise TProcessingError(self.ecuid,"Transformer")
@@ -83,50 +75,6 @@ class PythonTransformer(Transformer):
         #TODO Process errors like HostPythonTransformer
         return result
 
-    
-    def _processsequences(self, sequencestoprocess):
-        for sequence in sequencestoprocess:
-            from pydsl.Exceptions import TProcessingError
-            try:
-                result = self.__process(sequence)
-            except TProcessingError:
-                LOG.exception("run: Error while processing input")
-                self.emitToServer(sequence, Error("transformerError"))
-                self._dropSequences(sequence)
-            else:
-                self._dropSequences(sequence)
-                if not isinstance(result, dict):
-                    LOG.error("run: __process returned bad type")
-                    raise TypeError
-                if result == {}:
-                    self.emitToServer(sequence, Error("transformerError"))
-                else:
-                    self.emitToServer(sequence, result)
-                    for outputchannel in self._connections.keys():
-                        self.send(outputchannel, sequence, result[outputchannel])
-
-
-    def __process(self, sequence):
-        """Processing function. Calls to function wrapper. Error case returns {} """
-        LOG.info("__process: Begin")
-        if not self._function:
-            LOG.error("__process: No function defined")
-            return {}
-        else: 
-            datadict = {}
-            for entry in self._seq_cache:
-                if entry["msgid"] == sequence:
-                    datadict[entry["channel"]] =  entry["data"]
-            try:
-                #TODO: check if datadict has all the required keys
-                LOG.debug("__process: grammar dict: " + str(datadict))
-                result = self._functionwrapper(datadict)
-                return result
-            except IndexError: 
-                LOG.exception("__process: Index Error Exception calling function")
-                #self.emitMsgToServer({"type":"transformerError"}) #FIXME. Should emit an event, but no from this function
-                return {}
-            
     @property
     def summary(self):
         from pydsl.Abstract import InmutableDict
@@ -135,31 +83,18 @@ class PythonTransformer(Transformer):
         result = {"iclass":"PythonTransformer", "input":inputdic,"output":outputdic}
         return InmutableDict(result)
 
-class HostPythonTransformer(PythonTransformer, HostFunctionNetwork):
+class HostPythonTransformer(PythonTransformer):
     """Python Function Transformer which can call to other functions"""
-    def __init__(self, inputdic, outputdic, auxdic:dict, function, ecuid = None, server = None, handleeventfunction = None):
-        HostFunctionNetwork.__init__(self)
-        PythonTransformer.__init__(self, inputdic, outputdic, function, ecuid = ecuid, server = server, handleeventfunction = handleeventfunction)
+    def __init__(self, inputdic, outputdic, auxdic:dict, function):
+        PythonTransformer.__init__(self, inputdic, outputdic, function)
         self._initHostT(auxdic)
-        self._server.start()
 
-    def handleEvent(self, event):
-        """Handle message As a server"""
-        if event.destination == self._server.ecuid:
-            msg = event.msg
-            if isinstance(msg, Error):
-                msg.appendSource(self.name)
-                self.emitToServer(msg.msgid, msg)
-            else:
-                from pydsl.Exceptions import EventError
-                LOG.error("HostPythonTransformer: unknown message type: " + str(msg))
-                raise EventError
-        else:
-            self._server.handleEvent(event) 
-
-    def registerInstance(self, name, clientinstance):
-        clientinstance.changeParent(self._server)
-        self._hostT[name] = clientinstance
+    def _initHostT(self, namedic):
+        """Inits aux GTs. if a requested aux GT isn't connected, This function will create them"""
+        from pydsl.Memory.Storage.Loader import load_transformer
+        for title, gttype in namedic.items():
+            self._hostT[title] = load_transformer(gttype) 
+            LOG.debug("loaded " + str(title) + "auxT")
 
 
     def _functionwrapper(self, worddic):
@@ -167,7 +102,7 @@ class HostPythonTransformer(PythonTransformer, HostFunctionNetwork):
         LOG.info("HostPythonTransformer._functionwrapper: begin")
         from pydsl.Exceptions import TProcessingError
         try:
-            result = self._function(worddic, self._hostT, self.inputchanneldic, self.outputchanneldic, self._evfunctiondic)
+            result = self._function(worddic, self._hostT, self.inputchanneldic, self.outputchanneldic)
         except TProcessingError:            
             LOG.exception("__process: Index Error Exception calling function")
             newerror = Error("Tranformer")

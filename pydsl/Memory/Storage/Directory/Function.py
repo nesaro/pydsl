@@ -35,7 +35,7 @@ class TransformerDirStorage(DirStorage):
     def provided_iclasses(self) -> list:
         return ["PythonTransformer", "HostPythonTransformer"]
 
-    def load(self, identifier, server = None, ecuid=None):
+    def load(self, identifier):
         """guess class, guess filename from id, and then call loadTInstance"""
         import imp
         for value in self._searcher.search(identifier): 
@@ -45,9 +45,9 @@ class TransformerDirStorage(DirStorage):
                 LOG.exception("Exception while loading: " + identifier)
             else:
                 from pydsl.Memory.Storage.File.Board import load_python_f
-                return load_python_f(value["filepath"], server)
+                return load_python_f(value["filepath"])
 
-        raise KeyError("Transformer" + identifier)
+        raise KeyError("Transformer: " + identifier)
     
     def summary_from_filename(self, modulepath):
         from pydsl.Function.Transformer.Python import PythonTransformer
@@ -55,7 +55,7 @@ class TransformerDirStorage(DirStorage):
         import imp
         moduleobject = imp.load_source(fileBaseName, modulepath)
         try:
-            result = {"identifier":fileBaseName,"iclass":moduleobject.iclass, "filepath":modulepath, "ancestors":PythonTransformer.ancestors()}
+            result = {"identifier":fileBaseName,"iclass":moduleobject.iclass, "filepath":modulepath}
             if hasattr(moduleobject, "title"):
                 result["title"] =  InmutableDict(moduleobject.title)
             if hasattr(moduleobject, "description"):
@@ -82,16 +82,12 @@ class BoardDirStorage(DirStorage):
     def __init__(self, path):
         DirStorage.__init__(self, path, [".board"])
 
-
-    def load(self, identifier, server = None, ecuid = None):
+    def load(self, identifier):
         searchresult = self._searcher.search(identifier)
-        if not searchresult:
-            raise Exception
         for result in searchresult:
             #TODO assert(len(self._search(identifier) == 2)) 
             from pydsl.Memory.Storage.File.Board import load_board_file
-            return load_board_file(result["filepath"], server = server, ecuid = ecuid)
-
+            return load_board_file(result["filepath"])
         raise KeyError("Board" + identifier)
 
     def provided_iclasses(self) -> list:

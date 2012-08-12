@@ -63,9 +63,7 @@ class DirStorage(Storage, metaclass = ABCMeta):
         elif _isGDLFileName(modulepath):
             result = {"iclass":"BNFGrammar","identifier":fileBaseName, "filepath":modulepath}
         elif (modulepath).endswith(".board"):
-            from pydsl.Function.Transformer.Board import Board
-            result = {"iclass":"Board", "identifier":fileBaseName, "filepath":modulepath, "ancestors":Board.ancestors()}
-
+            result = {"iclass":"Board", "identifier":fileBaseName, "filepath":modulepath}
         else:
             import imp
             moduleobject = imp.load_source(fileBaseName, modulepath)

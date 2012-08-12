@@ -23,11 +23,11 @@ __email__ = "nesaro@gmail.com"
 
 import unittest
 
-def recursivecall(input, auxt ,inputgrammars, outputgrammars, evfunctions):
-    """Ignora la entrada"""
+def recursivecall(input, auxt ,inputgrammars, outputgrammars):
+    """Ignores input"""
     return {"output":auxt["myadder"]({"input":"1+e"})}
 
-def integerextractor(input, inputgrammars, outputgrammars, evfunctions):
+def integerextractor(input, inputgrammars, outputgrammars):
     return {"output":inputgrammars["input"].get_groups(input["input"],"Operator")[0]}
 
 def opidentifier(vardict, rulename, dpr):

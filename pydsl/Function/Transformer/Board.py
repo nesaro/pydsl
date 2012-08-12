@@ -22,127 +22,115 @@ __copyright__ = "Copyright 2008-2012, Nestor Arocha Rodriguez"
 __email__ = "nesaro@gmail.com"
 
 import logging
-from .Network import HostFunctionNetwork
-from pydsl.Function.Transformer.Transformer import Transformer
 LOG = logging.getLogger(__name__)
 from pydsl.Function.Function import Error
 from pydsl.Exceptions import EventError
 
-class Board(Transformer, HostFunctionNetwork):
+class Board:
     """A Transformer where you can call other Transformer. Doesn't perform any computation"""
 
     from pydsl.Abstract import Event
 
-    def __init__(self, gtenvdefinitionslist:list, ecuid = None, server = None, timeout = 10):
-        if ecuid != None:
-            from .Network import FunctionNetworkServer
-            if not isinstance(server, FunctionNetworkServer):
-                raise TypeError("FunctionNetworkServer expected, got %s" % str(server))
+    def __init__(self, gtenvdefinitionslist:list, timeout = 10):
+        self._hostT = {}
         self.__timeout = timeout
         self.__GTDefinitionlist = gtenvdefinitionslist #list to put every gt envdefinition
+        self.__loadTfromDefinitionList()
         self.__inputGTDict = {} #{"channelname":GTinstance,} #Inner GT that receives input
         self.__outputGTDict = {} #{"channelname":GTinstance,}
-        HostFunctionNetwork.__init__(self)
-        inputgrammars, outputgrammars = self.__extractExternalChannelGrammarsFromDefinitions()
-        Transformer.__init__(self, inputgrammars, outputgrammars, ecuid, server)
-        import threading
-        self.__event = threading.Event()
-        self.__loadTfromDefinitionList()
-        self.__worklock = threading.Lock()
+        self.connectionsdict = {}
         self.__connectAllGTs()
-        self.__run()
+        self.__extractExternalChannelGrammarsFromDefinitions()
+        import threading
+        self.__worklock = threading.Lock()
+
+    @property
+    def inputchanneldic(self):
+        return self.__inputGTDict
 
     @property
     def summary(self):
         from pydsl.Abstract import InmutableDict
-        inputdic = [ x.identifier for x in self.inputchanneldic.values() ]
-        outputdic = [ x.identifier for x in self.outputchanneldic.values() ]
-        result = {"iclass":"Board", "input":inputdic, "output":outputdic, "ancestors":self.ancestors()}
+        #TODO: inputs and outputs
+        result = {"iclass":"Board", "ancestors":self.ancestors()}
         return InmutableDict(result)
 
     def __call__(self, inputdict:dict):
         LOG.debug(" received dic:" + str(inputdict))
+        resultdict = {}
+        calldict = {}
         if not inputdict:
             LOG.error("No input")
             return None
-        with self.__worklock:
-            import random
-            rand = random.randint(1, 999999)
-            self.__event.clear()
-            for channel, strcontent in inputdict.items():
-                LOG.debug("Board Receiving: " + channel + " " + str(strcontent))
-                self.__sendToChannel(channel, rand, strcontent)
-            # ctime = now()
-            while True:
-                self.__event.wait(self.__timeout)
-                if not self.__event.isSet():
-                    LOG.error("Board: TIMEOUT")
-                    #emit error to parent
-                    #delete rand in msgqueue
-                    newerror = Error("Timeout")
-                    newerror.appendSource(self.ecuid.name)
-                    return newerror
-                # if there is an error assoc to rand:
-                    # emit error to parent
-                    # delete rand in msgqueue
-                    # return {}
-                error = self._queue.getErrorById(rand)
-                if error != None:
-                    error.appendSource(self.ecuid.name)
-                    return error
-                uidlist = []
-                for x in self.__outputGTDict.values():
-                    uidlist.append(self._hostT[x[0]].ecuid)
-                resultdic = self._queue.getResultsByMask(uidlist, rand)
-                if not resultdic:
-                    self.__event.clear()
-                    continue
-                else:
-                    break
-                #result = self.__outputIOObject.getLog()[rand]
-                #self.__outputIOObject.delLog(rand)
-            #returns dict {outputchannelname:word,}
-            uidlist = []
-            translationdic = {}
+        for channel, strcontent in inputdict.items():
+            LOG.debug("Board Receiving: " + channel + " " + str(strcontent))
+            #self.__sendToChannel(channel, rand, strcontent)
+            gtname, keyname = self.__inputGTDict[channel]
+            if not gtname in calldict:
+                calldict[gtname] = {}
+            calldict[gtname][keyname] = strcontent
+        for gtname, functinput in calldict.items():
+            resultdict[gtname] = self._hostT[gtname](functinput)
+        #prepare extendedtuplelist
 
-            #Extract all child identifiers
-
+        extendedtuplelist = []
+        for gtname, results in self.connectionsdict.items():
+            for chan1, duple in results.items():
+                #gtname, outputchannel, inputchannel, gtinstance
+                extendedtuplelist.append((gtname, chan1, duple[0], duple[1], duple[2]))
+        change = True
+        while change:
+            change = False
+            thisroundgt = set()
+            for gtname, extkey, intkey, gtinstance, extgtname in extendedtuplelist:
+                if gtinstance:
+                    thisroundgt.add((gtinstance, extgtname))
+            for curgt, curgtname in thisroundgt:
+                curinputs = {}
+                for gtname, extkey, intkey, gtinstance, extgtname in extendedtuplelist:
+                    if not gtinstance:
+                        continue
+                    if not gtname in curinputs:
+                        curinputs[gtname] = {}
+                    if gtname in resultdict:
+                        curinputs[gtname][extkey] = resultdict[gtname][intkey]
+                if sum([len(x) for x in curinputs.values()]) == len(curgt.inputchanneldic):
+                    change = True
+                    curinputdict = {}
+                    for gtname, value in curinputs.items():
+                        curinputdict.update(value)
+                        for key in value:
+                            del resultdict[gtname][key]
+                        if not resultdict[gtname]:
+                            del resultdict[gtname]
+                    resultdict[curgtname] = self._hostT[curgtname](curinputdict)
+                    
+            finaldict = {}
             for key, value in self.__outputGTDict.items():
-                uidlist.append(self._hostT[value[0]].ecuid)
-                translationdic[value[0]] = (value[1], key)
-            resultdic2 = {}
-            #copia los valores
-            #Translates output names
-            for uid in uidlist:
-                assert(len(resultdic[uid]) == 1)
-                resultdic2[translationdic[uid.name][1]] = resultdic[uid][translationdic[uid.name][0]]
-            return resultdic2
+                gtname, channelname = value
+                finaldict[key] = resultdict[gtname][channelname]
+            return finaldict
+                
 
     def __extractExternalChannelGrammarsFromDefinitions(self):
         """Extracts grammars from definition.
         generated channel must be connected to outside elements"""
-        inputtypedict = {}
-        outputtypedict = {}
+        #TODO: Store connections in a dictionary
+        #{"part1":["part2","part3"],
+        # "part2":....
+        # "partn":...}
+
+        #Store initials and ends in lists
+        #initials: ["part1"]
+        #ends: ["partn"]
+
         for definition in self.__GTDefinitionlist:
             for gtcondef in definition.inputConnectionDefinitions:
                 if gtcondef.externalgtname == "Main":
-                    if gtcondef.internalchannelname in inputtypedict:
-                        raise Exception #NameOverlap
-                    #FIXME: Is better to avoid loading the instance to obtain grammar name
-                    from pydsl.Memory.Storage.Loader import load_transformer
-                    gtinstance = load_transformer(definition.type)
-                    inputtypedict[gtcondef.externalchannelname] = gtinstance.inputdefinition[gtcondef.internalchannelname]
                     self.__inputGTDict[gtcondef.externalchannelname] = (gtcondef.basename, gtcondef.internalchannelname) #Prepares self.__inputGTDict
             for gtcondef in definition.outputConnectionDefinitions:
                 if gtcondef.externalgtname == "Main":
-                    if gtcondef.internalchannelname in outputtypedict:
-                        raise Exception #NameOverlap
-                    from pydsl.Memory.Storage.Loader import load_transformer
-                    gtinstance = load_transformer(definition.type)
-                    ocd = gtinstance.outputchanneldic
-                    outputtypedict[gtcondef.externalchannelname] = gtinstance.outputdefinition[gtcondef.internalchannelname]
                     self.__outputGTDict[gtcondef.externalchannelname] = (gtcondef.basename, gtcondef.internalchannelname) #Prepares self.__outputGTDict
-        return (inputtypedict, outputtypedict)
 
     def __loadTfromDefinitionList(self):
         """GTDefinitions -> Instances"""
@@ -164,57 +152,12 @@ class Board(Transformer, HostFunctionNetwork):
             gtname = definition.name
             outputgrammarlist = definition.outputConnectionDefinitions
             gtinstance = self._hostT[gtname]
+            self.connectionsdict[gtname] = {}
             for gtcondef in outputgrammarlist:
-                if not isinstance(gtcondef, BoardConnectionDefinition):
-                    raise TypeError
+                hostt = None     
                 if gtcondef.externalgtname != "Main":
-                    gtinstance.connect(gtcondef.internalchannelname, self._hostT[gtcondef.externalgtname], gtcondef.externalchannelname)
-
-    def __sendToChannel(self, inputchannel, msgid, data):
-        """Sends communication to an internal Transformer"""
-        internalt, internalchannel = self.__inputGTDict[inputchannel]
-        self._hostT[internalt].receive(internalchannel, msgid, data)
-
-    def __run(self):
-        self._server.start()
-
-    from .Network import FunctionNetworkClient
-    def registerInstance(self, name, client:FunctionNetworkClient):
-        self._server.registerInstance(name, client)
-
-    def _onReceiveEvent(self, event:Event):
-        """Receive message as a client"""
-        LOG.debug(str(self.identifier) + ":__receiveMSGFunction: Begin")
-        if isinstance(event.msg, Error):
-            #Grammar error, abort
-            self.__event.set()
-        elif event.msg:
-            self.__event.set() #TODO: Check event source
-            #Event sent by this element to finish waiting 
-        else:
-            raise EventError
-
-    def __receiveEventAsServer(self, event:Event):
-        """Receives message as server"""
-        #LOG.debug(str(self.identifier) + ":__receiveEventAsServer: Begin")
-        if event.msg:
-            if event.source != self.ecuid and event.source != self._server.ecuid:
-                self._queue.append(event)
-            self.__event.set() 
-        elif isinstance(event.msg, Error):
-            #Grammar error, abort
-            self._queue.append(event)
-            self.__event.set()
-        else:
-            LOG.error("Unknown event type")
-            raise EventError
-
-    def handleEvent(self, event:Event):
-        """Handle message As a server"""
-        if event.destination in self.ecuid or event.source == self.ecuid:
-            self.__receiveEventAsServer(event)
-        else:
-            HostFunctionNetwork.handleEvent(self, event)
+                    hostt = self._hostT[gtcondef.externalgtname]
+                self.connectionsdict[gtname][gtcondef.internalchannelname] = (gtcondef.externalchannelname, hostt, gtcondef.externalgtname)
 
     def __str__(self):
         result = "<B " + str(self.identifier) + " "
@@ -225,3 +168,11 @@ class Board(Transformer, HostFunctionNetwork):
         result += "connections: " + str(self._connections)
         result += ">"
         return result
+
+    def _initHostT(self, namedic):
+        """Inits aux GTs. if a requested aux GT isn't connected, This function will create them"""
+        from pydsl.Memory.Storage.Loader import load_transformer
+        for title, gttype in namedic.items():
+            self._hostT[title] = load_transformer(gttype) 
+            LOG.debug("loaded " + str(title) + "auxT")
+

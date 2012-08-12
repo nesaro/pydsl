@@ -53,8 +53,8 @@ class HostChannel(FunctionInterface):
         self.__outputchanneldic = _loadGrammarTools(outputtypedict)
         self._connections = {}
 
-    def connect(self, intchannel, extGT, extChannel):
-        self._connections[intchannel] = DirectedChannel(self, extGT, extChannel)
+    def connect(self, extGT, extChannel):
+        self._connections[intchannel] = Channel(extGT, extChannel)
 
     def send(self, outputchannel, msgid, content):
         """ Sends a data block"""
@@ -69,156 +69,10 @@ class HostChannel(FunctionInterface):
         return self.__outputchanneldic
 
 class Channel(metaclass = ABCMeta):
-    """ Channel base class"""
-    def __init__(self, host1:HostChannel, channel1Name, host2:HostChannel, channel2Name):
-        assert(channel1Name != channel2Name)
-        self._host1 = host1
-        self.channel1Name = channel1Name
+    def __init__(self, host2:HostChannel, channel2Name):
         self._host2 = host2
         self.channel2Name = channel2Name
 
-    def _sendTo(self, destination, msgid, content):
-        if destination == self.channel1Name:
-            self._host1.receive(self.channel1Name, msgid, content)
-        elif destination == self.channel2Name:
-            self._host2.receive(self.channel2Name, msgid, content)
-        else:
-            raise KeyError
-
-    @abstractmethod
-    def send(self):
-        pass
-
-class DirectedChannel(Channel):
-    """ One way channel"""
-    def __init__(self, GT, extGT, extChannelName):
-        Channel.__init__(self, GT, None, extGT, extChannelName)
-
     def send(self, msgid, content):
-        self._sendTo(self.channel2Name, msgid, content)
-
-    def __str__(self):
-        return "<DC " + str(self._host1.identifier) + " -> " + str(self._host2.identifier) + ":" + str(self.channel2Name) + ">"
-
-
-class NetworkedHostChannel(HostChannel):
-    """Network + Channel Host base class"""
-    def __init__(self, inputtypedict:dict, outputtypedict:dict):
-        HostChannel.__init__(self, inputtypedict, outputtypedict)
-        self._seq_cache = [] #stores words received by channels but unprocessed
-        import threading
-        self._worklock = threading.Condition()
-        self._appendlock = threading.Lock()
-
-    #This functionality belongs to the Channel+Network interface, not the channel alone
-    def receive(self, channel, msgid, content):
-        """Receives an content through channel"""
-        LOG.debug("Received:" + str(channel) + " : " + str(content))
-        if not channel in self.inputchanneldic.keys():
-            LOG.critical("Channel not found: " + str(channel)) 
-            raise IndexError
-        with self._appendlock:
-            self._seq_cache.append({"channel":channel, "msgid":msgid, "data":content})
-        with self._worklock:
-            sequencestoprocess, sequencestodrop = self._checkSequences()
-            if sequencestoprocess:
-                LOG.debug("run: " + " after finished: sequence list" + str(sequencestoprocess))
-                self._processsequences(sequencestoprocess)
-            self._dropSequences(sequencestodrop) #FIXME find the right place to clean sequences
-
-    def _processsequences(self, sequencestoprocess) -> bool:
-        for sequence in sequencestoprocess:
-            from pydsl.Exceptions import TProcessingError
-            try:
-                mylist = list(filter(lambda x:x["msgid"] == sequence, self._seq_cache))
-                mydic = {}
-                for x in mylist:
-                    mydic[x["channel"]] = x["data"]
-                result = self.__call__(mydic)
-            except TProcessingError:
-                LOG.exception("run: Error while processing input")
-                self.emitToServer({"type":"transformerError"}, sequence)
-                self._dropSequences(sequence)
-            else:
-                self._dropSequences(sequence)
-                from pydsl.Function.Function import Error
-                if isinstance(result, Error):
-                    result.appendSource(str(self.ecuid.name))
-                    self.emitToServer(sequence, result) #FIXME: this sequence number must be checked
-                    return False
-                if not isinstance(result, dict):
-                    LOG.error("run: __process returned bad type")
-                    raise TypeError                
-                if result == {}:
-                    self.emitToServer(sequence, Error("transformerError"))
-                else:
-                    self.emitToServer(sequence, result)
-                    for outputchannel in self._connections.keys():
-                        self.send(outputchannel, sequence, result[outputchannel])
-                    self.emitToSelf(sequence, result) #TODO: Only Boards requires it
-        return True
-
-
-    def _dropSequences(self, sequencestodrop):
-        """Drops every sequence in self._sequencestodrop """
-        if not isinstance(sequencestodrop, list):
-            sequencestodrop = [sequencestodrop]
-        LOG.debug("_dropSequences: sequences to drop:" + str(sequencestodrop))
-        with self._appendlock:
-            i = 0
-            while i < len(self._seq_cache):
-                if self._seq_cache[i]["msgid"] in sequencestodrop:
-                    del self._seq_cache[i]
-                else:
-                    i += 1
-
-    def _checkSequences(self):
-        """Checks if there is at least one valid sequence. Fills self._sequencestoprocess and self._sequencestodrop"""
-        #Iterate through self._seq_cache
-        seqlist = [] #Stores every known sequence
-        sequencestodrop = []
-        for entry in self._seq_cache: #Grab every sequence
-            if not entry["msgid"] in seqlist:
-                seqlist.append(entry["msgid"])
-        LOG.debug("__checkSequences: " + " inputCommunications text list:" + str([x["data"] for x in self._seq_cache])) 
-        checkdic = {} #To check valid sequences
-        for sequence in seqlist:
-            checkdic[sequence] = {}
-            for grammarname in self.inputchanneldic.keys():
-                checkdic[sequence][grammarname] = False
-
-        for sequence in seqlist:
-            for inputgrammarname, inputgrammar in self.inputchanneldic.items():
-                for communication in self._seq_cache:
-                    if communication["channel"] == inputgrammarname and communication["msgid"] == sequence:
-                        if not inputgrammar.check(communication["data"]):
-                            LOG.warning("__checkSequences: " + " Grammar " + " check failed:" + inputgrammarname + " communication: " + str(communication["data"])) 
-                            from pydsl.Function.Function import Error
-                            self.emitToServer(sequence,Error("Grammar",[self.ecuid.name])) #FIXME: which id should use?
-                            if not sequence in sequencestodrop:
-                                sequencestodrop.append(sequence)
-                        else:
-                            LOG.debug("__checkSequences: " + "sequence :" + str(sequence) + " ok in channel: " +communication["channel"]) 
-                            checkdic[sequence][communication["channel"]] = True
-                    else:
-                        LOG.debug("__checkSequences: " + " communication[channel]: " + str(communication["channel"]) + " inputgrammarname: " + inputgrammarname) 
-                        LOG.debug("__checkSequences: " + "sequence  from data:" + str(communication["msgid"]) + " and from list:" + str(sequence) )
-
-
-        for sequence in sequencestodrop:
-            seqlist.remove(sequence)
-
-        sequencestoprocess = []
-        for sequence in seqlist:
-            validsequence = True
-            for value in checkdic[sequence].values():
-                if not value:
-                    validsequence = False
-                    LOG.debug("__checkSequences: " +  " not valid sequence:" + str(sequence))
-                    break
-            if validsequence:
-                with self._appendlock:
-                    sequencestoprocess.append(sequence)
-        LOG.debug("__checkSequences: valid sequences:" + str(sequencestoprocess) + " ; dropped sequences: " + str(sequencestodrop))
-        return sequencestoprocess, sequencestodrop
+        self._host2.receive(self.channel2Name, msgid, content)
 

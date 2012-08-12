@@ -55,7 +55,7 @@ def parseRegularSections(configparser):
         definitionlist.append(sectionToBoardDefinition(configparser, section))
     return definitionlist
 
-def load_board_file(filename, server = None , ecuid = None):
+def load_board_file(filename):
     import configparser
     config = configparser.ConfigParser()
     config.read(filename)
@@ -64,15 +64,14 @@ def load_board_file(filename, server = None , ecuid = None):
         raise BadFileFormat(filename)
     GTDefinitionList = parseRegularSections(config)
     from pydsl.Function.Transformer.Board import Board
-    return Board(GTDefinitionList, ecuid = ecuid, server = server) 
+    return Board(GTDefinitionList) 
 
-def load_python_f(modulename , server):
+def load_python_f(modulename):
     """Load a file written in python"""
     identifier = getFileTuple(modulename)[2]
     import imp
-    print(identifier, modulename)
     moduleobject = imp.load_source(identifier, modulename)
     from .Python import load_python_file
-    return load_python_file(moduleobject, server = server)
+    return load_python_file(moduleobject)
 
 

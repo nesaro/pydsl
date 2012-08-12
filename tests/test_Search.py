@@ -41,21 +41,6 @@ class TestQuery(unittest.TestCase):
         myquery = dict_to_query({"roledict":{"$part":{"subject":"human"}}})
         from pydsl.Memory.Memory import LocalMemory
         mymem = LocalMemory()
-        from pydsl.Concept.Concept import Concept
-        from pydsl.Concept.Relation import Relation, Rel
-        concept1 = Concept("human")
-        concept2 = Concept("animal")
-        concept3 = Concept("dog")
-        rel = Rel("ISA", ["subject","object"])
-        rela = Relation(rel,{"subject":concept1,"object":concept2})
-        relb = Relation(rel,{"subject":concept3,"object":concept2})
-        mymem.save( concept1,"c1")
-        mymem.save( concept2,"c2")
-        mymem.save( concept3,"c3")
-        #mymem.save(rel,"r1")
-        mymem.save(rela,"r2")
-        mymem.save(relb,"r3")
-        mymem.search(myquery)
 
 
 

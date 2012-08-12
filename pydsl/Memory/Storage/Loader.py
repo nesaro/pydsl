@@ -83,7 +83,7 @@ def load_grammar(identifier, memorylist = []):
             return memory.load(identifier)
     raise KeyError("Grammar " + identifier)
 
-def load_transformer(identifier, eventmanager = None, ecuid = None, memorylist = []):
+def load_transformer(identifier, memorylist = []):
     #FIXME: Can return any type of element
     if not memorylist:
         from pydsl.Config import GLOBALCONFIG
@@ -91,10 +91,10 @@ def load_transformer(identifier, eventmanager = None, ecuid = None, memorylist =
 
     for memory in memorylist:
         if identifier in memory:
-            return memory.load(identifier, server=eventmanager, ecuid=ecuid)
-    raise KeyError("Transformer" + identifier)
+            return memory.load(identifier)
+    raise KeyError("Transformer: " + identifier)
 
-def load_board(identifier, eventmanager = None, memorylist = []):
+def load_board(identifier, memorylist = []):
     if not memorylist:
         from pydsl.Config import GLOBALCONFIG
         memorylist = GLOBALCONFIG.memorylist
