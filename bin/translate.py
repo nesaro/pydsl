@@ -38,7 +38,6 @@ if __name__ == "__main__":
     PARSER.add_argument("-o", "--outputfile", action="store", dest="outputfiledic", help="output filename dict")
     PARSER.add_argument("-e", "--expression", action="store", dest="expression", help="input expression")
     PARSER.add_argument("-t", "--fname", action="store", dest="gname", help="Transformer name")
-    PARSER.add_argument("-c", "--pname", action="store", dest="pname", help="Procedure name")
     PARSER.add_argument("-p", "--pipe", action="store_true", dest="pipemode", help="Pipe interaction mode")
     ARGS = PARSER.parse_args()
     import sys
@@ -53,15 +52,6 @@ if __name__ == "__main__":
     if (ARGS.gname):
         try: 
             MANAGER.readTR(ARGS.gname)
-        except BadFileFormat:
-            print("Error reading input file")
-            sys.exit(1)
-        except KeyError as le:
-            print("Unable to load " + str(le))
-            sys.exit(1)
-    elif (ARGS.pname):
-        try: 
-            MANAGER.readP(ARGS.pname)
         except BadFileFormat:
             print("Error reading input file")
             sys.exit(1)
