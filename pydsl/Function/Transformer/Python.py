@@ -71,6 +71,7 @@ class HostPythonTransformer(PythonTransformer):
     """Python Function Transformer which can call to other functions"""
     def __init__(self, inputdic, outputdic, auxdic:dict, function):
         PythonTransformer.__init__(self, inputdic, outputdic, function)
+        self._hostT = {}
         self._initHostT(auxdic)
 
     def _initHostT(self, namedic):

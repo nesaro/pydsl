@@ -20,8 +20,8 @@
 check if input data belongs to a Type 
 """
 
-__author__ = "Néstor Arocha Rodríguez"
-__copyright__ = "Copyright 2008-2012, Néstor Arocha Rodríguez"
+__author__ = "Nestor Arocha Rodriguez"
+__copyright__ = "Copyright 2008-2012, Nestor Arocha Rodriguez"
 __email__ = "nesaro@gmail.com"
 
 import logging
@@ -31,7 +31,7 @@ from pydsl.Interaction.Program import UnixProgram
 
 CURRENTGRAMMAR = ""
 
-def checkfun(inputdic, auxboarddic, inputgt, outputgt, evfunctions):
+def checkfun(inputdic, auxboarddic, inputgt, outputgt):
     output = auxboarddic["checker"]({"string":inputdic["input"], "grammar":CURRENTGRAMMAR})
     if not output:
         return output

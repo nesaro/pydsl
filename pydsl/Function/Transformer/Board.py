@@ -23,15 +23,12 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
-from pydsl.Function.Function import Error
-from pydsl.Exceptions import EventError
 
 class Board:
     """A Transformer where you can call other Transformer. Doesn't perform any computation"""
 
     def __init__(self, gtenvdefinitionslist:list, timeout = 10):
         self._hostT = {}
-        self.__timeout = timeout
         self.__GTDefinitionlist = gtenvdefinitionslist #list to put every gt envdefinition
         self.__loadTfromDefinitionList()
         self.__inputGTDict = {} #{"channelname":GTinstance,} #Inner GT that receives input
@@ -39,8 +36,6 @@ class Board:
         self.connectionsdict = {}
         self.__connectAllGTs()
         self.__extractExternalChannelGrammarsFromDefinitions()
-        import threading
-        self.__worklock = threading.Lock()
 
     @property
     def inputchanneldic(self):

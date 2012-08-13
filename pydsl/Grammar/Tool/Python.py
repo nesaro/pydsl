@@ -26,13 +26,13 @@ import logging
 LOG = logging.getLogger(__name__)
 
 class PythonGrammarTools(GrammarTools):
-    def __init__(self, dictionary, auxdic = {}, propFun = None, enumFun = None, alphabetFun = None):
+    def __init__(self, dictionary):
         GrammarTools.__init__(self)
         self.dictionary = dictionary
         self._matchFun = None
-        self._askprop = propFun
-        self._enumFun = enumFun
-        self._alphabetFun = alphabetFun
+        self._askprop = dictionary.get('propFun')
+        self._enumFun = dictionary.get('enumFun')
+        self._alphabetFun = dictionary.get('alphabetFun')
 
     def check(self, word):
         if not self._matchFun:
