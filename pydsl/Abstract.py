@@ -70,13 +70,6 @@ class Indexable(metaclass = ABCMeta):
                     result += x.ancestors()
         return tuple(result)
 
-class Event:
-    def __init__(self, source, destination, msgid:int, content):
-        self.source = source 
-        self.destination = destination 
-        self.msg = content
-        self.msgid = msgid
-
 class TypeCheckList(list):
     def __init__(self, instancetype, *args):
         self.instancetype = instancetype

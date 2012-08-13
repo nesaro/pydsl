@@ -34,9 +34,6 @@ class TProcessingError(Exception):
         assert(errortype in ERRORLIST)
         self.errortype = errortype
 
-class EventError(Exception):
-    """Event related exception"""
-    pass
 
 class LRConflictException(Exception):
     pass

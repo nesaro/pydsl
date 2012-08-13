@@ -29,8 +29,6 @@ from pydsl.Exceptions import EventError
 class Board:
     """A Transformer where you can call other Transformer. Doesn't perform any computation"""
 
-    from pydsl.Abstract import Event
-
     def __init__(self, gtenvdefinitionslist:list, timeout = 10):
         self._hostT = {}
         self.__timeout = timeout
