@@ -23,7 +23,6 @@ __email__ = "nesaro@gmail.com"
 
 from ..Channel import HostChannel
 import logging
-from pydsl.Function.Function import Error
 LOG = logging.getLogger("PythonTransformer")
 
 class PythonTransformer(HostChannel):
@@ -35,41 +34,26 @@ class PythonTransformer(HostChannel):
     def __call__(self, ibdic):
         for inputkey in self.inputchanneldic.keys():
             if inputkey not in ibdic:
-                LOG.error("Key not found in inputdic")
-                newerror = Error("Transformer")
-                newerror.appendSource("TODONAME") #TODO: append name from the source
-                return newerror
+                raise KeyError("Key %s not found in inputdic" % inputkey)
         for dickey in ibdic.keys():
             if not self.inputchanneldic[dickey].check(ibdic[dickey]):
-                newerror = Error("Grammar") #FIXME: Should be Type error
-                newerror.appendSource("TODONAME") #TODO: append name from the source
-                return newerror
-        from pydsl.Exceptions import TProcessingError
-        try:
-            result = self._functionwrapper(ibdic)
-        except TProcessingError: #TODO: Extract exception source
-            newerror = Error("Transformer", [self.ecuid])
-            return newerror
-        if isinstance(result, Error):
-            result.appendSource(self.ecuid)
-            return result
-        if not result:
-            newerror = Error("Transformer", [self.ecuid])
-            return newerror
+                raise ValueError("Invalid value %s for input %s (%s)" % (ibdic[dickey], dickey, self))
+        from pydsl.Exceptions import ProcessingError
+        result = self._functionwrapper(ibdic)
         return result
 
     def _functionwrapper(self, wdict):
         """Wraps function call, to add parammeters if required"""
         LOG.debug("PythonTransformer._functionwrapper: begin")
         result = self._function(wdict, self.inputchanneldic, self.outputchanneldic)
-        from pydsl.Exceptions import TProcessingError
-        if not result or isinstance(result, Error):
-            raise TProcessingError(self.ecuid,"Transformer")
+        from pydsl.Exceptions import ProcessingError
+        if not result:
+            raise ProcessingError("Transformer", self)
         for outputgrammarname in self.outputchanneldic.keys():
             LOG.debug("Verifying Grammar name: " + outputgrammarname)
             if not outputgrammarname in result:
                 LOG.error("Error while verifying Grammar name:" + outputgrammarname)
-                raise TProcessingError(self.ecuid,"Transformer")
+                raise ProcessingError("Transformer")
 
         #Converting to words
         #TODO Process errors like HostPythonTransformer
@@ -100,17 +84,10 @@ class HostPythonTransformer(PythonTransformer):
     def _functionwrapper(self, worddic):
         """Wraps function call, to add parammeters if required"""
         LOG.info("HostPythonTransformer._functionwrapper: begin")
-        from pydsl.Exceptions import TProcessingError
-        try:
-            result = self._function(worddic, self._hostT, self.inputchanneldic, self.outputchanneldic)
-        except TProcessingError:            
-            LOG.exception("__process: Index Error Exception calling function")
-            newerror = Error("Tranformer")
-            newerror.appendSource(self.ecuid.name)
-            return newerror
-        if isinstance(result, Error):
-            result.appendSource(self.ecuid.name)
-            return result
+        from pydsl.Exceptions import ProcessingError
+        result = self._function(worddic, self._hostT, self.inputchanneldic, self.outputchanneldic)
+        if not result:
+            raise ProcessingError("Transformer", self)
         for channel in result.keys():
             if not result[channel]: #FIXME: > 1 channel receives an error
                 newerror = result[channel]

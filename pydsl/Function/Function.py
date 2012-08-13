@@ -30,28 +30,3 @@ class FunctionInterface(metaclass = ABCMeta):
     """A method applied to a function to comunicate with other functions"""
     pass
 
-class Error:
-    """Error Transformation result"""
-    def __init__(self, errortype, bt = []):
-        from pydsl.Config import ERRORLIST
-        self.__bt = bt
-        assert(errortype in ERRORLIST)
-        self.errortype = errortype
-
-    def appendSource(self, name):
-        self.__bt.append(name)
-
-    @property
-    def bt(self):
-        return self.__bt
-
-    def __str__(self):
-        result = "<Error- source: " 
-        result += str(self.__bt)
-        result += " type: "
-        result += str(self.errortype)
-        result += " >"
-        return result
-
-    def __bool__(self):
-        return False

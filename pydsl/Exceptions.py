@@ -26,14 +26,16 @@ __email__ = "nesaro@gmail.com"
 import logging
 LOG = logging.getLogger(__name__)
 
-class TProcessingError(Exception):
-    def __init__(self, source, errortype):
+class ProcessingError(Exception):
+    def __init__(self, errortype, source = []):
         Exception.__init__(self)
         self.source = source
         from .Config import ERRORLIST
         assert(errortype in ERRORLIST)
         self.errortype = errortype
 
+    def append(self, element):
+        self.source.append(element)
 
 class LRConflictException(Exception):
     pass

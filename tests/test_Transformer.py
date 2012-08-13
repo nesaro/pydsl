@@ -62,8 +62,7 @@ class TestHostTransformer(unittest.TestCase):
         self.__gt1 = HostPythonTransformer({"input":"cstring"},{"output":"cstring"},{"myadder":"simple-adder"},recursivecall)
 
     def testError(self):
-        result = self.__gt1({"input":"1"})
-        assert(str(result.bt[0]) == 'separator' and str(result.bt[1]) == "myadder" and str(result.bt[2]) == "Main")
+        self.assertRaises(ValueError,self.__gt1, {"input":"1"})
 
 @unittest.skip
 class TestSyntaxDirectedTransformer(unittest.TestCase):
