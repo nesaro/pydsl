@@ -63,9 +63,6 @@ class PersistentStorage(Storage):
         return self.__getitem__(name)
     
     def __getitem__(self, name):
-        from pydsl.Identifier import Identifier
-        if isinstance(name, Identifier):
-            name = str(name)
         with self.lock:
             a = shelve.open(self.filename)
             with contextlib.closing(a):

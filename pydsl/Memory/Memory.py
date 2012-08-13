@@ -69,9 +69,6 @@ class LocalMemory(Memory):
         self.content = {}
     
     def load(self, index):
-        from pydsl.Identifier import Identifier
-        if isinstance(index, Identifier):
-            index = str(index)
         return self.content[index]
     
     def save(self, element:Indexable, identifier):
