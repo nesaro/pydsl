@@ -35,16 +35,6 @@ class Checker(metaclass = ABCMeta):
     def check(self, value) -> bool:
         pass
 
-class DummyChecker(Checker):
-    """Always True Checker"""
-    def check(self, word):
-        return True
-        
-    def __eq__(self, other):
-        if isinstance(other, DummyChecker):
-            return True
-        return False
-        
 class RegularExpressionChecker(Checker):
     def __init__(self, regexp, flags = ""):
         import re
