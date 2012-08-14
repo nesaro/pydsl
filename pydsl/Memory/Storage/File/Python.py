@@ -47,7 +47,7 @@ def load_python_file(moduleobject, **kwargs):
         from pydsl.Function.ExternalProgram import ExternalProgramTransformer
         return ExternalProgramTransformer(**resultdic)
     elif iclass == "ExternalProgramFileFunction":
-        from pydsl.Function.File import ExternalProgramFileFunction
+        from pydsl.Function.ExternalProgram import ExternalProgramFileFunction
         return ExternalProgramFileFunction(**resultdic)
     elif iclass == "PythonGrammar":
         return resultdic
