@@ -24,7 +24,7 @@ class TestBinaries(unittest.TestCase):
 
     def testTranslate(self):
         import os
-        self.assertEqual(os.system("python3 bin/translate.py"),0)
+        self.assertEqual(os.system("python3 bin/translate.py"),512)
 
 
     def testConvert(self):
