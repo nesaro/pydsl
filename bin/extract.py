@@ -41,7 +41,7 @@ class Extract(UnixProgram):
     """Read input file contents, creates grammar and transform objects, create connections, 
     and afterwards reads required input/launch main loop"""
     def __init__(self, optionsdict):
-        from pydsl.Function.Transformer.Python import HostPythonTransformer
+        from pydsl.Function.Python import HostPythonTransformer
         #import pydsl.GlobalConfig
         #pydsl.GlobalConfig.GLOBALCONFIG.strictgrammar = True
         self.__maingt = HostPythonTransformer({"input":"cstring"},{"output":"TrueFalse"},{"checker":"GrammarChecker"}, checkfun) 

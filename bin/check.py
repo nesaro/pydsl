@@ -49,7 +49,7 @@ class Checker(UnixProgram):
     """Read input file contents, creates grammar and transform objects, create connections, 
     and afterwards reads required input/launch main loop"""
     def __init__(self, optionsdict):
-        from pydsl.Function.Transformer.Python import HostPythonTransformer
+        from pydsl.Function.Python import HostPythonTransformer
         #import pydsl.GlobalConfig
         #pydsl.GlobalConfig.GLOBALCONFIG.strictgrammar = True
         self.__maingt = HostPythonTransformer({"input":"cstring"},{"output":"TrueFalse"},{"checker":"GrammarChecker"}, checkfun) 
@@ -72,12 +72,8 @@ class Checker(UnixProgram):
             myexpression = {"input":self._opt["expression"]}
             result = self.__maingt(myexpression)["output"]
             #result = bool_dict_values(str(result["output"]))
-            from pydsl.Function.Function import Error
-            if isinstance(result, Error):
-                print(result)
-            else:
-                print(result)
-            return result #FIXME: Solo en el modo expresion se espera de resultado para test 
+            print(result)
+            return result #FIXME: Only expression mode expects a returned result
         elif self._opt["inputfiledic"]:
             inputdic = parse_shell_dict(self._opt["inputfiledic"])
             outputdic = {"output":"stdout"}

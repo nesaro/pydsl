@@ -63,7 +63,7 @@ def load_board_file(filename):
         from pydsl.Exceptions import BadFileFormat
         raise BadFileFormat(filename)
     GTDefinitionList = parseRegularSections(config)
-    from pydsl.Function.Transformer.Board import Board
+    from pydsl.Function.Board import Board
     return Board(GTDefinitionList) 
 
 def load_python_f(modulename):

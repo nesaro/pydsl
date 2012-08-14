@@ -21,7 +21,7 @@ __author__ = "Néstor Arocha Rodríguez"
 __copyright__ = "Copyright 2008-2012, Néstor Arocha Rodríguez"
 __email__ = "nesaro@gmail.com"
 
-from ..Channel import HostChannel
+from .Channel import HostChannel
 import logging
 LOG = logging.getLogger("PythonTransformer")
 

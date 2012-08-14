@@ -38,20 +38,17 @@ def load_python_file(moduleobject, **kwargs):
     for x in mylist:
         resultdic[x] = getattr(moduleobject, x)
     if iclass == "PythonTransformer":
-        from pydsl.Function.Transformer.Python import PythonTransformer
+        from pydsl.Function.Python import PythonTransformer
         return PythonTransformer(**resultdic)
     elif iclass == "HostPythonTransformer":
-        from pydsl.Function.Transformer.Python import HostPythonTransformer
+        from pydsl.Function.Python import HostPythonTransformer
         return HostPythonTransformer(**resultdic)
     elif iclass == "ExternalProgramTransformer":
-        from pydsl.Function.Transformer.ExternalProgram import ExternalProgramTransformer
+        from pydsl.Function.ExternalProgram import ExternalProgramTransformer
         return ExternalProgramTransformer(**resultdic)
     elif iclass == "ExternalProgramFileFunction":
         from pydsl.Function.File import ExternalProgramFileFunction
         return ExternalProgramFileFunction(**resultdic)
-    elif iclass == "SimpleGrammarSetTransformer":
-        from pydsl.Function.GrammarSetTransformer import SimpleGrammarSetTransformer
-        return SimpleGrammarSetTransformer(**resultdic)
     elif iclass == "PythonGrammar":
         return resultdic
     elif iclass == "SymbolGrammar":

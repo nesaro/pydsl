@@ -42,7 +42,7 @@ def opefinal(vardict):
 class TestTransformer(unittest.TestCase):
     """Tests Transformers"""
     def setUp(self):
-        from pydsl.Function.Transformer.Python import PythonTransformer
+        from pydsl.Function.Python import PythonTransformer
         from pydsl.Function.ExternalProgram import ExternalProgramFunction #FIXME: Not a transformer
         self.__gt1 = PythonTransformer({"input":"integerop"},{"output":"cstring"},integerextractor)
         self.__text = ExternalProgramFunction({"input":"cstring"},{"output":"cstring"}, ["echo","#{input}"])
@@ -58,7 +58,7 @@ class TestTransformer(unittest.TestCase):
 class TestHostTransformer(unittest.TestCase):
     """Test recursive transformer"""
     def setUp(self):
-        from pydsl.Function.Transformer.Python import HostPythonTransformer
+        from pydsl.Function.Python import HostPythonTransformer
         self.__gt1 = HostPythonTransformer({"input":"cstring"},{"output":"cstring"},{"myadder":"simple-adder"},recursivecall)
 
     def testError(self):
@@ -67,7 +67,7 @@ class TestHostTransformer(unittest.TestCase):
 @unittest.skip
 class TestSyntaxDirectedTransformer(unittest.TestCase):
     def setUp(self):
-        from pydsl.Function.Transformer.SyntaxDirected import SyntaxDirectedTransformer
+        from pydsl.Function.SyntaxDirected import SyntaxDirectedTransformer
         self.__gt1 = SyntaxDirectedTransformer({"input":"LogicalExpression"},{"output":"cstring"}, {"OperatorExpression1":ope1, "Expression0":ope1 , "S0":ope1, "Expression2":ope1, "RestExpression0":ope1, "finally":opefinal})
 
     def testError(self):

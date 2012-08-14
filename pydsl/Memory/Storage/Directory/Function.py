@@ -50,7 +50,7 @@ class TransformerDirStorage(DirStorage):
         raise KeyError("Transformer: " + identifier)
     
     def summary_from_filename(self, modulepath):
-        from pydsl.Function.Transformer.Python import PythonTransformer
+        from pydsl.Function.Python import PythonTransformer
         (_, _, fileBaseName, _) = getFileTuple(modulepath)
         import imp
         moduleobject = imp.load_source(fileBaseName, modulepath)
