@@ -29,58 +29,48 @@ import logging
 LOG = logging.getLogger(__name__)
 from pkg_resources import Requirement, resource_filename, DistributionNotFound
 
-def guess_filename(inputfile, memorylist = []) -> set:
-    from pydsl.Memory.Search.Searcher import MemorySearcher
-    from pydsl.Memory.Storage.Dict import FileTypeDictStorage
+class Guesser:
+    def __init__(self, memorylist = []):
+        from pydsl.Memory.Search.Searcher import MemorySearcher
+        from pydsl.Memory.Storage.Directory.Grammar import GrammarDirStorage 
+        from pydsl.Memory.Storage.Dict import FileTypeDictStorage
+        if not memorylist:
+            try:
+                dirname = resource_filename(Requirement.parse("pydsl_contrib"),"")
+            except DistributionNotFound:
+                pass
+            else:
+                memorylist.append(GrammarDirStorage(dirname + "grammar/"))
+                memorylist.append(FileTypeDictStorage(dirname + "/dict/filetype.dict"))
+        self.memorylist = memorylist
+        self.searcher = MemorySearcher([x.indexer() for x in memorylist])
 
-    if not memorylist:
-        dirname = resource_filename(Requirement.parse("pydsl_contrib"),"")
-        memorylist.append(FileTypeDictStorage(dirname + "/dict/filetype.dict"))
-    searcher = MemorySearcher([x.indexer() for x in memorylist])
-    result = set()
-    for summary in searcher.search():
-        typ = None
-        name = None
-        try:
-            for mem in memorylist:
-                if summary["identifier"] in mem:
-                    name = summary["identifier"]
-                    typ = mem.load(name)
-                    break
-            if typ.check(inputfile):
-                result.add(str(name))
-        except TypeError:
-            continue
-    return result
+    def __call__(self, inputstring) -> set:
+        result = set()
+        for summary in self.searcher.search():
+            typ = None
+            name = None
+            try:
+                for mem in self.memorylist:
+                    if summary["identifier"] in mem:
+                        name = summary["identifier"]
+                        typ = mem.load(name)
+                        break
+                if typ.check(inputstring):
+                    result.add(str(name))
+            except TypeError:
+                continue
+        return result
 
+class FileGuesser(Guesser):
+    """Guesser subclass for files only. Works like file command"""
+    def __init__(self, memorylist = []):
+        from pydsl.Memory.Search.Searcher import MemorySearcher
+        from pydsl.Memory.Storage.Dict import FileTypeDictStorage
 
-
-def guess(inputstring, memorylist = []) -> set:
-    from pydsl.Memory.Search.Searcher import MemorySearcher
-    from pydsl.Memory.Storage.Directory.Grammar import GrammarDirStorage 
-    from pydsl.Memory.Storage.Dict import FileTypeDictStorage
-    if not memorylist:
-        try:
+        if not memorylist:
             dirname = resource_filename(Requirement.parse("pydsl_contrib"),"")
-        except DistributionNotFound:
-            pass
-        else:
-            memorylist.append(GrammarDirStorage(dirname + "grammar/"))
             memorylist.append(FileTypeDictStorage(dirname + "/dict/filetype.dict"))
-    searcher = MemorySearcher([x.indexer() for x in memorylist])
-    result = set()
-    for summary in searcher.search():
-        typ = None
-        name = None
-        try:
-            for mem in memorylist:
-                if summary["identifier"] in mem:
-                    name = summary["identifier"]
-                    typ = mem.load(name)
-                    break
-            if typ.check(inputstring):
-                result.add(str(name))
-        except TypeError:
-            continue
-    return result
+        Guesser.__init__(self, memorylist)
+
 

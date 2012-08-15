@@ -35,7 +35,8 @@ class Cstr(str):
             
     def guess(self):
         if self.grammarlist == None:
-            from pydsl.Guess import guess
+            from pydsl.Guess import Guesser
+            guess = Guesser()
             self.grammarlist = guess(self)
         return self.grammarlist
 
