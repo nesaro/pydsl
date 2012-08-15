@@ -17,12 +17,12 @@ USAGE
 =====
 Memory Management
 -----------------
- * info.py: Retrieves an element from memory and show a summary
+ * info.py: Retrieves an element from memory and shows a summary
  * search.py: Searchs memory 
 
 Grammars
 --------
- * check.py: Checks if input data belongs to type
+ * check.py: Checks if input data belongs to a grammar
  * guess:py: Determines input data type
  * validate.py: Perform a validation routine for user data according to a grammar
 
