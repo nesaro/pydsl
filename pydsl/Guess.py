@@ -28,6 +28,7 @@ __email__ = "nesaro@gmail.com"
 import logging
 LOG = logging.getLogger(__name__)
 from pkg_resources import Requirement, resource_filename, DistributionNotFound
+from pydsl.Memory.Storage.Loader import load_checker
 
 class Guesser:
     def __init__(self, memorylist = []):
@@ -40,7 +41,7 @@ class Guesser:
             except DistributionNotFound:
                 pass
             else:
-                memorylist.append(GrammarDirStorage(dirname + "grammar/"))
+                memorylist.append(GrammarDirStorage(dirname + "/grammar/"))
                 memorylist.append(FileTypeDictStorage(dirname + "/dict/filetype.dict"))
         self.memorylist = memorylist
         self.searcher = MemorySearcher([x.indexer() for x in memorylist])
@@ -56,7 +57,8 @@ class Guesser:
                         name = summary["identifier"]
                         typ = mem.load(name)
                         break
-                if typ.check(inputstring):
+                checker = load_checker(typ)
+                if checker.check(inputstring):
                     result.add(str(name))
             except TypeError:
                 continue

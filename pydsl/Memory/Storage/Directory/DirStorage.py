@@ -29,7 +29,7 @@ LOG = logging.getLogger(__name__)
 class DirStorage(Storage, metaclass = ABCMeta):
     """A collection of elements stored inside a directory"""
     def __init__(self, dirpath:str, allowedextensions:list = []):
-        self.identifier = dirpath
+        self.path = dirpath
         from pydsl.Config import GLOBALCONFIG
         resultdirpath = []
         self._allowedextensions = allowedextensions
@@ -90,14 +90,14 @@ class DirStorage(Storage, metaclass = ABCMeta):
         if self._allowedextensions:
             for extension in self._allowedextensions:
                 tmpresult = []
-                searchstring = self.identifier + "*" + extension 
+                searchstring = self.path + "*" + extension 
                 tmpresult = glob.glob(searchstring)
                 for result in tmpresult:
                     if result.endswith("__init__.py"):
                         continue
                     yield result 
         else:
-            searchstring = self.identifier + "*" 
+            searchstring = self.path + "*" 
             for result in glob.glob(searchstring):
                 yield result 
 
@@ -113,7 +113,7 @@ class DirStorage(Storage, metaclass = ABCMeta):
     def _load_module_from_library(self, identifier):
         try:
             import imp
-            moduleobject = imp.load_source(identifier, self.identifier + "/" + identifier + ".py")
+            moduleobject = imp.load_source(identifier, self.path + "/" + identifier + ".py")
         except (ImportError, IOError):
             pass
         else:
