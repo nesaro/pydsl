@@ -54,8 +54,14 @@ class Guesser:
                 for mem in self.memorylist:
                     if summary["identifier"] in mem:
                         name = summary["identifier"]
-                        typ = mem.load(name)
+                        try:
+                            typ = mem.load(name)
+                        except:
+                            LOG.exception("Error while loading memory %s" % name)
+                            continue
                         break
+                else:
+                    continue # not found 
                 checker = load_checker(typ)
                 if checker.check(inputstring):
                     result.add(str(name))

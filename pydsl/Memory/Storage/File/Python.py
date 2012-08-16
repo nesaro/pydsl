@@ -49,15 +49,13 @@ def load_python_file(moduleobject, **kwargs):
     elif iclass == "ExternalProgramFileFunction":
         from pydsl.Function.ExternalProgram import ExternalProgramFileFunction
         return ExternalProgramFileFunction(**resultdic)
-    elif iclass == "PythonGrammar":
-        return resultdic
     elif iclass == "SymbolGrammar":
         from pydsl.Grammar.Tool.Symbol import SymbolGrammarTools
         return SymbolGrammarTools(**resultdic)
-    elif iclass == "MongoDict":
+    elif iclass in ["MongoDict", "PythonGrammar"]:
         return resultdic
     else:
-        raise ValueError
+        raise ValueError(str(moduleobject))
 
 
 def getFileTuple(fullname):
