@@ -45,9 +45,8 @@ if __name__ == "__main__":
         DEBUGLEVEL = ARGS.debuglevel
     logging.basicConfig(level = DEBUGLEVEL)    
     inputstr = ""
-    from pydsl.Guess import Guesser, FileGuesser
+    from pydsl.Guess import Guesser
     guess = Guesser()
-    guess_filename = FileGuesser()
     if (ARGS.inputfile):
         from pydsl.Interaction.Protocol import protocol_split
         pdict = protocol_split(ARGS.inputfile)
@@ -58,7 +57,6 @@ if __name__ == "__main__":
             except IOError:
                 inputstr = ""
             result = guess(inputstr)
-            result = result.union(guess_filename(ARGS.inputfile))
         elif pdict["protocol"] == "http":
             import urllib.request
             f = urllib.request.urlopen(ARGS.inputfile);

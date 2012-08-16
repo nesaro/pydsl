@@ -8,6 +8,6 @@ setup(name='pydsl',
       author_email='nesaro@gmail.com',
       url='https://github.com/nesaro/pydsl',
       packages = find_packages(),
-      scripts=['bin/extract.py', 'bin/translate.py','bin/check.py','bin/search.py', 'bin/guess.py', 'bin/convert.py', 'bin/info.py', 'bin/validate.py', 'bin/parts.py'],
+      scripts=['bin/extract.py', 'bin/translate.py','bin/check.py','bin/search.py', 'bin/guess.py', 'bin/info.py', 'bin/validate.py', 'bin/parts.py'],
      )
 

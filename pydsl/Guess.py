@@ -23,6 +23,7 @@ guess which types are the input data.
 __author__ = "Nestor Arocha Rodriguez"
 __copyright__ = "Copyright 2008-2012, Nestor Arocha Rodriguez"
 __email__ = "nesaro@gmail.com"
+#FIXME: Use globalconfig memories
 
 
 import logging
@@ -34,7 +35,6 @@ class Guesser:
     def __init__(self, memorylist = []):
         from pydsl.Memory.Search.Searcher import MemorySearcher
         from pydsl.Memory.Storage.Directory.Grammar import GrammarDirStorage 
-        from pydsl.Memory.Storage.Dict import FileTypeDictStorage
         if not memorylist:
             try:
                 dirname = resource_filename(Requirement.parse("pydsl_contrib"),"")
@@ -42,7 +42,6 @@ class Guesser:
                 pass
             else:
                 memorylist.append(GrammarDirStorage(dirname + "/grammar/"))
-                memorylist.append(FileTypeDictStorage(dirname + "/dict/filetype.dict"))
         self.memorylist = memorylist
         self.searcher = MemorySearcher([x.indexer() for x in memorylist])
 
@@ -64,15 +63,15 @@ class Guesser:
                 continue
         return result
 
-class FileGuesser(Guesser):
-    """Guesser subclass for files only. Works like file command"""
-    def __init__(self, memorylist = []):
-        from pydsl.Memory.Search.Searcher import MemorySearcher
-        from pydsl.Memory.Storage.Dict import FileTypeDictStorage
-
-        if not memorylist:
-            dirname = resource_filename(Requirement.parse("pydsl_contrib"),"")
-            memorylist.append(FileTypeDictStorage(dirname + "/dict/filetype.dict"))
-        Guesser.__init__(self, memorylist)
+#class FileGuesser(Guesser):
+#    """Guesser subclass for files only. Works like file command"""
+#    def __init__(self, memorylist = []):
+#        from pydsl.Memory.Search.Searcher import MemorySearcher
+#        from pydsl.Memory.Storage.Dict import FileTypeDictStorage
+#
+#        if not memorylist:
+#            dirname = resource_filename(Requirement.parse("pydsl_contrib"),"")
+#            memorylist.append(FileTypeDictStorage(dirname + "/dict/filetype.dict"))
+#        Guesser.__init__(self, memorylist)
 
 

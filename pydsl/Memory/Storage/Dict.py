@@ -87,23 +87,6 @@ class RegexpDictStorage(DictStorage):
         return ["re"]
 
 
-class FileTypeDictStorage(DictStorage):
-    def generate_all_summaries(self) -> list:
-        result = []
-        from pydsl.Abstract import InmutableDict
-        from pydsl.Grammar.FileType import FileType
-        for key in self._content:
-            result.append(InmutableDict({"identifier":key, "regexp":self._content[key], "iclass":"FileType" , "ancestors":FileType.ancestors()}))
-        return result
-
-    def load(self, index, **kwargs):
-        from pydsl.Grammar.FileType import FileType
-        return FileType(self._content[index])
-
-    def provided_iclasses(self) -> list:
-        return ["FileType"]
-
-
 class StrDictStorage(DictStorage):
     def generate_all_summaries(self) -> list:
         result = []

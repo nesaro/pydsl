@@ -29,7 +29,6 @@ Grammars
 Functions
 ---------
  * translate.py: Process user input using a function
- * convert.py: Same as translate, but restricted for files
 
 HELP
 ====
