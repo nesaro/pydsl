@@ -26,13 +26,15 @@ LOG = logging.getLogger(__name__)
 from abc import ABCMeta, abstractmethod, abstractproperty
 finalchar = "EOF"
 
-class Lexer(metaclass = ABCMeta):
+
+class Lexer(metaclass=ABCMeta):
     def __init__(self):
         self.string = None
         self.index = 0
 
     @property
     def current(self):
+        """Returns the element under the cursor"""
         try:
             return self.string[self.index]
         except IndexError:
@@ -51,13 +53,19 @@ class Lexer(metaclass = ABCMeta):
     def nextToken(self):
         pass
 
-    @abstractmethod
     def __call__(self, string) -> "TokenList":
         """Tokenizes input, generating a list of tokens"""
-        pass
+        self.string = string
+        result = []
+        while True:
+            nt = self.nextToken()
+            result.append(nt)
+            if nt[0] == "EOF_TYPE":
+                return result
+
 
 class BNFLexer(Lexer):
-    def __init__(self, bnfgrammar, string = ""):
+    def __init__(self, bnfgrammar, string=""):
         Lexer.__init__(self, string)
 
     def nextToken(self):
@@ -103,52 +111,3 @@ class BNFLexer(Lexer):
             string += self.current
             self.consume()
         return ("NAME", string)
-
-class BacktracingLexer(Lexer):
-    def __init__(self):
-        Lexer.__init__(self, "")
-        self.lookahead = []
-        self.markers = []
-        self.index = 0
-
-    def LT(self, i):
-        """gets element from input"""
-        self.sync(i)
-        return self.lookahead[self.index+i-1]
-
-    def match(self, x):
-        if self.LT(1)[0] == x:
-            self.consume();
-        else:
-            raise Exception("Not matched")
-
-    def sync(self, i):
-        """Fills from index to index +i """
-        if self.index + i > len(self.lookahead):
-            n = self.index + i - len(self.lookahead)
-            self.fill(n)
-
-
-    def fill(self, n):
-        """fills n elements"""
-        for _ in range(n):
-            self.lookahead.append(self.string.nextToken())
-
-    def consume(self):
-        self.index += 1
-        if self.index == len(self.lookahead) and not self.speculating():
-            self.index = 0
-            self.lookahead = []
-        self.sync(1)
-
-    def mark(self):
-        self.markers.append(self.index)
-        return self.index
-
-    def release(self):
-        marker = self.markers.pop()
-        self.index = marker
-
-    def speculating(self):
-        return bool(self.markers) 
-

@@ -24,40 +24,94 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
-from pydsl.Grammar.Lexer import BacktracingLexer
+from pydsl.Grammar.Lexer import Lexer, finalchar
+import re
 
 #manual lexer
 
-reservedwords = ["grammar","options","language","output","ASTLabelType",":",";","|","*"]
+protectedwords = {"grammar": "GRAMMAR",
+        "options": "OPTIONS",
+        "language": "LANGUAGE",
+        "output": "OUTPUT",
+        "ASTLabelType": "ASTLABELTYPE"}
 
-comments = ["/**/"]
+chardict = {",": "COMMA",
+        ":": "COLON",
+        ";": "SEMICOLON",
+        "|": "VBAR",
+        "{": "LCBRACKET",
+        "}": "RCBRACKET",
+        "(": "LPAR",
+        ")": "RPAR",
+        "=": "EQUAL",
+        "!": "EMARK",
+        "?": "QMARK",
+        "^": "HAT",
+        "*": "STAR",
+        "-": "HYPHEN",
+        "_": "UNDERSCORE",
+        ">": "GT",
+        "'": "QUOTE",
+        "&": "AMP",
+        ".": "DOT",
+        "\\": "ISLASH",
+        "+": "PLUS",
+        "$": "DOLLAR"}
 
-class ANLTRGrammarLexer(BacktracingLexer):
-    def comma(self):
+
+class ANLTRGrammarLexer(Lexer):
+    def matchchar(self, char):
+        if not char in chardict:
+            raise Exception
         current = self.current
-        self.match(",")
-        return ("COMMA", current)
+        self.match(char)
+        return (chardict[char], current)
 
-    def colon(self):
-        current = self.current
-        self.match(":")
-        return ("COLON", current)
+    def comment(self):
+        self.match("/")
+        self.match("*")
+        while True:
+            while self.current != "*":
+                self.consume()
+            self.consume()
+            if self.current == "/":
+                self.consume()
+                break
 
-    def vbar(self):
-        current = self.current
-        self.match("|")
-        return ("VBAR", current)
+    def name(self):
+        import re
+        string = ""
+        while self.current != finalchar and re.match("[a-zA-Z]", self.current):
+            string += self.current
+            self.consume()
+        return (protectedwords.get(string, "NAME"), string)
 
-    def __call__(self):
-        if self.speculate_stat_1():
-            self.rlist()
-            self.match("EOF_TYPE")
-        elif self.speculate_stat_2():
-            self.assign()
-            self.match("EOF_TYPE")
-        else:
-            raise Exception("No alternative for stat")
-        
+    def number(self):
+        import re
+        string = ""
+        while self.current != finalchar and re.match("[0-9]", self.current):
+            string += self.current
+            self.consume()
+        return ("NUMBER", string)
+
+    def nextToken(self):
+        while self.current != finalchar:
+            if self.current == "/":
+                self.comment()
+                continue
+            elif self.current in [" ", '\n', '\t', '\i']:
+                self.consume()
+                continue
+            elif self.current in chardict.keys():
+                return self.matchchar(self.current)
+            elif re.match("[0-9]", self.current):
+                return self.number()
+            elif re.match("[a-zA-Z]", self.current):
+                return self.name()
+            else:
+                raise Exception("Unknown char '%s'" % self.current)
+        return ("EOF_TYPE", "")
+
 
 def load_anltr_from_text(text):
     lexer = ANLTRGrammarLexer()
@@ -67,8 +121,6 @@ def load_anltr_from_text(text):
 #manual parser
 def load_anltr_file(filepath):
     """Converts an anltr .g file into a BNFGrammar instance"""
-    content = ""
-    with open(filepath,'r', encoding='utf-8') as mlfile:
+    with open(filepath, 'r', encoding='utf-8') as mlfile:
         content = mlfile.read()
-
-    
+        return load_anltr_from_text(content)
