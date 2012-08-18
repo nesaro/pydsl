@@ -69,9 +69,8 @@ class RegexpDictStorage(DictStorage):
     def generate_all_summaries(self) -> list:
         result = []
         from pydsl.Abstract import InmutableDict
-        from pydsl.Grammar.FileType import FileType
         for key in self._content:
-            result.append(InmutableDict({"identifier":key, "regexp":self._content[key]["regexp"], "iclass":"RegularExpressionGrammarTools" , "ancestors":FileType.ancestors()}))
+            result.append(InmutableDict({"identifier":key, "regexp":self._content[key]["regexp"], "iclass":"RegularExpressionGrammarTools"}))
         return result
 
     def load(self, index, **kwargs):
