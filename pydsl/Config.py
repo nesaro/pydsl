@@ -26,69 +26,69 @@ import logging
 LOG = logging.getLogger(__name__)
 from pkg_resources import Requirement, resource_filename, DistributionNotFound
 
+
 def generate_memory_list() -> list:
     """loads default memories"""
     result = []
     from pydsl.Memory.Storage.Directory.Grammar import GrammarDirStorage
     from pydsl.Memory.Storage.Directory.Function import BoardDirStorage, TransformerDirStorage
-    from pydsl.Memory.Storage.Dict import FileTypeDictStorage, RegexpDictStorage
-    #from pydsl.Memory.Storage.Directory.Scheme import SchemeDirStorage
+    from pydsl.Memory.Storage.Dict import RegexpDictStorage
     try:
-        dirname = resource_filename(Requirement.parse("pydsl_contrib"),"")
+        dirname = resource_filename(Requirement.parse("pydsl_contrib"), "")
     except DistributionNotFound:
         pass
     else:
         result.append(GrammarDirStorage(dirname + "/grammar/"))
         result.append(BoardDirStorage(dirname + "/board/"))
         result.append(TransformerDirStorage(dirname + "/transformer/"))
-        result.append(FileTypeDictStorage(dirname + "/dict/filetype.dict"))
         result.append(RegexpDictStorage(dirname + "/dict/regexp.dict"))
     return result
 
 
-class GlobalConfig(metaclass = Singleton):
+class GlobalConfig(metaclass=Singleton):
     """Execution time global configuration"""
-    def __init__(self, persistent_dir:str = None, debuglevel = 40):
+    def __init__(self, persistent_dir: str=None, debuglevel=40):
         self.persistent_dir = persistent_dir
-        self.__memorylist = None #All known memories, sorted by preference  #Loaded when required
+        self.__memorylist = None  # default memories, sorted by preference
         self.__debuglevel = debuglevel
         self.lang = "es"
         if self.persistent_dir is None:
             try:
                 import os
                 if not os.path.exists(os.environ['HOME'] + "/.colony/"):
-                    os.mkdir(os.environ['HOME'] + "/.colony/")                         
+                    os.mkdir(os.environ['HOME'] + "/.colony/")
                 self.persistent_dir = os.environ['HOME'] + "/.colony/persistent/"
                 if not os.path.exists(self.persistent_dir):
-                    os.mkdir(self.persistent_dir)                         
+                    os.mkdir(self.persistent_dir)
             except (OSError, KeyError):
                 LOG.exception("Unable to create persistent dir")
-       
+
     def load(self, filename):
         """Load config from file"""
         raise NotImplementedError
-     
+
     def save(self):
         """Save config to file"""
         raise NotImplementedError
-        
+
     @property
     def memorylist(self):
-        if self.__memorylist == None:
+        if self.__memorylist is None:
             self.__memorylist = generate_memory_list()
         return self.__memorylist
 
     @property
     def debuglevel(self):
         return self.__debuglevel
-    
+
     @debuglevel.setter
-    def debuglevel(self, level:int):
+    def debuglevel(self, level: int):
         self.__debuglevel = level
-    
+
 VERSION = "pydsl pre-version\n Copyright (C) 2008-2012 Néstor Arocha Rodríguez"
-GLOBALCONFIG = GlobalConfig() #The only instance available
+GLOBALCONFIG = GlobalConfig()  # The only instance available
 ERRORLIST = ["Grammar", "Timeout", "Transformer"]
+
 
 def all_classes(module) -> set:
     """Returns all classes (introspection)"""
@@ -102,6 +102,7 @@ def all_classes(module) -> set:
                 result = result.union(all_classes(obj))
     return result
 
+
 def all_indexable_classes(module) -> set:
     """Returns all indexable classes (introspection)"""
     import inspect
@@ -114,4 +115,3 @@ def all_indexable_classes(module) -> set:
             if obj.__name__[:6] == "pydsl":
                 result = result.union(all_indexable_classes(obj))
     return result
-
