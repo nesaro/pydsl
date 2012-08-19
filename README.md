@@ -16,6 +16,7 @@ pydsl offer a set of functionalities that use _grammar definitions_
  * enumerate(gd, input): yields a list of accepted words
  * getgroup(gd, input, tag): returns the parts of the input according to a tag
  * extract(gd, input): extract all the slices of the input that are accepted by _grammar definition_
+ * distance(gd, input1, input2): returns the distance between two inputs according to _grammar definition_
  * translate(gd, input): generic translator
    * ast(astdefinition, input): creates an abstract syntax tree according to astdefinition
 
