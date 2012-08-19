@@ -55,9 +55,9 @@ class GlobalConfig(metaclass=Singleton):
         if self.persistent_dir is None:
             try:
                 import os
-                if not os.path.exists(os.environ['HOME'] + "/.colony/"):
-                    os.mkdir(os.environ['HOME'] + "/.colony/")
-                self.persistent_dir = os.environ['HOME'] + "/.colony/persistent/"
+                if not os.path.exists(os.environ['HOME'] + "/.pydsl/"):
+                    os.mkdir(os.environ['HOME'] + "/.pydsl/")
+                self.persistent_dir = os.environ['HOME'] + "/.pydsl/persistent/"
                 if not os.path.exists(self.persistent_dir):
                     os.mkdir(self.persistent_dir)
             except (OSError, KeyError):

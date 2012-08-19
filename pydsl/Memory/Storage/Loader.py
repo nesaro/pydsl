@@ -111,7 +111,7 @@ def load_information(name:str, memorylist = []):
         memorylist = GLOBALCONFIG.memorylist
     import os
     from pydsl.Memory.Storage.Directory.DirStorage import load_python_file
-    dirname = resource_filename(Requirement.parse("colony_archive"),"")
+    dirname = resource_filename(Requirement.parse("pydsl_contrib"),"")
     if os.path.exists(dirname + "/grammar/protocol.py"):
         pginstance = load_python_file(dirname + "/grammar/protocol.py")
     else:
