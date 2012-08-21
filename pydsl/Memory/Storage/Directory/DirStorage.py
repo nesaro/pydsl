@@ -134,11 +134,3 @@ class DirStorage(Storage, metaclass = ABCMeta):
     def provided_iclasses(self) -> set:
         return set([x['identifier'] for x in self])
 
-class StrDirStorage(DirStorage):
-    """Dir library for txt files"""
-    def __init__(self, dirpath:str):
-        DirStorage.__init__(self, dirpath)
-
-    def provided_iclasses(self) -> list:
-        return ["str"]
-
