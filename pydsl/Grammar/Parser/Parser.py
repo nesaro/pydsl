@@ -228,13 +228,6 @@ class Parser(metaclass = ABCMeta):
         """returns productionset"""
         return self._productionset
 
-    #@abstractproperty
-    def alphabet(self):
-        return set()
-
-    def enumerate(self):
-        return set()
-
 class TopDownParser(Parser):
     """Top down parser like descent parser"""
     def check(self, word):
