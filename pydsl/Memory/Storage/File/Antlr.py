@@ -33,6 +33,9 @@ protectedwords = {"grammar": "GRAMMAR",
         "options": "OPTIONS",
         "language": "LANGUAGE",
         "output": "OUTPUT",
+        "fragment": "FRAGMENT",
+        "Java": "JAVA",
+        "AST": "AST",
         "ASTLabelType": "ASTLABELTYPE"}
 
 chardict = {",": "COMMA",
@@ -84,7 +87,12 @@ class ANLTRGrammarLexer(Lexer):
         while self.current != finalchar and re.match("[a-zA-Z]", self.current):
             string += self.current
             self.consume()
-        return (protectedwords.get(string, "NAME"), string)
+        if string in protectedwords:
+            return(string, protectedwords[string])
+        if string == string.lower():
+            return(string, "PARSERID")
+        else:
+            return(string, "LEXERID")
 
     def rawstring(self):
         self.match("'")
