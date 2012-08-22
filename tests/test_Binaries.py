@@ -26,11 +26,6 @@ class TestBinaries(unittest.TestCase):
         import os
         self.assertEqual(os.system("python3 bin/translate.py"),512)
 
-
-    def testConvert(self):
-        import os
-        self.assertEqual(os.system("python3 bin/convert.py"),512)
-
     def testSearch(self):
         import os
         self.assertEqual(os.system("python3 bin/search.py"),512)
