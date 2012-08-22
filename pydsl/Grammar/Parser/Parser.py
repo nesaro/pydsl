@@ -213,15 +213,13 @@ class Parser(metaclass = ABCMeta):
         self._productionset = productionruleset
 
     @abstractmethod
-    def check(self, word):
-        """ Checks if word is valid for current productionruleset """
-        pass
-
-    @abstractmethod
     def get_trees(self, word) -> list:
         """ returns a ParseTree list with all guesses """
         #FIXME: Should instantiate a tokenizer
         pass
+
+    def __call__(self, word):
+        return self.get_trees(word)
 
     @property
     def productionset(self):
@@ -230,9 +228,7 @@ class Parser(metaclass = ABCMeta):
 
 class TopDownParser(Parser):
     """Top down parser like descent parser"""
-    def check(self, word):
-        """ Checks if word is valid for current productionruleset """
-        return len(self.get_trees(word)) > 0
+    pass
         
 class BottomUpParser(Parser):
     """ leaf to root parser"""
@@ -245,11 +241,3 @@ class BottomUpParser(Parser):
                 raise Exception
         Parser.__init__(self, productionruleset)
         
-    @abstractmethod
-    def _symbolize_word(self, word):
-        """Convert input word into symbols"""
-        #parse wordtokens
-        #search for chartokens that belongs to wordsymbols
-        #assing else to charsymbols
-        pass
-

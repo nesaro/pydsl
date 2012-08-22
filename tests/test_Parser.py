@@ -87,37 +87,37 @@ class TestParsers(unittest.TestCase):
     def testRightRecursion(self):
         from pydsl.Grammar.Parser.RecursiveDescent import RecursiveDescentParser
         descentparser = RecursiveDescentParser(self.productionsetrr)
-        result = descentparser.check(self.dots)
+        result = descentparser(self.dots)
         self.assertTrue(result)
 
     def testCenterRecursion(self):
         from pydsl.Grammar.Parser.RecursiveDescent import RecursiveDescentParser
         descentparser = RecursiveDescentParser(self.productionsetcr)
-        result = descentparser.check(self.dots)
+        result = descentparser(self.dots)
         self.assertTrue(result)
 
     def testRecursiveDescentParserStore(self):
         from pydsl.Grammar.Parser.RecursiveDescent import RecursiveDescentParser
         descentparser = RecursiveDescentParser(self.productionset1)
-        result = descentparser.check(self.tokelist1)
+        result = descentparser(self.tokelist1)
         self.assertTrue(result)
 
     def testRecursiveDescentParserBad(self):
         from pydsl.Grammar.Parser.RecursiveDescent import RecursiveDescentParser
         descentparser = RecursiveDescentParser(self.productionset1)
-        result = descentparser.check(self.tokelist2)
+        result = descentparser(self.tokelist2)
         self.assertFalse(result)
        
     def testRecursiveDescentParserNull(self):
         from pydsl.Grammar.Parser.RecursiveDescent import RecursiveDescentParser
         descentparser = RecursiveDescentParser(self.productionset2)
-        result = descentparser.check(self.tokelist3)
+        result = descentparser(self.tokelist3)
         self.assertTrue(result)
         
     def testRecursiveDescentParserNullBad(self):
         from pydsl.Grammar.Parser.RecursiveDescent import RecursiveDescentParser
         descentparser = RecursiveDescentParser(self.productionset2)
-        result = descentparser.check(self.tokelist4)
+        result = descentparser(self.tokelist4)
         self.assertTrue(not result)
        
     #def testLR0ParserStore(self):
