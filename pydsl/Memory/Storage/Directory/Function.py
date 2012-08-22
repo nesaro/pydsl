@@ -32,9 +32,6 @@ class TransformerDirStorage(DirStorage):
     def __init__(self, path):
         DirStorage.__init__(self, path, [".py"])
 
-    def provided_iclasses(self) -> list:
-        return ["PythonTransformer", "HostPythonTransformer"]
-
     def load(self, identifier):
         """guess class, guess filename from id, and then call loadTInstance"""
         import imp
@@ -44,8 +41,8 @@ class TransformerDirStorage(DirStorage):
             except (ImportError, IOError):
                 LOG.exception("Exception while loading: " + identifier)
             else:
-                from pydsl.Memory.Storage.File.Board import load_python_f
-                return load_python_f(value["filepath"])
+                from pydsl.Memory.Storage.File.Python import load_python_file
+                return load_python_file(value["filepath"])
 
         raise KeyError("Transformer: " + identifier)
     

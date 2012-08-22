@@ -21,10 +21,11 @@
 import logging
 LOG = logging.getLogger(__name__)
 
-def load_module(filepath):
-    (_, _, fileBaseName, _) = getFileTuple(filepath)
+def load_module(filepath, identifier = None):
+    if identifier is None
+        (_, _, identifier, _) = getFileTuple(filepath)
     import imp
-    return imp.load_source(fileBaseName, filepath)
+    return imp.load_source(identifier, filepath)
 
 def load_python_file(moduleobject, **kwargs):
     """ Try to create an indexable instance from a module"""

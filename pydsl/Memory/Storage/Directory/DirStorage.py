@@ -140,5 +140,5 @@ class DirStorage(Storage, metaclass = ABCMeta):
         return key in self.all_names()
 
     def provided_iclasses(self) -> set:
-        return set([x['identifier'] for x in self])
+        return set([x['iclass'] for x in self])
 

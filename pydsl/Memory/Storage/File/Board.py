@@ -65,13 +65,3 @@ def load_board_file(filename):
     GTDefinitionList = parseRegularSections(config)
     from pydsl.Function.Board import Board
     return Board(GTDefinitionList) 
-
-def load_python_f(modulename):
-    """Load a file written in python"""
-    identifier = getFileTuple(modulename)[2]
-    import imp
-    moduleobject = imp.load_source(identifier, modulename)
-    from .Python import load_python_file
-    return load_python_file(moduleobject)
-
-
