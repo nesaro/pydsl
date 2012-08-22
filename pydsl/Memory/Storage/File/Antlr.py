@@ -51,7 +51,7 @@ chardict = {",": "COMMA",
         "-": "HYPHEN",
         "_": "UNDERSCORE",
         ">": "GT",
-        "'": "QUOTE",
+        #"'": "QUOTE",
         "&": "AMP",
         ".": "DOT",
         "\\": "ISLASH",
@@ -86,6 +86,18 @@ class ANLTRGrammarLexer(Lexer):
             self.consume()
         return (protectedwords.get(string, "NAME"), string)
 
+    def rawstring(self):
+        self.match("'")
+        string = ""
+        while self.current not in [finalchar, "'"]:
+            string += self.current
+            self.consume()
+            if string[-1] == "\\":
+                string += self.current
+                self.consume()
+        self.match("'")
+        return (string, "STRING")
+
     def number(self):
         import re
         string = ""
@@ -106,6 +118,8 @@ class ANLTRGrammarLexer(Lexer):
                 return self.matchchar(self.current)
             elif re.match("[0-9]", self.current):
                 return self.number()
+            elif self.current == "'":
+                return self.rawstring()
             elif re.match("[a-zA-Z]", self.current):
                 return self.name()
             else:
