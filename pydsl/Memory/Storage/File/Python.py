@@ -22,7 +22,7 @@ import logging
 LOG = logging.getLogger(__name__)
 
 def load_module(filepath, identifier = None):
-    if identifier is None
+    if identifier is None:
         (_, _, identifier, _) = getFileTuple(filepath)
     import imp
     return imp.load_source(identifier, filepath)
