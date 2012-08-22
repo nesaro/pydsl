@@ -72,6 +72,14 @@ class DirStorage(Storage, metaclass = ABCMeta):
                 result["title"] =  InmutableDict(moduleobject.title)
             if hasattr(moduleobject, "description"):
                 result["description"] =  InmutableDict(moduleobject.description)
+            if hasattr(moduleobject, "inputdic"):
+                result["input"] = InmutableDict(moduleobject.inputdic)
+            if hasattr(moduleobject, "outputdic"):
+                result["output"] = InmutableDict(moduleobject.outputdic)
+            if hasattr(moduleobject, "inputformat"):
+                result["input"] = moduleobject.inputformat
+            if hasattr(moduleobject, "outputformat"):
+                result["output"] = moduleobject.outputformat
         return InmutableDict(result)
 
     def _search_files(self, string: str, exact:bool = True):

@@ -49,34 +49,6 @@ class TransformerDirStorage(DirStorage):
 
         raise KeyError("Transformer: " + identifier)
     
-    def summary_from_filename(self, modulepath):
-        from pydsl.Function.Python import PythonTransformer
-        (_, _, fileBaseName, _) = getFileTuple(modulepath)
-        import imp
-        moduleobject = imp.load_source(fileBaseName, modulepath)
-        try:
-            result = {"identifier":fileBaseName,"iclass":moduleobject.iclass, "filepath":modulepath}
-            if hasattr(moduleobject, "title"):
-                result["title"] =  InmutableDict(moduleobject.title)
-            if hasattr(moduleobject, "description"):
-                result["description"] =  InmutableDict(moduleobject.description)
-            if hasattr(moduleobject, "inputdic"):
-                result["input"] = InmutableDict(moduleobject.inputdic)
-            if hasattr(moduleobject, "outputdic"):
-                result["output"] = InmutableDict(moduleobject.outputdic)
-            if hasattr(moduleobject, "inputformat"):
-                result["input"] = moduleobject.inputformat
-            if hasattr(moduleobject, "outputformat"):
-                result["output"] = moduleobject.outputformat
-
-            return InmutableDict(result)
-        except AttributeError:
-            #LOG.exception(modulepath)
-            return InmutableDict()
-        except ValueError:
-            LOG.exception("Error: non-indexable element while loading " + modulepath)
-            return InmutableDict()
-
 class BoardDirStorage(DirStorage):
     """Loads boards from library"""
     def __init__(self, path):
