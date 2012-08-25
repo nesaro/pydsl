@@ -28,15 +28,17 @@ from abc import ABCMeta, abstractproperty
 
 class Singleton(type):
     """singleton pattern metaclass"""
-    #Only problem here is that classes can't have two metaclasses (ABCMeta conflict)
+    #Only problem here is that classes can't have two metaclasses
     def __init__(self, name, bases, dct):
         self.__instance = None
         type.__init__(self, name, bases, dct)
+
     def __call__(self, *args, **kw):
         if self.__instance is None:
-            self.__instance = type.__call__(self, *args,**kw)
+            self.__instance = type.__call__(self, *args, **kw)
         return self.__instance
- 
+
+
 class InmutableDict(dict):
     """A dict with a hash method for dictionary use"""
     def __hash__(self):
@@ -56,7 +58,8 @@ class InmutableDict(dict):
                 return False
         return True
 
-class Indexable(metaclass = ABCMeta):
+
+class Indexable(metaclass=ABCMeta):
     """ This class is searchable """
     @abstractproperty
     def summary(self) -> InmutableDict:
@@ -70,6 +73,7 @@ class Indexable(metaclass = ABCMeta):
                 if not x in result:
                     result += x.ancestors()
         return tuple(result)
+
 
 class TypeCheckList(list):
     def __init__(self, instancetype, *args):
@@ -89,4 +93,3 @@ class TypeCheckList(list):
         for element in item:
             assert(isinstance(element, self.instancetype))
         return list.__iadd__(self, item)
-

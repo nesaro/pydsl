@@ -39,6 +39,7 @@ class GrammarDirStorage(DirStorage):
             filename = value["filepath"]
             return load_grammar_file(filename)
         raise KeyError("Grammar " + identifier)
+
     def provided_iclasses(self) -> list:
         return ["PythonGrammarTools","re","BNFGrammar"]
 

@@ -16,7 +16,7 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 
-""" File Library class """
+""" Directory storage """
 
 from abc import ABCMeta, abstractmethod
 from ..Storage import Storage

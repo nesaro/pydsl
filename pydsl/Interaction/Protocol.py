@@ -17,17 +17,12 @@
 
 """Protocols"""
 
-__author__ = "Néstor Arocha Rodríguez"
-__copyright__ = "Copyright 2008-2012, Néstor Arocha Rodríguez"
+__author__ = "Nestor Arocha Rodriguez"
+__copyright__ = "Copyright 2008-2012, Nestor Arocha Rodriguez"
 __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
-from pydsl.Abstract import Singleton
-from abc import ABCMeta, abstractmethod 
-
-PROTOLIST = ["file","lib"]
-PROTOMODES = ["direct", "connection", "session", "continuous"]
 
 def protocol_split(content):
     """Splits a protocol string"""

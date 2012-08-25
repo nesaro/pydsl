@@ -73,7 +73,6 @@ class Extract(UnixProgram):
             resultdic = bool_dict_values(resultdic)
             from pydsl.Interaction.Shell import save_result_to_output
             save_result_to_output(resultdic, outputdic)
-            #close_files_dict(inputdic)
         elif self._opt["pipemode"]:
             from pydsl.Interaction.Shell import StreamFileToTransformerInteraction
             assert(len(self.__maingt.inputchanneldic) == 1)

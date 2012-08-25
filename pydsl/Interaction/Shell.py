@@ -21,6 +21,7 @@ __author__ = "Nestor Arocha Rodriguez"
 __copyright__ = "Copyright 2008-2012, Nestor Arocha Rodriguez"
 __email__ = "nesaro@gmail.com"
 
+import sys
 import logging
 LOG = logging.getLogger(__name__)
 
@@ -76,33 +77,20 @@ def open_files_dict(inputdic) -> dict:
     return result
 
 
-def close_files_dict(filedic) -> dict:
-    """Closes all files"""
-    for x in filedic.values():
-        x.close()
-
-
 def save_result_to_output(resultdic, outputdic):
     """Saves results dict to files in output values.
     Both dicts must have the same keys"""
     if not resultdic:
-        LOG.error("Error: " + str(resultdic))
-        raise Exception
+        raise Exception("Error: " + str(resultdic))
     for key in outputdic:
         if not key in resultdic:
-            LOG.error("No output channel detected")
-            raise Exception
+            raise KeyError("No output channel detected")
     for key in outputdic:
         if outputdic[key] == "stdout":  # print to screen
             print(resultdic[key])
         else:
             with open(outputdic[key], 'w') as currentfile:  # print to file
                 currentfile.write(resultdic[key].string)
-
-
-def command_line_output(resultdic):
-    """Prints result to stdout"""
-    print(str(resultdic) + "\n")
 
 
 class CommandLineToTransformerInteraction:
@@ -116,14 +104,14 @@ class CommandLineToTransformerInteraction:
         while value is not None:
             resultdic = self._tinstance(value)
             if not resultdic:
-                command_line_output(resultdic)
+                print(str(resultdic) + "\n")
             else:
                 for key in resultdic.keys():
                     try:
                         resultdic[key] = str(resultdic[key])
                     except UnicodeDecodeError:
                         resultdic[key] = "Unprintable"
-                command_line_output(resultdic)
+                print(str(resultdic) + "\n")
             value = self._getInput()
         print("Bye Bye")
 
@@ -138,16 +126,12 @@ class CommandLineToTransformerInteraction:
                     if var == "q":
                         return None
                     inputdic[channel] = var
-            except SyntaxError:
-                pass
-            except NameError:
-                pass
-            except TypeError:
+            except (SyntaxError, NameError, TypeError):
                 pass
             for channel in self._tinstance.inputchanneldic.keys():
                 if channel not in inputdic:
-                    print("Invalid python dict. Example: {\"key\":\"value1\",...}")
-                    var = input(promptstr)
+                    print('Invalid python dict. Example: {"key":"value1",...}')
+                    var = input(promptstr)  # TODO use AST
                 continue
             return inputdic
 
@@ -176,17 +160,16 @@ class StreamFileToTransformerInteraction:
             endofstdin = False
             for channel, content in stringdiccopy.items():
                 if content == "stdin":
-                    import sys
                     line = sys.stdin.readline()
                     if not line:
-                        endofstdin = True 
+                        endofstdin = True
                     else:
                         stringdic[channel] = line.rstrip('\n')
                     break
             if endofstdin:
                 break  # No new line received
             resultdic = self._tinstance(stringdic)
-            self._showOutput(resultdic)
+            self.__showOutput(resultdic)
             for channel, filename in self._inputfiledic.items():
                 if filename == "stdin":
                     stringdic[channel] = "stdin"
@@ -198,10 +181,9 @@ class StreamFileToTransformerInteraction:
             if key != "input" and filehandler != "stdin":
                 filehandler.close()
 
-    def _showOutput(self, resultdic):
+    def __showOutput(self, resultdic):
         #TODO: check if is an error. if stdout is used, use stderr
         if not resultdic:
-            import sys
             sys.stderr.write(str(resultdic) + "\n")
         elif not self._outputfiledic:
             #No output information, stdout assumed
@@ -210,11 +192,10 @@ class StreamFileToTransformerInteraction:
         else:
             for key in self._outputfiledic:
                 if not key in resultdic:
-                    LOG.warning("No output channel detected")
-                    raise Exception
+                    raise Exception("No output channel detected")
             for key in self._outputfiledic:
                 if self._outputfiledic[key] == "stdout":  # print to screen
                     print(resultdic[key].string.strip())
-                else:
-                    with open(self._outputfiledic[key], 'a') as currentfile:  # print to file
+                else:  # print to file
+                    with open(self._outputfiledic[key], 'a') as currentfile:
                         currentfile.write(resultdic[key].string + "\n")
