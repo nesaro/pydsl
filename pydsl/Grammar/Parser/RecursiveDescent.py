@@ -17,13 +17,13 @@
 
 """Recursive descent parser"""
 
-__author__ = "Néstor Arocha Rodríguez"
+__author__ = "Nestor Arocha Rodriguez"
 __copyright__ = "Copyright 2008-2012, Néstor Arocha Rodríguez"
 __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
-from .Parser import TopDownParser, terminal_symbol_consume, locate_result_borders, mix_results 
+from .Parser import TopDownParser, terminal_symbol_consume
 from ..Tree import ParseTree
 from pydsl.Abstract import TypeCheckList
 
