@@ -130,18 +130,3 @@ class TestSymbolGrammars(unittest.TestCase):
     
     def testSerialize(self):
         pass
-
-class TestMongoGrammar(unittest.TestCase):
-    def testCheck(self):
-        spec = {"a":1,"b":2}
-        bad = {"a":1,"b":3}
-        letter = {"a":1,"b":"asd"}
-        fullspec = {"a":{"$type":"integer"},"b":{"$type":"integer"}}
-        from pydsl.Grammar.Checker import MongoChecker
-        checker = MongoChecker(spec)
-        self.assertTrue(checker.check(spec))
-        self.assertFalse(checker.check(bad))
-        fullchecker = MongoChecker(fullspec)
-        self.assertTrue(fullchecker.check(spec))
-        self.assertTrue(fullchecker.check(bad))
-        self.assertFalse(fullchecker.check(letter))
