@@ -90,15 +90,7 @@ class StringTerminalSymbol(TerminalSymbol):
         self.definition = string
 
     def check(self, tokenlist) -> bool:
-        if len(tokenlist)!= len(self.definition):
-            return False
-        index = 0
-        for char in self.definition:
-            token = tokenlist[index]
-            if str(token) != char:
-                return False
-            index += 1
-        return True
+        return tokenlist == self.definition
 
     def __eq__(self, other):
         """StringTerminalSymbol are equals if definition and names are equal"""

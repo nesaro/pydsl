@@ -32,7 +32,7 @@ centerrecursive=["S ::= E","E ::= dot E dot | dot","dot := String,."]
 class TestParsers(unittest.TestCase):
     def setUp(self):
         from pydsl.Grammar.Symbol import StringTerminalSymbol, WordTerminalSymbol, NonTerminalSymbol, BoundariesRules, NullSymbol
-        from pydsl.Grammar.BNF import TerminalProduction, NonTerminalProduction, BNFGrammar
+        from pydsl.Grammar.BNF import Production, BNFGrammar
         br = BoundariesRules("max", 1)
 
         #productionset1 definition
@@ -44,26 +44,20 @@ class TestParsers(unittest.TestCase):
         final1 = NonTerminalSymbol("storeexp") 
         final2 = NonTerminalSymbol("retrieveexp") 
         final3 = NonTerminalSymbol("exp")
-        rule1 = NonTerminalProduction([final1], [symbol1, symbol3, symbol5])
-        rule2 = NonTerminalProduction([final2], [symbol2, symbol3, symbol4])
-        rule3 = NonTerminalProduction([final3], [final1])
-        rule4 = NonTerminalProduction([final3], [final2])
-        rule5 = TerminalProduction(symbol1)
-        rule6 = TerminalProduction(symbol2)
-        rule7 = TerminalProduction(symbol3)
-        rule8 = TerminalProduction(symbol4)
-        rule9 = TerminalProduction(symbol5)
-        rulelist = [rule1, rule2, rule3, rule4, rule5, rule6, rule7, rule8, rule9]
+        rule1 = Production([final1], [symbol1, symbol3, symbol5])
+        rule2 = Production([final2], [symbol2, symbol3, symbol4])
+        rule3 = Production([final3], [final1])
+        rule4 = Production([final3], [final2])
+        rulelist = [rule1, rule2, rule3, rule4, symbol1, symbol2, symbol3,
+                symbol4, symbol5]
         self.productionset1 = BNFGrammar(final3, rulelist)
 
         #productionset2 definition
         symbola = StringTerminalSymbol("A")
         symbolb = StringTerminalSymbol("B")
-        terminala = TerminalProduction(symbola)
-        terminalb = TerminalProduction(symbolb)
         nonterminal = NonTerminalSymbol("res")
-        rulea = NonTerminalProduction ([nonterminal], [symbola, NullSymbol(), symbolb])
-        self.productionset2 = BNFGrammar(nonterminal, [rulea, terminala, terminalb])
+        rulea = Production ([nonterminal], [symbola, NullSymbol(), symbolb])
+        self.productionset2 = BNFGrammar(nonterminal, [rulea, symbola, symbolb])
         from pydsl.Memory.Storage.File.BNF import strlist_to_production_set
         self.productionsetlr = strlist_to_production_set(leftrecursive)
         self.productionsetrr = strlist_to_production_set(rightrecursive)

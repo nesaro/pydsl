@@ -64,7 +64,7 @@ def terminal_symbol_reducer(symbol, word, production):
         return TypeCheckList(ParseTree)
     return validresults
 
-def terminal_symbol_consume(symbol, word, production):
+def terminal_symbol_consume(symbol, word):
     """ Reduces a terminal symbol. Always start from left"""
     from pydsl.Abstract import TypeCheckList
     from pydsl.Grammar.Tree import ParseTree
@@ -73,7 +73,7 @@ def terminal_symbol_consume(symbol, word, production):
     if symbol.boundariesrules.policy == "min":
         for end in range(begin, len(word)+1):
             if symbol.check(word[begin:end]):
-                return [ParseTree(begin, end, [symbol], word[begin:end], production)]
+                return [ParseTree(begin, end, [symbol], word[begin:end], symbol)]
     elif symbol.boundariesrules.policy == "max":
         LOG.debug("terminal_symbol_reducer: policy: max")
         maxword = 0
@@ -82,12 +82,13 @@ def terminal_symbol_consume(symbol, word, production):
                 LOG.debug("terminal_symbol_reducer: parsed:"+ str(word[begin:end]))
                 maxword = end
         if maxword > 0:
-           return[ParseTree(begin, maxword, [symbol], word[begin:maxword], production)]
+           return[ParseTree(begin, maxword, [symbol], word[begin:maxword],
+               symbol)]
     elif symbol.boundariesrules.policy == "fixed":
         size = symbol.boundariesrules.size
         LOG.debug("terminal_symbol_reducer: policy: fixed " + str(size))
         if len(word) >= size and symbol.check(word[:size]):
-            return [ParseTree(0, size, [symbol], word[:size], production)]
+            return [ParseTree(0, size, [symbol], word[:size], symbol)]
     else:
         LOG.warning("terminal_symbol_reducer: Unknown size policy")
         return TypeCheckList(ParseTree)
@@ -115,7 +116,7 @@ def mix_results(resultll:list, productionset):
             raise TypeError
         if result.leftpos == 0:
             midlist.append([result])
-        elif result.leftpos == None:
+        elif result.leftpos is None:
             raise Exception #FIXME:What's the right thing to do here? 
 
     #Processing Tail sets
@@ -132,10 +133,10 @@ def mix_results(resultll:list, productionset):
                 lastresult = middleresult[-1]
                 if lastresult.production != result.production:
                     pass
-                if result.rightpos == None:
+                if result.rightpos is None:
                     result.rightpos = lastresult.rightpos
                     result.leftpos = lastresult.rightpos
-                if lastresult.rightpos == None or result.leftpos == None:
+                if lastresult.rightpos is None or result.leftpos is None:
                     tmp.append(middleresult + [ParseTree(result.leftpos, result.rightpos, \
                             result.symbollist, result.content, result.production, \
                             TypeCheckList(ParseTree, result.childlist), result.valid)])
@@ -198,7 +199,7 @@ def locate_result_borders(results):
     for result in results:
         leftpos = result.leftpos
         rightpos = result.rightpos
-        if leftpos == None and rightpos == None:
+        if leftpos is None and rightpos is None:
             return (rightborder, leftborder)
         if leftpos > leftborder:
             leftborder = leftpos

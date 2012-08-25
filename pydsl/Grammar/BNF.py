@@ -15,28 +15,23 @@
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Production rules (SymbolGrammars)"""
+"""Production rules"""
 
 from pydsl.Grammar.Symbol import Symbol, TerminalSymbol
-from abc import ABCMeta 
 
-__author__ = "Néstor Arocha Rodríguez"
-__copyright__ = "Copyright 2008-2012, Néstor Arocha Rodríguez"
+__author__ = "Nestor Arocha Rodriguez"
+__copyright__ = "Copyright 2008-2012, Nestor Arocha Rodriguez"
 __email__ = "nesaro@gmail.com"
 
 
-class Production(metaclass = ABCMeta):
-    def __init__(self, leftside:list, rightside:list): 
+class Production:
+    def __init__(self, leftside:list, rightside:list):
+        #Left side must have at least one nonterminal symbol
         for element in rightside:
             if not isinstance(element, Symbol):
                 raise TypeError
         self.leftside = leftside
         self.rightside = rightside
-
-class NonTerminalProduction(Production):
-    def __init__(self, leftside:list, rightside:list):
-        #Left side must have at least one nonterminal symbol
-        Production.__init__(self, leftside, rightside)
 
     def __str__(self):
         """Pretty print"""
@@ -71,36 +66,23 @@ class NonTerminalProduction(Production):
         return self.leftside[0].name
 
 
-class TerminalProduction(Production):
-    """There are some restrictions about terminal symbols than can be described as a boundariesrules in only one symbol. Those restrictions that can't be described in one symbol are described in this class"""
-    def __init__(self, terminalsymbol:TerminalSymbol):
-        #Left side is a terminalsymbol
-        Production.__init__(self, [terminalsymbol], [])
-
-    def __str__(self):
-        """Pretty print"""
-        leftstr = ""
-        rightstr = ""
-        for symbol in self.leftside:
-            leftstr += " " + symbol.name + " "
-        return leftstr + " := " + leftstr 
-
-    def __eq__(self, other):
-        try:
-            if self.leftside[0] == other.leftside[0]:
-                return True
-        except AttributeError:
-            return False
-        return False
-
 class BNFGrammar: #Only stores a ruleset, and methods to ask properties or validity check 
-    def __init__(self, initialsymbol, productionrulelist:list, options = {}):
+    def __init__(self, initialsymbol, fulllist:list, options = {}):
         self._initialsymbol = initialsymbol
-        for rule in productionrulelist:
-            if productionrulelist.count(rule) >1:
+        for rule in fulllist:
+            if fulllist.count(rule) >1:
                 raise ValueError
-        self.productionlist = productionrulelist
+        self.fulllist = fulllist
         self.options = options
+
+    @property
+    def productionlist(self):
+        return [x for x in self.fulllist if isinstance(x, Production)]
+
+    @property
+    def terminalsymbollist(self):
+        return [x for x in self.fulllist if isinstance(x,
+            TerminalSymbol)]
 
     @property
     def left_recursive(self) -> bool:
@@ -189,12 +171,6 @@ class BNFGrammar: #Only stores a ruleset, and methods to ask properties or valid
                 return rule
         raise IndexError
 
-    def getTerminalProductions(self):
-        return [ rule for rule in self.productionlist if isinstance(rule, TerminalProduction) ] 
-
-    def getNonTerminalProductions(self):
-        return [ rule for rule in self.productionlist if isinstance(rule, NonTerminalProduction) ] 
-
     def getSymbols(self):
         """Returns every symbol"""
         symbollist = []
@@ -202,11 +178,15 @@ class BNFGrammar: #Only stores a ruleset, and methods to ask properties or valid
             for symbol in rule.leftside + rule.rightside:
                 if symbol not in symbollist:
                     symbollist.append(symbol)
+        symbollist += self.terminalsymbollist
         return symbollist
+
+    def getProductions(self):
+        return self.productionlist
 
     def getTerminalSymbols(self):
         """Returns a list with every terminal symbol """
-        return [symbol for symbol in self.getSymbols() if isinstance(symbol, TerminalSymbol)]
+        return self.terminalsymbollist
 
     def getProductionIndex(self, rule):
         return self.productionlist.index(rule)
@@ -233,11 +213,11 @@ def create_non_terminal_production(productionset:list, terminalsymbol):
                     break
     #Inserts new rule
     newsymbol = NonTerminalSymbol(str(terminalsymbol))
-    newproduction = NonTerminalProduction(newsymbol, terminalsymbol)
+    newproduction = Production(newsymbol, terminalsymbol)
     productionset.append(newproduction)
     #modifies required rules to link with new production
     for production in productionstochange:
-        newproduction = NonTerminalProduction(production.leftside[:], production.rightside[:])
+        newproduction = Production(production.leftside[:], production.rightside[:])
         for index, element in enumerate(production.rightside):
             if element == terminalsymbol:
                 del newproduction.rightside[index]
@@ -329,13 +309,3 @@ def chomsky_normal_form(productionset:BNFGrammar) -> BNFGrammar:
         productionset = split_production(productionset, nonterm)
     
     return productionset
-     
-            
-        
-        
-    
-        
-            
-            
-
-

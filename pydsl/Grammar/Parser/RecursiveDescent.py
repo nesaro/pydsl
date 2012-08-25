@@ -144,8 +144,7 @@ class RecursiveDescentParser(TopDownParser):
         if isinstance(onlysymbol, TerminalSymbol):
             #Locate every ocurrence of word and return a set of results. Follow boundariesrules
             LOG.debug("Iteration: terminalsymbol")
-            sproduction = self._productionset.getProductionsBySide([onlysymbol])[0]
-            result = terminal_symbol_consume(onlysymbol, data, sproduction )
+            result = terminal_symbol_consume(onlysymbol, data)
             if showerrors and not result:
                 LOG.debug("error symbolo: " + str(onlysymbol))
                 #print("ERROR!: " + str(data) + str(onlysymbol))

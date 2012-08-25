@@ -17,8 +17,8 @@
 
 "Tree class for tree based parsers"""
 
-__author__ = "Néstor Arocha Rodríguez"
-__copyright__ = "Copyright 2008-2012, Néstor Arocha Rodríguez"
+__author__ = "Nestor Arocha Rodriguez"
+__copyright__ = "Copyright 2008-2012, Nestor Arocha Rodriguez"
 __email__ = "nesaro@gmail.com"
 
 import logging
@@ -165,6 +165,9 @@ class AST(Tree):
         self.childlist.append(child)
 
     def __getitem__(self, index):
+        from pydsl.Grammar.Symbol import TerminalSymbol
+        if isinstance(self.production, TerminalSymbol):
+            return [(self.leftpos, self.rightpos)] # FIXME quick hack for terminal rules
         result = []
         if self.production.leftside[0].name == index:
             result.append((self.leftpos, self.rightpos))
@@ -176,6 +179,9 @@ class AST(Tree):
 
 
     def __contains__(self, index):
+        from pydsl.Grammar.Symbol import TerminalSymbol
+        if isinstance(self.production, TerminalSymbol):
+            return index == self.production.name # FIXME quick hack for terminal rules
         if not self.production.leftside:
             return False
         if self.production.leftside[0].name == index:
@@ -194,9 +200,10 @@ class ParseTree(Tree):
         if not isinstance(rightpos, int) and rightpos != None:
             raise TypeError
         from .BNF import Production
-        if production != None and not isinstance(production, Production):
-            print(production)
-            raise TypeError
+        from pydsl.Grammar.Symbol import TerminalSymbol
+        if production is not None and not (isinstance(production, Production) or
+                isinstance(production, TerminalSymbol)):
+            raise TypeError(production)
         Tree.__init__(self, leftpos, rightpos, content, valid)
         self.symbollist = symbollist
         self.production = production
@@ -225,7 +232,8 @@ class ParseTree(Tree):
         if not isinstance(other, ParseTree):
             raise TypeError
         if other == []:
-            return ParseTree(self.leftpos, self.rightpos, self.symbollist, self.content, self.production, self.childlist) #FIXME: Debe devolver copia de childlist
+            return ParseTree(self.leftpos, self.rightpos, self.symbollist,
+                    self.content, self.production, self.childlist) #FIXME: Must return a childlist copy
         if self.rightpos == other.leftpos and self.production == other.production:
             leftpos = self.leftpos
             rightpos = other.rightpos
@@ -336,8 +344,3 @@ def zss_distance(tree1, tree2):
             result = treedist(x, y)
             #print(x,y,result)
     return result
-    
-
-
-
-
