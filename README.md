@@ -9,11 +9,16 @@ pydsl support several grammar specification formats:
  * ANLTR .g format (not supported yet)
  * mongo database query dictionaries
 
+each grammar definition have the following properties:
+ * enumerate(gd): yields a list of accepted words
+ * first(gd): yields a list of the first accepted subword/char
+ * min(gd): length of the smaller accepted word
+ * max(gd): length of the biggest accepted word
+
 pydsl offer a set of functionalities that use _grammar definitions_
  * check(gd, input): test the input string against the spec
  * validate(gd, input): test the input string against the spec. In case of failure, it returns a list of errors
  * guess(input, [gd]): returns a list of _grammar definitions_ that are compatible with the input
- * enumerate(gd, input): yields a list of accepted words
  * getgroup(gd, input, tag): returns the parts of the input according to a tag
  * extract(gd, input): extract all the slices of the input that are accepted by _grammar definition_
  * distance(gd, input1, input2): returns the distance between two inputs according to _grammar definition_
