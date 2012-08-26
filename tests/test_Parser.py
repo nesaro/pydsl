@@ -15,62 +15,16 @@
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Abstract Classes"""
-
-__author__ = "Néstor Arocha Rodríguez"
+__author__ = "Nestor Arocha Rodriguez"
 __copyright__ = "Copyright 2008-2012, Néstor Arocha Rodríguez"
 __email__ = "nesaro@gmail.com"
 
 import unittest
 
 
-leftrecursive=["S ::= E","E ::= E dot | dot","dot := String,."]
-rightrecursive=["S ::= E","E ::= dot E | dot","dot := String,."]
-centerrecursive=["S ::= E","E ::= dot E dot | dot","dot := String,."]
-
+from bnfgrammar import *
 
 class TestParsers(unittest.TestCase):
-    def setUp(self):
-        from pydsl.Grammar.Symbol import StringTerminalSymbol, WordTerminalSymbol, NonTerminalSymbol, BoundariesRules, NullSymbol
-        from pydsl.Grammar.BNF import Production, BNFGrammar
-        br = BoundariesRules("max", 1)
-
-        #productionset1 definition
-        symbol1 = StringTerminalSymbol("S")
-        symbol2 = StringTerminalSymbol("R")
-        symbol3 = StringTerminalSymbol(":")
-        symbol4 = WordTerminalSymbol("Integer", {"grammarname":"integer"}, br)
-        symbol5 = WordTerminalSymbol("Generic", {"grammarname":"cstring"}, br)
-        final1 = NonTerminalSymbol("storeexp") 
-        final2 = NonTerminalSymbol("retrieveexp") 
-        final3 = NonTerminalSymbol("exp")
-        rule1 = Production([final1], [symbol1, symbol3, symbol5])
-        rule2 = Production([final2], [symbol2, symbol3, symbol4])
-        rule3 = Production([final3], [final1])
-        rule4 = Production([final3], [final2])
-        rulelist = [rule1, rule2, rule3, rule4, symbol1, symbol2, symbol3,
-                symbol4, symbol5]
-        self.productionset1 = BNFGrammar(final3, rulelist)
-
-        #productionset2 definition
-        symbola = StringTerminalSymbol("A")
-        symbolb = StringTerminalSymbol("B")
-        nonterminal = NonTerminalSymbol("res")
-        rulea = Production ([nonterminal], [symbola, NullSymbol(), symbolb])
-        self.productionset2 = BNFGrammar(nonterminal, [rulea, symbola, symbolb])
-        from pydsl.Memory.Storage.File.BNF import strlist_to_production_set
-        self.productionsetlr = strlist_to_production_set(leftrecursive)
-        self.productionsetrr = strlist_to_production_set(rightrecursive)
-        self.productionsetcr = strlist_to_production_set(centerrecursive)
-
-
-        #tokenlist definition
-        self.tokelist1 = "S:a"
-        self.tokelist2 = "S:"
-        self.tokelist3 = "AB"
-        self.tokelist4 = "ACB"
-        self.dots = "....."
-
 
     #def testLeftRecursion(self):
     #    from pydsl.Type.Grammar.Parser.RecursiveDescent import RecursiveDescentParser
@@ -80,38 +34,38 @@ class TestParsers(unittest.TestCase):
 
     def testRightRecursion(self):
         from pydsl.Grammar.Parser.RecursiveDescent import RecursiveDescentParser
-        descentparser = RecursiveDescentParser(self.productionsetrr)
-        result = descentparser(self.dots)
+        descentparser = RecursiveDescentParser(productionsetrr)
+        result = descentparser(dots)
         self.assertTrue(result)
 
     def testCenterRecursion(self):
         from pydsl.Grammar.Parser.RecursiveDescent import RecursiveDescentParser
-        descentparser = RecursiveDescentParser(self.productionsetcr)
-        result = descentparser(self.dots)
+        descentparser = RecursiveDescentParser(productionsetcr)
+        result = descentparser(dots)
         self.assertTrue(result)
 
     def testRecursiveDescentParserStore(self):
         from pydsl.Grammar.Parser.RecursiveDescent import RecursiveDescentParser
-        descentparser = RecursiveDescentParser(self.productionset1)
-        result = descentparser(self.tokelist1)
+        descentparser = RecursiveDescentParser(productionset1)
+        result = descentparser(string1)
         self.assertTrue(result)
 
     def testRecursiveDescentParserBad(self):
         from pydsl.Grammar.Parser.RecursiveDescent import RecursiveDescentParser
-        descentparser = RecursiveDescentParser(self.productionset1)
-        result = descentparser(self.tokelist2)
+        descentparser = RecursiveDescentParser(productionset1)
+        result = descentparser(string2)
         self.assertFalse(result)
        
     def testRecursiveDescentParserNull(self):
         from pydsl.Grammar.Parser.RecursiveDescent import RecursiveDescentParser
-        descentparser = RecursiveDescentParser(self.productionset2)
-        result = descentparser(self.tokelist3)
+        descentparser = RecursiveDescentParser(productionset2)
+        result = descentparser(string3)
         self.assertTrue(result)
         
     def testRecursiveDescentParserNullBad(self):
         from pydsl.Grammar.Parser.RecursiveDescent import RecursiveDescentParser
-        descentparser = RecursiveDescentParser(self.productionset2)
-        result = descentparser(self.tokelist4)
+        descentparser = RecursiveDescentParser(productionset2)
+        result = descentparser(string4)
         self.assertTrue(not result)
        
     #def testLR0ParserStore(self):
