@@ -207,14 +207,12 @@ def locate_result_borders(results):
 
 class Parser(metaclass = ABCMeta):
     """Parser abstract class. At this time, all parsers are tree based"""
-    from ..BNF import BNFGrammar
-    def __init__(self, productionruleset:BNFGrammar):
-        self._productionset = productionruleset
+    def __init__(self, bnfgrammar:BNFGrammar):
+        self._productionset = bnfgrammar
 
     @abstractmethod
     def get_trees(self, word) -> list:
         """ returns a ParseTree list with all guesses """
-        #FIXME: Should instantiate a tokenizer
         pass
 
     def __call__(self, word):
@@ -227,16 +225,19 @@ class Parser(metaclass = ABCMeta):
 
 class TopDownParser(Parser):
     """Top down parser like descent parser"""
-    pass
+    def __init__(self, bnfgrammar:BNFGrammar):
+        Parser.__init__(self, bnfgrammar)
+        from pydsl.Grammar.Lexer import BNFLexer
+        self._lexer = BNFLexer(bnfgrammar)
         
 class BottomUpParser(Parser):
     """ leaf to root parser"""
-    def __init__(self, productionruleset, packagedependencies = None):
-        terminalsymbollist = productionruleset.getTerminalSymbols()
+    def __init__(self, bnfgrammar, packagedependencies = None):
+        terminalsymbollist = bnfgrammar.getTerminalSymbols()
         for ts in terminalsymbollist:
             from pydsl.Grammar.Symbol import WordTerminalSymbol
             if isinstance(ts, WordTerminalSymbol):
                 LOG.critical("BottomUp parsers can't handle WordTerminalSymbol yet")
                 raise Exception
-        Parser.__init__(self, productionruleset)
+        Parser.__init__(self, bnfgrammar)
         

@@ -10,7 +10,7 @@ pydsl support several grammar specification formats:
  * mongo database query dictionaries
 
 each grammar definition have the following properties:
- * enumerate(gd): yields a list of accepted words
+ * enum(gd): yields a list of accepted words
  * first(gd): yields a list of the first accepted subword/char
  * min(gd): length of the smaller accepted word
  * max(gd): length of the biggest accepted word

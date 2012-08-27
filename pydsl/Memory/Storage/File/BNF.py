@@ -28,7 +28,7 @@ from pydsl.Grammar.Symbol import StringTerminalSymbol, WordTerminalSymbol, Bound
 from pydsl.Grammar.BNF import Production
 LOG = logging.getLogger(__name__)
 
-""" Colony Grammar definition file parser """
+""" pydsl Grammar definition file parser """
 
 def __generateStringSymbol(rightside):
     args = rightside.split(",")

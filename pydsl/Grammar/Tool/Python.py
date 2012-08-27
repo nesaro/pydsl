@@ -45,7 +45,7 @@ class PythonGrammarTools(GrammarTools):
             return [self._askprop(word, propertyname)]
         return []
 
-    def enumerate(self):
+    def enum(self):
         if self._enumFun != None:
             return set(self._enumFun())
         return set()

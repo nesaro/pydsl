@@ -62,8 +62,7 @@ class SymbolGrammarTools(GrammarTools):
             posttree = parser_to_post_tree(tree)
             if propertyname in posttree:
                 return posttree[propertyname] 
-            else:
-                return []
+            return []
 
     def get_trees(self, word, showErrors = False) -> list:
         """Returns a decomposition tree. askProperty and checkWord should rely on this
