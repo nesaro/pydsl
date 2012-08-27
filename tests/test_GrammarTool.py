@@ -15,6 +15,8 @@
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
+"""Tests GrammarTool instances"""
+
 __author__ = "Nestor Arocha Rodriguez"
 __copyright__ = "Copyright 2008-2012, Nestor Arocha Rodriguez"
 __email__ = "nesaro@gmail.com"
@@ -48,7 +50,7 @@ class TestRegExpGrammars(unittest.TestCase):
         self.assertTrue(result == ["tone"])
 
 class TestPythonGrammars(unittest.TestCase):
-    """Funcionamiento basico de las gramaticas"""
+    """Python Grammar Tool"""
     def setUp(self):
         from pydsl.Grammar.Tool.Python import PythonGrammarTools
         self.g1 = PythonGrammarTools({"matchFun":lambda x:int(str(x))>6})
@@ -75,7 +77,7 @@ class TestPythonGrammars(unittest.TestCase):
         pass
 
 class TestHostPythonGrammars(unittest.TestCase):
-    """HostPythonGrammar test"""
+    """Python Grammar tool with auxiliary grammars"""
     def setUp(self):
         from pydsl.Grammar.Tool.Python import PythonGrammarTools
         self.g1 = PythonGrammarTools({"matchFun":lambda x,aux: aux["ext"].check(x),"auxdic":{"ext":"email"}})
@@ -100,7 +102,7 @@ class TestHostPythonGrammars(unittest.TestCase):
 
     def testloadgrammar(self):
         #Load a grammar that uses a package (integerOPGrammar), call check
-        from pydsl.Memory.Storage.Loader import load_checker
+        from pydsl.Memory.Storage.Loader import load_checker # FIXME: is load_grammar_tool
         grammar = load_checker("integerop")
         self.assertTrue(grammar.check("123+3"))
 

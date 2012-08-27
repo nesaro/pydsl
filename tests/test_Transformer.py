@@ -30,9 +30,6 @@ def recursivecall(input, auxt ,inputgrammars, outputgrammars):
 def integerextractor(input, inputgrammars, outputgrammars):
     return {"output":inputgrammars["input"].get_groups(input["input"],"Operator")[0]}
 
-def opidentifier(vardict, rulename, dpr):
-    vardict.setByNameAndBorders(rulename, dpr, {"VAL":dpr.tokenlist.string})
-
 def ope1(vardict, rulename, dpr):
     vardict.setByNameAndBorders(rulename, dpr, {"1":"HI"})
 
@@ -43,7 +40,7 @@ class TestTransformer(unittest.TestCase):
     """Tests Transformers"""
     def setUp(self):
         from pydsl.Function.Python import PythonTransformer
-        from pydsl.Function.ExternalProgram import ExternalProgramFunction #FIXME: Not a transformer
+        from pydsl.Function.ExternalProgram import ExternalProgramFunction 
         self.__gt1 = PythonTransformer({"input":"integerop"},{"output":"cstring"},integerextractor)
         self.__text = ExternalProgramFunction({"input":"cstring"},{"output":"cstring"}, ["echo","#{input}"])
 

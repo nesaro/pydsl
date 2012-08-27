@@ -6,7 +6,6 @@
 import unittest
 
 class TestLoader(unittest.TestCase):
-    #TODO
     """Test loaders"""
     def setUp(self):
         from pydsl.Memory.Storage.Directory.Grammar import GrammarDirStorage

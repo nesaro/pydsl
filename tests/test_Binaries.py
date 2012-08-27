@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-#Copyright (C) 2008-2012 Néstor Arocha Rodríguez
+#Copyright (C) 2008-2012 Nestor Arocha Rodriguez
 
 """Test Binary calls"""
 
@@ -9,9 +9,6 @@ import unittest
 
 class TestBinaries(unittest.TestCase):
     """Tests Main Class"""
-    def setUp(self):
-        pass
-
     def testCheck(self):
         import os
         self.assertEqual(os.system("python3 bin/check.py"),512)

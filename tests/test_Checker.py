@@ -22,12 +22,13 @@ __email__ = "nesaro@gmail.com"
 import unittest
 
 class TestMongoChecker(unittest.TestCase):
+    """Mongo checker"""
     def testCheck(self):
-        spec = {"a":1,"b":2}
+        """Test checker instanciation and call"""
         bad = {"a":1,"b":3}
         letter = {"a":1,"b":"asd"}
-        fullspec = {"a":{"$type":"integer"},"b":{"$type":"integer"}}
         from pydsl.Grammar.Checker import MongoChecker
+        from mongogrammar import spec, fullspec
         checker = MongoChecker(spec)
         self.assertTrue(checker.check(spec))
         self.assertFalse(checker.check(bad))
@@ -35,3 +36,20 @@ class TestMongoChecker(unittest.TestCase):
         self.assertTrue(fullchecker.check(spec))
         self.assertTrue(fullchecker.check(bad))
         self.assertFalse(fullchecker.check(letter))
+        #self.assertRaises(TypeError,fullchecker.check, "")
+
+@unittest.skip
+class TestBNFChecker(unittest.TestCase):
+    """BNF Checker"""
+    def testCheck(self):
+        """Test checker instanciation and call"""
+        from pydsl.Grammar.Checker import BNFChecker
+        raise NotImplementedError
+
+@unittest.skip
+class TestRegularExpressionChecker(unittest.TestCase):
+    """BNF Checker"""
+    def testCheck(self):
+        """Test checker instanciation and call"""
+        from pydsl.Grammar.Checker import RegularExpressionChecker
+        raise NotImplementedError
