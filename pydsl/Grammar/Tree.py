@@ -195,9 +195,9 @@ class AST(Tree):
 class ParseTree(Tree):
     """ Stores a descent parser iteration result """
     def __init__(self, leftpos, rightpos, symbollist:list, content, production, childlist:list = [], valid:bool = True):
-        if not isinstance(leftpos, int) and leftpos != None:
+        if not isinstance(leftpos, int) and leftpos is not None:
             raise TypeError
-        if not isinstance(rightpos, int) and rightpos != None:
+        if not isinstance(rightpos, int) and rightpos is not None:
             raise TypeError
         from .BNF import Production
         from pydsl.Grammar.Symbol import TerminalSymbol
