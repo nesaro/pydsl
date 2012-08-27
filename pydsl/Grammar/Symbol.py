@@ -111,9 +111,14 @@ class WordTerminalSymbol(TerminalSymbol):#boundariesrules: priority, [max,min,fi
     def __init__(self, name, definitionrequirementsdic, boundariesrules):
         TerminalSymbol.__init__(self, name, 49, boundariesrules)
         self.grammarname = definitionrequirementsdic["grammarname"]
-        from pydsl.Memory.Storage.Loader import load_grammar, load_checker
-        grammar = load_grammar(self.grammarname)
-        self.checker =  load_checker(grammar)
+        self.__checker =  None 
+
+    @property
+    def checker(self):
+        if self.__checker is None:
+            from pydsl.Memory.Storage.Loader import load_checker
+            self.__checker = load_checker(self.grammarname)
+        return self.__checker
 
     def __eq__(self, other):
         if not isinstance(other, WordTerminalSymbol):
@@ -124,14 +129,8 @@ class WordTerminalSymbol(TerminalSymbol):#boundariesrules: priority, [max,min,fi
             return False
         return True
 
-    def check(self, tokenlist):
-        #LOG.debug("WordTerminalSymbol.check: Begin")
-        resultstring = ""
-        for token in tokenlist:
-            resultstring += str(token)
-        #LOG.debug("WordTerminalSymbol.check: resultstring:"+resultstring)
-        result =  self.checker.check(resultstring)
-        #LOG.debug("WordTerminalSymbol.check: result:"+str(result))
+    def check(self, string):
+        result =  self.checker.check(string)
         return result
 
     def __str__(self):
