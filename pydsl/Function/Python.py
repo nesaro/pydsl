@@ -17,13 +17,15 @@
 
 """Python Transformers"""
 
-__author__ = "Néstor Arocha Rodríguez"
-__copyright__ = "Copyright 2008-2012, Néstor Arocha Rodríguez"
+__author__ = "Nestor Arocha"
+__copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 from .Channel import HostChannel
+from pydsl.Exceptions import ProcessingError
 import logging
 LOG = logging.getLogger("PythonTransformer")
+
 
 class PythonTransformer(HostChannel):
     """ Python function based transformer """
@@ -38,7 +40,6 @@ class PythonTransformer(HostChannel):
         for dickey in ibdic.keys():
             if not self.inputchanneldic[dickey].check(ibdic[dickey]):
                 raise ValueError("Invalid value %s for input %s (%s)" % (ibdic[dickey], dickey, self))
-        from pydsl.Exceptions import ProcessingError
         result = self._functionwrapper(ibdic)
         return result
 
@@ -46,7 +47,6 @@ class PythonTransformer(HostChannel):
         """Wraps function call, to add parammeters if required"""
         LOG.debug("PythonTransformer._functionwrapper: begin")
         result = self._function(wdict, self.inputchanneldic, self.outputchanneldic)
-        from pydsl.Exceptions import ProcessingError
         if not result:
             raise ProcessingError("Transformer", self)
         for outputgrammarname in self.outputchanneldic.keys():
@@ -54,43 +54,42 @@ class PythonTransformer(HostChannel):
             if not outputgrammarname in result:
                 LOG.error("Error while verifying Grammar name:" + outputgrammarname)
                 raise ProcessingError("Transformer")
-
-        #Converting to words
-        #TODO Process errors like HostPythonTransformer
         return result
+
+    def __str__(self):
+        return "<PythonTransformer: %s, %s" % (self.inputdefinition, self.outputdefinition)
 
     @property
     def summary(self):
         from pydsl.Abstract import InmutableDict
         inputdic = tuple(self.inputdefinition.values())
         outputdic = tuple(self.outputdefinition.values())
-        result = {"iclass":"PythonTransformer", "input":inputdic,"output":outputdic}
+        result = {"iclass": "PythonTransformer", "input": inputdic, "output": outputdic}
         return InmutableDict(result)
+
 
 class HostPythonTransformer(PythonTransformer):
     """Python Function Transformer which can call to other functions"""
-    def __init__(self, inputdic, outputdic, auxdic:dict, function):
+    def __init__(self, inputdic, outputdic, auxdic: dict, function):
         PythonTransformer.__init__(self, inputdic, outputdic, function)
         self._hostT = {}
         self._initHostT(auxdic)
 
     def _initHostT(self, namedic):
-        """Inits aux GTs. if a requested aux GT isn't connected, This function will create them"""
+        """Inits auxiliary transformers """
         from pydsl.Memory.Storage.Loader import load_transformer
         for title, gttype in namedic.items():
-            self._hostT[title] = load_transformer(gttype) 
+            self._hostT[title] = load_transformer(gttype)
             LOG.debug("loaded " + str(title) + "auxT")
-
 
     def _functionwrapper(self, worddic):
         """Wraps function call, to add parammeters if required"""
         LOG.info("HostPythonTransformer._functionwrapper: begin")
-        from pydsl.Exceptions import ProcessingError
         result = self._function(worddic, self._hostT, self.inputchanneldic, self.outputchanneldic)
         if not result:
             raise ProcessingError("Transformer", self)
         for channel in result.keys():
-            if not result[channel]: #FIXME: > 1 channel receives an error
+            if not result[channel]:  # FIXME: > 1 channel receives an error
                 newerror = result[channel]
                 return newerror
         return result
