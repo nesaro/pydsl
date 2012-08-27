@@ -164,7 +164,7 @@ class Board:
 
     def _initHostT(self, namedic):
         """Inits aux GTs. if a requested aux GT isn't connected, This function will create them"""
-        from pydsl.Memory.Storage.Loader import load_transformer
+        from pydsl.Memory.Loader import load_transformer
         for title, gttype in namedic.items():
             self._hostT[title] = load_transformer(gttype) 
             LOG.debug("loaded " + str(title) + "auxT")

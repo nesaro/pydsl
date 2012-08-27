@@ -102,7 +102,7 @@ class TestHostPythonGrammars(unittest.TestCase):
 
     def testloadgrammar(self):
         #Load a grammar that uses a package (integerOPGrammar), call check
-        from pydsl.Memory.Storage.Loader import load_checker # FIXME: is load_grammar_tool
+        from pydsl.Memory.Loader import load_checker # FIXME: is load_grammar_tool
         grammar = load_checker("integerop")
         self.assertTrue(grammar.check("123+3"))
 

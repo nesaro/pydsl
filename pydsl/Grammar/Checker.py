@@ -26,7 +26,7 @@ import logging
 LOG = logging.getLogger(__name__)
 from abc import ABCMeta, abstractmethod
 from pydsl.Abstract import Indexable
-from pydsl.Memory.Storage.Loader import load_checker
+from pydsl.Memory.Loader import load_checker
 
 class Checker(metaclass = ABCMeta):
     """ Ensures information follows a rule, protocol or has a shape.

@@ -29,7 +29,7 @@ __email__ = "nesaro@gmail.com"
 import logging
 LOG = logging.getLogger(__name__)
 from pkg_resources import Requirement, resource_filename, DistributionNotFound
-from pydsl.Memory.Storage.Loader import load_checker
+from pydsl.Memory.Loader import load_checker
 
 class Guesser:
     def __init__(self, memorylist = []):

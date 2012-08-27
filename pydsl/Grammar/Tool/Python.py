@@ -36,7 +36,7 @@ class PythonGrammarTools(GrammarTools):
 
     def check(self, word):
         if not self._matchFun:
-            from pydsl.Memory.Storage.Loader import load_checker
+            from pydsl.Memory.Loader import load_checker
             self._matchFun = load_checker(self.dictionary)
         return self._matchFun.check(word)
 

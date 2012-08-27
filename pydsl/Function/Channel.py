@@ -29,7 +29,7 @@ LOG = logging.getLogger(__name__)
 
 def _loadGrammarTools(originaldic):
     """Converts {"channelname","type"} into {"channelname",instance}"""
-    from pydsl.Memory.Storage.Loader import load_grammar_tool
+    from pydsl.Memory.Loader import load_grammar_tool
     result = {}
     for key in originaldic:
         result[key] = load_grammar_tool(str(originaldic[key]))

@@ -77,7 +77,7 @@ class HostPythonTransformer(PythonTransformer):
 
     def _initHostT(self, namedic):
         """Inits auxiliary transformers """
-        from pydsl.Memory.Storage.Loader import load_transformer
+        from pydsl.Memory.Loader import load_transformer
         for title, gttype in namedic.items():
             self._hostT[title] = load_transformer(gttype)
             LOG.debug("loaded " + str(title) + "auxT")

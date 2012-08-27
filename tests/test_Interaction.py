@@ -27,7 +27,7 @@ class TestGuess(unittest.TestCase):
         self.gd = None
 
     def testGuess(self):
-        from pydsl.Memory.Storage.Loader import load_guesser
+        from pydsl.Memory.Loader import load_guesser
         guesser = load_guesser(self.gd)
         self.assertTrue(guesser("input"))
 
@@ -37,7 +37,7 @@ class TestValidate(unittest.TestCase):
         self.gd = None
 
     def testValidate(self):
-        from pydsl.Memory.Storage.Loader import load_validator
+        from pydsl.Memory.Loader import load_validator
         validator = load_validator(self.gd)
         self.assertTrue(validator("input"))
 
@@ -47,7 +47,7 @@ class TestExtract(unittest.TestCase):
         self.gd = None
 
     def testExtract(self):
-        from pydsl.Memory.Storage.Loader import load_extractor
+        from pydsl.Memory.Loader import load_extractor
         extractor = load_extractor(self.gd)
         self.assertTrue(extractor("input"))
 
@@ -57,7 +57,7 @@ class TestMeasurer(unittest.TestCase):
         self.gd = None
 
     def testMeasurer(self):
-        from pydsl.Memory.Storage.Loader import load_measurer
+        from pydsl.Memory.Loader import load_measurer
         measurer = load_measurer(self.gd)
         self.assertTrue(measurer("input", "input2"))
 
@@ -67,7 +67,7 @@ class TestPartitioner(unittest.TestCase):
         self.gd = None
 
     def testPartitioner(self):
-        from pydsl.Memory.Storage.Loader import load_partitioner
+        from pydsl.Memory.Loader import load_partitioner
         partitioner = load_partitioner(self.gd)
         self.assertTrue(partitioner("input", "part1"))
 

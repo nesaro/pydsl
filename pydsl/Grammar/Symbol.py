@@ -116,7 +116,7 @@ class WordTerminalSymbol(TerminalSymbol):#boundariesrules: priority, [max,min,fi
     @property
     def checker(self):
         if self.__checker is None:
-            from pydsl.Memory.Storage.Loader import load_checker
+            from pydsl.Memory.Loader import load_checker
             self.__checker = load_checker(self.grammarname)
         return self.__checker
 

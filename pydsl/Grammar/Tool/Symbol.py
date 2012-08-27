@@ -77,7 +77,7 @@ class SymbolGrammarTools(GrammarTools):
 
     def check(self, word):
         if not self.__checker:
-            from pydsl.Memory.Storage.Loader import load_checker
+            from pydsl.Memory.Loader import load_checker
             self.__checker = load_checker(self.__bnf)
         return self.__checker.check(word)
 
