@@ -40,6 +40,10 @@ class Lexer(metaclass=ABCMeta):
         except IndexError:
             return finalchar
 
+    def load(self, string):
+        self.string = string
+        self.index = 0
+
     def consume(self):
         self.index += 1
 
