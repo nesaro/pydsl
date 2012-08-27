@@ -19,8 +19,8 @@
 Shows information about an element retrieved from Memory
 """
 
-__author__ = "Néstor Arocha Rodríguez"
-__copyright__ = "Copyright 2008-2012, Néstor Arocha Rodríguez"
+__author__ = "Nestor Arocha"
+__copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
@@ -37,46 +37,36 @@ if __name__ == "__main__":
     import sys
     DEBUGLEVEL = ARGS.debuglevel or logging.WARNING
     logging.basicConfig(level = DEBUGLEVEL)
-    if ARGS.lang:
-        from pydsl.Config import GLOBALCONFIG
-        GLOBALCONFIG.lang = ARGS.lang
-    if ARGS.identifier:
-        from pydsl.Memory.Storage.Loader import load_information
-        instance = load_information(ARGS.identifier)
-        if "summary" in dir(instance):
-            resultdic = instance.summary
-            descmem = {}
-            from pydsl.Memory.Storage.Dict import StrDictStorage
-            from pkg_resources import Requirement, resource_filename
-            dirname = resource_filename(Requirement.parse("colony_archive"),"")
-            try:
-                if ARGS.lang == "en":
-                    descmem = StrDictStorage(dirname + "dict/description_en.dict")
-                else:
-                    descmem = StrDictStorage(dirname + "dict/description_es.dict")
-            except IOError:
-                pass
-            if ARGS.identifier in descmem:
-                resultdic["description"] = str(descmem[ARGS.identifier])
-            if ARGS.outputformat == "str":
-                for key in resultdic:
-                    print(key + ": " + str(resultdic[key]))
-            elif ARGS.outputformat == "json":
-                import json
-                print(json.dumps(resultdic))
-            else:
-                print("Raw format not supported")
-                sys.exit(-1)
-        else:
-            if ARGS.outputformat == "str":
-                print(str(instance))
-            elif ARGS.outputformat == "raw":
-                import sys
-                sys.stdout.write(str(instance))
-            else:
-                print("JSON format not supported")
-                sys.exit(-1)
+    from pydsl.Config import GLOBALCONFIG
+    memorylist = GLOBALCONFIG.memorylist
+    for memory in memorylist:
+        if ARGS.identifier in memory:
+            instance = memory.load(ARGS.identifier)
+            break
     else:
-        print(TUSAGE)
-        sys.exit(0)
+        print("Not found")
+        sys.exit(-1)
+    if instance:
+        if hasattr(instance, "summary"):
+            resultdic = instance.summary
+        else:
+            resultdic = {"instance":instance}
+        if ARGS.outputformat == "str":
+            for key in resultdic:
+                print(key + ": " + str(resultdic[key]))
+        elif ARGS.outputformat == "json":
+            import json
+            print(json.dumps(resultdic))
+        else:
+            print("Raw format not supported")
+            sys.exit(-1)
+    else:
+        if ARGS.outputformat == "str":
+            print(str(instance))
+        elif ARGS.outputformat == "raw":
+            import sys
+            sys.stdout.write(str(instance))
+        else:
+            print("JSON format not supported")
+            sys.exit(-1)
     sys.exit(0)
