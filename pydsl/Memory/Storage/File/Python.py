@@ -51,8 +51,8 @@ def load_python_file(moduleobject, **kwargs):
         from pydsl.Function.ExternalProgram import ExternalProgramFileFunction
         return ExternalProgramFileFunction(**resultdic)
     elif iclass == "SymbolGrammar":
-        from pydsl.Grammar.Tool.Symbol import SymbolGrammarTools
-        return SymbolGrammarTools(**resultdic)
+        from pydsl.Grammar.BNF import BNFGrammar
+        return BNFGrammar(**resultdic)
     elif iclass in ["MongoDict", "PythonGrammar"]:
         return resultdic
     else:
