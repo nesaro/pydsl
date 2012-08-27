@@ -73,23 +73,3 @@ class Indexable(metaclass=ABCMeta):
                 if not x in result:
                     result += x.ancestors()
         return tuple(result)
-
-
-class TypeCheckList(list):
-    def __init__(self, instancetype, *args):
-        self.instancetype = instancetype
-        list.__init__(self, *args)
-
-    def append(self, item):
-        assert(isinstance(item, self.instancetype))
-        list.append(self, item)
-
-    def __add__(self, item):
-        for element in item:
-            assert(isinstance(element, self.instancetype))
-        return list.__add__(self, item)
-
-    def __iadd__(self, item):
-        for element in item:
-            assert(isinstance(element, self.instancetype))
-        return list.__iadd__(self, item)

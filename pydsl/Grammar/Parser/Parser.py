@@ -24,16 +24,15 @@ __email__ = "nesaro@gmail.com"
 import logging
 LOG = logging.getLogger(__name__)
 from abc import ABCMeta, abstractmethod
-from pydsl.Abstract import TypeCheckList
+from ..BNF import BNFGrammar
 
 
 def terminal_symbol_reducer(symbol, word, production):
     """ Reduces a terminal symbol """
-    from pydsl.Abstract import TypeCheckList
     from pydsl.Grammar.Tree import ParseTree
     if not isinstance(word, str):
         word = str(word)
-    validresults = TypeCheckList(ParseTree)
+    validresults = []
     if symbol.boundariesrules.policy == "min":
         LOG.debug("terminal_symbol_reducer: policy: min")
         for begin in range(0, len(word)):
@@ -61,14 +60,13 @@ def terminal_symbol_reducer(symbol, word, production):
                 validresults.append(ParseTree(begin, begin + size, [symbol], word[begin:begin + size], production))
     else:
         LOG.warning("terminal_symbol_reducer: Unknown size policy")
-        return TypeCheckList(ParseTree)
+        return []
     return validresults
 
 def terminal_symbol_consume(symbol, word):
     """ Reduces a terminal symbol. Always start from left"""
-    from pydsl.Abstract import TypeCheckList
     from pydsl.Grammar.Tree import ParseTree
-    validresults = TypeCheckList(ParseTree)
+    validresults = []
     begin = 0
     if symbol.boundariesrules.policy == "min":
         for end in range(begin, len(word)+1):
@@ -90,8 +88,8 @@ def terminal_symbol_consume(symbol, word):
         if len(word) >= size and symbol.check(word[:size]):
             return [ParseTree(0, size, [symbol], word[:size], symbol)]
     else:
-        LOG.warning("terminal_symbol_reducer: Unknown size policy")
-        return TypeCheckList(ParseTree)
+        LOG.warning("terminal_symbol_consume: Unknown size policy")
+        return []
     return validresults
 
 def mix_results(resultll:list, productionset):
@@ -99,7 +97,7 @@ def mix_results(resultll:list, productionset):
     from pydsl.Grammar.Tree import ParseTree
     production = None
     for resultl in resultll:
-        assert(isinstance(resultl, TypeCheckList) and resultl.instancetype == ParseTree)
+        assert(isinstance(resultl, list) and resultl.instancetype == ParseTree)
     midlist = [] #All blocks combinations are stored here
     firstindex = 0
     while firstindex < len(resultll) and len(resultll[firstindex]) == 0: 
@@ -139,11 +137,11 @@ def mix_results(resultll:list, productionset):
                 if lastresult.rightpos is None or result.leftpos is None:
                     tmp.append(middleresult + [ParseTree(result.leftpos, result.rightpos, \
                             result.symbollist, result.content, result.production, \
-                            TypeCheckList(ParseTree, result.childlist), result.valid)])
+                            list(result.childlist), result.valid)])
                 elif lastresult.rightpos == result.leftpos:
                     tmp.append(middleresult + [ParseTree(result.leftpos, result.rightpos, \
                             result.symbollist, result.content, result.production, \
-                            TypeCheckList(ParseTree, result.childlist), result.valid)])
+                            list(result.childlist), result.valid)])
             midlist += tmp
         validsets += 1
     
@@ -155,7 +153,7 @@ def mix_results(resultll:list, productionset):
 
     #Combinamos resultados en la lista final
     #We mix all results into final result
-    finallist = TypeCheckList(ParseTree)
+    finallist = []
     for middleresult in midlist:
         if len(middleresult) == 1:
             finallist.append(middleresult[0])

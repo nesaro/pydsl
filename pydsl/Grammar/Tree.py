@@ -22,7 +22,6 @@ __copyright__ = "Copyright 2008-2012, Nestor Arocha Rodriguez"
 __email__ = "nesaro@gmail.com"
 
 import logging
-from pydsl.Abstract import TypeCheckList
 from abc import ABCMeta
 LOG = logging.getLogger(__name__)
 
@@ -33,15 +32,14 @@ def nodedist(a, b):
     return 1
 
 def traversePreOrder(item):
-    from pydsl.Abstract import TypeCheckList
-    result = TypeCheckList(Tree)
+    result = []
     result.append(item)
     for child in item.childlist:
         result += traversePreOrder(child)
     return result
 
 def traverseInOrder(item):
-    result = TypeCheckList(Tree)
+    result = []
     result.append(traverseInOrder(item.childlist[0]))
     result.append(item)
     for childindex in range(1, len(item.childlist)):
@@ -49,7 +47,7 @@ def traverseInOrder(item):
     return result
 
 def traversePostOrder(item):
-    result = TypeCheckList(Tree)
+    result = []
     for child in item.childlist:
         result += traversePostOrder(child)
     result.append(item)
@@ -59,7 +57,7 @@ class Tree(metaclass = ABCMeta):
     def __init__(self, leftpos, rightpos, content, valid = True):
         self.leftpos = leftpos
         self.rightpos = rightpos
-        self.childlist = TypeCheckList(Tree)
+        self.childlist = []
         self.content = content
         self.valid = valid
         
@@ -133,7 +131,6 @@ class AST(Tree):
     """Una representacion más simple de la descomposicion, sin alusion a los pasos intermedios"""
     def __init__(self, content, leftpos:int, rightpos:int, production, parentnode = None, valid = True):
         Tree.__init__(self, leftpos, rightpos, content, valid)
-        from pydsl.Abstract import TypeCheckList
         self.production = production 
         self.parentnode = parentnode
 
@@ -207,11 +204,7 @@ class ParseTree(Tree):
         Tree.__init__(self, leftpos, rightpos, content, valid)
         self.symbollist = symbollist
         self.production = production
-        if not childlist:
-            childlist = TypeCheckList(ParseTree)
-        else:
-            childlist = TypeCheckList(ParseTree, childlist)
-        self.childlist = childlist #This list stores rule's rightside DescentParserResults 
+        self.childlist = list(childlist) #This list stores rule's rightside DescentParserResults 
 
     def __str__(self):
         result = "<ParseTree: " 
@@ -248,7 +241,7 @@ class ParseTree(Tree):
 
     def split(self):
         """splits a result"""
-        result = TypeCheckList(ParseTree)
+        result = []
         for symbol in self.symbollist:
             currentlist = self.childlist
             while len(currentlist) > 1 and len(currentlist[0].symbollist) > 1 and currentlist[0].symbollist[0] != symbol:
