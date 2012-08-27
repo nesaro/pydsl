@@ -104,34 +104,3 @@ def load_board(identifier, memorylist = []):
         if identifier in memory:
             return memory.load(identifier)
     raise KeyError("Board" + identifier)
-
-def load_information(name:str, memorylist = []):
-    if not memorylist:
-        from pydsl.Config import GLOBALCONFIG
-        memorylist = GLOBALCONFIG.memorylist
-    import os
-    from pydsl.Memory.Storage.Directory.DirStorage import load_python_file
-    dirname = resource_filename(Requirement.parse("pydsl_contrib"),"")
-    if os.path.exists(dirname + "/grammar/protocol.py"):
-        pginstance = load_python_file(dirname + "/grammar/protocol.py")
-    else:
-        pginstance = load_python_file("lib_contrib/grammar/protocol.py")
-    if not pginstance.check(name):
-        for memory in memorylist:
-            if name in memory:
-                return memory.load(name)
-    else:
-        protocol = pginstance.get_groups(name, "protocol")[0]
-        path = pginstance.get_groups(name, "path")[0]
-        if protocol == "file":
-            from pydsl.Memory.Storage.Directory.Value import load_information as lin
-            return lin(path)
-        elif protocol == "memory":
-            identifier = pginstance.get_groups(name, "options")
-            for memory in memorylist:
-                if memory.identifier == path:
-                    return memory.load(identifier)
-            raise Exception("Memory not found")
-
-    raise KeyError("Information" + name)
-
