@@ -73,7 +73,7 @@ def terminal_symbol_consume(symbol, word):
             if symbol.check(word[begin:end]):
                 return [ParseTree(begin, end, [symbol], word[begin:end], symbol)]
     elif symbol.boundariesrules.policy == "max":
-        LOG.debug("terminal_symbol_reducer: policy: max")
+        LOG.debug("terminal_symbol_consume: policy: max")
         maxword = 0
         for end in range(begin, len(word)+1):
             if symbol.check(word[begin:end]):
@@ -84,7 +84,7 @@ def terminal_symbol_consume(symbol, word):
                symbol)]
     elif symbol.boundariesrules.policy == "fixed":
         size = symbol.boundariesrules.size
-        LOG.debug("terminal_symbol_reducer: policy: fixed " + str(size))
+        LOG.debug("terminal_symbol_consume: policy: fixed " + str(size))
         if len(word) >= size and symbol.check(word[:size]):
             return [ParseTree(0, size, [symbol], word[:size], symbol)]
     else:

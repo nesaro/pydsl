@@ -17,13 +17,13 @@
 
 """loader class"""
 
-__author__ = "Nestor Arocha Rodriguez"
+__author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2012, Nestor Arocha Rodriguez"
 __email__ = "nesaro@gmail.com"
 from pkg_resources import Requirement, resource_filename
-from pydsl.Grammar.BNF import BNFGrammar
 
 def load_checker(grammar):
+    from pydsl.Grammar.BNF import BNFGrammar
     import re
     tmp = re.compile("a")
     if isinstance(grammar, str):
@@ -44,6 +44,7 @@ def load_checker(grammar):
         raise ValueError(grammar)
 
 def load_grammar_tool(grammar):
+    from pydsl.Grammar.BNF import BNFGrammar
     from pydsl.Grammar.Tool.Python import PythonGrammarTools
     import re
     tmp = re.compile("a")
@@ -72,7 +73,7 @@ def load_function(identifier, memorylist = []):
         pass
     raise KeyError("Function" + identifier)
 
-def load_grammar(identifier, memorylist = []):
+def load_grammar(identifier, memorylist = []) -> "GrammarDefinition":
     if not memorylist:
         from pydsl.Config import GLOBALCONFIG
         memorylist = GLOBALCONFIG.memorylist
