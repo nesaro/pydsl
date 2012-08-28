@@ -1,11 +1,30 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-
-#Copyright (C) 2008-2012 Néstor Arocha Rodríguez
+#This file is part of pydsl.
+#
+#pydsl is free software: you can redistribute it and/or modify
+#it under the terms of the GNU General Public License as published by
+#the Free Software Foundation, either version 3 of the License, or
+#(at your option) any later version.
+#
+#pydsl is distributed in the hope that it will be useful,
+#but WITHOUT ANY WARRANTY; without even the implied warranty of
+#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#GNU General Public License for more details.
+#
+#You should have received a copy of the GNU General Public License
+#along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 """External program Transformer"""
 
+__author__ = "Nestor Arocha"
+__copyright__ = "Copyright 2008-2012, Nestor Arocha"
+__email__ = "nesaro@gmail.com"
+
+
 import logging
+import subprocess
+from pydsl.Exceptions import ProcessingError
 from .Channel import HostChannel
 LOG = logging.getLogger("Function.ExternalProgram")
 
@@ -22,13 +41,10 @@ class ExternalProgramFunction(HostChannel):
         for inputkey in self.inputchanneldic.keys():
             if inputkey not in wdic:
                 LOG.error("Key not found in inputdic")
-                from ColonyDSL.Function.Function import Error
-                err = Error("Transformer")
-                err.appendSource(self.ecuid)
-                return err 
+                raise ProcessingError("Transformer", self)
         result = self.__processWords(wdic)
         if not result:
-            return Error(self.name, "transformerError")
+            raise ProcessingError("Transformer")
         return result
 
     def __processWords(self, inputdict):
@@ -36,18 +52,15 @@ class ExternalProgramFunction(HostChannel):
         if not inputdict:            
             raise Exception
         calllist  = list(self.__programlist)
-        for channel, informationBlock in inputdict.items():
+        for channel, data in inputdict.items():
             channelfound = False
             for index in range(len(calllist)):
                 element = calllist[index]
                 if element.find("#{"+channel+"}") != -1:
                     channelfound = True
-                calllist[index] = element.replace("#{"+channel+"}", str(informationBlock))
+                    calllist[index] = element.replace("#{"+channel+"}", str(data))
             if not channelfound:
-                LOG.critical("No channel found")
-                raise Exception
-        LOG.debug("Calllist: "+ str(calllist))
-        import subprocess
+                raise Exception("No channel found")
         proc = subprocess.Popen(calllist, stdout=subprocess.PIPE)
         lines = proc.stdout.readlines()
         proc.stdout.close()
@@ -67,16 +80,14 @@ class ExternalProgramFunction(HostChannel):
 
 class ExternalProgramFileFunction:
     """FileFunction which calls an external program"""
-    def __init__(self, identifier, inputformat, outputformat, programcall:list):
+    def __init__(self, programcall:list):
         #programlist ["program","-s","#{inputchannelname1}","-e","#{inputchannelname2}"]
         self.__programlist = programcall
-        self.inputformat = inputformat #TODO
-        self.outputformat = outputformat #TODO
 
     def __call__(self, wdic):
         #fileinput, fileoutput
         #TODO: check if follows inputformat. 
-        from ColonyDSL.Interaction.Protocol import protocol_split
+        from pydsl.Interaction.Protocol import protocol_split
         for dickey in wdic.keys():
             val = wdic[dickey]
             if val.startswith("file://"):
@@ -85,7 +96,7 @@ class ExternalProgramFileFunction:
                 wdic[dickey] = val #file object assumed
         result = self.__processWords(wdic["inputfile"],wdic["outputfile"])
         if not result:
-            return Error(self.name, "transformerError")
+            raise ProcessingError("Transformer", self)
         return result
 
     def __processWords(self, inputfile, outputfile):
@@ -95,11 +106,9 @@ class ExternalProgramFileFunction:
         for index in range(len(calllist)):
             element = calllist[index]
             if element.find("#{inputfile}") != -1:
-                calllist[index] = element.replace("#{inputfile}", inputfile.string)
+                calllist[index] = element.replace("#{inputfile}", inputfile)
             if element.find("#{outputfile}") != -1:
-                calllist[index] = element.replace("#{outputfile}", outputfile.string)
-        LOG.debug("Calllist: "+ str(calllist))
-        import subprocess
+                calllist[index] = element.replace("#{outputfile}", outputfile)
         proc = subprocess.Popen(calllist, stdout=subprocess.PIPE)
         lines = proc.stdout.readlines()
         proc.stdout.close()
@@ -108,7 +117,3 @@ class ExternalProgramFileFunction:
         lines = map(lambda x: x.decode('utf-8'), lines)
         lines = "\n".join(lines)
         return {"output":lines}
-
-    @property
-    def summary(self):
-        return {"iclass":"ExternalProgramFileFunction", "input":self.inputformat, "output":self.outputformat, "identifier":self.identifier}
