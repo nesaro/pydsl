@@ -34,8 +34,11 @@ It also offers library related functionalities:
 
 INSTALLATION
 ============
- * disttools: python3 setup.py install
- * pip: pip install git+http://github.com/nesaro/pydsl.git
+ * disttools:
+   * python3 setup.py install
+ * pip:
+   * pip install git+http://github.com/nesaro/pydsl.git
+   * pip install git+http://github.com/nesaro/pydsl-contrib.git
 
 USAGE
 =====
