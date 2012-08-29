@@ -32,32 +32,10 @@ It also offers library related functionalities:
  * info(identifier): returns information about the element
  * translations(identifier): returns a list of available translators for identifier
 
-REQUIREMENTS
-============
- * python >= 3.0
- * pydsl contrib package ( https://github.com/nesaro/pydsl-contrib )
-
 INSTALLATION
 ============
-python setup.py install
-
-
-BINARIES
-========
-Memory Management
------------------
- * info.py: Retrieves an element from memory and shows a summary
- * search.py: Searchs memory 
-
-Grammars
---------
- * check.py: Checks if input data belongs to a grammar
- * guess:py: Determines input data type
- * validate.py: Perform a validation routine for user data according to a grammar
-
-Functions
----------
- * translate.py: Process user input using a function
+ * disttools: python3 setup.py install
+ * pip: pip install git+http://github.com/nesaro/pydsl.git
 
 USAGE
 =====
@@ -93,6 +71,29 @@ code:
     mychecker = load_checker(integer)
     mytransformer = load_function('inttohex')
     result = a({'input':'123'})
+
+BINARIES
+========
+Memory Management
+-----------------
+ * info.py: Retrieves an element from memory and shows a summary
+ * search.py: Searchs memory 
+
+Grammars
+--------
+ * check.py: Checks if input data belongs to a grammar
+ * guess:py: Determines input data type
+ * validate.py: Perform a validation routine for user data according to a grammar
+
+Functions
+---------
+ * translate.py: Process user input using a function
+
+
+REQUIREMENTS
+============
+ * python >= 3.0
+ * pydsl contrib package ( https://github.com/nesaro/pydsl-contrib )
 
 HELP
 ====
