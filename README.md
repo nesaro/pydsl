@@ -87,6 +87,7 @@ Using pydsl-contrib
  * install with python3 setup.py install
  * use default libraries and transformers
 
+code:
 
     from pydsl.Memory.Loader import *
     mychecker = load_checker(integer)
