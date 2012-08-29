@@ -74,6 +74,7 @@ Loading content from files
 Loading content from a directory
 --------------------------------
 First store your grammar definitions in a directory,
+
     from pydsl.Memory.Storage.Directory.Grammar import GrammarDirStorage
     from pydsl.Guess import Guesser
     a = GrammarDirStorage("directory/")
