@@ -87,11 +87,11 @@ Using pydsl-contrib
  * install with python3 setup.py install
  * use default libraries and transformers
 
+
     from pydsl.Memory.Loader import *
     mychecker = load_checker(integer)
     mytransformer = load_function('inttohex')
     result = a({'input':'123'})
-
 
 HELP
 ====
