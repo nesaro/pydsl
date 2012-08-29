@@ -27,6 +27,10 @@ pydsl offer a set of functionalities that use _grammar definitions_
    * sdt( sdt, ast): Performs an AST translation using a Syntax Directed
    Translator
 
+It also offers library related functionalities:
+ * search(query): search for an element within a memory
+ * info(identifier): returns information about the element
+ * translations(identifier): returns a list of available translators for identifier
 
 REQUIREMENTS
 ============
@@ -36,6 +40,7 @@ REQUIREMENTS
 INSTALLATION
 ============
 python setup.py install
+
 
 BINARIES
 ========
@@ -53,6 +58,27 @@ Grammars
 Functions
 ---------
  * translate.py: Process user input using a function
+
+USAGE
+=====
+To use pydsl as a library for your code, you can:
+
+Loading content from files
+--------------------------
+    from pydsl.Memory.Storage.File.BNF import load_bnf_file
+    grammardefinition = loand_bnf_file('myfile.bnf')
+    from pydsl.Memory.Loader import *
+    mychecker = load_checker(grammardefinition)
+    mychecker('mystring') # returns True or False
+
+Loading content from a directory
+--------------------------------
+First store your grammar definitions in a directory,
+    from pydsl.Memory.Storage.Directory.Grammar import GrammarDirStorage
+    from pydsl.Guess import Guesser
+    a = GrammarDirStorage("directory/")
+    guess = Guesser([a])
+    guess('string')
 
 HELP
 ====
