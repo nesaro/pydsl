@@ -1,21 +1,35 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-
-#Copyright (C) 2008-2012 Néstor Arocha Rodríguez
+#This file is part of pydsl.
+#
+#pydsl is free software: you can redistribute it and/or modify
+#it under the terms of the GNU General Public License as published by
+#the Free Software Foundation, either version 3 of the License, or
+#(at your option) any later version.
+#
+#pydsl is distributed in the hope that it will be useful,
+#but WITHOUT ANY WARRANTY; without even the implied warranty of
+#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#GNU General Public License for more details.
+#
+#You should have received a copy of the GNU General Public License
+#along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 """LR0 unfinished implementation"""
 
+__author__ = "Nestor Arocha"
+__copyright__ = "Copyright 2008-2012, Nestor Arocha"
+__email__ = "nesaro@gmail.com"
+
 import logging
 LOG = logging.getLogger(__name__)
-from .Production import NonTerminalProduction
+from pydsl.Grammar.BNF import NonTerminalProduction
 from pydsl.Grammar.Parser.Parser import BottomUpParser
 from pydsl.Grammar.Symbol import NonTerminalSymbol, TerminalSymbol, EndSymbol, Symbol
 
 def __check_action(action):
     """Valid actions string"""
-    if action not in ["Accept", "Shift", "Reduce", "Fail"]:
-        return False
-    return True
+    return action in ["Accept", "Shift", "Reduce", "Fail"]
 
 def __build_item_closure(itemset, productionruleset):
     """Build input itemset closure """
@@ -31,7 +45,7 @@ def __build_item_closure(itemset, productionruleset):
         changed = False
         for currentitem in resultset.itemlist:
             nextsymbol = currentitem.next_symbol()
-            if nextsymbol == None:
+            if nextsymbol is None:
                 break
             for rule in productionruleset.productionrulelist:
                 if rule.leftside[0] == nextsymbol:

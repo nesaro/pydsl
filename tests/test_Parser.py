@@ -15,8 +15,8 @@
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
-__author__ = "Nestor Arocha Rodriguez"
-__copyright__ = "Copyright 2008-2012, Néstor Arocha Rodríguez"
+__author__ = "Nestor Arocha"
+__copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
@@ -27,9 +27,9 @@ from bnfgrammar import *
 class TestParsers(unittest.TestCase):
 
     #def testLeftRecursion(self):
-    #    from pydsl.Type.Grammar.Parser.RecursiveDescent import RecursiveDescentParser
-    #    descentparser = RecursiveDescentParser(self.productionsetlr)
-    #    result = descentparser.check(self.dots)
+    #    from pydsl.Grammar.Parser.RecursiveDescent import RecursiveDescentParser
+    #    descentparser = RecursiveDescentParser(productionsetlr)
+    #    result = descentparser(dots)
     #    self.assertTrue(result)
 
     def testRightRecursion(self):
@@ -55,99 +55,100 @@ class TestParsers(unittest.TestCase):
         descentparser = RecursiveDescentParser(productionset1)
         result = descentparser(string2)
         self.assertFalse(result)
-       
+
     def testRecursiveDescentParserNull(self):
         from pydsl.Grammar.Parser.RecursiveDescent import RecursiveDescentParser
         descentparser = RecursiveDescentParser(productionset2)
         result = descentparser(string3)
         self.assertTrue(result)
-        
+
     def testRecursiveDescentParserNullBad(self):
         from pydsl.Grammar.Parser.RecursiveDescent import RecursiveDescentParser
         descentparser = RecursiveDescentParser(productionset2)
         result = descentparser(string4)
         self.assertTrue(not result)
-       
-    #def testLR0ParserStore(self):
-    #    from pydsl.Grammar.Parser.LR0Parser import LR0Parser
-    #    parser = LR0Parser(self.productionset1)
-    #    result = parser.check_word(self.tokelist1)
-    #    self.assertTrue(result)
 
-    #def testLR0ParserBad(self):
-    #    from pydsl.Grammar.Parser.LR0Parser import LR0Parser
-    #    parser = LR0Parser(self.productionset1)
-    #    result = parser.check_word(self.tokelist2)
-    #    self.assertTrue(not result)
+    @unittest.skip
+    def testLR0ParserStore(self):
+        from pydsl.Grammar.Parser.LR0 import LR0Parser
+        parser = LR0Parser(productionset1)
+        result = parser(string1)
+        self.assertTrue(result)
 
-    #def testWeightedRightRecursion(self):
-    #    from pydsl.Type.Grammar.Parser.Weighted import WeightedParser
-    #    parser = WeightedParser(self.productionsetrr)
-    #    result = parser.check(self.dots)
-    #    self.assertTrue(result)
+    @unittest.skip
+    def testLR0ParserBad(self):
+        from pydsl.Grammar.Parser.LR0 import LR0Parser
+        parser = LR0Parser(productionset1)
+        result = parser(string2)
+        self.assertTrue(not result)
 
-    #def testWeightedCenterRecursion(self):
-    #    from pydsl.Type.Grammar.Parser.RecursiveDescent import RecursiveDescentParser
-    #    descentparser = RecursiveDescentParser(self.productionsetcr)
-    #    result = descentparser.check(self.dots)
-    #    self.assertTrue(result)
+    @unittest.skip
+    def testWeightedRightRecursion(self):
+        from pydsl.Grammar.Parser.Weighted import WeightedParser
+        parser = WeightedParser(productionsetrr)
+        result = parser(dots)
+        self.assertTrue(result)
 
-    #def testWeightedParserStore(self):
-    #    from pydsl.Type.Grammar.Parser.Weighted import WeightedParser
-    #    parser = WeightedParser(self.productionset1)
-    #    result = parser.check(self.tokelist1)
-    #    self.assertTrue(result)
+    @unittest.skip
+    def testWeightedCenterRecursion(self):
+        from pydsl.Grammar.Parser.RecursiveDescent import RecursiveDescentParser
+        descentparser = RecursiveDescentParser(productionsetcr)
+        result = descentparser(dots)
+        self.assertTrue(result)
 
-    #def testWeightedParserBad(self):
-    #    from pydsl.Type.Grammar.Parser.Weighted import WeightedParser
-    #    parser = WeightedParser(self.productionset1)
-    #    result = parser.check(self.tokelist2)
-    #    self.assertTrue(not result)
-    #    
-    #def testWeightedParserNull(self):
-    #    from pydsl.Type.Grammar.Parser.Weighted import WeightedParser
-    #    parser = WeightedParser(self.productionset2)
-    #    result = parser.check(self.tokelist3)
-    #    self.assertTrue(result)
+    @unittest.skip
+    def testWeightedParserStore(self):
+        from pydsl.Grammar.Parser.Weighted import WeightedParser
+        parser = WeightedParser(productionset1)
+        result = parser(string1)
+        self.assertTrue(result)
 
-    #def testWeightedParserNullBad(self):
-    #    from pydsl.Type.Grammar.Parser.Weighted import WeightedParser
-    #    parser = WeightedParser(self.productionset2)
-    #    result = parser.check(self.tokelist4)
-    #    self.assertTrue(not result)
+    @unittest.skip
+    def testWeightedParserBad(self):
+        from pydsl.Grammar.Parser.Weighted import WeightedParser
+        parser = WeightedParser(productionset1)
+        result = parser(string2)
+        self.assertTrue(not result)
 
-#class TestWeightedParser(unittest.TestCase):
-#    def setUp(self):
-#        from pydsl.Value.Information import Information
-#        self.dots = Information("..................................")
-#        from pydsl.Memory.External.FileLibrary.BNF import strlist_to_production_set
-#        self.productionsetlr,_ = strlist_to_production_set(leftrecursive)
-#        self.productionsetrr,_ = strlist_to_production_set(rightrecursive)
-#        self.productionsetcr,_ = strlist_to_production_set(centerrecursive)
+    @unittest.skip
+    def testWeightedParserNull(self):
+        from pydsl.Grammar.Parser.Weighted import WeightedParser
+        parser = WeightedParser(productionset2)
+        result = parser(string3)
+        self.assertTrue(result)
 
-    #def testLeftRecursion(self):
-    #    from pydsl.Type.Grammar.Parser.WeightedParser import WeightedParser
-    #    parser = WeightedParser(self.productionsetlr)
-    #    result = parser.check_word(self.dots)
-    #    self.assertTrue(result)
+    @unittest.skip
+    def testWeightedParserNullBad(self):
+        from pydsl.Grammar.Parser.Weighted import WeightedParser
+        parser = WeightedParser(productionset2)
+        result = parser(string4)
+        self.assertTrue(not result)
 
-    #def testMixResults(self):
-    #    from pydsl.Type.Grammar.Parser.Parser import mix_results 
-    #    from pydsl.Type.Grammar.Tree import ParserTreeNode
-    #    from pydsl.Abstract import TypeCheckList
-    #    from pydsl.Type.Grammar.Symbol import NullSymbol
-    #    result1 = ParserTreeNode(0, 3, [NullSymbol()], "", None)
-    #    result2 = ParserTreeNode(0, 5, [NullSymbol()], "", None)
-    #    result3 = ParserTreeNode(3, 6, [NullSymbol()], "", None)
-    #    result4 = ParserTreeNode(6, 8, [NullSymbol()], "", None)
-    #    result5 = ParserTreeNode(7, 8, [NullSymbol()], "", None)
-    #    set1 = [result1, result2]
-    #    set1b = TypeCheckList(ParserTreeNode, set1)
-    #    set2 = [result3]
-    #    set2b = TypeCheckList(ParserTreeNode, set2)
-    #    set3 = [result4, result5]
-    #    set3b = TypeCheckList(ParserTreeNode, set3)
-    #    result = mix_results([set1b, set2b, set3b], None)
-    #    #TODO: check result
-    #    self.assertTrue(len(result) == 1)
+class TestWeightedParser(unittest.TestCase):
+    @unittest.skip
+    def testLeftRecursion(self):
+        from pydsl.Grammar.Parser.Weighted import WeightedParser
+        parser = WeightedParser(productionsetlr)
+        result = parser(dots)
+        self.assertTrue(result)
+
+    @unittest.skip
+    def testMixResults(self):
+        from pydsl.Grammar.Parser.Parser import mix_results
+        from pydsl.Grammar.Tree import ParseTree
+        from pydsl.Grammar.Symbol import NullSymbol
+        result1 = ParseTree(0, 3, [NullSymbol()], "", None)
+        result2 = ParseTree(0, 5, [NullSymbol()], "", None)
+        result3 = ParseTree(3, 6, [NullSymbol()], "", None)
+        result4 = ParseTree(6, 8, [NullSymbol()], "", None)
+        result5 = ParseTree(7, 8, [NullSymbol()], "", None)
+        set1 = [result1, result2]
+        set1b = [set1]
+        set2 = [result3]
+        set2b = [set2]
+        set3 = [result4, result5]
+        set3b = [set3]
+        result = mix_results([set1b, set2b, set3b], None)
+        #TODO: check result
+        self.assertTrue(len(result) == 1)
 

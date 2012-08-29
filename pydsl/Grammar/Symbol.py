@@ -94,6 +94,8 @@ class StringTerminalSymbol(TerminalSymbol):
 
     def __eq__(self, other):
         """StringTerminalSymbol are equals if definition and names are equal"""
+        if isinstance(other, str):
+            return self.definition == other
         if not isinstance(other, StringTerminalSymbol):
             return False
         if self.definition != other.definition:
@@ -107,7 +109,6 @@ class StringTerminalSymbol(TerminalSymbol):
 
 
 class WordTerminalSymbol(TerminalSymbol):#boundariesrules: priority, [max,min,fixedsize]
-    #If token is another grammar Word, it stores its semantic info
     def __init__(self, name, definitionrequirementsdic, boundariesrules):
         TerminalSymbol.__init__(self, name, 49, boundariesrules)
         self.grammarname = definitionrequirementsdic["grammarname"]

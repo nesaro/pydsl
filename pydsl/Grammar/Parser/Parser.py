@@ -96,8 +96,6 @@ def mix_results(resultll:list, productionset):
     """ Mix n sets of results """
     from pydsl.Grammar.Tree import ParseTree
     production = None
-    for resultl in resultll:
-        assert(isinstance(resultl, list) and resultl.instancetype == ParseTree)
     midlist = [] #All blocks combinations are stored here
     firstindex = 0
     while firstindex < len(resultll) and len(resultll[firstindex]) == 0: 
