@@ -81,6 +81,18 @@ First store your grammar definitions in a directory,
     guess = Guesser([a])
     guess('string')
 
+Using pydsl-contrib
+-------------------
+ * Download pydsl-contrib repositorie from github
+ * install with python3 setup.py install
+ * use default libraries and transformers
+
+    from pydsl.Memory.Loader import *
+    mychecker = load_checker(integer)
+    mytransformer = load_function('inttohex')
+    result = a({'input':'123'})
+
+
 HELP
 ====
  * http://github.com/nesaro/pydsl
