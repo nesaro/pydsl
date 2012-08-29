@@ -102,11 +102,9 @@ HELP
 
 LICENSE
 =======
-see LICENSE file
+GPLv3, see LICENSE file
 
 ABOUT
 =====
 pydsl is a formal and natural language framework.
-Copyright (C) 2008-2012 Nestor Arocha Rodriguez (nesaro@gmail.com)
-
-
+Copyright (C) 2008-2012 Nestor Arocha (nesaro@gmail.com)
