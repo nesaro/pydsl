@@ -225,12 +225,12 @@ class TopDownParser(Parser):
     """Top down parser like descent parser"""
     def __init__(self, bnfgrammar:BNFGrammar):
         Parser.__init__(self, bnfgrammar)
-        from pydsl.Grammar.Lexer import BNFLexer
-        self._lexer = BNFLexer(bnfgrammar)
         
 class BottomUpParser(Parser):
     """ leaf to root parser"""
     def __init__(self, bnfgrammar, packagedependencies = None):
+        from pydsl.Grammar.Lexer import BNFLexer
+        self._lexer = BNFLexer(bnfgrammar)
         terminalsymbollist = bnfgrammar.getTerminalSymbols()
         for ts in terminalsymbollist:
             from pydsl.Grammar.Symbol import WordTerminalSymbol
