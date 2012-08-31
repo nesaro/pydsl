@@ -152,9 +152,10 @@ class PLYChecker(Checker):
         from ply import yacc, lex
         lexer = lex.lex(self.module)
         parser = yacc.yacc(module = self.module)
+        from pydsl.Exceptions import ParseError
         try:
             parser.parse(data, lexer = lexer)
-        except self.module.ParseError:
+        except ParseError:
             return False
         else:
             return True
