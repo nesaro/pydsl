@@ -53,6 +53,9 @@ def load_python_file(moduleobject, **kwargs):
     elif iclass == "SymbolGrammar":
         from pydsl.Grammar.BNF import BNFGrammar
         return BNFGrammar(**resultdic)
+    elif iclass == "PLY":
+        from pydsl.Grammar.Definition import PLYGrammar
+        return PLYGrammar(moduleobject)
     elif iclass in ["MongoDict", "PythonGrammar"]:
         return resultdic
     else:
