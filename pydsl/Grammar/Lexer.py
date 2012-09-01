@@ -59,13 +59,13 @@ class Lexer(metaclass=ABCMeta):
 
     def __call__(self, string) -> "TokenList":
         """Tokenizes input, generating a list of tokens"""
-        self.string = string
+        self.load(string)
         result = []
         while True:
             nt = self.nextToken()
-            result.append(nt)
+            yield nt
             if nt[0] == "EOF_TYPE":
-                return result
+                return
 
 
 class BNFLexer(Lexer):
