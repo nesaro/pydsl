@@ -143,6 +143,22 @@ class MongoChecker(Checker):
                     return False
         return True
 
+class PLYChecker(Checker):
+    def __init__(self, gd):
+        Checker.__init__(self)
+        self.module = gd.module
+
+    def check(self, data):
+        from ply import yacc, lex
+        lexer = lex.lex(self.module)
+        parser = yacc.yacc(module = self.module)
+        from pydsl.Exceptions import ParseError
+        try:
+            parser.parse(data, lexer = lexer)
+        except ParseError:
+            return False
+        else:
+            return True
 
                 
 

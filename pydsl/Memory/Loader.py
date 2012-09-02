@@ -24,6 +24,7 @@ from pkg_resources import Requirement, resource_filename
 
 def load_checker(grammar):
     from pydsl.Grammar.BNF import BNFGrammar
+    from pydsl.Grammar.Definition import PLYGrammar
     import re
     tmp = re.compile("a")
     if isinstance(grammar, str):
@@ -40,6 +41,9 @@ def load_checker(grammar):
     elif isinstance(grammar, dict) and "spec" in grammar:
         from pydsl.Grammar.Checker import MongoChecker
         return MongoChecker(grammar["spec"])
+    elif isinstance(grammar, PLYGrammar):
+        from pydsl.Grammar.Checker import PLYChecker
+        return PLYChecker(grammar)
     else:
         raise ValueError(grammar)
 

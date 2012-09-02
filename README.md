@@ -8,6 +8,7 @@ pydsl support several grammar specification formats:
  * pydsl BNF format
  * ANLTR .g format (not supported yet)
  * mongo database query dictionaries
+ * python ply module (only check support)
 
 each grammar definition have the following properties:
  * enum(gd): yields a list of accepted words
@@ -97,6 +98,7 @@ REQUIREMENTS
 ============
  * python >= 3.0
  * pydsl contrib package ( https://github.com/nesaro/pydsl-contrib )
+ * optional: ply library ( http://www.dabeaz.com/ply/ )
 
 HELP
 ====

@@ -24,7 +24,7 @@ import unittest
 class TestMongoChecker(unittest.TestCase):
     """Mongo checker"""
     def testCheck(self):
-        """Test checker instanciation and call"""
+        """Test checker instantiation and call"""
         bad = {"a":1,"b":3}
         letter = {"a":1,"b":"asd"}
         from pydsl.Grammar.Checker import MongoChecker
@@ -42,7 +42,7 @@ class TestMongoChecker(unittest.TestCase):
 class TestBNFChecker(unittest.TestCase):
     """BNF Checker"""
     def testCheck(self):
-        """Test checker instanciation and call"""
+        """Test checker instantiation and call"""
         from pydsl.Grammar.Checker import BNFChecker
         raise NotImplementedError
 
@@ -50,6 +50,17 @@ class TestBNFChecker(unittest.TestCase):
 class TestRegularExpressionChecker(unittest.TestCase):
     """BNF Checker"""
     def testCheck(self):
-        """Test checker instanciation and call"""
+        """Test checker instantiation and call"""
         from pydsl.Grammar.Checker import RegularExpressionChecker
         raise NotImplementedError
+
+class TestPLYChecker(unittest.TestCase):
+    def testCheck(self):
+        """Test checker instantiation and call"""
+        from pydsl.Grammar.Checker import PLYChecker
+        import plye
+        from pydsl.Grammar.Definition import PLYGrammar
+        grammardef = PLYGrammar(plye)
+        checker = PLYChecker(grammardef)
+        self.assertTrue(checker.check("O"))
+        self.assertFalse(checker.check("FALSE"))
