@@ -69,49 +69,32 @@ class Lexer(metaclass=ABCMeta):
 
 
 class BNFLexer(Lexer):
-    def __init__(self, bnfgrammar, string=""):
-        Lexer.__init__(self, string)
+    """Generates a Lexer from a BNFGrammar instance"""
+    def __init__(self, bnfgrammar):
+        Lexer.__init__(self)
+        self.symbollist = bnfgrammar.getTerminalSymbols()
+
+    @property
+    def current(self):
+        """Returns the element under the cursor until the end of the string"""
+        try:
+            return self.string[self.index:]
+        except IndexError:
+            return finalchar
 
     def nextToken(self):
         import re
         while self.current != finalchar:
-            if self.current == "/":
-                self.comment(tl)
-                continue
-            elif self.current == " ":
-                self.consume()
-                continue
-            elif self.current == ",":
-                return self.comma()
-            elif self.current == "[":
-                return self.lbrack()
-            elif self.current == "]":
-                return self.rbrack()
-            elif re.match("[a-zA-Z]", self.current):
-                return self.name()
+            validelements = [x for x in self.symbollist if self.current[0] in x.first()]
+            if not validelements:
+                raise Exception("Not found")
+            if len(validelements) == 1:
+                element = validelements[0]
+                string = self.current[:len(element)]
+                for _ in range(len(element)):
+                    self.consume()
+                return (validelements[0].name, string)
             else:
                 raise Exception
+
         return ("EOF_TYPE", "")
-
-    def comma(self):
-        current = self.current
-        self.match(",")
-        return ("COMMA", current)
-
-    def lbrack(self):
-        current = self.current
-        self.match("[")
-        return ("LBRACK", current)
-
-    def rbrack(self):
-        current = self.current
-        self.match("]")
-        return ("RBRACK", current)
-
-    def name(self):
-        import re
-        string = ""
-        while self.current != finalchar and re.match("[a-zA-Z]", self.current):
-            string += self.current
-            self.consume()
-        return ("NAME", string)
