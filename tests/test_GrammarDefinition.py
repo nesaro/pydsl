@@ -78,3 +78,25 @@ class TestGrammarDefinitionMongoDb(unittest.TestCase):
     def testMax(self):
         self.grammardef.maxsize()
 
+class TestGrammarDefinitionPLY(unittest.TestCase):
+    def setUp(self):
+        import plye
+        from pydsl.Grammar.Definition import PLYGrammar
+        self.grammardef = PLYGrammar(plye)
+
+    @unittest.skip
+    def testEnumerate(self):
+        self.grammardef.enum()
+
+    @unittest.skip
+    def testFirst(self):
+        self.grammardef.first()
+
+    @unittest.skip
+    def testMin(self):
+        self.grammardef.minsize()
+
+    @unittest.skip
+    def testMax(self):
+        self.grammardef.maxsize()
+
