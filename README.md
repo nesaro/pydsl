@@ -1,7 +1,7 @@
 DESCRIPTION
 ===========
 
-pydsl is an environment for creating and using formal languages. 
+pydsl is a language workbench written in python
 The main idea is to allow an easy way to define, use and combine DSLs to create programs.
 pydsl support several grammar specification formats:
  * regular expressions
