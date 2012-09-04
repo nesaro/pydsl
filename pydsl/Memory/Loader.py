@@ -24,15 +24,13 @@ from pkg_resources import Requirement, resource_filename
 
 def load_checker(grammar):
     from pydsl.Grammar.BNF import BNFGrammar
-    from pydsl.Grammar.Definition import PLYGrammar
-    import re
-    tmp = re.compile("a")
+    from pydsl.Grammar.Definition import PLYGrammar, RegularExpressionDefinition
     if isinstance(grammar, str):
         grammar = load_grammar(grammar)
     if isinstance(grammar, BNFGrammar):
         from pydsl.Grammar.Checker import BNFChecker
         return BNFChecker(grammar)
-    elif isinstance(grammar, type(tmp)):
+    elif isinstance(grammar, RegularExpressionDefinition):
         from pydsl.Grammar.Checker import RegularExpressionChecker
         return RegularExpressionChecker(grammar)
     elif isinstance(grammar, dict) and "matchFun" in grammar:
@@ -49,15 +47,14 @@ def load_checker(grammar):
 
 def load_grammar_tool(grammar):
     from pydsl.Grammar.BNF import BNFGrammar
+    from pydsl.Grammar.Definition import RegularExpressionDefinition
     from pydsl.Grammar.Tool.Python import PythonGrammarTools
-    import re
-    tmp = re.compile("a")
     if isinstance(grammar, str):
         grammar = load_grammar(grammar)
     if isinstance(grammar, BNFGrammar):
         from pydsl.Grammar.Tool.Symbol import SymbolGrammarTools
         return SymbolGrammarTools(grammar)
-    elif isinstance(grammar, type(tmp)):
+    elif isinstance(grammar, RegularExpressionDefinition):
         from pydsl.Grammar.Tool.Regular import RegularExpressionGrammarTools
         return RegularExpressionGrammarTools(grammar)
     elif isinstance(grammar, dict) and "matchFun" in grammar:
