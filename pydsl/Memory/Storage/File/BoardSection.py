@@ -23,15 +23,15 @@ __email__ = "nesaro@gmail.com"
 
 class BoardConnectionDefinition:
     """Transformer connection definition"""
-    def __init__(self, basename, internalname, gtname, externalname):
-        self.basename = basename
-        self.internalchannelname = internalname
-        self.externalgtname = gtname
-        self.externalchannelname = externalname
+    def __init__(self, basename, source, gtname, destination):
+        self.source = basename
+        self.sourcechannel = source
+        self.destination = gtname
+        self.destinationchannel = destination
 
     def __str__(self):
-        result = "<BoardConnectionDefinition: " + self.basename + " " + self.internalchannelname
-        result += " -> " + self.externalgtname + ":" + self.externalchannelname
+        result = "<BoardConnectionDefinition: " + self.source + " " + self.sourcechannel
+        result += " -> " + self.externalgtname + ":" + self.destinationchannel
         return result
 
 class BoardDefinitionSection:

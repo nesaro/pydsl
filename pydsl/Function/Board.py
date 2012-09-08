@@ -119,11 +119,11 @@ class Board:
 
         for definition in self.__GTDefinitionlist:
             for gtcondef in definition.inputConnectionDefinitions:
-                if gtcondef.externalgtname == "Main":
-                    self.__inputGTDict[gtcondef.externalchannelname] = (gtcondef.basename, gtcondef.internalchannelname) #Prepares self.__inputGTDict
+                if gtcondef.destination == "Main":
+                    self.__inputGTDict[gtcondef.destinationchannel] = (gtcondef.source, gtcondef.sourcechannel) #Prepares self.__inputGTDict
             for gtcondef in definition.outputConnectionDefinitions:
-                if gtcondef.externalgtname == "Main":
-                    self.__outputGTDict[gtcondef.externalchannelname] = (gtcondef.basename, gtcondef.internalchannelname) #Prepares self.__outputGTDict
+                if gtcondef.destination == "Main":
+                    self.__outputGTDict[gtcondef.destinationchannel] = (gtcondef.source, gtcondef.sourcechannel) #Prepares self.__outputGTDict
 
     def __loadTfromDefinitionList(self):
         """GTDefinitions -> Instances"""
@@ -148,9 +148,9 @@ class Board:
             self.connectionsdict[gtname] = {}
             for gtcondef in outputgrammarlist:
                 hostt = None     
-                if gtcondef.externalgtname != "Main":
-                    hostt = self._hostT[gtcondef.externalgtname]
-                self.connectionsdict[gtname][gtcondef.internalchannelname] = (gtcondef.externalchannelname, hostt, gtcondef.externalgtname)
+                if gtcondef.destination != "Main":
+                    hostt = self._hostT[gtcondef.destination]
+                self.connectionsdict[gtname][gtcondef.sourcechannel] = (gtcondef.destinationchannel, hostt, gtcondef.destination)
 
     def __str__(self):
         result = "<B " + str(self.identifier) + " "
