@@ -74,8 +74,10 @@ class DirStorage(Storage, metaclass = ABCMeta):
                 result["description"] =  InmutableDict(moduleobject.description)
             if hasattr(moduleobject, "inputdic"):
                 result["input"] = InmutableDict(moduleobject.inputdic)
+                result["inputlist"] = tuple(moduleobject.inputdic.values())
             if hasattr(moduleobject, "outputdic"):
                 result["output"] = InmutableDict(moduleobject.outputdic)
+                result["outputlist"] = tuple(moduleobject.outputdic.values())
             if hasattr(moduleobject, "inputformat"):
                 result["input"] = moduleobject.inputformat
             if hasattr(moduleobject, "outputformat"):
