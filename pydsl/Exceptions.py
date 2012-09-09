@@ -45,3 +45,12 @@ class BadFileFormat(Exception):
         Exception.__init__(self)
         self.filename = filename
 
+class ParseError(Exception):
+    def __init__(self, msg, offset):
+        self.msg = msg
+        self.offset = offset
+    def __repr__(self):
+        return "ParseError(%r, %r)" % (self.msg, self.offset)
+    def __str__(self):
+        return "%s at position %s" % (self.msg, self.offset + 1)
+

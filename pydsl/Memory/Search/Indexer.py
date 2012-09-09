@@ -99,7 +99,7 @@ class Indexer:
                         #string
                         if qpart not in element[queryterm.left]:
                             ismatch = False
-                            break
+                            continue
                 except KeyError:
                     continue
                 if ismatch:

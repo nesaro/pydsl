@@ -57,6 +57,10 @@ class Symbol(metaclass = ABCMeta):
     def weight(self):
         return self._weight
 
+    def first(self, length = 1):
+        """Returns the list of possible first elements"""
+        raise NotImplementedError
+
 class NonTerminalSymbol(Symbol):
     def __init__(self, name,  weight = 50):
         Symbol.__init__(self, name, weight)
@@ -103,6 +107,12 @@ class StringTerminalSymbol(TerminalSymbol):
         if self.name != other.name:
             return False
         return True
+
+    def __len__(self):
+        return self.definition
+
+    def first(self):
+        return self.definition[0]
 
     def __str__(self):
         return "<StringTS: '" + self.definition + "'>"

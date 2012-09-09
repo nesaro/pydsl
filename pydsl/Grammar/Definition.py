@@ -35,3 +35,34 @@ class GrammarDefinition:
     @property
     def maxsize(self):
         raise NotImplementedError
+
+class PLYGrammar(GrammarDefinition):
+    """PLY based grammar"""
+    def __init__(self, module):
+        GrammarDefinition.__init__(self)
+        self.module = module
+
+    @property
+    def first(self):
+        pass
+
+    @property
+    def maxsize(self):
+        pass
+
+    @property
+    def minsize(self):
+        pass
+
+class RegularExpressionDefinition(GrammarDefinition):
+    def __init__(self, regexp, flags = 0):
+        if not isinstance(regexp, str):
+            raise TypeError
+        GrammarDefinition.__init__(self)
+        self.regexpstr = regexp
+        self.flags = flags
+        import re
+        self.regexp = re.compile(regexp, flags)
+
+    def __getattr__(self, attr):
+        return getattr(self.regexp, attr)

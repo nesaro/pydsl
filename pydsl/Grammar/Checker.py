@@ -65,16 +65,12 @@ class BNFChecker(Checker):
     def __init__(self, bnf, parser = "auto"):
         Checker.__init__(self)
         parser = bnf.options.get("parser",parser)
-        if parser == "descent":
+        if parser == "descent" or parser == "auto" or parser == "default":
             from .Parser.RecursiveDescent import RecursiveDescentParser
             self.__parser = RecursiveDescentParser(bnf)
         elif parser == "weighted":
             self.__parser = WeightedParser(bnf)
             raise Exception
-        elif parser == "auto" or parser == "default":
-            #TODO Guess best parser
-            from .Parser.Weighted import WeightedParser
-            self.__parser = WeightedParser(bnf)
         else:
             LOG.error("Wrong parser name: " + parser)
             raise Exception
@@ -83,7 +79,6 @@ class BNFChecker(Checker):
         try:
             return len(self.__parser.get_trees(data)) > 0
         except IndexError:
-            LOG.exception("EXCEPTION IndexError")
             return False 
         return False
         
@@ -143,6 +138,22 @@ class MongoChecker(Checker):
                     return False
         return True
 
+class PLYChecker(Checker):
+    def __init__(self, gd):
+        Checker.__init__(self)
+        self.module = gd.module
+
+    def check(self, data):
+        from ply import yacc, lex
+        lexer = lex.lex(self.module)
+        parser = yacc.yacc(module = self.module)
+        from pydsl.Exceptions import ParseError
+        try:
+            parser.parse(data, lexer = lexer)
+        except ParseError:
+            return False
+        else:
+            return True
 
                 
 

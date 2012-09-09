@@ -109,7 +109,7 @@ class RecursiveDescentParser(TopDownParser):
         """ Aux function. helps check_word"""
         LOG.debug("__recursive_parser: Begin ")
         if not data:
-            raise Exception("No input data while calling recursive parser")
+            return []
         from ..Symbol import TerminalSymbol, NullSymbol, NonTerminalSymbol
         if isinstance(onlysymbol, TerminalSymbol):
             #Locate every ocurrence of word and return a set of results. Follow boundariesrules

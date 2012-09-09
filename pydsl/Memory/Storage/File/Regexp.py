@@ -47,5 +47,6 @@ def load_re_from_file(filepath):
     flags = 0
     if "i" in flagstr:
         flags |= re.I
-    return re.compile(regexp, flags)
+    from pydsl.Grammar.Definition import RegularExpressionDefinition
+    return RegularExpressionDefinition(regexp, flags)
 

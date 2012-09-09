@@ -20,8 +20,8 @@
 from pydsl.Grammar.Symbol import Symbol, TerminalSymbol
 from pydsl.Grammar.Definition import GrammarDefinition
 
-__author__ = "Nestor Arocha Rodriguez"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha Rodriguez"
+__author__ = "Nestor Arocha"
+__copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 
@@ -124,10 +124,10 @@ class BNFGrammar(GrammarDefinition): #Only stores a ruleset, and methods to ask 
             if rule.leftside[0] == self._initialsymbol:
                 return rule
         raise IndexError
-        
+
     def getProductionsBySide(self, symbollist:list, side = "left"):
         result = []
-        for rule in self.productionlist:
+        for rule in self.productionlist: #FIXME Is iterating over production only
             part = None
             if side == "left":
                 part = rule.leftside
@@ -139,14 +139,14 @@ class BNFGrammar(GrammarDefinition): #Only stores a ruleset, and methods to ask 
             if len(part) != len(symbollist):
                 valid = False
             for ruleindex in range(len(part)):
-                if symbollist[ruleindex] != part[ruleindex]:
+                if part[ruleindex] != symbollist[ruleindex]:
                     valid = False
                     break
             if valid:
                 result.append(rule)
         if not result:
-            print([str(x) for x in symbollist], side)
-            raise IndexError
+            raise IndexError("Symbol: %s" % str([str(x) for x in symbollist]))
+
         return result
 
     def getProductionByBothSides(self, leftsymbollist:list, rightsymbollist:list):
@@ -247,7 +247,7 @@ def reduce_non_terminal_production(productionset:list, uselesssymbol):
             newproduction.insert(index, validterminalsymbol)
             if not saverule:#Si no habia otra produccion
                 productionset.remove(production)
-     
+
 
 def split_production(productionset:list, production):
     from .Symbol import NonTerminalSymbol
@@ -267,8 +267,8 @@ def split_production(productionset:list, production):
     newproduction = Production(production.leftside, newrightside)
     productionset.append(newproduction)
     return productionset
-        
-    
+
+
 def chomsky_normal_form(productionset:BNFGrammar) -> BNFGrammar:
     """TODO Check is Epsilon free"""
     ntermslist = []
@@ -298,7 +298,7 @@ def chomsky_normal_form(productionset:BNFGrammar) -> BNFGrammar:
             uselessnonterms.append(production.rightside[0])
     for nonterm in uselessnonterms:
         productionset = reduce_non_terminal_production(productionset, nonterm)
-    
+
     #STEP 3:rightside is too long 
     longproductions = []
     for production in productionset:
@@ -308,5 +308,5 @@ def chomsky_normal_form(productionset:BNFGrammar) -> BNFGrammar:
             longproductions.append(production)
     for production in longproductions:
         productionset = split_production(productionset, nonterm)
-    
+
     return productionset

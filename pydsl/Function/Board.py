@@ -50,7 +50,7 @@ class Board:
 
     def __call__(self, inputdict:dict):
         LOG.debug(" received dic:" + str(inputdict))
-        resultdict = {}
+        resultstack = {}
         calldict = {}
         if not inputdict:
             LOG.error("No input")
@@ -63,45 +63,36 @@ class Board:
                 calldict[gtname] = {}
             calldict[gtname][keyname] = strcontent
         for gtname, functinput in calldict.items():
-            resultdict[gtname] = self._hostT[gtname](functinput)
+            resultstack[gtname] = self._hostT[gtname](functinput)
         #prepare extendedtuplelist
 
         extendedtuplelist = []
         for gtname, results in self.connectionsdict.items():
-            for chan1, duple in results.items():
-                #gtname, outputchannel, inputchannel, gtinstance
-                extendedtuplelist.append((gtname, chan1, duple[0], duple[1], duple[2]))
+            for sourcechannel, duple in results.items():
+                #sourcename, sourcechannel, destinationchannel, destination, destinationame
+                extendedtuplelist.append((gtname, sourcechannel, duple[0], duple[1], duple[2]))
         change = True
         while change:
             change = False
-            thisroundgt = set()
-            for gtname, extkey, intkey, gtinstance, extgtname in extendedtuplelist:
-                if gtinstance:
-                    thisroundgt.add((gtinstance, extgtname))
-            for curgt, curgtname in thisroundgt:
+            for _, _, _, curgt, curgtname in extendedtuplelist:
+                if curgtname in resultstack:
+                    continue
                 curinputs = {}
-                for gtname, extkey, intkey, gtinstance, extgtname in extendedtuplelist:
-                    if not gtinstance:
+                for sourcename, sourcechannel, destinationchannel, destination, destinationname in extendedtuplelist:
+                    if not destination:
                         continue
-                    if not gtname in curinputs:
-                        curinputs[gtname] = {}
-                    if gtname in resultdict:
-                        curinputs[gtname][extkey] = resultdict[gtname][intkey]
-                if sum([len(x) for x in curinputs.values()]) == len(curgt.inputchanneldic):
+                    if not destinationname in curinputs:
+                        curinputs[destinationname] = {}
+                    if sourcename in resultstack:
+                        curinputs[destinationname][destinationchannel] = resultstack[sourcename][sourcechannel]
+                if curgtname in curinputs and len(curinputs[curgtname]) == len(curgt.inputchanneldic):
                     change = True
-                    curinputdict = {}
-                    for gtname, value in curinputs.items():
-                        curinputdict.update(value)
-                        for key in value:
-                            del resultdict[gtname][key]
-                        if not resultdict[gtname]:
-                            del resultdict[gtname]
-                    resultdict[curgtname] = self._hostT[curgtname](curinputdict)
-                    
+                    #TODO:Delete used elements from resultstack
+                    resultstack[curgtname] = self._hostT[curgtname](curinputs[curgtname])
             finaldict = {}
             for key, value in self.__outputGTDict.items():
                 gtname, channelname = value
-                finaldict[key] = resultdict[gtname][channelname]
+                finaldict[key] = resultstack[gtname][channelname]
             return finaldict
                 
 
@@ -119,11 +110,11 @@ class Board:
 
         for definition in self.__GTDefinitionlist:
             for gtcondef in definition.inputConnectionDefinitions:
-                if gtcondef.externalgtname == "Main":
-                    self.__inputGTDict[gtcondef.externalchannelname] = (gtcondef.basename, gtcondef.internalchannelname) #Prepares self.__inputGTDict
+                if gtcondef.destination == "Main":
+                    self.__inputGTDict[gtcondef.destinationchannel] = (gtcondef.source, gtcondef.sourcechannel) #Prepares self.__inputGTDict
             for gtcondef in definition.outputConnectionDefinitions:
-                if gtcondef.externalgtname == "Main":
-                    self.__outputGTDict[gtcondef.externalchannelname] = (gtcondef.basename, gtcondef.internalchannelname) #Prepares self.__outputGTDict
+                if gtcondef.destination == "Main":
+                    self.__outputGTDict[gtcondef.destinationchannel] = (gtcondef.source, gtcondef.sourcechannel) #Prepares self.__outputGTDict
 
     def __loadTfromDefinitionList(self):
         """GTDefinitions -> Instances"""
@@ -148,9 +139,9 @@ class Board:
             self.connectionsdict[gtname] = {}
             for gtcondef in outputgrammarlist:
                 hostt = None     
-                if gtcondef.externalgtname != "Main":
-                    hostt = self._hostT[gtcondef.externalgtname]
-                self.connectionsdict[gtname][gtcondef.internalchannelname] = (gtcondef.externalchannelname, hostt, gtcondef.externalgtname)
+                if gtcondef.destination != "Main":
+                    hostt = self._hostT[gtcondef.destination]
+                self.connectionsdict[gtname][gtcondef.sourcechannel] = (gtcondef.destinationchannel, hostt, gtcondef.destination)
 
     def __str__(self):
         result = "<B " + str(self.identifier) + " "
