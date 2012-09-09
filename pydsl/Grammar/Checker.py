@@ -79,7 +79,6 @@ class BNFChecker(Checker):
         try:
             return len(self.__parser.get_trees(data)) > 0
         except IndexError:
-            LOG.exception("EXCEPTION IndexError")
             return False 
         return False
         

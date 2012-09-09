@@ -72,7 +72,7 @@ def load_function(identifier, memorylist = []):
         return load_transformer(identifier, memorylist)
     except KeyError:
         pass
-    raise KeyError("Function" + identifier)
+    raise KeyError("Function " + identifier)
 
 def load_grammar(identifier, memorylist = []) -> "GrammarDefinition":
     if not memorylist:
