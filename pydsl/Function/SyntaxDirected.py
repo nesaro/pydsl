@@ -25,74 +25,34 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
-from .Transformer import Transformer
 
-class STDVarDict:
-    """Stores variable-value blocks Aside rule name, each element should be
-    retrievable by position in the original string"""
-    def __init__(self, productionruleset):
-        self.vardict = {} #store by rule name
-        self.productionruleset = productionruleset
-
-    def getInitialSymbol(self):
-        """returns global dict """
-        return list(self.vardict["S0"].values())[0][1]
-
-    def getChildByNameAndBorders(self, rulename, dpr):
-        thisrule = self.vardict[rulename]
-        ruledpr = None
-        for leftpos, rightpos in thisrule.keys():
-            if leftpos >= dpr.leftpos and rightpos <= dpr.rightpos:
-                ruledpr = thisrule[(leftpos, rightpos)][0]
-                break
-        else:
-            return []
-        result = []
-        for unused_child in ruledpr.childlist:
-            result.append((dpr.rule.name, dpr.leftpos, dpr.rightpos))
-        return result
-
-    def setByNameAndBorders(self, rulename, dpr, valuedict):
-        if not rulename in self.vardict:
-            self.vardict[rulename] = {}
-        self.vardict[rulename][(dpr.leftpos, dpr.rightpos)] = (dpr, valuedict)
-
-class STDCodeBlock:
-    def __call__(self, vardict, rulename, dpr):
-        pass
-
-class SyntaxDirectedTransformer(Transformer):
-    def __init__(self, inputgrammardic, outputgrammardic, blockdic:dict):
-        assert(len(inputgrammardic) == 1)
-        assert(len(outputgrammardic) == 1)
-        Transformer.__init__(self, inputgrammardic, outputgrammardic, ecuid, server)
+class SyntaxDirectedTransformer:
+    def __init__(self, inputgrammar, outputgrammar, blockdic:dict):
         self.blockdic = blockdic
-        productionset = list(self.inputchanneldic.values())[0].productionset
-        self.vardict = STDVarDict(productionset) #Donde se guardan las variables. Hay un registro general y uno por cada regla #Cada regla debe a su vez guardar una lista segun rango de la ocurrencia. Ejemplo: {"E->a+b":[(1,3)]:{"a.var":3,"b.var":5}} 
+        if isinstance(inputgrammar, str):
+            from pydsl.Memory.Loader import load_grammar
+            inputgrammar = load_grammar(inputgrammar)
+        from pydsl.Grammar.Parser.RecursiveDescent import RecursiveDescentParser
+        self.parser = RecursiveDescentParser(inputgrammar)
+        self.blockdic = blockdic
 
-    def __parseSymbolTokenTree(self, stt, word):
+    def __parseSymbolTokenTree(self, stt):
         """Returns a tokenlist"""
-        stts = list(self.inputchanneldic.values())[0].get_trees(word)
-        assert(len(stts) == 1)
-        stt = stts[0]
         #productionruleset = list(self.inputchanneldic.values())[0].productionset
-        mylist = {}
-        for dpr in stt.getAllByOrder():
-            mylist[dpr.production.name] = dpr
-        for rulename, dpr in mylist.items():
-            self.blockdic[rulename](self.vardict, rulename, dpr)
+        from pydsl.Grammar.Symbol import TerminalSymbol
+        if isinstance(stt.production, TerminalSymbol):
+            return stt.content
+        childlist = []
+        for child in stt.childlist:
+            childlist.append(self.__parseSymbolTokenTree(child))
+        if not str(stt.production) in self.blockdic and len(childlist) == 1:
+            return childlist[0]
+        return self.blockdic[str(stt.production)](childlist)
 
-    def __call__(self, worddic):
-        word = list(worddic.values())[0]
-        stts = list(self.inputchanneldic.values())[0].get_trees(word)
-        assert(len(stts) == 1)
-        stt = stts[0]
-        _ = self.__parseSymbolTokenTree(stt, word)
-        _ = self.blockdic["finally"](self.vardict) #El ultimo bloque que devuelve el resultado del transformador
-        #return result
+    def __call__(self, word):
+        stt = self.parser.get_trees(word)[0]
+        return self.__parseSymbolTokenTree(stt)
 
     @property
     def summary(self):
-        inputdic = [ x.identifier for x in self.inputchanneldic.values() ]
-        outputdic = [ x.identifier for x in self.outputchanneldic.values() ]
-        return {"iclass":"SyntaxDirectedTransformer", "identifier":self.identifier, "input":inputdic, "output":outputdic }
+        return {"iclass":"SyntaxDirectedTransformer", "identifier":self.identifier, "input":self.inputgrammar, "output":self.outputgrammar }
