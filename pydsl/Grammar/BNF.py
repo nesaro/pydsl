@@ -276,8 +276,6 @@ def chomsky_normal_form(productionset:BNFGrammar) -> BNFGrammar:
     #STEP 1: A -> B,c 
     #Terminal and nonterminal at right side 
     for production in productionset:
-        if isinstance(production, TerminalProduction):
-            continue
         termlist = 0
         ntermlist = 0
         for element in production.rightside:
@@ -292,8 +290,6 @@ def chomsky_normal_form(productionset:BNFGrammar) -> BNFGrammar:
     #STEP 2: useless nonterminal
     uselessnonterms = []
     for production in productionset:
-        if isinstance(production, TerminalProduction):
-            continue
         if len(production.rightside) == 1 and isinstance(production.rightside[0], NonTerminalSymbol):
             uselessnonterms.append(production.rightside[0])
     for nonterm in uselessnonterms:
@@ -302,8 +298,6 @@ def chomsky_normal_form(productionset:BNFGrammar) -> BNFGrammar:
     #STEP 3:rightside is too long 
     longproductions = []
     for production in productionset:
-        if isinstance(production, TerminalProduction):
-            continue
         if len(production.rightside) > 2:
             longproductions.append(production)
     for production in longproductions:
