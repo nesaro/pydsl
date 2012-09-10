@@ -66,7 +66,7 @@ class NonTerminalSymbol(Symbol):
         Symbol.__init__(self, name, weight)
 
     def __str__(self):
-        return "<NonTS name:" + self.name + " ,weight = " + str(self._weight) + ">"
+        return "<NonTS: " + self.name + ">"
 
     def __eq__(self, other):
         if not isinstance(other, NonTerminalSymbol):
@@ -115,7 +115,7 @@ class StringTerminalSymbol(TerminalSymbol):
         return self.definition[0]
 
     def __str__(self):
-        return "<StringTS: '" + self.definition + "'>"
+        return "<StringTS: " + self.definition + ">"
 
 
 class WordTerminalSymbol(TerminalSymbol):#boundariesrules: priority, [max,min,fixedsize]
@@ -145,7 +145,7 @@ class WordTerminalSymbol(TerminalSymbol):#boundariesrules: priority, [max,min,fi
         return result
 
     def __str__(self):
-        return "<WordTS: '" + self.grammarname + "'>"
+        return "<WordTS: " + self.grammarname + ">"
 
 
 class NullSymbol(Symbol):

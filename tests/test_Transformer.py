@@ -74,8 +74,8 @@ class TestSyntaxDirectedTransformer(unittest.TestCase):
     def setUp(self):
         from pydsl.Function.SyntaxDirected import SyntaxDirectedTransformer
         self.__gt1 = SyntaxDirectedTransformer("LogicalExpression", "cstring",
-                {" OperatorExpression  ::=  <WordTS: 'TrueFalse'>  <NonTS name:RestExpression ,weight = 50> ":ope1, 
-                    ' Expression  ::=  <NonTS name:OperatorExpression ,weight = 50> ':ope2})
+                {"OperatorExpression::=<WordTS: TrueFalse> <NonTS: RestExpression>":ope1, 
+                    'Expression::=<NonTS: OperatorExpression>':ope2})
         print(self.__gt1("True&&True"))
 
     def testError(self):
