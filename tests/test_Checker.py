@@ -64,3 +64,30 @@ class TestPLYChecker(unittest.TestCase):
         checker = PLYChecker(grammardef)
         self.assertTrue(checker.check("O"))
         self.assertFalse(checker.check("FALSE"))
+
+
+class TestJsonSchemaChecker(unittest.TestCase):
+    def testCheck(self):
+        """Test checker instantiation and call"""
+        from pydsl.Grammar.Definition import JsonSchema
+        from pydsl.Grammar.Checker import JsonSchemaChecker
+        schema = {
+            "type" : "string",
+            "items" : {
+                "type" : ["string", "object"],
+                "properties" : {
+                    "foo" : {"enum" : [1, 3]},
+                    "bar" : {
+                        "type" : "array",
+                        "properties" : {
+                            "bar" : {"required" : True},
+                            "baz" : {"minItems" : 2},
+                        }
+                    }
+                }
+            }
+        }
+        grammardef = JsonSchema(schema)
+        checker = JsonSchemaChecker(grammardef)
+        self.assertTrue(checker.check("a"))
+        self.assertFalse(checker.check([1, {"foo" : 2, "bar" : {"baz" : [1]}}, "quux"]))

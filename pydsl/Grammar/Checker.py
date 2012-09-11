@@ -155,5 +155,17 @@ class PLYChecker(Checker):
         else:
             return True
 
-                
+
+class JsonSchemaChecker(Checker):
+    def __init__(self, gd):
+        Checker.__init__(self)
+        self.gd = gd
+
+    def check(self, data):
+        from jsonschema import validate, ValidationError
+        try:
+            validate(data, self.gd)
+        except ValidationError:
+            return False
+        return True
 

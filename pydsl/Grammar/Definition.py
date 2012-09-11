@@ -66,6 +66,10 @@ class RegularExpressionDefinition(GrammarDefinition):
 
     def __getattr__(self, attr):
         return getattr(self.regexp, attr)
+
+class JsonSchema(GrammarDefinition, dict):
+    pass
+
 class MongoGrammar(GrammarDefinition, dict):
     @property
     def first(self):

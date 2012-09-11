@@ -1,0 +1,3 @@
+git+https://github.com/Julian/jsonschema.git
+git+https://github.com/nesaro/pydsl-contrib.git
+ply
