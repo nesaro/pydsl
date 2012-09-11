@@ -56,7 +56,10 @@ def load_python_file(moduleobject, **kwargs):
     elif iclass == "PLY":
         from pydsl.Grammar.Definition import PLYGrammar
         return PLYGrammar(moduleobject)
-    elif iclass in ["MongoDict", "PythonGrammar"]:
+    elif iclass == "MongoDict":
+        from pydsl.Grammar.Definition import MongoGrammar
+        return MongoGrammar(resultdic)
+    elif iclass in ["PythonGrammar"]:
         return resultdic
     else:
         raise ValueError(str(moduleobject))

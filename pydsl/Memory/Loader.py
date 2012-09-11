@@ -18,13 +18,13 @@
 """loader class"""
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha Rodriguez"
+__copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 from pkg_resources import Requirement, resource_filename
 
 def load_checker(grammar):
     from pydsl.Grammar.BNF import BNFGrammar
-    from pydsl.Grammar.Definition import PLYGrammar, RegularExpressionDefinition
+    from pydsl.Grammar.Definition import PLYGrammar, RegularExpressionDefinition, MongoGrammar
     if isinstance(grammar, str):
         grammar = load_grammar(grammar)
     if isinstance(grammar, BNFGrammar):
@@ -36,7 +36,7 @@ def load_checker(grammar):
     elif isinstance(grammar, dict) and "matchFun" in grammar:
         from pydsl.Grammar.Checker import PythonChecker
         return PythonChecker(grammar)
-    elif isinstance(grammar, dict) and "spec" in grammar:
+    elif isinstance(grammar, MongoGrammar):
         from pydsl.Grammar.Checker import MongoChecker
         return MongoChecker(grammar["spec"])
     elif isinstance(grammar, PLYGrammar):
