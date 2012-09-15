@@ -35,31 +35,28 @@ class QueryTerm(QueryElement):
         self.left = left
         self.right = right
 
+    def __hash__(self):
+        return hash(self.left) ^ hash(self.right)
+
 
 class QueryEquality(QueryTerm):
     """ a = b. It can use a string or a regexp"""
-    def __hash__(self):
-        return hash(self.left) ^ hash(self.right)
     def __str__(self):
         return "<" + str(self.left) + "=" + str(self.right) + ">"
 
 class QueryPartial(QueryTerm):
     """ a = b. It can use a string or a regexp"""
-    def __hash__(self):
-        return hash(self.left) ^ hash(self.right)
     def __str__(self):
         return "<" + str(self.left) + "=~" + str(self.right) + ">"
 
 
 class QueryInclusion(QueryTerm):
     """ looks for an element within a list """
-    def __hash__(self):
-        return hash(self.left) ^ hash(self.right)
+    pass
 
 class QueryGreaterThan(QueryTerm):
     """associated with > symbol """
-    def __hash__(self):
-        return hash(self.left) ^ hash(self.right)
+    pass
 
 class BinaryOperator(QueryElement):
     def __init__(self, element1, element2):
@@ -76,6 +73,7 @@ class OrQueryOperator(BinaryOperator):
 class NotQueryOperator(QueryElement):
     def __init__(self, element):
         self.element = element
+
     def __str__(self):
         return "<!" + str(self.element) + ">"
 
