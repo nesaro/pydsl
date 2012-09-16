@@ -17,8 +17,8 @@
 
 """ Channels: Where words are sent and received """
 
-__author__ = "Nestor Arocha Rodriguez"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha Rodriguez"
+__author__ = "Nestor Arocha"
+__copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 
@@ -51,14 +51,6 @@ class HostChannel(FunctionInterface):
         self.outputdefinition = outputtypedict
         self.__inputchanneldic = _loadGrammarTools(inputtypedict)
         self.__outputchanneldic = _loadGrammarTools(outputtypedict)
-        self._connections = {}
-
-    def connect(self, extGT, extChannel):
-        self._connections[intchannel] = Channel(extGT, extChannel)
-
-    def send(self, outputchannel, msgid, content):
-        """ Sends a data block"""
-        self._connections[outputchannel].send(msgid, content)
 
     @property
     def inputchanneldic(self):
@@ -67,12 +59,3 @@ class HostChannel(FunctionInterface):
     @property
     def outputchanneldic(self):
         return self.__outputchanneldic
-
-class Channel(metaclass = ABCMeta):
-    def __init__(self, host2:HostChannel, channel2Name):
-        self._host2 = host2
-        self.channel2Name = channel2Name
-
-    def send(self, msgid, content):
-        self._host2.receive(self.channel2Name, msgid, content)
-
