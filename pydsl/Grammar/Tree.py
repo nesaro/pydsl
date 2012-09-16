@@ -231,7 +231,7 @@ def parser_to_post_tree(pan:ParseTree) -> AST:
     """Converts a parser temporal node into a postnode"""
     result = AST(pan.content, pan.leftpos, pan.rightpos, pan.production, pan.valid)
     for child in pan.childlist:
-        childnode = parser_to_post_tree(child, result)
+        childnode = parser_to_post_tree(child)
         result.append_child(childnode)
     return result
 

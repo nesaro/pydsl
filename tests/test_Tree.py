@@ -49,7 +49,6 @@ class TestTrees(unittest.TestCase):
 
     def testBasics(self):
         self.assertTrue(len(self.tree1) == 6)
-        self.assertTrue(self.tree1.ancestors() == [])
         self.assertTrue(self.tree1.first_leaf() == self.firstleaf1)
 
     def testTreeDistance(self):
