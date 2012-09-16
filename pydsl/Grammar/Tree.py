@@ -17,19 +17,14 @@
 
 "Tree class for tree based parsers"""
 
-__author__ = "Nestor Arocha Rodriguez"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha Rodriguez"
+__author__ = "Nestor Arocha"
+__copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
 from abc import ABCMeta
 LOG = logging.getLogger(__name__)
-
-def nodedist(a, b):
-    if a == b:
-        return 0
-    assert(a.content != b.content) #For testing, but wrong
-    return 1
+from pydsl.Grammar.Symbol import TerminalSymbol
 
 def traversePreOrder(item):
     result = []
@@ -42,8 +37,8 @@ def traverseInOrder(item):
     result = []
     result.append(traverseInOrder(item.childlist[0]))
     result.append(item)
-    for childindex in range(1, len(item.childlist)):
-        result += traverseInOrder(item.childlist[childindex])
+    for child in item.childlist[1:]:
+        result += traverseInOrder(child)
     return result
 
 def traversePostOrder(item):
@@ -54,6 +49,11 @@ def traversePostOrder(item):
     return result
 
 class Tree(metaclass = ABCMeta):
+    def __init__(self, childlist = []):
+        self.childlist = []
+
+class PositionTree(Tree):
+    """Stores the position of the original tree"""
     def __init__(self, leftpos, rightpos, content, valid = True):
         self.leftpos = leftpos
         self.rightpos = rightpos
@@ -72,16 +72,6 @@ class Tree(metaclass = ABCMeta):
             if element.content == key:
                 result.append(element)
         return result
-
-    def getItemByOrder(self, key, order):
-        if order == "preorder":
-            return traversePreOrder(self)
-        elif order == "inorder":
-            return traverseInOrder(self)
-        elif order == "postorder":
-            return traversePostOrder(self)
-        else:
-            raise KeyError
 
     def getAllByOrder(self, order = "preorder"):
         if order == "preorder":
@@ -121,18 +111,17 @@ class Tree(metaclass = ABCMeta):
             return len(self), len(self)
 
     def first_leaf(self):
-        """Devuelve la primera hoja a la izq"""
+        """Returns the first lead node"""
         if self.childlist:
             return self.childlist[0].first_leaf()
         else:
             return self
 
-class AST(Tree):
+class AST(PositionTree):
     """Una representacion más simple de la descomposicion, sin alusion a los pasos intermedios"""
-    def __init__(self, content, leftpos:int, rightpos:int, production, parentnode = None, valid = True):
-        Tree.__init__(self, leftpos, rightpos, content, valid)
+    def __init__(self, content, leftpos:int, rightpos:int, production, valid = True):
+        PositionTree.__init__(self, leftpos, rightpos, content, valid)
         self.production = production 
-        self.parentnode = parentnode
 
     def __eq__(self, other):
         try:
@@ -140,29 +129,7 @@ class AST(Tree):
         except AttributeError:
             return False
 
-    def parent(self, level = 1):
-        if level <= 0:
-            return self
-        elif self.parentnode == None:
-            return None
-        else:
-            return self.parentnode.parent(level -1)
-
-    def ancestors(self)->list:
-        result = []
-        node = self.parent()
-        while node != None:
-            result.append(node)
-            node = node.parent()
-        return result
-
-    def append_child(self, child):
-        """appends dpr to childlist"""
-        child.parentnode = self
-        self.childlist.append(child)
-
     def __getitem__(self, index):
-        from pydsl.Grammar.Symbol import TerminalSymbol
         if isinstance(self.production, TerminalSymbol):
             return [(self.leftpos, self.rightpos)] # FIXME quick hack for terminal rules
         result = []
@@ -174,9 +141,7 @@ class AST(Tree):
             result += child.__getitem__(index)
         return result
 
-
     def __contains__(self, index):
-        from pydsl.Grammar.Symbol import TerminalSymbol
         if isinstance(self.production, TerminalSymbol):
             return index == self.production.name # FIXME quick hack for terminal rules
         if not self.production.leftside:
@@ -189,7 +154,7 @@ class AST(Tree):
         return False
 
 
-class ParseTree(Tree):
+class ParseTree(PositionTree):
     """ Stores a descent parser iteration result """
     def __init__(self, leftpos, rightpos, symbollist:list, content, production, childlist:list = [], valid:bool = True):
         if not isinstance(leftpos, int) and leftpos is not None:
@@ -197,11 +162,10 @@ class ParseTree(Tree):
         if not isinstance(rightpos, int) and rightpos is not None:
             raise TypeError
         from .BNF import Production
-        from pydsl.Grammar.Symbol import TerminalSymbol
         if production is not None and not (isinstance(production, Production) or
                 isinstance(production, TerminalSymbol)):
             raise TypeError(production)
-        Tree.__init__(self, leftpos, rightpos, content, valid)
+        PositionTree.__init__(self, leftpos, rightpos, content, valid)
         self.symbollist = symbollist
         self.production = production
         self.childlist = list(childlist) #This list stores rule's rightside DescentParserResults 
@@ -263,9 +227,9 @@ class ParseTree(Tree):
         return result
     
 
-def parser_to_post_tree(pan:ParseTree, parent = None) -> AST:
+def parser_to_post_tree(pan:ParseTree) -> AST:
     """Converts a parser temporal node into a postnode"""
-    result = AST(pan.content, pan.leftpos, pan.rightpos, pan.production, parent, pan.valid)
+    result = AST(pan.content, pan.leftpos, pan.rightpos, pan.production, pan.valid)
     for child in pan.childlist:
         childnode = parser_to_post_tree(child, result)
         result.append_child(childnode)
@@ -284,6 +248,11 @@ def zss_distance(tree1, tree2):
     l2 = [o2.index(x.first_leaf()) for x in o2]
 
     def treedist(i, j):
+        def nodedist(a, b):
+            if a == b:
+                return 0
+            assert(a.content != b.content) #For testing, but wrong
+            return 1
         if i in treedists and j in treedists[i]: 
             return treedists[i][j] #Cached!
         def s(i, j, v):
