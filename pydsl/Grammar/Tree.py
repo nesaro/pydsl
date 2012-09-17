@@ -193,30 +193,6 @@ class ParseTree(PositionTree):
             LOG.warning("Unable to add parser results")
             raise Exception
 
-    def split(self):
-        """splits a result"""
-        result = []
-        for symbol in self.symbollist:
-            currentlist = self.childlist
-            while len(currentlist) > 1 and len(currentlist[0].symbollist) > 1 and currentlist[0].symbollist[0] != symbol:
-                for dpr in currentlist:
-                    if symbol in dpr.symbollist:
-                        currentlist = dpr.childlist
-                        break
-                break #Not found
-            assert(len(currentlist < 2))
-            dpr = currentlist[0]
-            currentsymbol = dpr.symbollist[0]
-            if len(dpr.symbollist) > 0:
-                pass
-                #Ir eliminando los simbolos de alrededor hasta que se quede solo el que nos interesa junto a su word
-            if currentsymbol != symbol:
-                #Not found
-                raise Exception
-            result.append(dpr)
-        return result
-    
-
 def parser_to_post_tree(pan:ParseTree) -> AST:
     """Converts a parser temporal node into a postnode"""
     result = AST(pan.leftpos, pan.rightpos,pan.content, pan.production, pan.valid)
