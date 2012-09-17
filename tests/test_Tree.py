@@ -15,8 +15,8 @@
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
-__author__ = "Nestor Arocha Rodriguez"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha Rodriguez"
+__author__ = "Nestor Arocha"
+__copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
@@ -24,27 +24,27 @@ import unittest
 class TestTrees(unittest.TestCase):
     def setUp(self):
         from pydsl.Grammar.Tree import AST
-        a = AST("abcdef",0,6, None)
-        self.firstleaf1 = AST("a",0,1, None)
+        a = AST(0,6,"abcdef", None)
+        self.firstleaf1 = AST(0,1,"a", None)
         a.append_child(self.firstleaf1)
-        b = AST("bc",1,3, None)
+        b = AST(1,3,"bc", None)
         a.append_child(b)
-        b.append_child(AST("b",1,2,None))
-        b.append_child(AST("c",2,3,None))
-        a.append_child(AST("d",3,4,None))
-        a.append_child(AST("e",4,5,None))
-        a.append_child(AST("f",5,6,None))
+        b.append_child(AST(1,2,"b",None))
+        b.append_child(AST(2,3,"c",None))
+        a.append_child(AST(3,4,"d",None))
+        a.append_child(AST(4,5,"e",None))
+        a.append_child(AST(5,6,"f",None))
         self.tree1 = a
-        c = AST("abcdef",0,6, None)
-        self.firstleaf2 = AST("a",0,1, None)
+        c = AST(0,6,"abcdef", None)
+        self.firstleaf2 = AST(0,1,"a", None)
         c.append_child(self.firstleaf2)
-        b = AST("bc",1,3, None)
+        b = AST(1,3,"bc", None)
         c.append_child(b)
-        b.append_child(AST("b",1,2,None))
-        b.append_child(AST("j",2,3,None))
-        c.append_child(AST("d",3,4,None))
-        c.append_child(AST("e",4,5,None))
-        c.append_child(AST("f",5,6,None))
+        b.append_child(AST(1,2,"b",None))
+        b.append_child(AST(2,3,"j",None))
+        c.append_child(AST(3,4,"d",None))
+        c.append_child(AST(4,5,"e",None))
+        c.append_child(AST(5,6,"f",None))
         self.tree2 = c
 
     def testBasics(self):

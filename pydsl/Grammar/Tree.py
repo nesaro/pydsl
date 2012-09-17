@@ -54,13 +54,20 @@ class Tree(metaclass = ABCMeta):
 
 class PositionTree(Tree):
     """Stores the position of the original tree"""
-    def __init__(self, leftpos, rightpos, content, valid = True):
+    def __init__(self, leftpos, rightpos, content, production, valid = True, childlist:list = []):
         self.leftpos = leftpos
         self.rightpos = rightpos
-        self.childlist = []
+        self.childlist = list(childlist)
         self.content = content
         self.valid = valid
+        self.production = production
         
+    def __eq__(self, other):
+        try:
+            return self.production == other.production and self.content == other.content and self.leftpos == other.leftpos and self.rightpos == other.rightpos and self.valid == other.valid
+        except AttributeError:
+            return False
+
     def __bool__(self):
         """checks if it is a null result"""
         return self.valid
@@ -71,6 +78,15 @@ class PositionTree(Tree):
         for element in mylist:
             if element.content == key:
                 result.append(element)
+        return result
+
+    def __str__(self):
+        result = "<PositionTree: "
+        result += "(" + str(self.leftpos) + "," + str(self.rightpos)
+        result += ") SymbolList: "
+        if self.childlist:
+            result += ", children: " + str(self.childlist)
+        result += " >"
         return result
 
     def getAllByOrder(self, order = "preorder"):
@@ -119,16 +135,6 @@ class PositionTree(Tree):
 
 class AST(PositionTree):
     """Una representacion más simple de la descomposicion, sin alusion a los pasos intermedios"""
-    def __init__(self, content, leftpos:int, rightpos:int, production, valid = True):
-        PositionTree.__init__(self, leftpos, rightpos, content, valid)
-        self.production = production 
-
-    def __eq__(self, other):
-        try:
-            return self.production == other.production and self.content == other.content and self.leftpos == other.leftpos and self.rightpos == other.rightpos and self.valid == other.valid
-        except AttributeError:
-            return False
-
     def __getitem__(self, index):
         if isinstance(self.production, TerminalSymbol):
             return [(self.leftpos, self.rightpos)] # FIXME quick hack for terminal rules
@@ -165,24 +171,8 @@ class ParseTree(PositionTree):
         if production is not None and not (isinstance(production, Production) or
                 isinstance(production, TerminalSymbol)):
             raise TypeError(production)
-        PositionTree.__init__(self, leftpos, rightpos, content, valid)
+        PositionTree.__init__(self, leftpos, rightpos, content, production, valid, childlist)
         self.symbollist = symbollist
-        self.production = production
-        self.childlist = list(childlist) #This list stores rule's rightside DescentParserResults 
-
-    def __str__(self):
-        result = "<ParseTree: " 
-        result += "(" + str(self.leftpos) + "," + str(self.rightpos) 
-        result += ") SymbolList: " 
-        if len(self.symbollist) == 1:
-            result += str(self.symbollist[0])
-        else:
-            result += str(self.symbollist) 
-        result += " Information: " + str(self.content)
-        if self.childlist:
-            result += ", children: " + str(self.childlist)
-        result += " >"
-        return result
 
     def __add__(self, other):
         """ Adds two results. Only if self.rightpos = other.leftpos and parents are the same """
@@ -229,7 +219,7 @@ class ParseTree(PositionTree):
 
 def parser_to_post_tree(pan:ParseTree) -> AST:
     """Converts a parser temporal node into a postnode"""
-    result = AST(pan.content, pan.leftpos, pan.rightpos, pan.production, pan.valid)
+    result = AST(pan.leftpos, pan.rightpos,pan.content, pan.production, pan.valid)
     for child in pan.childlist:
         childnode = parser_to_post_tree(child)
         result.append_child(childnode)
