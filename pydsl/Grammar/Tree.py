@@ -134,7 +134,7 @@ class PositionTree(Tree):
             return self
 
 class AST(PositionTree):
-    """Una representacion más simple de la descomposicion, sin alusion a los pasos intermedios"""
+    #FIXME This is a PositionTree with a few extra functions, but it cannot be called an AST
     def __getitem__(self, index):
         if isinstance(self.production, TerminalSymbol):
             return [(self.leftpos, self.rightpos)] # FIXME quick hack for terminal rules
@@ -194,7 +194,7 @@ class ParseTree(PositionTree):
             raise Exception
 
 def parser_to_post_tree(pan:ParseTree) -> AST:
-    """Converts a parser temporal node into a postnode"""
+    """Converts a parse tree into an AST"""
     result = AST(pan.leftpos, pan.rightpos,pan.content, pan.production, pan.valid)
     for child in pan.childlist:
         childnode = parser_to_post_tree(child)
