@@ -24,27 +24,27 @@ import unittest
 class TestTrees(unittest.TestCase):
     def setUp(self):
         from pydsl.Grammar.Tree import AST
-        a = AST(0,6,"abcdef", None)
-        self.firstleaf1 = AST(0,1,"a", None)
+        a = AST(0,6,"abcdef")
+        self.firstleaf1 = AST(0,1,"a")
         a.append_child(self.firstleaf1)
-        b = AST(1,3,"bc", None)
+        b = AST(1,3,"bc")
         a.append_child(b)
-        b.append_child(AST(1,2,"b",None))
-        b.append_child(AST(2,3,"c",None))
-        a.append_child(AST(3,4,"d",None))
-        a.append_child(AST(4,5,"e",None))
-        a.append_child(AST(5,6,"f",None))
+        b.append_child(AST(1,2,"b"))
+        b.append_child(AST(2,3,"c"))
+        a.append_child(AST(3,4,"d"))
+        a.append_child(AST(4,5,"e"))
+        a.append_child(AST(5,6,"f"))
         self.tree1 = a
-        c = AST(0,6,"abcdef", None)
-        self.firstleaf2 = AST(0,1,"a", None)
+        c = AST(0,6,"abcdef")
+        self.firstleaf2 = AST(0,1,"a")
         c.append_child(self.firstleaf2)
-        b = AST(1,3,"bc", None)
+        b = AST(1,3,"bc")
         c.append_child(b)
-        b.append_child(AST(1,2,"b",None))
-        b.append_child(AST(2,3,"j",None))
-        c.append_child(AST(3,4,"d",None))
-        c.append_child(AST(4,5,"e",None))
-        c.append_child(AST(5,6,"f",None))
+        b.append_child(AST(1,2,"b"))
+        b.append_child(AST(2,3,"j"))
+        c.append_child(AST(3,4,"d"))
+        c.append_child(AST(4,5,"e"))
+        c.append_child(AST(5,6,"f"))
         self.tree2 = c
 
     def testBasics(self):

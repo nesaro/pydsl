@@ -54,7 +54,7 @@ class Tree(metaclass = ABCMeta):
 
 class PositionTree(Tree):
     """Stores the position of the original tree"""
-    def __init__(self, leftpos, rightpos, content, production, valid = True, childlist:list = []):
+    def __init__(self, leftpos, rightpos, content, production = None, valid = True, childlist:list = []):
         self.leftpos = leftpos
         self.rightpos = rightpos
         self.childlist = list(childlist)
