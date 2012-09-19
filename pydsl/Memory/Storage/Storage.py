@@ -19,8 +19,8 @@
 """Storage class"""
 
 
-__author__ = "Néstor Arocha Rodríguez"
-__copyright__ = "Copyright 2008-2012, Néstor Arocha Rodríguez"
+__author__ = "Nestor Arocha"
+__copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 
@@ -38,9 +38,8 @@ class Storage(Memory, metaclass = ABCMeta):
     def load(self, name, **kwargs):
         pass
 
-    #Salvo que se implemente, no soporta guardado de elemento
     def save(self, element):
-        raise Exception
+        raise NotImplementedError
 
     @abstractmethod
     def provided_iclasses(self) -> list:
