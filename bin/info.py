@@ -30,7 +30,6 @@ if __name__ == "__main__":
     TUSAGE = "usage: %(prog)s [options] identifier"
     PARSER = argparse.ArgumentParser(usage = TUSAGE)
     PARSER.add_argument("-d", "--debuglevel", action="store", type=int, dest="debuglevel", help="Sets debug level")
-    PARSER.add_argument('--lang', dest='lang',nargs='?', choices=["es","en"], default="en", help="Languages")
     PARSER.add_argument('-o', dest='outputformat',nargs='?', choices=["str","json","raw"], default="str", help="output formats")
     PARSER.add_argument("identifier", metavar="identifier" , help="Element identifier")
     ARGS = PARSER.parse_args()
