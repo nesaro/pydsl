@@ -52,12 +52,33 @@ class Tree(metaclass = ABCMeta):
     def __init__(self, childlist = []):
         self.childlist = []
 
+    def append_child(self, dpr):
+        """appends dpr to childlist"""
+        self.childlist.append(dpr)
+
+    def to_list(self, order = "preorder"):
+        if order == "preorder":
+            return traversePreOrder(self)
+        elif order == "inorder":
+            return traverseInOrder(self)
+        elif order == "postorder":
+            return traversePostOrder(self)
+        else:
+            raise KeyError
+
+    def first_leaf(self):
+        """Returns the first lead node"""
+        if self.childlist:
+            return self.childlist[0].first_leaf()
+        else:
+            return self
+
 class PositionTree(Tree):
     """Stores the position of the original tree"""
     def __init__(self, leftpos, rightpos, content, production = None, valid = True, childlist:list = []):
         self.leftpos = leftpos
         self.rightpos = rightpos
-        self.childlist = list(childlist)
+        self.childlist = list(childlist) #creates a copy
         self.content = content
         self.valid = valid
         self.production = production
@@ -74,10 +95,12 @@ class PositionTree(Tree):
 
     def __getitem__(self, key, order = "preorder"): #FIXME: getitem and optional argument??
         result = []
-        mylist = self.getAllByOrder(order)
+        mylist = self.to_list(order)
         for element in mylist:
             if element.content == key:
                 result.append(element)
+        if not result:
+            raise KeyError
         return result
 
     def __str__(self):
@@ -89,24 +112,10 @@ class PositionTree(Tree):
         result += " >"
         return result
 
-    def getAllByOrder(self, order = "preorder"):
-        if order == "preorder":
-            return traversePreOrder(self)
-        elif order == "inorder":
-            return traverseInOrder(self)
-        elif order == "postorder":
-            return traversePostOrder(self)
-        else:
-            raise KeyError
-
     def shift(self, amount):
         """ shifts position """
         self.leftpos += amount
         self.rightpos += amount
-
-    def append_child(self, dpr):
-        """appends dpr to childlist"""
-        self.childlist.append(dpr)
 
     def __len__(self):
         return self.rightpos - self.leftpos
@@ -126,16 +135,7 @@ class PositionTree(Tree):
         else:
             return len(self), len(self)
 
-    def first_leaf(self):
-        """Returns the first lead node"""
-        if self.childlist:
-            return self.childlist[0].first_leaf()
-        else:
-            return self
-
-class AST(PositionTree):
-    #FIXME This is a PositionTree with a few extra functions, but it cannot be called an AST
-    def __getitem__(self, index):
+    def get_by_symbol(self, index):
         if isinstance(self.production, TerminalSymbol):
             return [(self.leftpos, self.rightpos)] # FIXME quick hack for terminal rules
         result = []
@@ -144,7 +144,7 @@ class AST(PositionTree):
         else:
             LOG.debug("Not equal: " + str(self.production.leftside[0].name) + " and :" + str(index))
         for child in self.childlist:
-            result += child.__getitem__(index)
+            result += child.get_by_symbol(index)
         return result
 
     def __contains__(self, index):
@@ -155,7 +155,7 @@ class AST(PositionTree):
         if self.production.leftside[0].name == index:
             return True
         for child in self.childlist:
-            if index in child:
+            if child.get_by_symbol(index):
                 return True
         return False
 
@@ -193,21 +193,12 @@ class ParseTree(PositionTree):
             LOG.warning("Unable to add parser results")
             raise Exception
 
-def parser_to_post_tree(pan:ParseTree) -> AST:
-    """Converts a parse tree into an AST"""
-    result = AST(pan.leftpos, pan.rightpos,pan.content, pan.production, pan.valid)
-    for child in pan.childlist:
-        childnode = parser_to_post_tree(child)
-        result.append_child(childnode)
-    return result
-
-
 #Original implementation: https://github.com/irskep/zhang-shasha and https://github.com/timtadh/zhang-shasha
 
 def zss_distance(tree1, tree2):
     treedists = {}
-    o1 = tree1.getAllByOrder("postorder")
-    o2 = tree2.getAllByOrder("postorder")
+    o1 = tree1.to_list("postorder")
+    o2 = tree2.to_list("postorder")
     LOG.debug([x.content for x in o1])
     LOG.debug([x.content for x in o2])
     l1 = [o1.index(x.first_leaf()) for x in o1]
