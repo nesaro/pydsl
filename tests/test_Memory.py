@@ -15,8 +15,8 @@
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
-__author__ = "Néstor Arocha Rodríguez"
-__copyright__ = "Copyright 2008-2012, Néstor Arocha Rodríguez"
+__author__ = "Nestor Arocha"
+__copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest

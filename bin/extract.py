@@ -20,8 +20,8 @@
 extracts input slices that are a Type 
 """
 
-__author__ = "Nestor Arocha Rodriguez"
-__copyright__ = "Copyright 2008-2012, Néstor Arocha Rodríguez"
+__author__ = "Nestor Arocha"
+__copyright__ = "Copyright 2008-2012, Néstor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging

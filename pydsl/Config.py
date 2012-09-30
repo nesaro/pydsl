@@ -17,8 +17,8 @@
 
 """Global (per execution) elements"""
 
-__author__ = "Nestor Arocha Rodriguez"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha Rodriguez"
+__author__ = "Nestor Arocha"
+__copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 from pydsl.Abstract import Singleton
@@ -85,7 +85,7 @@ class GlobalConfig(metaclass=Singleton):
     def debuglevel(self, level: int):
         self.__debuglevel = level
 
-VERSION = "pydsl pre-version\n Copyright (C) 2008-2012 Néstor Arocha Rodríguez"
+VERSION = "pydsl pre-version\n Copyright (C) 2008-2012 Nestor Arocha"
 GLOBALCONFIG = GlobalConfig()  # The only instance available
 ERRORLIST = ["Grammar", "Timeout", "Transformer"]
 

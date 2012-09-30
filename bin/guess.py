@@ -19,8 +19,8 @@
 guess to which type can belong an input. It works like the unix file command
 """
 
-__author__ = "Néstor Arocha Rodríguez"
-__copyright__ = "Copyright 2008-2012, Néstor Arocha Rodríguez"
+__author__ = "Nestor Arocha"
+__copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 

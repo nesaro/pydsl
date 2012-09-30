@@ -22,8 +22,8 @@ Query and related classes
 #Current query class only works for indexable elements
 #for concepts ands relations, other operators are required: ELEMENT HASA CONCEPT1 OR ELEMENT ISA CONCEPT4 OR ELEMENT PROPERTY CONCEPT5
 
-__author__ = "Nestor Arocha Rodriguez"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha Rodriguez"
+__author__ = "Nestor Arocha"
+__copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 class QueryElement:

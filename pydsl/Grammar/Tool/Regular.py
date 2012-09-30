@@ -17,8 +17,8 @@
 
 """Regular Expression Grammars"""
 
-__author__ = "Nestor Arocha Rodriguez"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha Rodriguez"
+__author__ = "Nestor Arocha"
+__copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 #There are at least three ways to define a regular grammar. Regexp, FSM table, production rules. At this time, I'm going to combine several regexp rules, each one with a name.

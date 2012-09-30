@@ -16,8 +16,8 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 
-__author__ = "Nestor Arocha Rodriguez"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha Rodriguez"
+__author__ = "Nestor Arocha"
+__copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging

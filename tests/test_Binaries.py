@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-#Copyright (C) 2008-2012 Nestor Arocha Rodriguez
+#Copyright (C) 2008-2012 Nestor Arocha
 
 """Test Binary calls"""
 
