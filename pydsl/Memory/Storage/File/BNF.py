@@ -114,8 +114,7 @@ def strlist_to_production_set(linelist):
         elif re.search ("^\s*$", cleanline):
             pass #Empty line
         else:
-            LOG.error("Unknown line at bnf input file")
-            raise Exception #TODO find proper exception
+            raise ValueError("Unknown line at bnf input file")
 
     #then read nonterminalsymbols
     while len(nonterminalrulelist) > 0:
