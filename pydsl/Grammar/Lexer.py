@@ -26,6 +26,7 @@ LOG = logging.getLogger(__name__)
 from abc import ABCMeta, abstractmethod, abstractproperty
 finalchar = "EOF"
 
+###Lexer follows an alphabet definition, which is like a grammar definition but generates a list of tokens and it is always Readable using a regular grammar
 
 class Lexer(metaclass=ABCMeta):
     def __init__(self):

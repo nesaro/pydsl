@@ -161,3 +161,7 @@ class BeginSymbol(TerminalSymbol):
 
 class EndSymbol(TerminalSymbol):
     pass
+
+class Token:
+    """ Stores a symbol and its associated input """
+    pass
