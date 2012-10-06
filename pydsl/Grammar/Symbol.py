@@ -161,9 +161,3 @@ class BeginSymbol(TerminalSymbol):
 
 class EndSymbol(TerminalSymbol):
     pass
-
-class Token:
-    """ Stores a symbol and its associated input """
-    def __init__(self, terminalsymbol, string):
-        self.symbol = terminalsymbol
-        self.string = string
