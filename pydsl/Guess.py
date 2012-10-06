@@ -24,6 +24,7 @@ __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 #FIXME: Use globalconfig memories
+#TODO: Add Alphabet support
 
 
 import logging
