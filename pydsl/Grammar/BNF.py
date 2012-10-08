@@ -36,13 +36,9 @@ class Production:
 
     def __str__(self):
         """Pretty print"""
-        leftstr = ""
-        rightstr = ""
-        for symbol in self.leftside:
-            leftstr += " " + symbol.name + " "
-        for symbol in self.rightside:
-            rightstr += " " + str(symbol) + " "
-        return leftstr + " ::= " + rightstr
+        leftstr = " ".join([ x.name for x in self.leftside])
+        rightstr = " ".join([ str(x) for x in self.rightside])
+        return leftstr + "::=" + rightstr
 
     def __eq__(self, other):
         try:
