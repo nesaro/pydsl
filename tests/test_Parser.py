@@ -66,7 +66,7 @@ class TestParsers(unittest.TestCase):
         from pydsl.Grammar.Parser.RecursiveDescent import RecursiveDescentParser
         descentparser = RecursiveDescentParser(productionset2)
         result = descentparser(string4)
-        self.assertTrue(not result)
+        self.assertFalse(result)
 
     @unittest.skip
     def testLR0ParserStore(self):
@@ -80,7 +80,7 @@ class TestParsers(unittest.TestCase):
         from pydsl.Grammar.Parser.LR0 import LR0Parser
         parser = LR0Parser(productionset1)
         result = parser(string2)
-        self.assertTrue(not result)
+        self.assertFalse(result)
 
     @unittest.skip
     def testWeightedRightRecursion(self):
@@ -108,7 +108,7 @@ class TestParsers(unittest.TestCase):
         from pydsl.Grammar.Parser.Weighted import WeightedParser
         parser = WeightedParser(productionset1)
         result = parser(string2)
-        self.assertTrue(not result)
+        self.assertFalse(result)
 
     @unittest.skip
     def testWeightedParserNull(self):
@@ -122,7 +122,7 @@ class TestParsers(unittest.TestCase):
         from pydsl.Grammar.Parser.Weighted import WeightedParser
         parser = WeightedParser(productionset2)
         result = parser(string4)
-        self.assertTrue(not result)
+        self.assertFalse(result)
 
 class TestWeightedParser(unittest.TestCase):
     @unittest.skip

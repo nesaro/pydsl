@@ -59,7 +59,7 @@ class TestPythonGrammars(unittest.TestCase):
         self.assertTrue(self.g1.check("7"))
 
     def testBadCheck(self):
-        self.assertTrue(not self.g1.check("3"))
+        self.assertFalse(self.g1.check("3"))
 
     def testsenumerateWords(self):
         pass
@@ -86,7 +86,7 @@ class TestHostPythonGrammars(unittest.TestCase):
         self.assertTrue(self.g1.check("NESARO@GMAIL.COM"))
 
     def testBadCheck(self):
-        self.assertTrue(not self.g1.check("777"))
+        self.assertFalse(self.g1.check("777"))
 
     def testsenumerateWords(self):
         pass
@@ -118,7 +118,7 @@ class TestSymbolGrammars(unittest.TestCase):
         self.assertTrue(result)
 
     def testBadCheck(self):
-        self.assertTrue(not self.g1.check("777"))
+        self.assertFalse(self.g1.check("777"))
 
     def testsenumerateWords(self):
         pass

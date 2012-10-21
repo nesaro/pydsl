@@ -6,24 +6,20 @@
 """Test Binary calls"""
 
 import unittest
+import os
 
 class TestBinaries(unittest.TestCase):
     """Tests Main Class"""
     def testCheck(self):
-        import os
         self.assertEqual(os.system("python3 bin/check.py"),512)
         self.assertEqual(os.system("python3 bin/check.py integer -e 1"),0)
 
     def testGuess(self):
-        import os
         self.assertEqual(os.system("python3 bin/guess.py"),512)
         self.assertEqual(os.system("python3 bin/guess.py -e 1234"),0)
 
     def testTranslate(self):
-        import os
         self.assertEqual(os.system("python3 bin/translate.py"),512)
 
     def testSearch(self):
-        import os
         self.assertEqual(os.system("python3 bin/search.py"),512)
-
