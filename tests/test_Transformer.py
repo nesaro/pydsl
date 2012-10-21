@@ -20,7 +20,6 @@ __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
-
 import unittest
 
 def recursivecall(input, auxt ,inputgrammars, outputgrammars):
@@ -30,8 +29,18 @@ def recursivecall(input, auxt ,inputgrammars, outputgrammars):
 def integerextractor(input, inputgrammars, outputgrammars):
     return {"output":inputgrammars["input"].get_groups(input["input"],"Operator")[0]}
 
-def ope1(vardict, rulename, dpr):
-    vardict.setByNameAndBorders(rulename, dpr, {"1":"HI"})
+def ope1(childlist):
+    """&& True"""
+    return childlist[1]
+
+def ope2(childlist):
+    print("ope2")
+    print(childlist)
+    el0, el1 = childlist
+    if el0 != 'True' or el1 != 'True':
+        return 'False'
+    return 'True'
+
 
 def opefinal(vardict):
     return str(vardict.getInitialSymbol())
@@ -61,11 +70,13 @@ class TestHostTransformer(unittest.TestCase):
     def testError(self):
         self.assertRaises(ValueError,self.__gt1, {"input":"1"})
 
-@unittest.skip
 class TestSyntaxDirectedTransformer(unittest.TestCase):
     def setUp(self):
         from pydsl.Function.SyntaxDirected import SyntaxDirectedTransformer
-        self.__gt1 = SyntaxDirectedTransformer({"input":"LogicalExpression"},{"output":"cstring"}, {"OperatorExpression1":ope1, "Expression0":ope1 , "S0":ope1, "Expression2":ope1, "RestExpression0":ope1, "finally":opefinal})
+        self.__gt1 = SyntaxDirectedTransformer("LogicalExpression", "cstring",
+                {"OperatorExpression::=<WordTS: TrueFalse> <NonTS: RestExpression>":ope1, 
+                    'Expression::=<NonTS: OperatorExpression>':ope2})
+        print(self.__gt1("True&&True"))
 
     def testError(self):
         pass
