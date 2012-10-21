@@ -29,23 +29,26 @@ class TestAlphabet(unittest.TestCase):
     def testAlphabetChecker(self):
         x = load_alphabet("xyz")
         checker = load_checker(x)
-        checker("abc")
+        self.assertTrue(checker("abc"))
+        self.assertTrue(checker("bcdf"))
 
     def testLexer(self):
         x = load_alphabet("xyz")
         lexer = load_lexer(x)
-        lexer("abc")
+        self.assertListEqual(lexer("abc"), TokenList("A:type1","B:type2","C:type3"))
 
     def testAlphabetTranslator(self):
         x = load_alphabet("xyz")
         translator = load_translator("bcy")
         y = translator(x)
+        self.assertListEqual(y, TokenList("A:type1","B:type2","C:type3"))
 
     def testAlphabetProperties(self):
         x = load_alphabet("xyz")
         x.symbols() #list allowed symbols
 
 
+@unittest.skip
 class TestTokenList(unittest.TestCase):
     def setUp(self):
         pass
