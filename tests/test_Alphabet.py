@@ -51,6 +51,7 @@ class TestTokenList(unittest.TestCase):
         pass
 
     def testInstance(self):
+        from pydsl.Alphabet.Token import Token
         a = Token()
         b = Token()
         c = Token()
