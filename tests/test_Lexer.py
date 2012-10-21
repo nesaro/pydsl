@@ -27,7 +27,5 @@ class TestLexer(unittest.TestCase):
         from pydsl.Alphabet.Lexer import BNFLexer
         lexer = BNFLexer(productionset1)
         result = list(lexer(string1))
-        print(result)
-        print("DS")
         self.assertTrue(result)
 
