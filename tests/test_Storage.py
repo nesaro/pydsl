@@ -15,7 +15,7 @@ class TestLoader(unittest.TestCase):
     
     def test_grammars(self):
         grammarlist = self.glibrary.all_names()
-        from pydsl.Memory.Loader import load_grammar
+        from pydsl.Memory.Loader import load
         for grammar in grammarlist:
-            load_grammar(grammar)
+            load(grammar)
 

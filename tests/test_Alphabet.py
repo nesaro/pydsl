@@ -20,31 +20,32 @@ __copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
+from pydsl.Memory.Loader import load, load_checker
 
 @unittest.skip
 class TestAlphabet(unittest.TestCase):
     def setUp(self):
         pass
 
-    def testAlphabetChecker(self):
-        x = load_alphabet("xyz")
+    def testChecker(self):
+        x = load("xyz")
         checker = load_checker(x)
         self.assertTrue(checker("abc"))
         self.assertTrue(checker("bcdf"))
 
     def testLexer(self):
-        x = load_alphabet("xyz")
+        x = load("xyz")
         lexer = load_lexer(x)
         self.assertListEqual(lexer("abc"), TokenList("A:type1","B:type2","C:type3"))
 
-    def testAlphabetTranslator(self):
-        x = load_alphabet("xyz")
-        translator = load_translator("bcy")
+    def testTranslator(self):
+        x = load("xyz")
+        translator = load("bcy")
         y = translator(x)
         self.assertListEqual(y, TokenList("A:type1","B:type2","C:type3"))
 
-    def testAlphabetProperties(self):
-        x = load_alphabet("xyz")
+    def testProperties(self):
+        x = load("xyz")
         x.symbols() #list allowed symbols
 
 

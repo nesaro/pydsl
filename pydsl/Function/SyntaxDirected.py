@@ -30,8 +30,8 @@ class SyntaxDirectedTransformer:
     def __init__(self, inputgrammar, outputgrammar, blockdic:dict):
         self.blockdic = blockdic
         if isinstance(inputgrammar, str):
-            from pydsl.Memory.Loader import load_grammar
-            inputgrammar = load_grammar(inputgrammar)
+            from pydsl.Memory.Loader import load
+            inputgrammar = load(inputgrammar)
         from pydsl.Grammar.Parser.RecursiveDescent import RecursiveDescentParser
         self.parser = RecursiveDescentParser(inputgrammar)
         self.blockdic = blockdic
