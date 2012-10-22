@@ -22,7 +22,6 @@ __email__ = "nesaro@gmail.com"
 import unittest
 from pydsl.Memory.Loader import load, load_checker
 
-@unittest.skip
 class TestAlphabet(unittest.TestCase):
     def setUp(self):
         pass
@@ -33,17 +32,20 @@ class TestAlphabet(unittest.TestCase):
         self.assertTrue(checker("abc"))
         self.assertTrue(checker("bcdf"))
 
+    @unittest.skip
     def testLexer(self):
         x = load("xyz")
         lexer = load_lexer(x)
         self.assertListEqual(lexer("abc"), TokenList("A:type1","B:type2","C:type3"))
 
+    @unittest.skip
     def testTranslator(self):
         x = load("xyz")
         translator = load("bcy")
         y = translator(x)
         self.assertListEqual(y, TokenList("A:type1","B:type2","C:type3"))
 
+    @unittest.skip
     def testProperties(self):
         x = load("xyz")
         x.symbols() #list allowed symbols
