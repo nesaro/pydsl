@@ -62,5 +62,5 @@ class TestPersistentMemory(unittest.TestCase):
             del self.mem["DummyChecker"]
         self.mem.save(dg, "DummyChecker")
         newdg = self.mem["DummyChecker"]
-        self.assertTrue(newdg == dg)
+        self.assertEqual(newdg,dg)
         del self.mem["DummyChecker"]
