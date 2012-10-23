@@ -62,7 +62,7 @@ First store your grammar definitions in a directory,
     guess = Guesser([a])
     guess('string')
 
-Using pydsl-contrib
+Using contrib
 -------------------
     from pydsl.Memory.Loader import *
     mychecker = load_checker(integer)
