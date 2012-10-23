@@ -90,7 +90,7 @@ Functions
 CONTRIB
 =======
 
-pydsl-contrib contains several types of elements. Those elements are either imported by colony or used as a function argument for their binaries.
+contrib directory contains several types of elements. Those elements are either imported by colony or used as a function argument for their binaries.
 
  * board: Boards are Functions, therefore they can be used as an argument for:
    * translate: translate -e input -t boardname
