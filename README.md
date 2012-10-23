@@ -50,7 +50,6 @@ INSTALLATION
    * python3 setup.py install
  * pip:
    * pip install git+http://github.com/nesaro/pydsl.git
-   * pip install git+http://github.com/nesaro/pydsl-contrib.git
 
 USAGE
 =====
@@ -74,14 +73,8 @@ First store your grammar definitions in a directory,
     guess = Guesser([a])
     guess('string')
 
-Using pydsl-contrib
+Using contrib
 -------------------
- * Download pydsl-contrib repositorie from github
- * install with python3 setup.py install
- * use default libraries and transformers
-
-code:
-
     from pydsl.Memory.Loader import *
     mychecker = load_checker(integer)
     mytransformer = load_function('inttohex')
@@ -103,6 +96,29 @@ Grammars
 Functions
 ---------
  * translate.py: Process user input using a function
+
+
+CONTRIB
+=======
+
+contrib directory contains several types of elements. Those elements are either imported by colony or used as a function argument for their binaries.
+
+ * board: Boards are Functions, therefore they can be used as an argument for:
+   * translate: translate -e input -t boardname
+ * grammar: Grammar are Types; they can be used with the following programs:
+   * check: check -e expression grammarname
+   * extract: extract -e expression grammarname
+   * validate: extract -e expression grammarname
+ * procedure: procedure are functions, but have no input 
+   * translate: translate -t procedurename
+ * board: Transformer are Functions too:
+   * translate: translate -e input -t functionname
+ * dict/filetype.dict: A list of filetypes, which are types
+ * dict/refexp.dict: A list of Regular expressions, which are types
+
+search program will find any element within the library.
+info gives a summary for an element
+guess returns a list of the types that match the input element
 
 
 REQUIREMENTS

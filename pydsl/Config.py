@@ -34,7 +34,7 @@ def generate_memory_list() -> list:
     from pydsl.Memory.Storage.Directory.Function import BoardDirStorage, TransformerDirStorage
     from pydsl.Memory.Storage.Dict import RegexpDictStorage
     try:
-        dirname = resource_filename(Requirement.parse("pydsl_contrib"), "")
+        dirname = resource_filename("pydsl.contrib", "")
     except DistributionNotFound:
         pass
     else:

@@ -1,0 +1,7 @@
+//Date
+#parser=descent
+
+S ::= dayofmonth separator number separator number
+separator := String,/
+number := Word,integer,max,1
+dayofmonth := Word,DayOfMonth,max,1

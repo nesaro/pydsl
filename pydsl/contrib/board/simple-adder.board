@@ -1,0 +1,10 @@
+[separator]
+type: integerAddExpressionReducer
+input: input.Main.input 
+output: int1.adder.int1,int2.adder.int2
+
+[adder]
+type: integerAdder
+input: int1.separator.int1,int2.separator.int2
+output: int.Main.output
+
