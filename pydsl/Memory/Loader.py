@@ -28,19 +28,19 @@ def load_checker(grammar):
     if isinstance(grammar, str):
         grammar = load(grammar)
     if isinstance(grammar, BNFGrammar):
-        from pydsl.Grammar.Checker import BNFChecker
+        from pydsl.Checker import BNFChecker
         return BNFChecker(grammar)
     elif isinstance(grammar, RegularExpressionDefinition):
-        from pydsl.Grammar.Checker import RegularExpressionChecker
+        from pydsl.Checker import RegularExpressionChecker
         return RegularExpressionChecker(grammar)
     elif isinstance(grammar, dict) and "matchFun" in grammar:
-        from pydsl.Grammar.Checker import PythonChecker
+        from pydsl.Checker import PythonChecker
         return PythonChecker(grammar)
     elif isinstance(grammar, MongoGrammar):
-        from pydsl.Grammar.Checker import MongoChecker
+        from pydsl.Checker import MongoChecker
         return MongoChecker(grammar["spec"])
     elif isinstance(grammar, PLYGrammar):
-        from pydsl.Grammar.Checker import PLYChecker
+        from pydsl.Checker import PLYChecker
         return PLYChecker(grammar)
     else:
         raise ValueError(grammar)

@@ -76,7 +76,7 @@ class RegularExpressionGrammarTools(GrammarTools):
         self.__gd = regexp
 
     def check(self, word):
-        from ..Checker import RegularExpressionChecker
+        from pydsl.Checker import RegularExpressionChecker
         checker = RegularExpressionChecker(self.__gd)
         return checker.check(word)
 

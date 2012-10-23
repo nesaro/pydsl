@@ -51,7 +51,7 @@ class TestPersistentMemory(unittest.TestCase):
     """Tests Transformers"""
     def setUp(self):
         from pydsl.Memory.Storage.Storage import PersistentStorage
-        from pydsl.Grammar.Checker import Checker
+        from pydsl.Checker import Checker
         self.mem = PersistentStorage("tmp", Checker)
         
     @unittest.skip
