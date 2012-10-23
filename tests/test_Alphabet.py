@@ -27,10 +27,11 @@ class TestAlphabet(unittest.TestCase):
         pass
 
     def testChecker(self):
-        x = load("xyz")
+        from pydsl.Alphabet.Definition import AlphabetListDefinition
+        x = AlphabetListDefinition(["integer","Date"])
         checker = load_checker(x)
-        self.assertTrue(checker("abc"))
-        self.assertTrue(checker("bcdf"))
+        self.assertTrue(checker.check(["1234","11/11/1991"]))
+        self.assertFalse(checker.check(["bcdf"]))
 
     @unittest.skip
     def testLexer(self):

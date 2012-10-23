@@ -25,6 +25,7 @@ from pkg_resources import Requirement, resource_filename
 def load_checker(grammar):
     from pydsl.Grammar.BNF import BNFGrammar
     from pydsl.Grammar.Definition import PLYGrammar, RegularExpressionDefinition, MongoGrammar
+    from pydsl.Alphabet.Definition import AlphabetListDefinition
     if isinstance(grammar, str):
         grammar = load(grammar)
     if isinstance(grammar, BNFGrammar):
@@ -42,6 +43,10 @@ def load_checker(grammar):
     elif isinstance(grammar, PLYGrammar):
         from pydsl.Checker import PLYChecker
         return PLYChecker(grammar)
+    elif isinstance(grammar, AlphabetListDefinition):
+        from pydsl.Checker import AlphabetListChecker
+        return AlphabetListChecker(grammar)
+
     else:
         raise ValueError(grammar)
 
