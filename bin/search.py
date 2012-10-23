@@ -55,7 +55,7 @@ if __name__ == "__main__":
     from pydsl.Config import VERSION, GLOBALCONFIG
     TUSAGE = "usage: %(prog)s [options] query"
     PARSER = argparse.ArgumentParser(usage = TUSAGE)
-    PARSER.add_argument("search", metavar="search", help="Query to search")
+    PARSER.add_argument("query", nargs="?", default="/.*/", metavar="query", help="Query to search")
     PARSER.add_argument('--version', action='version', version = VERSION)
     PARSER.add_argument('--filter', dest='myfilter',nargs='?', default=None, help="comma separated field list")
     PARSER.add_argument('-o', dest='outputformat',nargs='?', choices=["str","json"], default="str", help="output formats")
@@ -63,16 +63,16 @@ if __name__ == "__main__":
     import sys
     from pydsl.Memory.Search.Searcher import MemorySearcher
     from pydsl.Memory.Search.Indexer import Indexer
-    if ARGS.search:
+    if ARGS.query:
         searcher = MemorySearcher([Indexer(x) for x in GLOBALCONFIG.memorylist])
         myfilter = None
         if ARGS.myfilter:
             myfilter = ARGS.myfilter.split(',')
         if ARGS.outputformat == "str":
-            print(search_pp(searcher.search(ARGS.search), myfilter))
+            print(search_pp(searcher.search(ARGS.query), myfilter))
         elif ARGS.outputformat == "json":
             import json
-            print(json.dumps(list(filterset(searcher.search(ARGS.search), myfilter))))
+            print(json.dumps(list(filterset(searcher.search(ARGS.query), myfilter))))
         sys.exit(0)
     else:
         print(TUSAGE)
