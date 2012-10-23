@@ -18,7 +18,7 @@ NAME : ('a'..'z' |'A'..'Z' )+ ; // NAME is sequence of >=1 letter
 
 
 
-from pydsl.Grammar.Lexer import Lexer as _Lexer
+from pydsl.Alphabet.Lexer import Lexer as _Lexer
 
 
 import functools

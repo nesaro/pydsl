@@ -16,7 +16,7 @@ NAME : ('a'..'z' |'A'..'Z' )+ ; // NAME is sequence of >=1 letter
 
 #tokenlist = ["NAME", "COMMA", "LBRACK", "RBRACK","EOF_TYPE"]
 
-from pydsl.Grammar.Lexer import Lexer as _Lexer
+from pydsl.Alphabet.Lexer import Lexer as _Lexer
 
 class _Parser:
     def __init__(self, lexer):
