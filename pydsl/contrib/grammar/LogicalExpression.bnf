@@ -1,0 +1,12 @@
+//Logical Expression
+
+S ::= Expression
+Expression ::= identifier | op Expression cp | OperatorExpression 
+OperatorExpression ::= not Expression | identifier RestExpression 
+RestExpression ::= and Expression | or Expression
+op := String,(
+cp := String,)
+and := String,&&
+or := String,||
+not := String,!
+identifier := Word,TrueFalse,min,1

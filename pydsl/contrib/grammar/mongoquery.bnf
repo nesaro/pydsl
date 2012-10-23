@@ -1,0 +1,16 @@
+S ::¡ Query
+
+Query : { identifier : subexpression } | { $or : querylist }
+querylist: [ Query *(,Query) ]
+valuelist: [ value *(,value) ]
+sublist: [ subexpression *(,subexpression) ]
+subexpression: inexpression |  orexpression | ninexpression | elemMatchexpression | modexpression | existsexpression | typeexpression | query | value
+existsexpression: { $exists: bool } 
+inexpression: { $in: valuelist}
+ninexpression: { $nin: valuelist }
+orexpression: { $or: sublist}
+elemMatchexpression: { $elemMatch : { identifier:value * (, identifier:value) } }
+modexpression: { $mod: [int, int] }
+typeexpression: { $type: int }
+bool: true | false
+value: str | int | float | bool | / regexp /
