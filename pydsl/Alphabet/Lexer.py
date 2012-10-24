@@ -99,3 +99,33 @@ class BNFLexer(Lexer):
                 raise Exception("Multiple choices")
 
         return ("EOF_TYPE", "")
+
+class AlphabetListLexer(Lexer):
+    def __init__(self, alphabet):
+        Lexer.__init__(self)
+        self.alphabet = alphabet
+
+    @property
+    def current(self):
+        """Returns the element under the cursor until the end of the string"""
+        try:
+            return self.string[self.index:]
+        except IndexError:
+            return finalchar
+
+    def nextToken(self):
+        while self.current != finalchar:
+            validelements = [x for x in self.alphabet if self.current[0] in x.first()]
+            if not validelements:
+                raise Exception("Not found")
+            if len(validelements) == 1:
+                element = validelements[0]
+                string = self.current[:len(element)]
+                for _ in range(len(element)):
+                    self.consume()
+                return (validelements[0].name, string)
+            else:
+                raise Exception("Multiple choices")
+
+        return ("EOF_TYPE", "")
+
