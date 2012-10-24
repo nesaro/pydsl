@@ -20,23 +20,21 @@ __copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
-from pydsl.Memory.Loader import load, load_checker
+from pydsl.Memory.Loader import load, load_checker, load_lexer
 
 class TestAlphabet(unittest.TestCase):
     def setUp(self):
-        pass
+        from pydsl.Alphabet.Definition import AlphabetListDefinition
+        self.alphabet = AlphabetListDefinition(["integer","Date"])
 
     def testChecker(self):
-        from pydsl.Alphabet.Definition import AlphabetListDefinition
-        x = AlphabetListDefinition(["integer","Date"])
-        checker = load_checker(x)
+        checker = load_checker(self.alphabet)
         self.assertTrue(checker.check(["1234","11/11/1991"]))
         self.assertFalse(checker.check(["bcdf"]))
 
     @unittest.skip
     def testLexer(self):
-        x = load("xyz")
-        lexer = load_lexer(x)
+        lexer = load_lexer(self.alphabet)
         self.assertListEqual(lexer("abc"), TokenList("A:type1","B:type2","C:type3"))
 
     @unittest.skip
