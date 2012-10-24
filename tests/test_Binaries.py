@@ -22,4 +22,4 @@ class TestBinaries(unittest.TestCase):
         self.assertEqual(os.system("python3 bin/translate.py"),512)
 
     def testSearch(self):
-        self.assertEqual(os.system("python3 bin/search.py"),512)
+        self.assertEqual(os.system("python3 bin/search.py"),0)
