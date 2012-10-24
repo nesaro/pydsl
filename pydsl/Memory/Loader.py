@@ -68,6 +68,20 @@ def load_grammar_tool(grammar):
     else:
         raise ValueError(grammar)
 
+def load_lexer(alphabet):
+    from pydsl.Alphabet.Definition import AlphabetListDefinition
+    from pydsl.Grammar.BNF import BNFGrammar
+    if isinstance(alphabet, str):
+        alphabet = load(alphabet)
+    if isinstance(alphabet, AlphabetListDefinition):
+        from pydsl.Alphabet.Lexer import AlphabetListLexer
+        return AlphabetListLexer(alphabet)
+    elif isinstance(alphabet, BNFGrammar):
+        from pydsl.Alphabet.Lexer import BNFLexer
+        return BNFLexer(alphabet)
+    else:
+        raise ValueError(grammar)
+
 def load(identifier, memorylist = []):
     if not memorylist:
         from pydsl.Config import GLOBALCONFIG
