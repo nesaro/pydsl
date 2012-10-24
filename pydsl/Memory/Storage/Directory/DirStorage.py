@@ -43,7 +43,7 @@ class DirStorage(Storage, metaclass = ABCMeta):
             try:
                 self.cache.append(self.summary_from_filename(filename))
             except (AttributeError,ImportError) as e:
-                LOG.exception("Error while loading %s file summary" % filename )
+                LOG.debug("Error while loading %s file summary" % filename )
         return self
 
     def __next__(self):

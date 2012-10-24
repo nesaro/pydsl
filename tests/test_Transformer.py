@@ -34,8 +34,6 @@ def ope1(childlist):
     return childlist[1]
 
 def ope2(childlist):
-    print("ope2")
-    print(childlist)
     el0, el1 = childlist
     if el0 != 'True' or el1 != 'True':
         return 'False'
@@ -54,6 +52,7 @@ class TestTransformer(unittest.TestCase):
         self.__text = ExternalProgramFunction({"input":"cstring"},{"output":"cstring"}, ["echo","#{input}"])
 
     def testProperty(self):
+        """Tests an extractor Transformer"""
         result = self.__gt1({"input":"1+1"})
         assert(str(result["output"]) == "+")
 
@@ -76,7 +75,9 @@ class TestSyntaxDirectedTransformer(unittest.TestCase):
         self.__gt1 = SyntaxDirectedTransformer("LogicalExpression", "cstring",
                 {"OperatorExpression::=<WordTS: TrueFalse> <NonTS: RestExpression>":ope1, 
                     'Expression::=<NonTS: OperatorExpression>':ope2})
-        print(self.__gt1("True&&True"))
+
+    def testCall(self):
+        self.assertTrue(self.__gt1("True&&True"))
 
     def testError(self):
         pass
