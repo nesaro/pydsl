@@ -85,7 +85,7 @@ class TerminalSymbol(Symbol):
         pass
 
 
-class StringTerminalSymbol(TerminalSymbol):
+class StringTerminalSymbol(TerminalSymbol): #FIXME This class is equivalent to a StaticGrammarDefinition
     def __init__(self, string):
         if len(string) < 1:
             raise TypeError
