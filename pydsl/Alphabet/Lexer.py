@@ -96,6 +96,6 @@ class BNFLexer(Lexer):
                     self.consume()
                 return (validelements[0].name, string)
             else:
-                raise Exception
+                raise Exception("Multiple choices")
 
         return ("EOF_TYPE", "")
