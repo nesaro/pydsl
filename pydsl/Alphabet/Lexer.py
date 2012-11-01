@@ -87,7 +87,7 @@ class BNFLexer(Lexer):
     def nextToken(self):
         import re
         while self.current != finalchar:
-            validelements = [x for x in self.symbollist if self.current[0] in x.first]
+            validelements = [x for x in self.symbollist if self.current[0] in x.first()]
             if not validelements:
                 raise Exception("Not found")
             if len(validelements) == 1:
