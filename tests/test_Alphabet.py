@@ -32,10 +32,9 @@ class TestAlphabet(unittest.TestCase):
         self.assertTrue(checker.check(["1234","11/11/1991"]))
         self.assertFalse(checker.check(["bcdf"]))
 
-    @unittest.skip
     def testLexer(self):
         lexer = load_lexer(self.alphabet)
-        self.assertListEqual(lexer("abc"), TokenList("A:type1","B:type2","C:type3"))
+        self.assertListEqual(lexer("1234"), TokenList("1234:integer"))
 
     @unittest.skip
     def testTranslator(self):
