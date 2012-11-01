@@ -82,6 +82,10 @@ class BNFGrammar(GrammarDefinition): #Only stores a ruleset, and methods to ask 
             TerminalSymbol)]
 
     @property
+    def first(self):
+        return [x.first for x in self.terminalsymbollist]
+
+    @property
     def left_recursive(self) -> bool:
         """Tests if exists left recursion"""
         #TODO

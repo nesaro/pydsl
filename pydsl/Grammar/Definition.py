@@ -43,10 +43,6 @@ class PLYGrammar(GrammarDefinition):
         self.module = module
 
     @property
-    def first(self):
-        pass
-
-    @property
     def maxsize(self):
         pass
 
@@ -63,6 +59,17 @@ class RegularExpressionDefinition(GrammarDefinition):
         self.flags = flags
         import re
         self.regexp = re.compile(regexp, flags)
+
+    @property
+    def first(self) -> set:
+        i = 0
+        while True:
+            if self.regexpstr[i] == "^":
+                i+=1
+                continue
+            if self.regexpstr[i] == "[":
+                return [x for x in self.regexpstr[i+1:self.regexpstr.find("]")]]
+            return self.regexpstr[i] 
 
     def __getattr__(self, attr):
         return getattr(self.regexp, attr)
