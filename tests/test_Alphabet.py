@@ -24,8 +24,8 @@ from pydsl.Memory.Loader import load, load_checker, load_lexer
 
 class TestAlphabet(unittest.TestCase):
     def setUp(self):
-        from pydsl.Alphabet.Definition import AlphabetListDefinition
-        self.alphabet = AlphabetListDefinition(["integer","Date"])
+        from pydsl.Alphabet.Definition import AlphabetDictDefinition
+        self.alphabet = AlphabetDictDefinition({"integer":"integer","Date":"Date"})
 
     def testChecker(self):
         checker = load_checker(self.alphabet)

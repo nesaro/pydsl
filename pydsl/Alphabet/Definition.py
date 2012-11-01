@@ -24,7 +24,10 @@ class AlphabetDefinition:
     """Defines an alphabet"""
     pass
 
-class AlphabetListDefinition(AlphabetDefinition):
-    """Uses a list of grammardefinitions"""
-    def __init__(self, grammarlist):
-        self.grammarlist = grammarlist
+class AlphabetDictDefinition(AlphabetDefinition):
+    """Uses a dict of grammardefinitions"""
+    def __init__(self, grammardict):
+        from pydsl.Memory.Loader import load
+        self.grammardict = {}
+        for x in grammardict:
+            self.grammardict[x] = load(grammardict[x])

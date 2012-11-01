@@ -100,7 +100,7 @@ class BNFLexer(Lexer):
 
         return ("EOF_TYPE", "")
 
-class AlphabetListLexer(Lexer):
+class AlphabetDictLexer(Lexer):
     def __init__(self, alphabet):
         Lexer.__init__(self)
         self.alphabet = alphabet

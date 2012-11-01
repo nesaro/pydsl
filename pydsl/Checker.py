@@ -169,12 +169,12 @@ class JsonSchemaChecker(Checker):
             return False
         return True
 
-class AlphabetListChecker(Checker):
+class AlphabetDictChecker(Checker):
     def __init__(self, gd):
         Checker.__init__(self)
         self.gd = gd
         from pydsl.Memory.Loader import load_checker
-        self.checkerinstances = [load_checker(x) for x in self.gd.grammarlist]
+        self.checkerinstances = [load_checker(x) for x in self.gd.grammardict]
 
     def check(self, data):
         for element in data:

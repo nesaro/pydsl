@@ -25,7 +25,7 @@ from pkg_resources import Requirement, resource_filename
 def load_checker(grammar):
     from pydsl.Grammar.BNF import BNFGrammar
     from pydsl.Grammar.Definition import PLYGrammar, RegularExpressionDefinition, MongoGrammar
-    from pydsl.Alphabet.Definition import AlphabetListDefinition
+    from pydsl.Alphabet.Definition import AlphabetDictDefinition
     if isinstance(grammar, str):
         grammar = load(grammar)
     if isinstance(grammar, BNFGrammar):
@@ -43,9 +43,9 @@ def load_checker(grammar):
     elif isinstance(grammar, PLYGrammar):
         from pydsl.Checker import PLYChecker
         return PLYChecker(grammar)
-    elif isinstance(grammar, AlphabetListDefinition):
-        from pydsl.Checker import AlphabetListChecker
-        return AlphabetListChecker(grammar)
+    elif isinstance(grammar, AlphabetDictDefinition):
+        from pydsl.Checker import AlphabetDictChecker
+        return AlphabetDictChecker(grammar)
 
     else:
         raise ValueError(grammar)
@@ -69,13 +69,13 @@ def load_grammar_tool(grammar):
         raise ValueError(grammar)
 
 def load_lexer(alphabet):
-    from pydsl.Alphabet.Definition import AlphabetListDefinition
+    from pydsl.Alphabet.Definition import AlphabetDictDefinition
     from pydsl.Grammar.BNF import BNFGrammar
     if isinstance(alphabet, str):
         alphabet = load(alphabet)
-    if isinstance(alphabet, AlphabetListDefinition):
-        from pydsl.Alphabet.Lexer import AlphabetListLexer
-        return AlphabetListLexer(alphabet)
+    if isinstance(alphabet, AlphabetDictDefinition):
+        from pydsl.Alphabet.Lexer import AlphabetDictLexer
+        return AlphabetDictLexer(alphabet)
     elif isinstance(alphabet, BNFGrammar):
         from pydsl.Alphabet.Lexer import BNFLexer
         return BNFLexer(alphabet)
