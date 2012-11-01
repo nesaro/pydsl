@@ -30,11 +30,11 @@ class GrammarDefinition:
 
     @property
     def minsize(self) -> int:
-        raise NotImplementedError
+        return 0
 
     @property
     def maxsize(self):
-        raise NotImplementedError
+        return None
 
 class PLYGrammar(GrammarDefinition):
     """PLY based grammar"""
