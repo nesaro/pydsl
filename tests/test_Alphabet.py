@@ -34,7 +34,8 @@ class TestAlphabet(unittest.TestCase):
 
     def testLexer(self):
         lexer = load_lexer(self.alphabet)
-        self.assertListEqual(lexer("1234"), TokenList("1234:integer"))
+        from pydsl.Alphabet.Token import TokenList
+        self.assertListEqual(lexer("1234"), TokenList((("integer", "1234"), ("EOF_TYPE", ""))))
 
     @unittest.skip
     def testTranslator(self):
