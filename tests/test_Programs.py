@@ -29,12 +29,6 @@ class TestProgramsLibrary(unittest.TestCase):
     def testRoman(self):
         self.assertTrue(maketestFromGT("simple-adder-roman", {"input":"1+2"}, {"output":"III"}))
 
-    def testIntegerDivisor(self):
-        self.assertTrue(maketestFromGT("integerDivisor", {'input':'123'}, {"output":'123\x00parent\x003;123\x00parent\x0041;'}))
-
-    def testIntegerDivisibilityTree(self):
-        self.assertTrue(maketestFromGT("integerToDivisibilityTree", {'input':'8'}, {"output":'8\x00parent\x002;8\x00parent\x004;4\x00parent\x002;'}))
-
     def testAdder(self):
         self.assertTrue(maketestFromGT("simple-adder", {'input':'1+2'}, {"output":"3"}))
 
@@ -44,8 +38,3 @@ class TestProgramsLibrary(unittest.TestCase):
 
     def testTokenBoardTransformer(self):
         self.assertTrue(maketestFromGT("board-adder-roman", {"input":"1+2"}, {"output":"III"}))
-
-    def testHostPythonGT(self):
-        self.assertTrue(maketestFromGT("integerToDivisibilityTree", {"input":"24"}, {"output":'24\x00parent\x002;24\x00parent\x003;24\x00parent\x004;24\x00parent\x006;24\x00parent\x008;24\x00parent\x0012;4\x00parent\x002;6\x00parent\x002;6\x00parent\x003;8\x00parent\x002;8\x00parent\x004;12\x00parent\x002;12\x00parent\x003;12\x00parent\x004;12\x00parent\x006;4\x00parent\x002;4\x00parent\x002;6\x00parent\x002;6\x00parent\x003;'}))
-
-
