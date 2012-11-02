@@ -26,36 +26,24 @@ LOG = logging.getLogger(__name__)
 from abc import ABCMeta, abstractmethod, abstractproperty
 from pydsl.Memory.Loader import load_function
 
-class Cstr(str):
+class Content:
     """String wrapper"""
-    def __init__(self, *args, **kwargs):
-        str.__init__(*args, **kwargs)
-        self.grammarlist = None
-        self.functionlist = None
+    def __init__(self, content):
+        self.content = TokenList(content)
             
     def guess(self):
-        if self.grammarlist == None:
-            from pydsl.Guess import Guesser
-            guess = Guesser()
-            self.grammarlist = guess(self)
-        return self.grammarlist
+        from pydsl.Guess import Guesser
+        guess = Guesser()
+        return guess(self)
 
     def check(self, grammar):
         return grammar in self.guess()
 
-    def available_transforms(self):
-        if self.functionlist == None:
-            from pydsl.Memory.Search.Searcher import MemorySearcher
-            from pydsl.Memory.Search.Indexer import Indexer
-            from pydsl.Config import GLOBALCONFIG
-            searcher = MemorySearcher([Indexer(x) for x in GLOBALCONFIG.memorylist])
-            resultlist = []
-            for element in self.guess():
-                resultlist += searcher.search({"input":{"$part":{"input":element}}})
-            self.functionlist = resultlist
-        return self.functionlist
+    def available_alphabets(self):
+        return None
 
-
+    def available_grammars(self):
+        return None
 
 class FunctionsMeta(type):
     def __dir__(cls):
@@ -68,8 +56,20 @@ class FunctionsMeta(type):
     def __getattr__(cls, key):
         return load_function(key)
 
-class Functions(metaclass=FunctionsMeta):
+    @staticmethod
+    def available_transforms(content):
+        from pydsl.Memory.Search.Searcher import MemorySearcher
+        from pydsl.Memory.Search.Indexer import Indexer
+        from pydsl.Config import GLOBALCONFIG
+        searcher = MemorySearcher([Indexer(x) for x in GLOBALCONFIG.memorylist])
+        resultlist = []
+        for element in content.guess():
+            resultlist += searcher.search({"input":{"$part":{"input":element}}})
+        return resultlist
+
+class FunctionPool(metaclass=FunctionsMeta):
     pass
 
-
+class NetworkPool:
+    pass
 
