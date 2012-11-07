@@ -29,21 +29,26 @@ from pydsl.Memory.Loader import load_function
 class Content:
     """String wrapper"""
     def __init__(self, content):
-        self.content = TokenList(content)
+        self.content = content
+        self.grammar = None
             
-    def guess(self):
-        from pydsl.Guess import Guesser
-        guess = Guesser()
-        return guess(self)
 
     def check(self, grammar):
         return grammar in self.guess()
 
     def available_alphabets(self):
-        return None
+        return []
 
     def available_grammars(self):
-        return None
+        from pydsl.Guess import Guesser
+        guess = Guesser()
+        return guess(self.content)
+
+    def select_grammar(self, grammar):
+        if grammar not in self.available_grammars():
+            print(self.available_grammars())
+            raise Exception
+        self.grammar = grammar
 
 class FunctionsMeta(type):
     def __dir__(cls):
@@ -63,9 +68,13 @@ class FunctionsMeta(type):
         from pydsl.Config import GLOBALCONFIG
         searcher = MemorySearcher([Indexer(x) for x in GLOBALCONFIG.memorylist])
         resultlist = []
-        for element in content.guess():
+        if content.grammar:
+            grammarlist = [content.grammar]
+        else:
+            grammarlist = content.available_grammars()
+        for element in grammarlist:
             resultlist += searcher.search({"input":{"$part":{"input":element}}})
-        return resultlist
+        return [x['identifier'] for x in resultlist]
 
 class FunctionPool(metaclass=FunctionsMeta):
     pass

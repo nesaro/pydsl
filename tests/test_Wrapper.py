@@ -25,11 +25,12 @@ import unittest
 
 class TestWrapper(unittest.TestCase):
     def testBasic(self):
+        from pydsl.Wrapper import Content, FunctionPool
         a = Content("abcde")
-        a.available_alphabet()
-        a.select_alphabet("unicode") #Autodetected as encoding
+        #a.available_alphabet()
+        #a.select_alphabet("unicode") #Autodetected as encoding
         a.available_grammars()
-        a.select_grammar("string")
+        a.select_grammar("cstring")
         transformlist = FunctionPool.available_transforms(a)
-        result = FunctionPool.funcion1(a) #Result should be a content with the right alphabet/grammar
+        result = FunctionPool.lowerCase(a.content) #Result should be a content with the right alphabet/grammar
 
