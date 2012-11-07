@@ -23,8 +23,7 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
-from abc import ABCMeta, abstractmethod, abstractproperty
-from pydsl.Abstract import Indexable 
+from abc import ABCMeta
 
 class FunctionInterface(metaclass = ABCMeta):
     """A method applied to a function to comunicate with other functions"""
