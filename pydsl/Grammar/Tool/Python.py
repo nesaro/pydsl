@@ -35,6 +35,9 @@ class PythonGrammarTools(GrammarTools):
         self._alphabetFun = dictionary.get('alphabetFun')
 
     def check(self, word):
+        from pydsl.Alphabet.Token import TokenList
+        if isinstance(word, TokenList):
+            word = str(word)
         if not self._matchFun:
             from pydsl.Memory.Loader import load_checker
             self._matchFun = load_checker(self.dictionary)

@@ -26,7 +26,10 @@ class Token:
         self.symbol = terminalsymbol
         self.string = string
 
+    def __str__(self):
+        return self.string
+
 class TokenList(list):
     def __str__(self):
-        return "".join([x.string for x in self])
+        return "".join([str(x[1]) for x in self[:-1]])
 

@@ -21,6 +21,7 @@ __email__ = "nesaro@gmail.com"
 
 import unittest
 from pydsl.Memory.Loader import load, load_checker, load_lexer
+from pydsl.Alphabet.Token import TokenList
 
 class TestAlphabet(unittest.TestCase):
     def setUp(self):
@@ -34,15 +35,12 @@ class TestAlphabet(unittest.TestCase):
 
     def testLexer(self):
         lexer = load_lexer(self.alphabet)
-        from pydsl.Alphabet.Token import TokenList
         self.assertListEqual(lexer("1234"), TokenList((("integer", "1234"), ("EOF_TYPE", ""))))
 
-    @unittest.skip
     def testTranslator(self):
-        x = load("xyz")
-        translator = load("bcy")
-        y = translator(x)
-        self.assertListEqual(y, TokenList("A:type1","B:type2","C:type3"))
+        translator = load("upperCase")
+        y = translator(TokenList((("cstring", "abcde"), ("EOF_TYPE", ""))))
+        self.assertEqual(y["output"], "ABCDE")
 
     @unittest.skip
     def testProperties(self):
