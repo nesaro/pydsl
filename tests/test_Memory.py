@@ -15,8 +15,8 @@
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
-__author__ = "Néstor Arocha Rodríguez"
-__copyright__ = "Copyright 2008-2012, Néstor Arocha Rodríguez"
+__author__ = "Nestor Arocha"
+__copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
@@ -51,7 +51,7 @@ class TestPersistentMemory(unittest.TestCase):
     """Tests Transformers"""
     def setUp(self):
         from pydsl.Memory.Storage.Storage import PersistentStorage
-        from pydsl.Grammar.Checker import Checker
+        from pydsl.Checker import Checker
         self.mem = PersistentStorage("tmp", Checker)
         
     @unittest.skip
@@ -62,5 +62,5 @@ class TestPersistentMemory(unittest.TestCase):
             del self.mem["DummyChecker"]
         self.mem.save(dg, "DummyChecker")
         newdg = self.mem["DummyChecker"]
-        self.assertTrue(newdg == dg)
+        self.assertEqual(newdg,dg)
         del self.mem["DummyChecker"]

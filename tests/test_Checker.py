@@ -15,8 +15,8 @@
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
-__author__ = "Nestor Arocha Rodriguez"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha Rodriguez"
+__author__ = "Nestor Arocha"
+__copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
@@ -24,10 +24,10 @@ import unittest
 class TestMongoChecker(unittest.TestCase):
     """Mongo checker"""
     def testCheck(self):
-        """Test checker instanciation and call"""
+        """Test checker instantiation and call"""
         bad = {"a":1,"b":3}
         letter = {"a":1,"b":"asd"}
-        from pydsl.Grammar.Checker import MongoChecker
+        from pydsl.Checker import MongoChecker
         from mongogrammar import spec, fullspec
         checker = MongoChecker(spec)
         self.assertTrue(checker.check(spec))
@@ -42,14 +42,52 @@ class TestMongoChecker(unittest.TestCase):
 class TestBNFChecker(unittest.TestCase):
     """BNF Checker"""
     def testCheck(self):
-        """Test checker instanciation and call"""
-        from pydsl.Grammar.Checker import BNFChecker
+        """Test checker instantiation and call"""
+        from pydsl.Checker import BNFChecker
         raise NotImplementedError
 
 @unittest.skip
 class TestRegularExpressionChecker(unittest.TestCase):
     """BNF Checker"""
     def testCheck(self):
-        """Test checker instanciation and call"""
-        from pydsl.Grammar.Checker import RegularExpressionChecker
+        """Test checker instantiation and call"""
+        from pydsl.Checker import RegularExpressionChecker
         raise NotImplementedError
+
+class TestPLYChecker(unittest.TestCase):
+    def testCheck(self):
+        """Test checker instantiation and call"""
+        from pydsl.Checker import PLYChecker
+        import plye
+        from pydsl.Grammar.Definition import PLYGrammar
+        grammardef = PLYGrammar(plye)
+        checker = PLYChecker(grammardef)
+        self.assertTrue(checker.check("O"))
+        self.assertFalse(checker.check("FALSE"))
+
+
+class TestJsonSchemaChecker(unittest.TestCase):
+    def testCheck(self):
+        """Test checker instantiation and call"""
+        from pydsl.Grammar.Definition import JsonSchema
+        from pydsl.Checker import JsonSchemaChecker
+        schema = {
+            "type" : "string",
+            "items" : {
+                "type" : ["string", "object"],
+                "properties" : {
+                    "foo" : {"enum" : [1, 3]},
+                    "bar" : {
+                        "type" : "array",
+                        "properties" : {
+                            "bar" : {"required" : True},
+                            "baz" : {"minItems" : 2},
+                        }
+                    }
+                }
+            }
+        }
+        grammardef = JsonSchema(schema)
+        checker = JsonSchemaChecker(grammardef)
+        self.assertTrue(checker.check("a"))
+        self.assertFalse(checker.check([1, {"foo" : 2, "bar" : {"baz" : [1]}}, "quux"]))

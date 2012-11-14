@@ -18,8 +18,8 @@
 
 """Abstract Classes"""
 
-__author__ = "Nestor Arocha Rodriguez"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha Rodriguez"
+__author__ = "Nestor Arocha"
+__copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
@@ -65,16 +65,12 @@ class BNFChecker(Checker):
     def __init__(self, bnf, parser = "auto"):
         Checker.__init__(self)
         parser = bnf.options.get("parser",parser)
-        if parser == "descent":
-            from .Parser.RecursiveDescent import RecursiveDescentParser
+        if parser == "descent" or parser == "auto" or parser == "default":
+            from .Grammar.Parser.RecursiveDescent import RecursiveDescentParser
             self.__parser = RecursiveDescentParser(bnf)
         elif parser == "weighted":
             self.__parser = WeightedParser(bnf)
             raise Exception
-        elif parser == "auto" or parser == "default":
-            #TODO Guess best parser
-            from .Parser.Weighted import WeightedParser
-            self.__parser = WeightedParser(bnf)
         else:
             LOG.error("Wrong parser name: " + parser)
             raise Exception
@@ -83,7 +79,6 @@ class BNFChecker(Checker):
         try:
             return len(self.__parser.get_trees(data)) > 0
         except IndexError:
-            LOG.exception("EXCEPTION IndexError")
             return False 
         return False
         
@@ -143,6 +138,47 @@ class MongoChecker(Checker):
                     return False
         return True
 
+class PLYChecker(Checker):
+    def __init__(self, gd):
+        Checker.__init__(self)
+        self.module = gd.module
 
-                
+    def check(self, data):
+        from ply import yacc, lex
+        lexer = lex.lex(self.module)
+        parser = yacc.yacc(module = self.module)
+        from pydsl.Exceptions import ParseError
+        try:
+            parser.parse(data, lexer = lexer)
+        except ParseError:
+            return False
+        else:
+            return True
+
+
+class JsonSchemaChecker(Checker):
+    def __init__(self, gd):
+        Checker.__init__(self)
+        self.gd = gd
+
+    def check(self, data):
+        from jsonschema import validate, ValidationError
+        try:
+            validate(data, self.gd)
+        except ValidationError:
+            return False
+        return True
+
+class AlphabetDictChecker(Checker):
+    def __init__(self, gd):
+        Checker.__init__(self)
+        self.gd = gd
+        from pydsl.Memory.Loader import load_checker
+        self.checkerinstances = [load_checker(x) for x in self.gd.grammardict]
+
+    def check(self, data):
+        for element in data:
+            if not any([x.check(element) for x in self.checkerinstances]):
+                return False
+        return True
 

@@ -20,8 +20,8 @@
 validates input against the Grammar
 """
 
-__author__ = "Nestor Arocha Rodriguez"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha Rodriguez"
+__author__ = "Nestor Arocha"
+__copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
@@ -48,9 +48,9 @@ class Validate(UnixProgram):
     """Read input file contents, creates grammar and transform objects, create connections, 
     and afterwards reads required input/launch main loop"""
     def __init__(self, optionsdict):
-        from pydsl.Memory.External.Loader import load_grammar
+        from pydsl.Memory.External.Loader import load
         UnixProgram.__init__(self, optionsdict)
-        self.__sgrammar = load_grammar(optionsdict.sgrammar) 
+        self.__sgrammar = load(optionsdict.sgrammar) 
     
     def execute(self):
         resulttrees = None

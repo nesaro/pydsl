@@ -20,8 +20,8 @@
 Calls a transformer
 """
 
-__author__ = "Nestor Arocha Rodriguez"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha Rodriguez"
+__author__ = "Nestor Arocha"
+__copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
@@ -39,8 +39,8 @@ class Translate(UnixProgram):
         UnixProgram.__init__(self, optionsdict)
         
     def readTR(self, gtname):
-        from pydsl.Memory.Loader import load_transformer
-        self.__mainfunc = load_transformer(gtname) 
+        from pydsl.Memory.Loader import load
+        self.__mainfunc = load(gtname) 
     
     def execute(self):
         #Generating and connecting output

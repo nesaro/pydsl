@@ -1,0 +1,14 @@
+//HTML table Grammar
+
+S ::= btable Tablecontent etable
+Tablecontent ::= Trblock Tablecontent | Null
+Trblock ::= btr Trcontent etr 
+Trcontent ::= Tdblock Trcontent | Null
+Tdblock ::= btd identifier etd 
+btable := String,<table>
+etable := String,</table>
+btr := String,<tr>
+etr := String,</tr>
+btd := String,<td>
+etd := String,</td>
+identifier := Word,integer,max,1

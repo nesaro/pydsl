@@ -16,8 +16,8 @@
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
-__author__ = "Néstor Arocha Rodríguez"
-__copyright__ = "Copyright 2008-2012, Néstor Arocha Rodríguez"
+__author__ = "Nestor Arocha"
+__copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
@@ -58,10 +58,8 @@ class SymbolGrammarTools(GrammarTools):
         """ Allow to ask for a grammar property of a valid sentence. Example: (English)ask for verb in a phrase: askProperty("verb","desk is clean") Maybe there is a method to pass it through __init__ (like _matchFun) """
         treelist = self.__parser.get_trees(word)
         for tree in treelist:
-            from pydsl.Grammar.Tree import parser_to_post_tree
-            posttree = parser_to_post_tree(tree)
-            if propertyname in posttree:
-                return posttree[propertyname] 
+            if propertyname in tree:
+                return tree.get_by_symbol(propertyname)
             return []
 
     def get_trees(self, word, showErrors = False) -> list:

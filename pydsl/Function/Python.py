@@ -34,9 +34,12 @@ class PythonTransformer(HostChannel):
         self._function = function
 
     def __call__(self, ibdic):
-        for inputkey in self.inputchanneldic.keys():
-            if inputkey not in ibdic:
-                raise KeyError("Key %s not found in inputdic" % inputkey)
+        if isinstance(ibdic, dict):
+            for inputkey in self.inputchanneldic.keys():
+                if inputkey not in ibdic:
+                    raise KeyError("Key %s not found in inputdic" % inputkey)
+        elif len(self.inputchanneldic) == 1:
+            ibdic = {list(self.inputchanneldic.keys())[0]:ibdic}
         for dickey in ibdic.keys():
             if not self.inputchanneldic[dickey].check(ibdic[dickey]):
                 raise ValueError("Invalid value %s for input %s (%s)" % (ibdic[dickey], dickey, self))
@@ -77,9 +80,9 @@ class HostPythonTransformer(PythonTransformer):
 
     def _initHostT(self, namedic):
         """Inits auxiliary transformers """
-        from pydsl.Memory.Loader import load_transformer
+        from pydsl.Memory.Loader import load
         for title, gttype in namedic.items():
-            self._hostT[title] = load_transformer(gttype)
+            self._hostT[title] = load(gttype)
             LOG.debug("loaded " + str(title) + "auxT")
 
     def _functionwrapper(self, worddic):

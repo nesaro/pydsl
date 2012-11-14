@@ -18,8 +18,8 @@
 
 """Tests the Grammar definition instances"""
 
-__author__ = "Nestor Arocha Rodriguez"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha Rodriguez"
+__author__ = "Nestor Arocha"
+__copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
@@ -75,6 +75,28 @@ class TestGrammarDefinitionMongoDb(unittest.TestCase):
     def testMin(self):
         self.grammardef.minsize()
 
+    def testMax(self):
+        self.grammardef.maxsize()
+
+class TestGrammarDefinitionPLY(unittest.TestCase):
+    def setUp(self):
+        import plye
+        from pydsl.Grammar.Definition import PLYGrammar
+        self.grammardef = PLYGrammar(plye)
+
+    @unittest.skip
+    def testEnumerate(self):
+        self.grammardef.enum()
+
+    @unittest.skip
+    def testFirst(self):
+        self.grammardef.first()
+
+    @unittest.skip
+    def testMin(self):
+        self.grammardef.minsize()
+
+    @unittest.skip
     def testMax(self):
         self.grammardef.maxsize()
 

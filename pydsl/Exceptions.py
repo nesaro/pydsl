@@ -18,8 +18,8 @@
 
 """Exceptions definitions"""
 
-__author__ = "Nestor Arocha Rodriguez"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha Rodriguez"
+__author__ = "Nestor Arocha"
+__copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 
@@ -44,4 +44,13 @@ class BadFileFormat(Exception):
     def __init__(self, filename):
         Exception.__init__(self)
         self.filename = filename
+
+class ParseError(Exception):
+    def __init__(self, msg, offset):
+        self.msg = msg
+        self.offset = offset
+    def __repr__(self):
+        return "ParseError(%r, %r)" % (self.msg, self.offset)
+    def __str__(self):
+        return "%s at position %s" % (self.msg, self.offset + 1)
 

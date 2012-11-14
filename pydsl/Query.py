@@ -22,8 +22,8 @@ Query and related classes
 #Current query class only works for indexable elements
 #for concepts ands relations, other operators are required: ELEMENT HASA CONCEPT1 OR ELEMENT ISA CONCEPT4 OR ELEMENT PROPERTY CONCEPT5
 
-__author__ = "Nestor Arocha Rodriguez"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha Rodriguez"
+__author__ = "Nestor Arocha"
+__copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 class QueryElement:
@@ -35,31 +35,28 @@ class QueryTerm(QueryElement):
         self.left = left
         self.right = right
 
+    def __hash__(self):
+        return hash(self.left) ^ hash(self.right)
+
 
 class QueryEquality(QueryTerm):
     """ a = b. It can use a string or a regexp"""
-    def __hash__(self):
-        return hash(self.left) ^ hash(self.right)
     def __str__(self):
         return "<" + str(self.left) + "=" + str(self.right) + ">"
 
 class QueryPartial(QueryTerm):
     """ a = b. It can use a string or a regexp"""
-    def __hash__(self):
-        return hash(self.left) ^ hash(self.right)
     def __str__(self):
         return "<" + str(self.left) + "=~" + str(self.right) + ">"
 
 
 class QueryInclusion(QueryTerm):
     """ looks for an element within a list """
-    def __hash__(self):
-        return hash(self.left) ^ hash(self.right)
+    pass
 
 class QueryGreaterThan(QueryTerm):
     """associated with > symbol """
-    def __hash__(self):
-        return hash(self.left) ^ hash(self.right)
+    pass
 
 class BinaryOperator(QueryElement):
     def __init__(self, element1, element2):
@@ -76,6 +73,7 @@ class OrQueryOperator(BinaryOperator):
 class NotQueryOperator(QueryElement):
     def __init__(self, element):
         self.element = element
+
     def __str__(self):
         return "<!" + str(self.element) + ">"
 

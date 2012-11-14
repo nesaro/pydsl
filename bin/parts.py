@@ -5,8 +5,8 @@
 Show input's components according to a language
 """
 
-__author__ = "Nestor Arocha Rodriguez"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha Rodriguez"
+__author__ = "Nestor Arocha"
+__copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
@@ -24,11 +24,11 @@ def print_errors(postnode):
 class Parts(UnixProgram):
     """Shows the differents components of data according to a Grammar"""
     def __init__(self, optionsdict):
-        from pydsl.Memory.Loader import load_grammar
+        from pydsl.Memory.Loader import load
         #import pydsl.GlobalConfig
         #pydsl.GlobalConfig.GLOBALCONFIG.strictgrammar = True
         UnixProgram.__init__(self, optionsdict)
-        self.__sgrammar = load_grammar(optionsdict.sgrammar) 
+        self.__sgrammar = load(optionsdict.sgrammar) 
     
     def execute(self):
         import sys

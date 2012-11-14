@@ -36,13 +36,9 @@ class Production:
 
     def __str__(self):
         """Pretty print"""
-        leftstr = ""
-        rightstr = ""
-        for symbol in self.leftside:
-            leftstr += " " + symbol.name + " "
-        for symbol in self.rightside:
-            rightstr += " " + str(symbol) + " "
-        return leftstr + " ::= " + rightstr
+        leftstr = " ".join([ x.name for x in self.leftside])
+        rightstr = " ".join([ str(x) for x in self.rightside])
+        return leftstr + "::=" + rightstr
 
     def __eq__(self, other):
         try:
@@ -84,6 +80,10 @@ class BNFGrammar(GrammarDefinition): #Only stores a ruleset, and methods to ask 
     def terminalsymbollist(self):
         return [x for x in self.fulllist if isinstance(x,
             TerminalSymbol)]
+
+    @property
+    def first(self):
+        return [x.first for x in self.terminalsymbollist]
 
     @property
     def left_recursive(self) -> bool:
@@ -276,8 +276,6 @@ def chomsky_normal_form(productionset:BNFGrammar) -> BNFGrammar:
     #STEP 1: A -> B,c 
     #Terminal and nonterminal at right side 
     for production in productionset:
-        if isinstance(production, TerminalProduction):
-            continue
         termlist = 0
         ntermlist = 0
         for element in production.rightside:
@@ -292,8 +290,6 @@ def chomsky_normal_form(productionset:BNFGrammar) -> BNFGrammar:
     #STEP 2: useless nonterminal
     uselessnonterms = []
     for production in productionset:
-        if isinstance(production, TerminalProduction):
-            continue
         if len(production.rightside) == 1 and isinstance(production.rightside[0], NonTerminalSymbol):
             uselessnonterms.append(production.rightside[0])
     for nonterm in uselessnonterms:
@@ -302,8 +298,6 @@ def chomsky_normal_form(productionset:BNFGrammar) -> BNFGrammar:
     #STEP 3:rightside is too long 
     longproductions = []
     for production in productionset:
-        if isinstance(production, TerminalProduction):
-            continue
         if len(production.rightside) > 2:
             longproductions.append(production)
     for production in longproductions:

@@ -15,8 +15,8 @@
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
-__author__ = "Nestor Arocha Rodriguez"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha Rodriguez"
+__author__ = "Nestor Arocha"
+__copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
@@ -24,10 +24,9 @@ from bnfgrammar import *
 
 class TestLexer(unittest.TestCase):
     def testLexer(self):
-        from pydsl.Grammar.Lexer import BNFLexer
+        """Lexer call"""
+        from pydsl.Alphabet.Lexer import BNFLexer
         lexer = BNFLexer(productionset1)
         result = list(lexer(string1))
-        print(result)
-        print("DS")
         self.assertTrue(result)
 

@@ -17,8 +17,8 @@
 
 """Python Function Grammar"""
 
-__author__ = "Nestor Arocha Rodriguez"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha Rodriguez"
+__author__ = "Nestor Arocha"
+__copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 from .Tool import GrammarTools
@@ -35,6 +35,9 @@ class PythonGrammarTools(GrammarTools):
         self._alphabetFun = dictionary.get('alphabetFun')
 
     def check(self, word):
+        from pydsl.Alphabet.Token import TokenList
+        if isinstance(word, TokenList):
+            word = str(word)
         if not self._matchFun:
             from pydsl.Memory.Loader import load_checker
             self._matchFun = load_checker(self.dictionary)

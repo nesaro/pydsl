@@ -42,8 +42,8 @@ class DirStorage(Storage, metaclass = ABCMeta):
         for filename in self.all_files():
             try:
                 self.cache.append(self.summary_from_filename(filename))
-            except AttributeError as e:
-                LOG.exception("Error while loading %s file summary" % filename )
+            except (AttributeError,ImportError) as e:
+                LOG.debug("Error while loading %s file summary" % filename )
         return self
 
     def __next__(self):
@@ -74,8 +74,10 @@ class DirStorage(Storage, metaclass = ABCMeta):
                 result["description"] =  InmutableDict(moduleobject.description)
             if hasattr(moduleobject, "inputdic"):
                 result["input"] = InmutableDict(moduleobject.inputdic)
+                result["inputlist"] = tuple(moduleobject.inputdic.values())
             if hasattr(moduleobject, "outputdic"):
                 result["output"] = InmutableDict(moduleobject.outputdic)
+                result["outputlist"] = tuple(moduleobject.outputdic.values())
             if hasattr(moduleobject, "inputformat"):
                 result["input"] = moduleobject.inputformat
             if hasattr(moduleobject, "outputformat"):

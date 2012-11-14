@@ -17,8 +17,8 @@
 
 """Regular Expression Grammars"""
 
-__author__ = "Nestor Arocha Rodriguez"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha Rodriguez"
+__author__ = "Nestor Arocha"
+__copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 #There are at least three ways to define a regular grammar. Regexp, FSM table, production rules. At this time, I'm going to combine several regexp rules, each one with a name.
@@ -70,15 +70,14 @@ def regexp_alphabet_helper(string, endchar = None) -> set:
 class RegularExpressionGrammarTools(GrammarTools):
     def __init__(self, regexp, flags = ""):
         GrammarTools.__init__(self)
-        self.__regexpstr = regexp
-        myflags = 0
-        if "i" in flags:
-            myflags |= re.I
-        self.__regexp = re.compile(regexp, myflags)
+        if isinstance(regexp, str):
+            from pydsl.Grammar.Definition import RegularExpressionDefinition
+            regexp = RegularExpressionDefinition(regexp)
+        self.__gd = regexp
 
     def check(self, word):
-        from ..Checker import RegularExpressionChecker
-        checker = RegularExpressionChecker(self.__regexpstr)
+        from pydsl.Checker import RegularExpressionChecker
+        checker = RegularExpressionChecker(self.__gd)
         return checker.check(word)
 
     def get_groups(self, word, groupname):
@@ -86,13 +85,13 @@ class RegularExpressionGrammarTools(GrammarTools):
         data = str(word)
         if not data:
             return []
-        groupdict = self.__regexp.match(data).groupdict()
+        groupdict = self.__gd.match(data).groupdict()
         if not groupname in groupdict:
             return []
-        return [(self.__regexp.match(data).start(groupname),self.__regexp.match(data).end(groupname))] #Returns a list
+        return [(self.__gd.match(data).start(groupname),self.__gd.match(data).end(groupname))] #Returns a list
 
     def groups(self):
-        return list(self.__regexp.groupindex.keys())
+        return list(self.__gd.groupindex.keys())
 
     def tokenize(self, information:str):
         """Uses python str iteration"""
@@ -101,8 +100,8 @@ class RegularExpressionGrammarTools(GrammarTools):
 
     def alphabet(self):
         #FIXME:It is not working with groups
-        return regexp_alphabet_helper(self.__regexpstr)[0]
+        return regexp_alphabet_helper(self.__gd.regexpstr)[0]
 
     @property
     def summary(self):
-        return {"iclass":"RegularExpressionGrammar", "groups":self.groups(), "regexp":self.__regexpstr}
+        return {"iclass":"RegularExpressionGrammar", "groups":self.groups(), "regexp":self.__gd}

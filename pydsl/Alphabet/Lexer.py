@@ -17,17 +17,19 @@
 
 """Base Lexer classes"""
 
-__author__ = "Nestor Arocha Rodriguez"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha Rodriguez"
+__author__ = "Nestor Arocha"
+__copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
 from abc import ABCMeta, abstractmethod, abstractproperty
+from pydsl.Memory.Loader import load_checker
 finalchar = "EOF"
 
 
 class Lexer(metaclass=ABCMeta):
+    """Lexer follows an alphabet definition, which is like a grammar definition but generates a list of tokens and it is always Readable using a regular grammar"""
     def __init__(self):
         self.string = None
         self.index = 0
@@ -95,6 +97,43 @@ class BNFLexer(Lexer):
                     self.consume()
                 return (validelements[0].name, string)
             else:
-                raise Exception
+                raise Exception("Multiple choices")
 
         return ("EOF_TYPE", "")
+
+class AlphabetDictLexer(Lexer):
+    def __init__(self, alphabet):
+        Lexer.__init__(self)
+        self.alphabet = alphabet
+
+    @property
+    def current(self):
+        """Returns the element under the cursor until the end of the string"""
+        try:
+            return self.string[self.index:]
+        except IndexError:
+            return finalchar
+
+    def nextToken(self):
+        while self.current:
+            validelements = [(x,y) for x,y in self.alphabet.grammardict.items() if self.current[0] in y.first]
+            if not validelements:
+                raise Exception("Not found")
+            if len(validelements) == 1:
+                element = validelements[0][1]
+                size = 0
+                checker = load_checker(element)
+                for size in range(element.maxsize or len(self.current), element.minsize, -1):
+                    if checker.check(self.current[:size]):
+                        break
+                else:
+                    raise Exception("Nothing consumed")
+                string = self.current[:size]
+                for _ in range(size):
+                    self.consume()
+                return (validelements[0][0], string)
+            else:
+                raise Exception("Multiple choices")
+
+        return ("EOF_TYPE", "")
+

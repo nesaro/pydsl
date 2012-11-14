@@ -18,8 +18,8 @@
 
 """BNF format functions"""
 
-__author__ = "Nestor Arocha Rodriguez"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha Rodriguez"
+__author__ = "Nestor Arocha"
+__copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
@@ -114,8 +114,7 @@ def strlist_to_production_set(linelist):
         elif re.search ("^\s*$", cleanline):
             pass #Empty line
         else:
-            LOG.error("Unknown line at bnf input file")
-            raise Exception #TODO find proper exception
+            raise ValueError("Unknown line at bnf input file")
 
     #then read nonterminalsymbols
     while len(nonterminalrulelist) > 0:

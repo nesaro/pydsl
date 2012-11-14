@@ -17,8 +17,8 @@
 
 """Symbols"""
 
-__author__ = "Nestor Arocha Rodríguez"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha Rodríguez"
+__author__ = "Nestor Arocha"
+__copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
@@ -66,7 +66,7 @@ class NonTerminalSymbol(Symbol):
         Symbol.__init__(self, name, weight)
 
     def __str__(self):
-        return "<NonTS name:" + self.name + " ,weight = " + str(self._weight) + ">"
+        return "<NonTS: " + self.name + ">"
 
     def __eq__(self, other):
         if not isinstance(other, NonTerminalSymbol):
@@ -85,7 +85,7 @@ class TerminalSymbol(Symbol):
         pass
 
 
-class StringTerminalSymbol(TerminalSymbol):
+class StringTerminalSymbol(TerminalSymbol): #FIXME This class is equivalent to a StaticGrammarDefinition
     def __init__(self, string):
         if len(string) < 1:
             raise TypeError
@@ -115,7 +115,7 @@ class StringTerminalSymbol(TerminalSymbol):
         return self.definition[0]
 
     def __str__(self):
-        return "<StringTS: '" + self.definition + "'>"
+        return "<StringTS: " + self.definition + ">"
 
 
 class WordTerminalSymbol(TerminalSymbol):#boundariesrules: priority, [max,min,fixedsize]
@@ -145,7 +145,7 @@ class WordTerminalSymbol(TerminalSymbol):#boundariesrules: priority, [max,min,fi
         return result
 
     def __str__(self):
-        return "<WordTS: '" + self.grammarname + "'>"
+        return "<WordTS: " + self.grammarname + ">"
 
 
 class NullSymbol(Symbol):

@@ -18,42 +18,48 @@
 """loader class"""
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha Rodriguez"
+__copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 from pkg_resources import Requirement, resource_filename
 
 def load_checker(grammar):
     from pydsl.Grammar.BNF import BNFGrammar
-    import re
-    tmp = re.compile("a")
+    from pydsl.Grammar.Definition import PLYGrammar, RegularExpressionDefinition, MongoGrammar
+    from pydsl.Alphabet.Definition import AlphabetDictDefinition
     if isinstance(grammar, str):
-        grammar = load_grammar(grammar)
+        grammar = load(grammar)
     if isinstance(grammar, BNFGrammar):
-        from pydsl.Grammar.Checker import BNFChecker
+        from pydsl.Checker import BNFChecker
         return BNFChecker(grammar)
-    elif isinstance(grammar, type(tmp)):
-        from pydsl.Grammar.Checker import RegularExpressionChecker
+    elif isinstance(grammar, RegularExpressionDefinition):
+        from pydsl.Checker import RegularExpressionChecker
         return RegularExpressionChecker(grammar)
     elif isinstance(grammar, dict) and "matchFun" in grammar:
-        from pydsl.Grammar.Checker import PythonChecker
+        from pydsl.Checker import PythonChecker
         return PythonChecker(grammar)
-    elif isinstance(grammar, dict) and "spec" in grammar:
-        from pydsl.Grammar.Checker import MongoChecker
+    elif isinstance(grammar, MongoGrammar):
+        from pydsl.Checker import MongoChecker
         return MongoChecker(grammar["spec"])
+    elif isinstance(grammar, PLYGrammar):
+        from pydsl.Checker import PLYChecker
+        return PLYChecker(grammar)
+    elif isinstance(grammar, AlphabetDictDefinition):
+        from pydsl.Checker import AlphabetDictChecker
+        return AlphabetDictChecker(grammar)
+
     else:
         raise ValueError(grammar)
 
 def load_grammar_tool(grammar):
     from pydsl.Grammar.BNF import BNFGrammar
+    from pydsl.Grammar.Definition import RegularExpressionDefinition
     from pydsl.Grammar.Tool.Python import PythonGrammarTools
-    import re
-    tmp = re.compile("a")
     if isinstance(grammar, str):
-        grammar = load_grammar(grammar)
+        grammar = load(grammar)
     if isinstance(grammar, BNFGrammar):
         from pydsl.Grammar.Tool.Symbol import SymbolGrammarTools
         return SymbolGrammarTools(grammar)
-    elif isinstance(grammar, type(tmp)):
+    elif isinstance(grammar, RegularExpressionDefinition):
         from pydsl.Grammar.Tool.Regular import RegularExpressionGrammarTools
         return RegularExpressionGrammarTools(grammar)
     elif isinstance(grammar, dict) and "matchFun" in grammar:
@@ -62,46 +68,25 @@ def load_grammar_tool(grammar):
     else:
         raise ValueError(grammar)
 
-def load_function(identifier, memorylist = []):
-    try:
-        return load_board(identifier, memorylist)
-    except KeyError:
-        pass
-    try:
-        return load_transformer(identifier, memorylist)
-    except KeyError:
-        pass
-    raise KeyError("Function" + identifier)
+def load_lexer(alphabet):
+    from pydsl.Alphabet.Definition import AlphabetDictDefinition
+    from pydsl.Grammar.BNF import BNFGrammar
+    if isinstance(alphabet, str):
+        alphabet = load(alphabet)
+    if isinstance(alphabet, AlphabetDictDefinition):
+        from pydsl.Alphabet.Lexer import AlphabetDictLexer
+        return AlphabetDictLexer(alphabet)
+    elif isinstance(alphabet, BNFGrammar):
+        from pydsl.Alphabet.Lexer import BNFLexer
+        return BNFLexer(alphabet)
+    else:
+        raise ValueError(grammar)
 
-def load_grammar(identifier, memorylist = []) -> "GrammarDefinition":
+def load(identifier, memorylist = []):
     if not memorylist:
         from pydsl.Config import GLOBALCONFIG
         memorylist = GLOBALCONFIG.memorylist
     for memory in memorylist:
-        #if memory.provided_iclasses() and "Grammar" not in memory.provided_iclasses():
-        #    continue
         if identifier in memory:
             return memory.load(identifier)
-    raise KeyError("Grammar " + identifier)
-
-def load_transformer(identifier, memorylist = []):
-    #FIXME: Can return any type of element
-    if not memorylist:
-        from pydsl.Config import GLOBALCONFIG
-        memorylist = GLOBALCONFIG.memorylist
-
-    for memory in memorylist:
-        if identifier in memory:
-            return memory.load(identifier)
-    raise KeyError("Transformer: " + identifier)
-
-def load_board(identifier, memorylist = []):
-    if not memorylist:
-        from pydsl.Config import GLOBALCONFIG
-        memorylist = GLOBALCONFIG.memorylist
-    for memory in memorylist:
-        if "Board" not in memory.provided_iclasses():
-            continue
-        if identifier in memory:
-            return memory.load(identifier)
-    raise KeyError("Board" + identifier)
+    raise KeyError(identifier)

@@ -1,13 +1,15 @@
 DESCRIPTION
 ===========
 
-pydsl is an environment for creating and using formal languages. 
+pydsl is a language workbench written in python
 The main idea is to allow an easy way to define, use and combine DSLs to create programs.
+
 pydsl support several grammar specification formats:
  * regular expressions
  * pydsl BNF format
  * ANLTR .g format (not supported yet)
  * mongo database query dictionaries
+ * python ply module (only check support)
 
 each grammar definition have the following properties:
  * enum(gd): yields a list of accepted words
@@ -16,18 +18,28 @@ each grammar definition have the following properties:
  * maxsize(gd): length of the biggest accepted word
 
 pydsl offer a set of functionalities that use _grammar definitions_
- * check(gd, input): test the input string against the spec
  * validate(gd, input): test the input string against the spec. In case of failure, it returns a list of errors
- * guess(input, [gd]): returns a list of _grammar definitions_ that are compatible with the input
  * partition(gd, input, tag): returns the parts of the input according to a tag
- * extract(gd, input): extract all the slices of the input that are accepted by _grammar definition_
+
+alphabet abstraction is also available. Alphabets are a set of symbols that are recognized using a regular grammar. Properties:
+ * symbols(ad): return the list of allowed symbols for this alphabet
+
+functionalities that use _alphabets_:
+ * lexer(ad, input): Generates a tokenlist from a string (it is a special case of translate)
+ 
+functionalities that use both _alphabets_ and _grammar definitions_:
+ * guess(input, [gd]): returns a list of _grammar definitions_ that are compatible with the input
  * distance(gd, input1, input2): returns the distance between two inputs according to _grammar definition_
- * translate(gd, input): generic translator
+ * check(d, input): test the input string against the spec
+ * extract(gd, input): extract all the slices of the input that are accepted by the definition 
+
+translation functionalities
+ * translate(td, input): generic translator
    * ast(astdefinition, input): creates an abstract syntax tree according to astdefinition
    * sdt( sdt, ast): Performs an AST translation using a Syntax Directed
    Translator
 
-It also offers library related functionalities:
+pydsl also offers library related functionalities:
  * search(query): search for an element within a memory
  * info(identifier): returns information about the element
  * translations(identifier): returns a list of available translators for identifier
@@ -38,7 +50,6 @@ INSTALLATION
    * python3 setup.py install
  * pip:
    * pip install git+http://github.com/nesaro/pydsl.git
-   * pip install git+http://github.com/nesaro/pydsl-contrib.git
 
 USAGE
 =====
@@ -62,14 +73,8 @@ First store your grammar definitions in a directory,
     guess = Guesser([a])
     guess('string')
 
-Using pydsl-contrib
+Using contrib
 -------------------
- * Download pydsl-contrib repositorie from github
- * install with python3 setup.py install
- * use default libraries and transformers
-
-code:
-
     from pydsl.Memory.Loader import *
     mychecker = load_checker(integer)
     mytransformer = load_function('inttohex')
@@ -93,10 +98,33 @@ Functions
  * translate.py: Process user input using a function
 
 
+CONTRIB
+=======
+
+contrib directory contains several types of elements. Those elements are either imported by colony or used as a function argument for their binaries.
+
+ * board: Boards are Functions, therefore they can be used as an argument for:
+   * translate: translate -e input -t boardname
+ * grammar: Grammar are Types; they can be used with the following programs:
+   * check: check -e expression grammarname
+   * extract: extract -e expression grammarname
+   * validate: extract -e expression grammarname
+ * procedure: procedure are functions, but have no input 
+   * translate: translate -t procedurename
+ * board: Transformer are Functions too:
+   * translate: translate -e input -t functionname
+ * dict/filetype.dict: A list of filetypes, which are types
+ * dict/refexp.dict: A list of Regular expressions, which are types
+
+search program will find any element within the library.
+info gives a summary for an element
+guess returns a list of the types that match the input element
+
+
 REQUIREMENTS
 ============
  * python >= 3.0
- * pydsl contrib package ( https://github.com/nesaro/pydsl-contrib )
+ * optional: ply library ( http://www.dabeaz.com/ply/ )
 
 HELP
 ====

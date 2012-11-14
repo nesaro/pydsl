@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-#Copyright (C) 2008-2012 Néstor Arocha Rodríguez
+#Copyright (C) 2008-2012 Nestor Arocha
 
 import unittest
 
@@ -15,7 +15,7 @@ class TestLoader(unittest.TestCase):
     
     def test_grammars(self):
         grammarlist = self.glibrary.all_names()
-        from pydsl.Memory.Loader import load_grammar
+        from pydsl.Memory.Loader import load
         for grammar in grammarlist:
-            load_grammar(grammar)
+            load(grammar)
 
