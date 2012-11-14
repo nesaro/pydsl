@@ -30,6 +30,9 @@ class Token:
         return self.string
 
 class TokenList(list):
+    def __bool__(self):
+        return len(self) > 1
+
     def __str__(self):
         return "".join([str(x[1]) for x in self[:-1]])
 
