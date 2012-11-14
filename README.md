@@ -124,7 +124,6 @@ guess returns a list of the types that match the input element
 REQUIREMENTS
 ============
  * python >= 3.0
- * pydsl contrib package ( https://github.com/nesaro/pydsl-contrib )
  * optional: ply library ( http://www.dabeaz.com/ply/ )
 
 HELP

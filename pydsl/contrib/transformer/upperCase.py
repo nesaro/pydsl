@@ -1,5 +1,5 @@
 def function(inputdic, inputgt, outputgt):
-    palabras = inputdic["input"].string
+    palabras = str(inputdic["input"])
     return {"output":palabras.upper()}
 
 
