@@ -18,26 +18,26 @@ each grammar definition have the following properties:
  * maxsize(gd): length of the biggest accepted word
 
 pydsl offer a set of functionalities that use _grammar definitions_
- * check(gd, input): test the input string against the spec
  * validate(gd, input): test the input string against the spec. In case of failure, it returns a list of errors
  * partition(gd, input, tag): returns the parts of the input according to a tag
- * extract(gd, input): extract all the slices of the input that are accepted by _grammar definition_
- * translate(gd, input): generic translator
-   * ast(astdefinition, input): creates an abstract syntax tree according to astdefinition
-   * sdt( sdt, ast): Performs an AST translation using a Syntax Directed
-   Translator
 
 alphabet abstraction is also available. Alphabets are a set of symbols that are recognized using a regular grammar. Properties:
  * symbols(ad): return the list of allowed symbols for this alphabet
 
 functionalities that use _alphabets_:
- * lexer(ad, input): Generates a tokenlist from a string (is a special case of translate)
- * translate(ad, tokenlist) -> tokenlist: generic translator
- * checker(ad, input): Tests if a given string or tokenlist belongs to the given definition
+ * lexer(ad, input): Generates a tokenlist from a string (it is a special case of translate)
  
 functionalities that use both _alphabets_ and _grammar definitions_:
  * guess(input, [gd]): returns a list of _grammar definitions_ that are compatible with the input
  * distance(gd, input1, input2): returns the distance between two inputs according to _grammar definition_
+ * check(d, input): test the input string against the spec
+ * extract(gd, input): extract all the slices of the input that are accepted by the definition 
+
+translation functionalities
+ * translate(td, input): generic translator
+   * ast(astdefinition, input): creates an abstract syntax tree according to astdefinition
+   * sdt( sdt, ast): Performs an AST translation using a Syntax Directed
+   Translator
 
 pydsl also offers library related functionalities:
  * search(query): search for an element within a memory
