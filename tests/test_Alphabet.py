@@ -42,10 +42,8 @@ class TestAlphabet(unittest.TestCase):
         y = translator(TokenList((("cstring", "abcde"), ("EOF_TYPE", ""))))
         self.assertEqual(y["output"], "ABCDE")
 
-    @unittest.skip
     def testProperties(self):
-        x = load("xyz")
-        x.symbols() #list allowed symbols
+        self.alphabet.symbols #list allowed symbols
 
 
 @unittest.skip

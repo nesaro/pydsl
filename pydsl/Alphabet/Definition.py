@@ -22,7 +22,10 @@ __email__ = "nesaro@gmail.com"
 
 class AlphabetDefinition:
     """Defines an alphabet"""
-    pass
+    @property
+    def symbols(self):
+        """Returns a list of allowed symbols"""
+        return []
 
 class AlphabetDictDefinition(AlphabetDefinition):
     """Uses a dict of grammardefinitions"""
@@ -31,3 +34,7 @@ class AlphabetDictDefinition(AlphabetDefinition):
         self.grammardict = {}
         for x in grammardict:
             self.grammardict[x] = load(grammardict[x])
+
+    @property
+    def symbols(self):
+        return list(self.grammardict.keys())
