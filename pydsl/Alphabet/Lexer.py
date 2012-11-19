@@ -57,7 +57,7 @@ class Lexer:
     def nextToken(self):
         raise NotImplementedError
 
-    def __call__(self, string) -> "TokenList":
+    def __call__(self, string):# -> "TokenList":
         """Tokenizes input, generating a list of tokens"""
         self.string = string
         result = []

@@ -25,22 +25,22 @@ LOG = logging.getLogger(__name__)
 class GrammarTools:
     """Convenience class that have members for checking, groups, tokenizing"""
 
-    def get_groups(self, information, propertyname = None) -> list:
+    def get_groups(self, information, propertyname = None):# -> list:
         """  
         returns [wordgroup1, wordgroup2] (list). A list of tokens.  provides dict like access.
         if propertyname == none: returns all input groups 
         """
         return []
 
-    def groups(self) -> set:
+    def groups(self): # -> set:
         """Returns a set with all groups names"""
         return set() 
 
-    def enumerate(self) -> set:
+    def enumerate(self): # -> set:
         """Yields a list of accepted values (if possible) else return {}"""
         return set() 
 
-    def alphabet(self) -> set:
+    def alphabet(self): # -> set:
         """Returns the alphabet of this grammar, a list of token (if possible) else return {}"""
         return set()
 

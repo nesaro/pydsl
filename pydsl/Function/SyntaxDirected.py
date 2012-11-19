@@ -27,7 +27,7 @@ import logging
 LOG = logging.getLogger(__name__)
 
 class SyntaxDirectedTransformer:
-    def __init__(self, inputgrammar, outputgrammar, blockdic:dict):
+    def __init__(self, inputgrammar, outputgrammar, blockdic):
         self.blockdic = blockdic
         if isinstance(inputgrammar, str):
             from pydsl.Memory.Loader import load

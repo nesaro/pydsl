@@ -32,7 +32,7 @@ ALLSYMBOLS = CHARACTERS.union({".",","})
 
 #TODO: What if Terminal symbols in current grammar scope is a language-grammar-accepted word? We need to tell what terminal symbols mean
 
-def regexp_alphabet_helper(string, endchar = None) -> set:
+def regexp_alphabet_helper(string, endchar = None): # -> set:
     index = 0
     result = set()
     while index < len(string):
@@ -93,7 +93,7 @@ class RegularExpressionGrammarTools(GrammarTools):
     def groups(self):
         return list(self.__gd.groupindex.keys())
 
-    def tokenize(self, information:str):
+    def tokenize(self, information):
         """Uses python str iteration"""
         for x in information:
             yield x

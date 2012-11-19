@@ -26,7 +26,7 @@ LOG = logging.getLogger(__name__)
 
 class BoundariesRules:
     """Rules and policies for symbol conflicts"""
-    def __init__(self, policy, priority:int, size=-1):
+    def __init__(self, policy, priority, size=-1):
         self.priority = priority
         if policy == "min":
             self.policy = policy
@@ -91,7 +91,7 @@ class StringTerminalSymbol(TerminalSymbol): #FIXME This class is equivalent to a
         TerminalSymbol.__init__(self, "StrSymbol " + string, 99, br)
         self.definition = string
 
-    def check(self, tokenlist) -> bool:
+    def check(self, tokenlist):# -> bool:
         return tokenlist == self.definition
 
     def __eq__(self, other):

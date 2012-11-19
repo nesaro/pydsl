@@ -91,7 +91,7 @@ def terminal_symbol_consume(symbol, word):
         return []
     return validresults
 
-def mix_results(resultll:list, productionset):
+def mix_results(resultll, productionset):
     """ Mix n sets of results """
     from pydsl.Grammar.Tree import ParseTree
     production = None
@@ -204,7 +204,7 @@ def locate_result_borders(results):
 
 class Parser:
     """Parser abstract class. At this time, all parsers are tree based"""
-    def __init__(self, bnfgrammar:BNFGrammar):
+    def __init__(self, bnfgrammar):
         self._productionset = bnfgrammar
 
     def get_trees(self, word): # -> list:
@@ -221,7 +221,7 @@ class Parser:
 
 class TopDownParser(Parser):
     """Top down parser like descent parser"""
-    def __init__(self, bnfgrammar:BNFGrammar):
+    def __init__(self, bnfgrammar):
         Parser.__init__(self, bnfgrammar)
         
 class BottomUpParser(Parser):

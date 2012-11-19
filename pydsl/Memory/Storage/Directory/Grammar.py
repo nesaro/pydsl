@@ -32,7 +32,7 @@ class GrammarDirStorage(DirStorage):
     def __init__(self, path):
         DirStorage.__init__(self, path, [".py", ".bnf", ".re"])
 
-    def load(self, identifier:str):
+    def load(self, identifier):
         #TODO: What happens when we have > 1 result
         resultdic = self._searcher.search(identifier)
         for value in resultdic: 
@@ -40,6 +40,6 @@ class GrammarDirStorage(DirStorage):
             return load_grammar_file(filename)
         raise KeyError("Grammar " + identifier)
 
-    def provided_iclasses(self) -> list:
+    def provided_iclasses(self):# -> list:
         return ["PythonGrammarTools","re","BNFGrammar"]
 

@@ -39,7 +39,7 @@ class HostChannel(FunctionInterface):
     """A class that contains input and output string-named channels. Each channel must contain a Type object
     Any class which inherites from this must also inherit from HostChannel
     """
-    def __init__(self, inputtypedict:dict, outputtypedict:dict):
+    def __init__(self, inputtypedict, outputtypedict):
         FunctionInterface.__init__(self)
         for key in inputtypedict:
             if not isinstance(key, str):

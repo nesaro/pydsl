@@ -73,7 +73,7 @@ class PythonTransformer(HostChannel):
 
 class HostPythonTransformer(PythonTransformer):
     """Python Function Transformer which can call to other functions"""
-    def __init__(self, inputdic, outputdic, auxdic: dict, function):
+    def __init__(self, inputdic, outputdic, auxdic, function):
         PythonTransformer.__init__(self, inputdic, outputdic, function)
         self._hostT = {}
         self._initHostT(auxdic)

@@ -25,11 +25,11 @@ class GrammarDefinition:
         raise NotImplementedError
 
     @property
-    def first(self) -> set:
+    def first(self):# -> set:
         raise NotImplementedError
 
     @property
-    def minsize(self) -> int:
+    def minsize(self):# -> int:
         return 0
 
     @property
@@ -61,7 +61,7 @@ class RegularExpressionDefinition(GrammarDefinition):
         self.regexp = re.compile(regexp, flags)
 
     @property
-    def first(self) -> set:
+    def first(self):# -> set:
         i = 0
         while True:
             if self.regexpstr[i] == "^":

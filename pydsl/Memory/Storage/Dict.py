@@ -29,7 +29,7 @@ from .Storage import Storage
 
 class DictStorage(Storage):
     """Stores element in a python file using a python dictionaty"""
-    def __init__(self, fullpath:str):
+    def __init__(self, fullpath):
         Storage.__init__(self)
         self._content = {}
         from pydsl.Memory.Search.Searcher import MemorySearcher
@@ -55,16 +55,15 @@ class DictStorage(Storage):
         self.index += 1
         return result
 
-    @abstractmethod
     def generate_all_summaries(self):
         """A list of all elements of full elements"""
-        pass
+        raise NotImplementedError
         
     def __contains__(self, index):
         return index in self._content
 
 class RegexpDictStorage(DictStorage):
-    def generate_all_summaries(self) -> list:
+    def generate_all_summaries(self):# -> list:
         result = []
         from pydsl.Abstract import InmutableDict
         for key in self._content:
@@ -80,12 +79,12 @@ class RegexpDictStorage(DictStorage):
             return re.compile(self._content[index]["regexp"], flags)
         return re.compile(self._content[index]["regexp"])
 
-    def provided_iclasses(self) -> list:
+    def provided_iclasses(self):# -> list:
         return ["re"]
 
 
 class StrDictStorage(DictStorage):
-    def generate_all_summaries(self) -> list:
+    def generate_all_summaries(self):# -> list:
         result = []
         from pydsl.Abstract import InmutableDict
         for key in self._content:
@@ -95,6 +94,6 @@ class StrDictStorage(DictStorage):
     def load(self, index):
         return self._content[index]
 
-    def provided_iclasses(self) -> list:
+    def provided_iclasses(self):# -> list:
         return ["str"]
 

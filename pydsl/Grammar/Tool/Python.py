@@ -59,7 +59,7 @@ class PythonGrammarTools(GrammarTools):
                 yield x
 
     @property
-    def alphabet(self) -> set:
+    def alphabet(self): # -> set:
         if self._alphabetFun != None:
             return set(self._alphabetFun())
         return set()
