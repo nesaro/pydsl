@@ -27,7 +27,7 @@ LOG = logging.getLogger(__name__)
 class Board:
     """A Transformer where you can call other Transformer. Doesn't perform any computation"""
 
-    def __init__(self, gtenvdefinitionslist:list, timeout = 10):
+    def __init__(self, gtenvdefinitionslist, timeout = 10):
         self._hostT = {}
         self.__GTDefinitionlist = gtenvdefinitionslist #list to put every gt envdefinition
         self.__loadTfromDefinitionList()
@@ -48,7 +48,7 @@ class Board:
         result = {"iclass":"Board", "ancestors":self.ancestors()}
         return InmutableDict(result)
 
-    def __call__(self, inputdict:dict):
+    def __call__(self, inputdict):
         LOG.debug(" received dic:" + str(inputdict))
         resultstack = {}
         calldict = {}
