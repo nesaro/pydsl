@@ -29,12 +29,10 @@ __email__ = "nesaro@gmail.com"
 
 from .Indexer import Indexer
 from .Query import Query, QueryElement
-from abc import ABCMeta, abstractmethod
 
-class Searcher(metaclass=ABCMeta):
-    @abstractmethod
+class Searcher:
     def search(self, query):
-        pass
+        raise NotImplementedError
 
 class MemorySearcher(Searcher):
     def __init__(self, indexerlist):

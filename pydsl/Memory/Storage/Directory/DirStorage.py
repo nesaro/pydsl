@@ -18,7 +18,6 @@
 
 """ Directory storage """
 
-from abc import ABCMeta, abstractmethod
 from ..Storage import Storage
 from ..File.Python import getFileTuple
 from ..File.Grammar import _isRELFileName, _isGDLFileName
@@ -26,7 +25,7 @@ from pydsl.Abstract import InmutableDict
 import logging
 LOG = logging.getLogger(__name__)
 
-class DirStorage(Storage, metaclass = ABCMeta):
+class DirStorage(Storage):
     """A collection of elements stored inside a directory"""
     def __init__(self, dirpath:str, allowedextensions:list = []):
         self.path = dirpath

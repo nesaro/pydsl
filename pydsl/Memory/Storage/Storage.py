@@ -24,26 +24,22 @@ __copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 
-from abc import abstractmethod, ABCMeta
-
 import contextlib
 import shelve
 import logging
 LOG = logging.getLogger(__name__)
 from pydsl.Memory.Memory import Memory
 
-class Storage(Memory, metaclass = ABCMeta):
+class Storage(Memory):
     """External Memory. A Memory type which stores on physical files"""
-    @abstractmethod
     def load(self, name, **kwargs):
-        pass
+        raise NotImplementedError
 
     def save(self, element):
         raise NotImplementedError
 
-    @abstractmethod
-    def provided_iclasses(self) -> list:
-        pass
+    def provided_iclasses(self):
+        raise NotImplementedError
 
 class PersistentStorage(Storage):
     def __init__(self, dbname, allowedclass = None):

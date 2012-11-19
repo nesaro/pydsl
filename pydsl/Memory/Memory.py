@@ -25,25 +25,21 @@ LOG = logging.getLogger(__name__)
 from abc import ABCMeta, abstractmethod
 from pydsl.Abstract import Indexable
 
-class Memory(metaclass = ABCMeta):
+class Memory:
     """Memory Abstraction"""
-    @abstractmethod
     def load(self, index, **kwargs):
-        pass
+        raise NotImplementedError
     
-    @abstractmethod
     def save(self, element):
-        pass
+        raise NotImplementedError
 
-    @abstractmethod
     def __iter__(self):
-        """Debe trabajar con summary"""
-        pass
+        """Must use summary abstraction"""
+        raise NotImplementedError
     
-    @abstractmethod
     def __next__(self):
-        """Debe trabajar con summary"""
-        pass
+        """Must use summary abstraction"""
+        raise NotImplementedError
     
     def __getitem__(self, index):
         return self.load(index)
