@@ -23,13 +23,11 @@ __copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 
-from abc import abstractmethod, ABCMeta
-
 import logging
 LOG = logging.getLogger("Storage.Dict")
 from .Storage import Storage
 
-class DictStorage(Storage, metaclass = ABCMeta):
+class DictStorage(Storage):
     """Stores element in a python file using a python dictionaty"""
     def __init__(self, fullpath:str):
         Storage.__init__(self)

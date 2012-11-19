@@ -28,12 +28,14 @@ from abc import ABCMeta, abstractmethod
 from pydsl.Abstract import Indexable
 from pydsl.Memory.Loader import load_checker
 
-class Checker(metaclass = ABCMeta):
+class Checker:
     """ Ensures information follows a rule, protocol or has a shape.
     Provides only check function, for complex operations, use Grammar"""
-    @abstractmethod
-    def check(self, value) -> bool:
+    def __init__(self):
         pass
+
+    def check(self, value):# -> bool:
+        raise NotImplementedError
 
 class RegularExpressionChecker(Checker):
     def __init__(self, regexp, flags = ""):

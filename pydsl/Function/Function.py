@@ -23,9 +23,8 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
-from abc import ABCMeta
 
-class FunctionInterface(metaclass = ABCMeta):
+class FunctionInterface:
     """A method applied to a function to comunicate with other functions"""
     pass
 

@@ -22,7 +22,6 @@ __copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
-from abc import ABCMeta
 LOG = logging.getLogger(__name__)
 from pydsl.Grammar.Symbol import TerminalSymbol
 
@@ -48,7 +47,7 @@ def traversePostOrder(item):
     result.append(item)
     return result
 
-class Tree(metaclass = ABCMeta):
+class Tree:
     def __init__(self, childlist = []):
         self.childlist = []
 

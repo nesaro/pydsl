@@ -22,7 +22,6 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
-from abc import ABCMeta, abstractmethod
 from pydsl.Abstract import Indexable
 
 class Memory:

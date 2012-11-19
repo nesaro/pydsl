@@ -23,7 +23,6 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
-from abc import ABCMeta, abstractmethod
 from ..BNF import BNFGrammar
 
 
@@ -203,15 +202,14 @@ def locate_result_borders(results):
             rightborder = rightpos
     return (leftborder, rightborder)
 
-class Parser(metaclass = ABCMeta):
+class Parser:
     """Parser abstract class. At this time, all parsers are tree based"""
     def __init__(self, bnfgrammar:BNFGrammar):
         self._productionset = bnfgrammar
 
-    @abstractmethod
-    def get_trees(self, word) -> list:
+    def get_trees(self, word): # -> list:
         """ returns a ParseTree list with all guesses """
-        pass
+        raise NotImplementedError
 
     def __call__(self, word):
         return self.get_trees(word)
