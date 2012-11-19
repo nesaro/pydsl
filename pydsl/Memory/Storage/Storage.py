@@ -41,9 +41,6 @@ class Storage(Memory):
     def provided_iclasses(self):
         raise NotImplementedError
 
-    def __next__(self):
-        return self.next()
-
 class PersistentStorage(Storage):
     def __init__(self, dbname, allowedclass = None):
         Storage.__init__(self)

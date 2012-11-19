@@ -39,10 +39,12 @@ class Memory:
         """Must use summary abstraction"""
         raise NotImplementedError
     
-    def __next__(self):
-        """Must use summary abstraction"""
+    def next(self):
         raise NotImplementedError
-    
+
+    def __next__(self):
+        return self.next()
+
     def __getitem__(self, index):
         return self.load(index)
 
