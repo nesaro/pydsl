@@ -23,6 +23,12 @@ __email__ = "nesaro@gmail.com"
 
 from .Python import getFileTuple
 import logging
+try:
+    # 3.x name
+    import configparser
+except ImportError:
+    # 2.x name
+    import ConfigParser as configparser
 LOG = logging.getLogger("Storage.Directory.Function")
 
 def _readBoardFileRightSideArgs(thestring, basegtname):
@@ -56,7 +62,6 @@ def parseRegularSections(configparser):
     return definitionlist
 
 def load_board_file(filename):
-    import configparser
     config = configparser.ConfigParser()
     config.read(filename)
     if len(config.sections()) == 0:
