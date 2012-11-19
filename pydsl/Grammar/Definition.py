@@ -21,6 +21,9 @@ __email__ = "nesaro@gmail.com"
 
 
 class GrammarDefinition: 
+    def __init__(self):
+        pass
+
     def enum(self):
         raise NotImplementedError
 

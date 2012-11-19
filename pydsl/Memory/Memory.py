@@ -26,6 +26,9 @@ from pydsl.Abstract import Indexable
 
 class Memory:
     """Memory Abstraction"""
+    def __init__(self):
+        pass
+
     def load(self, index, **kwargs):
         raise NotImplementedError
     

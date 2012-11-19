@@ -24,6 +24,8 @@ LOG = logging.getLogger(__name__)
 
 class GrammarTools:
     """Convenience class that have members for checking, groups, tokenizing"""
+    def __init__(self):
+        pass
 
     def get_groups(self, information, propertyname = None):# -> list:
         """  

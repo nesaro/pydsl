@@ -26,5 +26,6 @@ LOG = logging.getLogger(__name__)
 
 class FunctionInterface:
     """A method applied to a function to comunicate with other functions"""
-    pass
+    def __init__(self):
+        pass
 
