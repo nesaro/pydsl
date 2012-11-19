@@ -45,7 +45,7 @@ def generate_memory_list(): #-> list:
     return result
 
 
-class GlobalConfig:
+class GlobalConfig(object):
     """Execution time global configuration"""
     def __init__(self, persistent_dir=None, debuglevel=40):
         self.persistent_dir = persistent_dir
@@ -85,9 +85,9 @@ class GlobalConfig:
     def debuglevel(self, level):
         self.__debuglevel = level
 
-GlobalConfig = Singleton('GlobalConfig', (object, ), {})
+GlobalConfig2 = Singleton('GlobalConfig2', (GlobalConfig, ), {})
 VERSION = "pydsl pre-version\n Copyright (C) 2008-2012 Nestor Arocha"
-GLOBALCONFIG = GlobalConfig()  # The only instance available
+GLOBALCONFIG = GlobalConfig2()  # The only instance available
 ERRORLIST = ["Grammar", "Timeout", "Transformer"]
 
 
