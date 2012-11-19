@@ -27,7 +27,7 @@ LOG = logging.getLogger(__name__)
 from pkg_resources import Requirement, resource_filename, DistributionNotFound
 
 
-def generate_memory_list() -> list:
+def generate_memory_list(): #-> list:
     """loads default memories"""
     result = []
     from pydsl.Memory.Storage.Directory.Grammar import GrammarDirStorage
@@ -45,9 +45,9 @@ def generate_memory_list() -> list:
     return result
 
 
-class GlobalConfig(metaclass=Singleton):
+class GlobalConfig:
     """Execution time global configuration"""
-    def __init__(self, persistent_dir: str=None, debuglevel=40):
+    def __init__(self, persistent_dir=None, debuglevel=40):
         self.persistent_dir = persistent_dir
         self.__memorylist = None  # default memories, sorted by preference
         self.__debuglevel = debuglevel
@@ -82,15 +82,16 @@ class GlobalConfig(metaclass=Singleton):
         return self.__debuglevel
 
     @debuglevel.setter
-    def debuglevel(self, level: int):
+    def debuglevel(self, level):
         self.__debuglevel = level
 
+GlobalConfig = Singleton('GlobalConfig', (object, ), {})
 VERSION = "pydsl pre-version\n Copyright (C) 2008-2012 Nestor Arocha"
 GLOBALCONFIG = GlobalConfig()  # The only instance available
 ERRORLIST = ["Grammar", "Timeout", "Transformer"]
 
 
-def all_classes(module) -> set:
+def all_classes(module):# -> set:
     """Returns all classes (introspection)"""
     import inspect
     result = set()
@@ -103,7 +104,7 @@ def all_classes(module) -> set:
     return result
 
 
-def all_indexable_classes(module) -> set:
+def all_indexable_classes(module):# -> set:
     """Returns all indexable classes (introspection)"""
     import inspect
     result = set()

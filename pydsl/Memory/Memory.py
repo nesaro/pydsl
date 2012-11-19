@@ -67,7 +67,7 @@ class LocalMemory(Memory):
     def load(self, index):
         return self.content[index]
     
-    def save(self, element:Indexable, identifier):
+    def save(self, element, identifier):
         self.content[str(identifier)] = element
     
     def __delitem__(self, key):

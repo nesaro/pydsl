@@ -41,6 +41,9 @@ class Storage(Memory):
     def provided_iclasses(self):
         raise NotImplementedError
 
+    def __next__(self):
+        return self.next()
+
 class PersistentStorage(Storage):
     def __init__(self, dbname, allowedclass = None):
         Storage.__init__(self)
@@ -72,7 +75,7 @@ class PersistentStorage(Storage):
                 self.cache = a.keys() #TODO: should return full dict, not only names
         return self
 
-    def __next__(self):
+    def next(self):
         try:
             result = self.cache[self.index]
         except IndexError:

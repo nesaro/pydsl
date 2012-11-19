@@ -59,7 +59,7 @@ class BoardDirStorage(DirStorage):
             return load_board_file(result["filepath"])
         raise KeyError("Board" + identifier)
 
-    def provided_iclasses(self) -> list:
+    def provided_iclasses(self): #-> list:
         return ["Board"]
 
 

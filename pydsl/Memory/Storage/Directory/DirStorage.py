@@ -27,7 +27,7 @@ LOG = logging.getLogger(__name__)
 
 class DirStorage(Storage):
     """A collection of elements stored inside a directory"""
-    def __init__(self, dirpath:str, allowedextensions:list = []):
+    def __init__(self, dirpath, allowedextensions = []):
         self.path = dirpath
         from pydsl.Config import GLOBALCONFIG
         resultdirpath = []
@@ -45,7 +45,7 @@ class DirStorage(Storage):
                 LOG.debug("Error while loading %s file summary" % filename )
         return self
 
-    def __next__(self):
+    def next(self):
         try:
             result = self.cache[self.index]
         except IndexError:
@@ -83,7 +83,7 @@ class DirStorage(Storage):
                 result["output"] = moduleobject.outputformat
         return InmutableDict(result)
 
-    def _search_files(self, string: str, exact:bool = True):
+    def _search_files(self, string, exact = True):
         """Search through library"""
         for filename in self.all_files():
             if exact:
@@ -140,6 +140,6 @@ class DirStorage(Storage):
     def __contains__(self, key):
         return key in self.all_names()
 
-    def provided_iclasses(self) -> set:
+    def provided_iclasses(self):
         return set([x['iclass'] for x in self])
 
