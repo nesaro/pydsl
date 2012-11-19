@@ -143,7 +143,7 @@ def strlist_to_production_set(linelist):
 def load_bnf_file(filepath):
     """Converts a bnf file into a BNFGrammar instance"""
     linelist = []
-    with open(filepath,'r', encoding='utf-8') as mlfile:
+    with open(filepath,'r') as mlfile:
         for line in mlfile:
             linelist.append(line)
     return strlist_to_production_set(linelist)
