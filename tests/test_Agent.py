@@ -20,13 +20,15 @@ __copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
+from pydsl.Agent import AgentNetwork
 
 class TestAgentNetwork(unittest.TestCase):
     def setUp(self):
         pass
 
     def testNetwork(self):
-        initlist = [("exchange1", "name1", [])]
-        mynetwork = AgentNetwork(initlist, "name1")
+        initlist = [("agent1", {'input':lambda parent, obj:parent.emitmessage('output','OK')})]
+        mynetwork = AgentNetwork("ExampleExchange", initlist)
         mynetwork.send_input("1234")
-        result = mynetwork.collect_output()
+        result = mynetwork.call()
+        print(result)
