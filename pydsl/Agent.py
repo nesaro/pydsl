@@ -10,6 +10,7 @@ class Agent(threading.Thread):
     def __init__(self, exchange, name, actiondictionary):
         """Subscription is the exchange key to connect to aside the name"""
         threading.Thread.__init__(self)
+        self.daemon = True
         self.exchange = exchange
         if name == "output":
             raise Exception("output is a protected name")
