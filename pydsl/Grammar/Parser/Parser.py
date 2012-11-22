@@ -23,7 +23,7 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
-from ..BNF import BNFGrammar
+from pydsl.Grammar.BNF import BNFGrammar
 
 
 def terminal_symbol_reducer(symbol, word, production):
