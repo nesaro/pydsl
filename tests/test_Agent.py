@@ -22,13 +22,18 @@ __email__ = "nesaro@gmail.com"
 import unittest
 from pydsl.Agent import AgentNetwork
 
+def fun1(parent, obj):
+    print("FUN !")
+    parent.emit_message('output',obj['message'])
+
+
 class TestAgentNetwork(unittest.TestCase):
     def setUp(self):
         pass
 
     def testNetwork(self):
-        initlist = [("agent1", {'input':lambda parent, obj:parent.emitmessage('output','OK')})]
+        initlist = [("agent1", {'input':fun1})]
+        #initlist = [("agent1", {'input':lambda parent,obj:'OK'})]
         mynetwork = AgentNetwork("ExampleExchange", initlist)
-        mynetwork.send_input("1234")
-        result = mynetwork.call()
+        result = mynetwork.call("1234")
         print(result)
