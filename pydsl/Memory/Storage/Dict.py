@@ -25,12 +25,12 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger("Storage.Dict")
-from .Storage import Storage
+from ..Memory import Memory
 
-class DictStorage(Storage):
+class DictStorage(Memory):
     """Stores element in a python file using a python dictionaty"""
     def __init__(self, fullpath):
-        Storage.__init__(self)
+        Memory.__init__(self)
         self._content = {}
         from pydsl.Memory.Search.Searcher import MemorySearcher
         self._searcher = MemorySearcher(self)

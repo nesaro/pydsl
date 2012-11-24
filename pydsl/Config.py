@@ -30,17 +30,16 @@ from pkg_resources import Requirement, resource_filename, DistributionNotFound
 def generate_memory_list(): #-> list:
     """loads default memories"""
     result = []
-    from pydsl.Memory.Storage.Directory.Grammar import GrammarDirStorage
-    from pydsl.Memory.Storage.Directory.Function import BoardDirStorage, TransformerDirStorage
+    from pydsl.Memory.Storage.Directory import DirStorage
     from pydsl.Memory.Storage.Dict import RegexpDictStorage
     try:
         dirname = resource_filename("pydsl.contrib", "")
     except DistributionNotFound:
         pass
     else:
-        result.append(GrammarDirStorage(dirname + "/grammar/"))
-        result.append(BoardDirStorage(dirname + "/board/"))
-        result.append(TransformerDirStorage(dirname + "/transformer/"))
+        result.append(DirStorage(dirname + "/grammar/"))
+        result.append(DirStorage(dirname + "/board/"))
+        result.append(DirStorage(dirname + "/transformer/"))
         result.append(RegexpDictStorage(dirname + "/dict/regexp.dict"))
     return result
 

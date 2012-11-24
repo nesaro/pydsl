@@ -18,19 +18,26 @@
 
 """ Directory storage """
 
-from ..Storage import Storage
-from ..File.Python import getFileTuple
-from ..File.Grammar import _isRELFileName, _isGDLFileName
+from ..Memory import Memory
+from .File.Python import getFileTuple
 from pydsl.Abstract import InmutableDict
 import logging
 LOG = logging.getLogger(__name__)
 
-class DirStorage(Storage):
+def _isGDLFileName(path):
+    return path.endswith(".bnf")
+
+def _isRELFileName(path):
+    return path.endswith(".re")
+
+def _isBoardFileName(path):
+    return path.endswith(".board")
+
+
+class DirStorage(Memory):
     """A collection of elements stored inside a directory"""
-    def __init__(self, dirpath, allowedextensions = []):
+    def __init__(self, dirpath, allowedextensions = [".py",".bnf",".re",".board"]):
         self.path = dirpath
-        from pydsl.Config import GLOBALCONFIG
-        resultdirpath = []
         self._allowedextensions = allowedextensions
         from pydsl.Memory.Search.Searcher import MemorySearcher
         self._searcher = MemorySearcher(self)
@@ -61,38 +68,12 @@ class DirStorage(Storage):
             result =  {"iclass":"re","identifier":fileBaseName, "filepath":modulepath}
         elif _isGDLFileName(modulepath):
             result = {"iclass":"BNFGrammar","identifier":fileBaseName, "filepath":modulepath}
-        elif (modulepath).endswith(".board"):
+        elif _isBoardFileName(modulepath):
             result = {"iclass":"Board", "identifier":fileBaseName, "filepath":modulepath}
         else:
-            import imp
-            moduleobject = imp.load_source(fileBaseName, modulepath)
-            result = {"identifier":fileBaseName, "iclass":moduleobject.iclass, "filepath":modulepath}
-            if hasattr(moduleobject, "title"):
-                result["title"] =  InmutableDict(moduleobject.title)
-            if hasattr(moduleobject, "description"):
-                result["description"] =  InmutableDict(moduleobject.description)
-            if hasattr(moduleobject, "inputdic"):
-                result["input"] = InmutableDict(moduleobject.inputdic)
-                result["inputlist"] = tuple(moduleobject.inputdic.values())
-            if hasattr(moduleobject, "outputdic"):
-                result["output"] = InmutableDict(moduleobject.outputdic)
-                result["outputlist"] = tuple(moduleobject.outputdic.values())
-            if hasattr(moduleobject, "inputformat"):
-                result["input"] = moduleobject.inputformat
-            if hasattr(moduleobject, "outputformat"):
-                result["output"] = moduleobject.outputformat
-        return InmutableDict(result)
-
-    def _search_files(self, string, exact = True):
-        """Search through library"""
-        for filename in self.all_files():
-            if exact:
-                (_, _, fileBaseName, _) = getFileTuple(filename)
-                if fileBaseName.strip() == string.strip():
-                    yield filename
-            else:
-                if string.lower() in filename.lower():
-                    yield filename
+            from pydsl.Memory.Storage.File.Python import summary_python_file
+            result = summary_python_file(modulepath)
+        return result
 
     def all_files(self):
         import glob
@@ -135,7 +116,18 @@ class DirStorage(Storage):
             LOG.error("Found two or more matches, FIXME: processing the first, should raise exception")
         if len(resultlist) == 0:
             raise KeyError(self.__class__.__name__ + name)
-        return load_python_file(list(resultlist)[0]["filepath"], **kwargs)
+        filepath = list(resultlist)[0]["filepath"]
+        if _isRELFileName(filepath):
+            from pydsl.Memory.Storage.File.Regexp import load_re_from_file
+            return load_re_from_file(filepath)
+        if _isGDLFileName(filepath):
+            from pydsl.Memory.Storage.File.BNF import load_bnf_file
+            return load_bnf_file(filepath)
+        if _isBoardFileName(filepath):
+            from pydsl.Memory.Storage.File.Board import load_board_file
+            return load_board_file(filepath)
+        from pydsl.Memory.Storage.File.Python import load_python_file
+        return load_python_file(filepath, **kwargs)
 
     def __contains__(self, key):
         return key in self.all_names()

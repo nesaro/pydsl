@@ -20,6 +20,7 @@
 
 import logging
 LOG = logging.getLogger(__name__)
+from pydsl.Abstract import InmutableDict
 
 def load_module(filepath, identifier = None):
     if identifier is None:
@@ -70,4 +71,26 @@ def getFileTuple(fullname):
     (dirName, fileName) = os.path.split(fullname)
     (fileBaseName, fileExtension) = os.path.splitext(fileName)
     return (dirName, fileName, fileBaseName, fileExtension) 
+
+def summary_python_file(modulepath):
+    import imp
+    from pydsl.Memory.Storage.Directory import getFileTuple
+    (_, _, fileBaseName, ext) = getFileTuple(modulepath)
+    moduleobject = imp.load_source(fileBaseName, modulepath)
+    result = {"identifier":fileBaseName, "iclass":moduleobject.iclass, "filepath":modulepath}
+    if hasattr(moduleobject, "title"):
+        result["title"] =  InmutableDict(moduleobject.title)
+    if hasattr(moduleobject, "description"):
+        result["description"] =  InmutableDict(moduleobject.description)
+    if hasattr(moduleobject, "inputdic"):
+        result["input"] = InmutableDict(moduleobject.inputdic)
+        result["inputlist"] = tuple(moduleobject.inputdic.values())
+    if hasattr(moduleobject, "outputdic"):
+        result["output"] = InmutableDict(moduleobject.outputdic)
+        result["outputlist"] = tuple(moduleobject.outputdic.values())
+    if hasattr(moduleobject, "inputformat"):
+        result["input"] = moduleobject.inputformat
+    if hasattr(moduleobject, "outputformat"):
+        result["output"] = moduleobject.outputformat
+    return InmutableDict(result)
 

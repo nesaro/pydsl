@@ -30,20 +30,9 @@ import logging
 LOG = logging.getLogger(__name__)
 from pydsl.Memory.Memory import Memory
 
-class Storage(Memory):
-    """External Memory. A Memory type which stores on physical files"""
-    def load(self, name, **kwargs):
-        raise NotImplementedError
-
-    def save(self, element):
-        raise NotImplementedError
-
-    def provided_iclasses(self):
-        raise NotImplementedError
-
-class PersistentStorage(Storage):
+class PersistentStorage(Memory):
     def __init__(self, dbname, allowedclass = None):
-        Storage.__init__(self)
+        Memory.__init__(self)
         self.identifier = dbname
         #store shelve path list
         #load/create each shelve path

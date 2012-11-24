@@ -62,6 +62,8 @@ class Memory:
     def search(self, query):
         return self.searcher().search(query)
 
+    def provided_iclasses(self):
+        raise NotImplementedError
 
 class LocalMemory(Memory):
     """Execution time memory"""
