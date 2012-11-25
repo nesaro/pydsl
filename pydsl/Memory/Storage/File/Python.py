@@ -74,7 +74,6 @@ def getFileTuple(fullname):
 
 def summary_python_file(modulepath):
     import imp
-    from pydsl.Memory.Storage.Directory import getFileTuple
     (_, _, fileBaseName, ext) = getFileTuple(modulepath)
     moduleobject = imp.load_source(fileBaseName, modulepath)
     result = {"identifier":fileBaseName, "iclass":moduleobject.iclass, "filepath":modulepath}
