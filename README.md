@@ -26,6 +26,7 @@ alphabet abstraction is also available. Alphabets are a set of symbols that are 
 
 functionalities that use _alphabets_:
  * lexer(ad, input): Generates a tokenlist from a string (it is a special case of translate)
+ * mapper(ad, input): Converts a tokenlist from an alphabet into another alphabet
  
 functionalities that use both _alphabets_ and _grammar definitions_:
  * guess(input, [gd]): returns a list of _grammar definitions_ that are compatible with the input
@@ -36,8 +37,7 @@ functionalities that use both _alphabets_ and _grammar definitions_:
 translation functionalities
  * translate(td, input): generic translator
    * ast(astdefinition, input): creates an abstract syntax tree according to astdefinition
-   * sdt( sdt, ast): Performs an AST translation using a Syntax Directed
-   Translator
+   * sdt( sdt, ast): Performs an AST translation using a Syntax Directed Translator
 
 pydsl also offers library related functionalities:
  * search(query): search for an element within a memory
