@@ -27,7 +27,7 @@ LOG = logging.getLogger(__name__)
 class Board:
     """A Transformer where you can call other Transformer. Doesn't perform any computation"""
 
-    def __init__(self, gtenvdefinitionslist, timeout = 10):
+    def __init__(self, gtenvdefinitionslist):
         self._hostT = {}
         self.__GTDefinitionlist = gtenvdefinitionslist #list to put every gt envdefinition
         self.__loadTfromDefinitionList()
