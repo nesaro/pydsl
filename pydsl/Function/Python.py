@@ -33,13 +33,18 @@ class PythonTransformer(HostChannel):
         HostChannel.__init__(self, inputdic, outputdic)
         self._function = function
 
-    def __call__(self, ibdic):
-        if isinstance(ibdic, dict):
+    def __call__(self, *args, **kwargs):
+        if kwargs:
             for inputkey in self.inputchanneldic.keys():
-                if inputkey not in ibdic:
+                if inputkey not in kwargs:
                     raise KeyError("Key %s not found in inputdic" % inputkey)
-        elif len(self.inputchanneldic) == 1:
-            ibdic = {list(self.inputchanneldic.keys())[0]:ibdic}
+            ibdic = kwargs
+        elif len(args) == 1 and isinstance(args[0], dict):
+            ibdic = args[0]
+        elif len(args) == 1:
+            ibdic = {list(self.inputchanneldic.keys())[0]:args[0]}
+        else:
+            raise ValueError
         for dickey in ibdic.keys():
             if not self.inputchanneldic[dickey].check(ibdic[dickey]):
                 raise ValueError("Invalid value %s for input %s (%s)" % (ibdic[dickey], dickey, self))
@@ -49,7 +54,10 @@ class PythonTransformer(HostChannel):
     def _functionwrapper(self, wdict):
         """Wraps function call, to add parammeters if required"""
         LOG.debug("PythonTransformer._functionwrapper: begin")
-        result = self._function(wdict, self.inputchanneldic, self.outputchanneldic)
+        if hasattr(self, "_hostT"):
+            result = self._function(wdict, self._hostT, self.inputchanneldic, self.outputchanneldic)
+        else:
+            result = self._function(wdict, self.inputchanneldic, self.outputchanneldic)
         if not result:
             raise ProcessingError("Transformer", self)
         for outputgrammarname in self.outputchanneldic.keys():
@@ -84,15 +92,3 @@ class HostPythonTransformer(PythonTransformer):
         for title, gttype in namedic.items():
             self._hostT[title] = load(gttype)
             LOG.debug("loaded " + str(title) + "auxT")
-
-    def _functionwrapper(self, worddic):
-        """Wraps function call, to add parammeters if required"""
-        LOG.info("HostPythonTransformer._functionwrapper: begin")
-        result = self._function(worddic, self._hostT, self.inputchanneldic, self.outputchanneldic)
-        if not result:
-            raise ProcessingError("Transformer", self)
-        for channel in result.keys():
-            if not result[channel]:  # FIXME: > 1 channel receives an error
-                newerror = result[channel]
-                return newerror
-        return result
