@@ -23,8 +23,7 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
-from abc import ABCMeta, abstractmethod
-from ..BNF import BNFGrammar
+from pydsl.Grammar.BNF import BNFGrammar
 
 
 def terminal_symbol_reducer(symbol, word, production):
@@ -92,7 +91,7 @@ def terminal_symbol_consume(symbol, word):
         return []
     return validresults
 
-def mix_results(resultll:list, productionset):
+def mix_results(resultll, productionset):
     """ Mix n sets of results """
     from pydsl.Grammar.Tree import ParseTree
     production = None
@@ -203,15 +202,14 @@ def locate_result_borders(results):
             rightborder = rightpos
     return (leftborder, rightborder)
 
-class Parser(metaclass = ABCMeta):
+class Parser:
     """Parser abstract class. At this time, all parsers are tree based"""
-    def __init__(self, bnfgrammar:BNFGrammar):
+    def __init__(self, bnfgrammar):
         self._productionset = bnfgrammar
 
-    @abstractmethod
-    def get_trees(self, word) -> list:
+    def get_trees(self, word): # -> list:
         """ returns a ParseTree list with all guesses """
-        pass
+        raise NotImplementedError
 
     def __call__(self, word):
         return self.get_trees(word)
@@ -223,7 +221,7 @@ class Parser(metaclass = ABCMeta):
 
 class TopDownParser(Parser):
     """Top down parser like descent parser"""
-    def __init__(self, bnfgrammar:BNFGrammar):
+    def __init__(self, bnfgrammar):
         Parser.__init__(self, bnfgrammar)
         
 class BottomUpParser(Parser):

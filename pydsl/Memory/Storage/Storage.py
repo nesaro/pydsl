@@ -24,30 +24,15 @@ __copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 
-from abc import abstractmethod, ABCMeta
-
 import contextlib
 import shelve
 import logging
 LOG = logging.getLogger(__name__)
 from pydsl.Memory.Memory import Memory
 
-class Storage(Memory, metaclass = ABCMeta):
-    """External Memory. A Memory type which stores on physical files"""
-    @abstractmethod
-    def load(self, name, **kwargs):
-        pass
-
-    def save(self, element):
-        raise NotImplementedError
-
-    @abstractmethod
-    def provided_iclasses(self) -> list:
-        pass
-
-class PersistentStorage(Storage):
+class PersistentStorage(Memory):
     def __init__(self, dbname, allowedclass = None):
-        Storage.__init__(self)
+        Memory.__init__(self)
         self.identifier = dbname
         #store shelve path list
         #load/create each shelve path
@@ -76,7 +61,7 @@ class PersistentStorage(Storage):
                 self.cache = a.keys() #TODO: should return full dict, not only names
         return self
 
-    def __next__(self):
+    def next(self):
         try:
             result = self.cache[self.index]
         except IndexError:

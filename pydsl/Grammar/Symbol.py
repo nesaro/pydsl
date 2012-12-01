@@ -23,11 +23,10 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
-from abc import ABCMeta, abstractmethod
 
 class BoundariesRules:
     """Rules and policies for symbol conflicts"""
-    def __init__(self, policy, priority:int, size=-1):
+    def __init__(self, policy, priority, size=-1):
         self.priority = priority
         if policy == "min":
             self.policy = policy
@@ -39,7 +38,7 @@ class BoundariesRules:
         else:
             raise TypeError
             
-class Symbol(metaclass = ABCMeta):
+class Symbol:
     def __init__(self, name, weight): 
         self.name = name
         self._weight = weight
@@ -80,12 +79,11 @@ class TerminalSymbol(Symbol):
             raise TypeError
         self.boundariesrules = boundariesrules
 
-    @abstractmethod
-    def check(self, data) ->bool:
-        pass
+    def check(self, data):# ->bool:
+        raise NotImplementedError
 
 
-class StringTerminalSymbol(TerminalSymbol):
+class StringTerminalSymbol(TerminalSymbol): #FIXME This class is equivalent to a StaticGrammarDefinition
     def __init__(self, string):
         if len(string) < 1:
             raise TypeError
@@ -93,7 +91,7 @@ class StringTerminalSymbol(TerminalSymbol):
         TerminalSymbol.__init__(self, "StrSymbol " + string, 99, br)
         self.definition = string
 
-    def check(self, tokenlist) -> bool:
+    def check(self, tokenlist):# -> bool:
         return tokenlist == self.definition
 
     def __eq__(self, other):

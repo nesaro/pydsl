@@ -24,7 +24,7 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
-from pydsl.Grammar.Lexer import Lexer, finalchar
+from pydsl.Alphabet.Lexer import Lexer, finalchar
 import re
 
 #manual lexer
@@ -143,6 +143,6 @@ def load_anltr_from_text(text):
 #manual parser
 def load_anltr_file(filepath):
     """Converts an anltr .g file into a BNFGrammar instance"""
-    with open(filepath, 'r', encoding='utf-8') as mlfile:
+    with open(filepath, 'r') as mlfile:
         content = mlfile.read()
         return load_anltr_from_text(content)

@@ -16,24 +16,22 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 
-"""Abstract Classes"""
-
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
-from abc import ABCMeta, abstractmethod
-from pydsl.Abstract import Indexable
 from pydsl.Memory.Loader import load_checker
 
-class Checker(metaclass = ABCMeta):
+class Checker:
     """ Ensures information follows a rule, protocol or has a shape.
     Provides only check function, for complex operations, use Grammar"""
-    @abstractmethod
-    def check(self, value) -> bool:
+    def __init__(self):
         pass
+
+    def check(self, value):# -> bool:
+        raise NotImplementedError
 
 class RegularExpressionChecker(Checker):
     def __init__(self, regexp, flags = ""):
@@ -66,7 +64,7 @@ class BNFChecker(Checker):
         Checker.__init__(self)
         parser = bnf.options.get("parser",parser)
         if parser == "descent" or parser == "auto" or parser == "default":
-            from .Parser.RecursiveDescent import RecursiveDescentParser
+            from .Grammar.Parser.RecursiveDescent import RecursiveDescentParser
             self.__parser = RecursiveDescentParser(bnf)
         elif parser == "weighted":
             self.__parser = WeightedParser(bnf)
@@ -167,5 +165,18 @@ class JsonSchemaChecker(Checker):
             validate(data, self.gd)
         except ValidationError:
             return False
+        return True
+
+class AlphabetDictChecker(Checker):
+    def __init__(self, gd):
+        Checker.__init__(self)
+        self.gd = gd
+        from pydsl.Memory.Loader import load_checker
+        self.checkerinstances = [load_checker(x) for x in self.gd.grammardict]
+
+    def check(self, data):
+        for element in data:
+            if not any([x.check(element) for x in self.checkerinstances]):
+                return False
         return True
 

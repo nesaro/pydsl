@@ -21,7 +21,7 @@ from pydsl.Query import QueryEquality, QueryInclusion, QueryTerm, QueryGreaterTh
 
 class Indexer:
     """Indexes memory content. Current implementation just copy Memory iterator (Inmutabledicts) into a cache dict. This is possible because Memory iterator format is suitable for search, but it might change in the future"""
-    def __init__(self, memory:Memory):
+    def __init__(self, memory):
         self.memory = memory #One memory per indexer
         self.index = []
         self.__init_index()
@@ -31,7 +31,7 @@ class Indexer:
         for element in self.memory:
             self.index.append(element)
 
-    def show_all(self) -> list:
+    def show_all(self):# -> list:
         """All elements inside index"""
         return list(self.index)
 
@@ -41,7 +41,7 @@ class Indexer:
             if element not in self.index:
                 self.index.append(element)
 
-    def search_index(self, queryterm:QueryTerm) -> set:
+    def search_index(self, queryterm): #-> set:
         result = set()
         qpart = queryterm.right
         if isinstance(queryterm, QueryEquality):

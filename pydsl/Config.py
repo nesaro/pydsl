@@ -27,27 +27,26 @@ LOG = logging.getLogger(__name__)
 from pkg_resources import Requirement, resource_filename, DistributionNotFound
 
 
-def generate_memory_list() -> list:
+def generate_memory_list(): #-> list:
     """loads default memories"""
     result = []
-    from pydsl.Memory.Storage.Directory.Grammar import GrammarDirStorage
-    from pydsl.Memory.Storage.Directory.Function import BoardDirStorage, TransformerDirStorage
+    from pydsl.Memory.Storage.Directory import DirStorage
     from pydsl.Memory.Storage.Dict import RegexpDictStorage
     try:
         dirname = resource_filename("pydsl.contrib", "")
     except DistributionNotFound:
         pass
     else:
-        result.append(GrammarDirStorage(dirname + "/grammar/"))
-        result.append(BoardDirStorage(dirname + "/board/"))
-        result.append(TransformerDirStorage(dirname + "/transformer/"))
+        result.append(DirStorage(dirname + "/grammar/"))
+        result.append(DirStorage(dirname + "/board/"))
+        result.append(DirStorage(dirname + "/transformer/"))
         result.append(RegexpDictStorage(dirname + "/dict/regexp.dict"))
     return result
 
 
-class GlobalConfig(metaclass=Singleton):
+class GlobalConfig(object):
     """Execution time global configuration"""
-    def __init__(self, persistent_dir: str=None, debuglevel=40):
+    def __init__(self, persistent_dir=None, debuglevel=40):
         self.persistent_dir = persistent_dir
         self.__memorylist = None  # default memories, sorted by preference
         self.__debuglevel = debuglevel
@@ -82,15 +81,16 @@ class GlobalConfig(metaclass=Singleton):
         return self.__debuglevel
 
     @debuglevel.setter
-    def debuglevel(self, level: int):
+    def debuglevel(self, level):
         self.__debuglevel = level
 
+GlobalConfig2 = Singleton('GlobalConfig2', (GlobalConfig, ), {})
 VERSION = "pydsl pre-version\n Copyright (C) 2008-2012 Nestor Arocha"
-GLOBALCONFIG = GlobalConfig()  # The only instance available
+GLOBALCONFIG = GlobalConfig2()  # The only instance available
 ERRORLIST = ["Grammar", "Timeout", "Transformer"]
 
 
-def all_classes(module) -> set:
+def all_classes(module):# -> set:
     """Returns all classes (introspection)"""
     import inspect
     result = set()
@@ -103,7 +103,7 @@ def all_classes(module) -> set:
     return result
 
 
-def all_indexable_classes(module) -> set:
+def all_indexable_classes(module):# -> set:
     """Returns all indexable classes (introspection)"""
     import inspect
     result = set()

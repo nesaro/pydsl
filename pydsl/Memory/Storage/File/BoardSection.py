@@ -36,7 +36,7 @@ class BoardConnectionDefinition:
 
 class BoardDefinitionSection:
     """Board and its connections definition"""
-    def __init__(self, name, gttype, inputconnections: list, outputconnections: list):
+    def __init__(self, name, gttype, inputconnections, outputconnections):
         self.name = name
         self.type = gttype
         self.inputConnectionDefinitions = inputconnections #each element is a BoardConnectionDefinition

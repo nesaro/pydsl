@@ -27,7 +27,7 @@ LOG = logging.getLogger(__name__)
 class Board:
     """A Transformer where you can call other Transformer. Doesn't perform any computation"""
 
-    def __init__(self, gtenvdefinitionslist:list, timeout = 10):
+    def __init__(self, gtenvdefinitionslist):
         self._hostT = {}
         self.__GTDefinitionlist = gtenvdefinitionslist #list to put every gt envdefinition
         self.__loadTfromDefinitionList()
@@ -48,7 +48,7 @@ class Board:
         result = {"iclass":"Board", "ancestors":self.ancestors()}
         return InmutableDict(result)
 
-    def __call__(self, inputdict:dict):
+    def __call__(self, inputdict):
         LOG.debug(" received dic:" + str(inputdict))
         resultstack = {}
         calldict = {}
@@ -155,8 +155,8 @@ class Board:
 
     def _initHostT(self, namedic):
         """Inits aux GTs. if a requested aux GT isn't connected, This function will create them"""
-        from pydsl.Memory.Loader import load_transformer
+        from pydsl.Memory.Loader import load
         for title, gttype in namedic.items():
-            self._hostT[title] = load_transformer(gttype) 
+            self._hostT[title] = load(gttype) 
             LOG.debug("loaded " + str(title) + "auxT")
 

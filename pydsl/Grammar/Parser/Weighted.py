@@ -41,7 +41,7 @@ class WeightedParser(TopDownParser):
                 finalresult.append(eresult)
         return finalresult
 
-    def __recursive_parser(self, symbols:list, data, production, showerrors = False):
+    def __recursive_parser(self, symbols, data, production, showerrors = False):
         """ Main function. It is recursive """
         if not symbols:
             return []

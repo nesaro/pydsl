@@ -26,7 +26,7 @@ __email__ = "nesaro@gmail.com"
 
 from pydsl.Query import Query, QueryEquality, QueryElement, QueryInclusion, QueryGreaterThan
 
-def str_to_memoryquery(string:str, escape = '\\') -> Query:
+def str_to_memoryquery(string, escape = '\\'):# -> Query:
     """String a query"""
     #We parse de string and generate an equivalent list
     elementlist = [] 
@@ -84,7 +84,7 @@ def str_to_memoryquery(string:str, escape = '\\') -> Query:
     else:
         return Query(recursive_str_to_query(string))
 
-def recursive_str_to_query(query_list:list) -> QueryElement:
+def recursive_str_to_query(query_list): # -> QueryElement:
     from pydsl.Query import AndQueryOperator, OrQueryOperator, NotQueryOperator
     if "||" in query_list:
         index = query_list.index("||")
@@ -113,10 +113,10 @@ def recursive_str_to_query(query_list:list) -> QueryElement:
     else:
         raise Exception
 
-def dict_to_query(querydict:dict) -> Query:
+def dict_to_query(querydict): # -> Query:
     return Query(recursive_dict_to_query(querydict))
 
-def recursive_dict_to_query(querydict, parentkey = None) -> QueryElement:
+def recursive_dict_to_query(querydict, parentkey = None): # -> QueryElement:
     if isinstance(querydict, str):
         return querydict
     from pydsl.Query import Query, QueryEquality, QueryElement, QueryInclusion, QueryGreaterThan, AndQueryOperator, NotQueryOperator, QueryPartial

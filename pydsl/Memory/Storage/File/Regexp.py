@@ -30,7 +30,7 @@ LOG = logging.getLogger(__name__)
 def load_re_from_file(filepath):
     """Converts a re file to Regular Grammar instance"""
     regexp = None
-    with open(filepath,'r', encoding='utf-8') as mlfile:
+    with open(filepath,'r') as mlfile:
         flagstr = ""
         for line in mlfile:
             cleanline = re.sub("//.*$", "", line)
