@@ -29,12 +29,10 @@ __email__ = "nesaro@gmail.com"
 
 from .Indexer import Indexer
 from .Query import Query, QueryElement
-from abc import ABCMeta, abstractmethod
 
-class Searcher(metaclass=ABCMeta):
-    @abstractmethod
+class Searcher:
     def search(self, query):
-        pass
+        raise NotImplementedError
 
 class MemorySearcher(Searcher):
     def __init__(self, indexerlist):
@@ -46,7 +44,7 @@ class MemorySearcher(Searcher):
         assert(isinstance(indexerlist, list))
         self.indexerlist = indexerlist
 
-    def search(self, query = None) -> set:
+    def search(self, query = None): # -> set:
         if isinstance(query, str):
             from .Query import str_to_memoryquery
             query = str_to_memoryquery(query)
@@ -60,7 +58,7 @@ class MemorySearcher(Searcher):
             return result
         return self.__recursive_search(query.content)
 
-    def __recursive_search(self, queryelement:QueryElement) -> set:
+    def __recursive_search(self, queryelement): # -> set:
         from pydsl.Query import NotQueryOperator, AndQueryOperator, OrQueryOperator, QueryTerm
         if isinstance(queryelement, AndQueryOperator):
             r1 = self.__recursive_search(queryelement.element1)

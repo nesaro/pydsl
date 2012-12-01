@@ -24,11 +24,11 @@ def print_errors(postnode):
 class Parts(UnixProgram):
     """Shows the differents components of data according to a Grammar"""
     def __init__(self, optionsdict):
-        from pydsl.Memory.Loader import load_grammar
+        from pydsl.Memory.Loader import load
         #import pydsl.GlobalConfig
         #pydsl.GlobalConfig.GLOBALCONFIG.strictgrammar = True
         UnixProgram.__init__(self, optionsdict)
-        self.__sgrammar = load_grammar(optionsdict.sgrammar) 
+        self.__sgrammar = load(optionsdict.sgrammar) 
     
     def execute(self):
         import sys

@@ -15,31 +15,26 @@
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Grammar FileLibraries"""
-
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 
-import logging
-LOG = logging.getLogger(__name__)
-from .Python import getFileTuple
+class AlphabetDefinition:
+    """Defines an alphabet"""
+    @property
+    def symbols(self):
+        """Returns a list of allowed symbols"""
+        return []
 
-def _isGDLFileName(path):
-    return path.endswith(".bnf")
+class AlphabetDictDefinition(AlphabetDefinition):
+    """Uses a dict of grammardefinitions"""
+    def __init__(self, grammardict):
+        from pydsl.Memory.Loader import load
+        self.grammardict = {}
+        for x in grammardict:
+            self.grammardict[x] = load(grammardict[x])
 
-def _isRELFileName(path):
-    return path.endswith(".re")
-
-def load_grammar_file(filepath):
-    if _isRELFileName(filepath):
-        from pydsl.Memory.Storage.File.Regexp import load_re_from_file
-        return load_re_from_file(filepath)
-    if _isGDLFileName(filepath):
-        from pydsl.Memory.Storage.File.BNF import load_bnf_file
-        return load_bnf_file(filepath)
-    from .Python import load_python_file 
-    return load_python_file(filepath)
-    
-
+    @property
+    def symbols(self):
+        return list(self.grammardict.keys())

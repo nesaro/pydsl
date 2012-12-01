@@ -13,8 +13,8 @@ def maketestFromGT(gtname, inputexpression, outputdic):
     values["outputfiledic"] = None    
     values["inputfiledic"] = None
     values["pipemode"] = None    
-    from pydsl.Memory.Loader import load_function
-    gt = load_function(gtname)
+    from pydsl.Memory.Loader import load
+    gt = load(gtname)
     result = gt(inputexpression)
     for key in outputdic.keys():
         if result[key] != outputdic[key]:

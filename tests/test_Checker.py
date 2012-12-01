@@ -27,7 +27,7 @@ class TestMongoChecker(unittest.TestCase):
         """Test checker instantiation and call"""
         bad = {"a":1,"b":3}
         letter = {"a":1,"b":"asd"}
-        from pydsl.Grammar.Checker import MongoChecker
+        from pydsl.Checker import MongoChecker
         from mongogrammar import spec, fullspec
         checker = MongoChecker(spec)
         self.assertTrue(checker.check(spec))
@@ -43,7 +43,7 @@ class TestBNFChecker(unittest.TestCase):
     """BNF Checker"""
     def testCheck(self):
         """Test checker instantiation and call"""
-        from pydsl.Grammar.Checker import BNFChecker
+        from pydsl.Checker import BNFChecker
         raise NotImplementedError
 
 @unittest.skip
@@ -51,13 +51,13 @@ class TestRegularExpressionChecker(unittest.TestCase):
     """BNF Checker"""
     def testCheck(self):
         """Test checker instantiation and call"""
-        from pydsl.Grammar.Checker import RegularExpressionChecker
+        from pydsl.Checker import RegularExpressionChecker
         raise NotImplementedError
 
 class TestPLYChecker(unittest.TestCase):
     def testCheck(self):
         """Test checker instantiation and call"""
-        from pydsl.Grammar.Checker import PLYChecker
+        from pydsl.Checker import PLYChecker
         import plye
         from pydsl.Grammar.Definition import PLYGrammar
         grammardef = PLYGrammar(plye)
@@ -70,7 +70,7 @@ class TestJsonSchemaChecker(unittest.TestCase):
     def testCheck(self):
         """Test checker instantiation and call"""
         from pydsl.Grammar.Definition import JsonSchema
-        from pydsl.Grammar.Checker import JsonSchemaChecker
+        from pydsl.Checker import JsonSchemaChecker
         schema = {
             "type" : "string",
             "items" : {

@@ -24,7 +24,7 @@ __email__ = "nesaro@gmail.com"
 import logging
 LOG = logging.getLogger(__name__)
 from abc import ABCMeta, abstractmethod, abstractproperty
-from pydsl.Memory.Loader import load_function
+from pydsl.Memory.Loader import load
 
 class Content:
     """String wrapper"""
@@ -59,7 +59,7 @@ class FunctionsMeta(type):
         return [ x["identifier"] for x in searcher.search({"ancestors":{"$in":"Function"}})]
 
     def __getattr__(cls, key):
-        return load_function(key)
+        return load(key)
 
     @staticmethod
     def available_transforms(content):

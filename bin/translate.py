@@ -39,8 +39,8 @@ class Translate(UnixProgram):
         UnixProgram.__init__(self, optionsdict)
         
     def readTR(self, gtname):
-        from pydsl.Memory.Loader import load_transformer
-        self.__mainfunc = load_transformer(gtname) 
+        from pydsl.Memory.Loader import load
+        self.__mainfunc = load(gtname) 
     
     def execute(self):
         #Generating and connecting output

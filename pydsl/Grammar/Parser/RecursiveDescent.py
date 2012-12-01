@@ -94,7 +94,7 @@ class RecursiveDescentResultTree(Tree):
 
 class RecursiveDescentParser(TopDownParser):
     """Recursive descent parser class"""
-    def get_trees(self, data, showerrors:bool = False) -> list:
+    def get_trees(self, data, showerrors = False): # -> list:
         """ returns a list of trees with valid guesses """
         if not isinstance(data, str):
             data = str(data).strip()
@@ -105,7 +105,7 @@ class RecursiveDescentParser(TopDownParser):
                 finalresult.append(eresult)        
         return finalresult
 
-    def __recursive_parser(self, onlysymbol, data, production, showerrors:bool = False):
+    def __recursive_parser(self, onlysymbol, data, production, showerrors = False):
         """ Aux function. helps check_word"""
         LOG.debug("__recursive_parser: Begin ")
         if not data:

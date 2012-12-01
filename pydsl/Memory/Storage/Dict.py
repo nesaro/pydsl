@@ -23,16 +23,14 @@ __copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 
-from abc import abstractmethod, ABCMeta
-
 import logging
 LOG = logging.getLogger("Storage.Dict")
-from .Storage import Storage
+from ..Memory import Memory
 
-class DictStorage(Storage, metaclass = ABCMeta):
+class DictStorage(Memory):
     """Stores element in a python file using a python dictionaty"""
-    def __init__(self, fullpath:str):
-        Storage.__init__(self)
+    def __init__(self, fullpath):
+        Memory.__init__(self)
         self._content = {}
         from pydsl.Memory.Search.Searcher import MemorySearcher
         self._searcher = MemorySearcher(self)
@@ -49,7 +47,7 @@ class DictStorage(Storage, metaclass = ABCMeta):
         self.cache += self.generate_all_summaries()
         return self
 
-    def __next__(self):
+    def next(self):
         try:
             result = self.cache[self.index]
         except IndexError:
@@ -57,16 +55,15 @@ class DictStorage(Storage, metaclass = ABCMeta):
         self.index += 1
         return result
 
-    @abstractmethod
     def generate_all_summaries(self):
         """A list of all elements of full elements"""
-        pass
+        raise NotImplementedError
         
     def __contains__(self, index):
         return index in self._content
 
 class RegexpDictStorage(DictStorage):
-    def generate_all_summaries(self) -> list:
+    def generate_all_summaries(self):# -> list:
         result = []
         from pydsl.Abstract import InmutableDict
         for key in self._content:
@@ -82,12 +79,12 @@ class RegexpDictStorage(DictStorage):
             return re.compile(self._content[index]["regexp"], flags)
         return re.compile(self._content[index]["regexp"])
 
-    def provided_iclasses(self) -> list:
+    def provided_iclasses(self):# -> list:
         return ["re"]
 
 
 class StrDictStorage(DictStorage):
-    def generate_all_summaries(self) -> list:
+    def generate_all_summaries(self):# -> list:
         result = []
         from pydsl.Abstract import InmutableDict
         for key in self._content:
@@ -97,6 +94,6 @@ class StrDictStorage(DictStorage):
     def load(self, index):
         return self._content[index]
 
-    def provided_iclasses(self) -> list:
+    def provided_iclasses(self):# -> list:
         return ["str"]
 

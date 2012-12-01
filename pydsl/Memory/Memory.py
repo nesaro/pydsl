@@ -22,29 +22,29 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
-from abc import ABCMeta, abstractmethod
 from pydsl.Abstract import Indexable
 
-class Memory(metaclass = ABCMeta):
+class Memory:
     """Memory Abstraction"""
-    @abstractmethod
-    def load(self, index, **kwargs):
-        pass
-    
-    @abstractmethod
-    def save(self, element):
+    def __init__(self):
         pass
 
-    @abstractmethod
+    def load(self, index, **kwargs):
+        raise NotImplementedError
+    
+    def save(self, element):
+        raise NotImplementedError
+
     def __iter__(self):
-        """Debe trabajar con summary"""
-        pass
+        """Must use summary abstraction"""
+        raise NotImplementedError
     
-    @abstractmethod
+    def next(self):
+        raise NotImplementedError
+
     def __next__(self):
-        """Debe trabajar con summary"""
-        pass
-    
+        return self.next()
+
     def __getitem__(self, index):
         return self.load(index)
 
@@ -62,6 +62,8 @@ class Memory(metaclass = ABCMeta):
     def search(self, query):
         return self.searcher().search(query)
 
+    def provided_iclasses(self):
+        raise NotImplementedError
 
 class LocalMemory(Memory):
     """Execution time memory"""
@@ -71,7 +73,7 @@ class LocalMemory(Memory):
     def load(self, index):
         return self.content[index]
     
-    def save(self, element:Indexable, identifier):
+    def save(self, element, identifier):
         self.content[str(identifier)] = element
     
     def __delitem__(self, key):

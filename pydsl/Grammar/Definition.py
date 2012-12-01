@@ -21,30 +21,29 @@ __email__ = "nesaro@gmail.com"
 
 
 class GrammarDefinition: 
+    def __init__(self):
+        pass
+
     def enum(self):
         raise NotImplementedError
 
     @property
-    def first(self) -> set:
+    def first(self):# -> set:
         raise NotImplementedError
 
     @property
-    def minsize(self) -> int:
-        raise NotImplementedError
+    def minsize(self):# -> int:
+        return 0
 
     @property
     def maxsize(self):
-        raise NotImplementedError
+        return None
 
 class PLYGrammar(GrammarDefinition):
     """PLY based grammar"""
     def __init__(self, module):
         GrammarDefinition.__init__(self)
         self.module = module
-
-    @property
-    def first(self):
-        pass
 
     @property
     def maxsize(self):
@@ -63,6 +62,17 @@ class RegularExpressionDefinition(GrammarDefinition):
         self.flags = flags
         import re
         self.regexp = re.compile(regexp, flags)
+
+    @property
+    def first(self):# -> set:
+        i = 0
+        while True:
+            if self.regexpstr[i] == "^":
+                i+=1
+                continue
+            if self.regexpstr[i] == "[":
+                return [x for x in self.regexpstr[i+1:self.regexpstr.find("]")]]
+            return self.regexpstr[i] 
 
     def __getattr__(self, attr):
         return getattr(self.regexp, attr)

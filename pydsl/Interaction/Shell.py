@@ -58,7 +58,7 @@ def escapedsplitby(inputstring, separator):
     return result
 
 
-def parse_shell_dict(inputstring) -> dict:
+def parse_shell_dict(inputstring): # -> dict:
     """Parses commandline input dicts. Example: a:b,c:d,e:f."""
     result = {}
     arglist = escapedsplitby(inputstring, ",")
@@ -68,7 +68,7 @@ def parse_shell_dict(inputstring) -> dict:
     return result
 
 
-def open_files_dict(inputdic) -> dict:
+def open_files_dict(inputdic): # -> dict:
     """Converts a all str filename values into file objects"""
     result = {}
     for channel, filename in inputdic.items():

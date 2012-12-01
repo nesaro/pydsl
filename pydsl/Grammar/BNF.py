@@ -26,7 +26,7 @@ __email__ = "nesaro@gmail.com"
 
 
 class Production:
-    def __init__(self, leftside:list, rightside:list):
+    def __init__(self, leftside, rightside):
         #Left side must have at least one nonterminal symbol
         for element in rightside:
             if not isinstance(element, Symbol):
@@ -64,7 +64,7 @@ class Production:
 
 
 class BNFGrammar(GrammarDefinition): #Only stores a ruleset, and methods to ask properties or validity check 
-    def __init__(self, initialsymbol, fulllist:list, options = {}):
+    def __init__(self, initialsymbol, fulllist, options = {}):
         self._initialsymbol = initialsymbol
         for rule in fulllist:
             if fulllist.count(rule) >1:
@@ -82,13 +82,17 @@ class BNFGrammar(GrammarDefinition): #Only stores a ruleset, and methods to ask 
             TerminalSymbol)]
 
     @property
-    def left_recursive(self) -> bool:
+    def first(self):
+        return [x.first for x in self.terminalsymbollist]
+
+    @property
+    def left_recursive(self):# -> bool:
         """Tests if exists left recursion"""
         #TODO
         raise NotImplementedError
 
     @property
-    def right_recursive(self) -> bool:
+    def right_recursive(self):# -> bool:
         """Tests if exists right recursion"""
         #TODO
         raise NotImplementedError
@@ -121,7 +125,7 @@ class BNFGrammar(GrammarDefinition): #Only stores a ruleset, and methods to ask 
                 return rule
         raise IndexError
 
-    def getProductionsBySide(self, symbollist:list, side = "left"):
+    def getProductionsBySide(self, symbollist, side = "left"):
         result = []
         for rule in self.productionlist: #FIXME Is iterating over production only
             part = None
@@ -145,7 +149,7 @@ class BNFGrammar(GrammarDefinition): #Only stores a ruleset, and methods to ask 
 
         return result
 
-    def getProductionByBothSides(self, leftsymbollist:list, rightsymbollist:list):
+    def getProductionByBothSides(self, leftsymbollist, rightsymbollist):
         for rule in self.productionlist:
             valid = True
             if len(rule.leftside) != len(leftsymbollist):
@@ -191,7 +195,7 @@ class BNFGrammar(GrammarDefinition): #Only stores a ruleset, and methods to ask 
     def __str__(self):
         return str(list(map(str,self.productionlist)))
 
-def create_non_terminal_production(productionset:list, terminalsymbol):
+def create_non_terminal_production(productionset, terminalsymbol):
     """Creates a new nonterminalrule for terminalsymbol
     A -> B,nt 
     is changed to: 
@@ -222,7 +226,7 @@ def create_non_terminal_production(productionset:list, terminalsymbol):
         productionset.append(newproduction)
     return productionset
 
-def reduce_non_terminal_production(productionset:list, uselesssymbol):
+def reduce_non_terminal_production(productionset, uselesssymbol):
     """search for production that only have nonterminalsymbol at right, subst nonterminal from rules at right and  remove the rule that have it at left"""
     production = productionset.getProductionsBySide(uselesssymbol, "right")
     productionset.remove(production)
@@ -245,7 +249,7 @@ def reduce_non_terminal_production(productionset:list, uselesssymbol):
                 productionset.remove(production)
 
 
-def split_production(productionset:list, production):
+def split_production(productionset, production):
     from .Symbol import NonTerminalSymbol
     if len(production.rightside) < 2:
         return productionset
@@ -265,7 +269,7 @@ def split_production(productionset:list, production):
     return productionset
 
 
-def chomsky_normal_form(productionset:BNFGrammar) -> BNFGrammar:
+def chomsky_normal_form(productionset):# -> BNFGrammar:
     """TODO Check is Epsilon free"""
     ntermslist = []
     from .Symbol import NonTerminalSymbol
