@@ -123,7 +123,7 @@ guess returns a list of the types that match the input element
 
 REQUIREMENTS
 ============
- * python >= 3.0
+ * python >= 2.7
  * optional: ply library ( http://www.dabeaz.com/ply/ )
 
 HELP
