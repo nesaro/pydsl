@@ -137,5 +137,5 @@ GPLv3, see LICENSE file
 
 ABOUT
 =====
-pydsl is a formal and natural language framework.
+pydsl is a formal language framework.
 Copyright (C) 2008-2012 Nestor Arocha (nesaro@gmail.com)
