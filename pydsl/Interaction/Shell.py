@@ -90,7 +90,7 @@ def save_result_to_output(resultdic, outputdic):
             print(resultdic[key])
         else:
             with open(outputdic[key], 'w') as currentfile:  # print to file
-                currentfile.write(resultdic[key].string)
+                currentfile.write(str(resultdic[key]))
 
 
 class CommandLineToTransformerInteraction:
