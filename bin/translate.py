@@ -114,7 +114,6 @@ if __name__ == "__main__":
     if ARGS.debuglevel:
         DEBUGLEVEL = ARGS.debuglevel
     logging.basicConfig(level = DEBUGLEVEL)
-    from pydsl.Interaction.Translate import Translate
     MANAGER = Translate(ARGS)
     try: 
         MANAGER.readTR(ARGS.transformer)
