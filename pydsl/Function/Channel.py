@@ -23,7 +23,6 @@ __email__ = "nesaro@gmail.com"
 
 
 from abc import ABCMeta, abstractmethod, abstractproperty
-from .Function import FunctionInterface
 import logging
 LOG = logging.getLogger(__name__)
 
@@ -35,12 +34,11 @@ def _loadGrammarTools(originaldic):
         result[key] = load_grammar_tool(str(originaldic[key]))
     return result
 
-class HostChannel(FunctionInterface):
+class HostChannel:
     """A class that contains input and output string-named channels. Each channel must contain a Type object
     Any class which inherites from this must also inherit from HostChannel
     """
     def __init__(self, inputtypedict, outputtypedict):
-        FunctionInterface.__init__(self)
         for key in inputtypedict:
             if not isinstance(key, str):
                 raise TypeError
