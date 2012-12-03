@@ -138,7 +138,7 @@ class CommandLineToTransformerInteraction:
 
 class StreamFileToTransformerInteraction:
     """Write to file n times"""
-    def __init__(self, gt, inputfiledic: dict, outputfiledic: dict={}):
+    def __init__(self, gt, inputfiledic, outputfiledic={}):
         self._tinstance = gt
         self._inputfiledic = inputfiledic
         self._outputfiledic = outputfiledic
