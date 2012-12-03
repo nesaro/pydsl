@@ -74,7 +74,6 @@ class Translate(UnixProgram):
             stringdic = open_files_dict(inputdic)
             resultdic = self.__mainfunc(stringdic)
             save_result_to_output(resultdic, outputdic)
-            close_input_dic(stringdic)
             return resultdic
         elif self._opt["pipemode"]:
             assert(len(self.__mainfunc.inputchanneldic) == 1)
