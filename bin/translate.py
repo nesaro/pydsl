@@ -25,7 +25,7 @@ __copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
-from pydsl.Interaction.Shell import parse_shell_dict, open_files_dict
+from pydsl.Interaction.Shell import parse_shell_dict, open_files_dict, StreamFileToTransformerInteraction
 from pydsl.Interaction.Program import UnixProgram
 from pydsl.Exceptions import BadFileFormat
 LOG = logging.getLogger(__name__)
@@ -67,7 +67,6 @@ class Translate(UnixProgram):
             print(result)
             return result #FIXME: this is the only condition that returns a result. Because of tests
         elif self._opt["inputstreamdic"] and self._opt["outputfiledic"]:
-            from pydsl.Interaction.Shell import StreamFileToTransformerInteraction
             interactor = StreamFileToTransformerInteraction(self.__mainfunc, parse_shell_dict(self._opt["inputstreamdic"]), parse_shell_dict(self._opt["outputfiledic"]))
             interactor.start()
         elif self._opt["inputfiledic"] and self._opt["outputfiledic"]:
@@ -80,7 +79,6 @@ class Translate(UnixProgram):
             close_input_dic(stringdic)
             return resultdic
         elif self._opt["pipemode"]:
-            from pydsl.Interaction.Shell import StreamFileToTransformerInteraction
             assert(len(self.__mainfunc.inputchanneldic) == 1)
             assert(len(self.__mainfunc.outputchanneldic) == 1)
             inputname = list(self.__mainfunc.inputchanneldic.keys())[0]
