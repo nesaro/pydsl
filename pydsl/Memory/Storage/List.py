@@ -27,12 +27,12 @@ from abc import abstractmethod, ABCMeta
 
 import logging
 LOG = logging.getLogger("Storage.List")
-from .Storage import Storage
+from pydsl.Memory.Memory import Memory
 
-class ListStorage(Storage, metaclass = ABCMeta):
+class ListStorage(Memory):
     """Stores element in a python file using a python list"""
     def __init__(self, fullpath:str):
-        Storage.__init__(self)
+        Memory.__init__(self)
         self._content = {}
         from pydsl.Memory.Search.Searcher import MemorySearcher
         self._searcher = MemorySearcher(self)
