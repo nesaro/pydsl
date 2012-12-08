@@ -134,6 +134,7 @@ HELP
 LICENSE
 =======
 GPLv3, see LICENSE file
+Included Spark code, by John Aycock. See pydsl/spark.py
 
 ABOUT
 =====
