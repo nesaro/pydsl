@@ -129,6 +129,7 @@ REQUIREMENTS
 HELP
 ====
  * http://github.com/nesaro/pydsl
+ * http://pydsl.blogspot.co.uk
  * nesaro@gmail.com
 
 LICENSE
