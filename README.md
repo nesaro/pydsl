@@ -1,8 +1,8 @@
 DESCRIPTION
 ===========
 
-pydsl is a language workbench written in python
-The main idea is to allow an easy way to define, use and combine DSLs to create programs.
+pydsl is a language library written in python
+The main idea is to allow an easy way to define, use and combine DSLs to create programs and provide tools around them.
 
 pydsl support several grammar specification formats:
  * regular expressions
