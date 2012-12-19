@@ -111,7 +111,10 @@ class CommandLineToTransformerInteraction:
                         resultdic[key] = str(resultdic[key])
                     except UnicodeDecodeError:
                         resultdic[key] = "Unprintable"
-                print(str(resultdic) + "\n")
+                if len(resultdic) == 1:
+                    print(str(list(resultdic.values())[0]) + "\n")
+                else:
+                    print(str(resultdic) + "\n")
             value = self._getInput()
         print("Bye Bye")
 
