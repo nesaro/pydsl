@@ -10,7 +10,6 @@ __copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
-from pydsl.Interaction.Program import UnixProgram
 
 
 def print_errors(postnode):
@@ -21,46 +20,39 @@ def print_errors(postnode):
             result += print_errors(child) + "\n"
     return result
 
-class Parts(UnixProgram):
-    """Shows the differents components of data according to a Grammar"""
-    def __init__(self, optionsdict):
-        from pydsl.Memory.Loader import load
-        #import pydsl.GlobalConfig
-        #pydsl.GlobalConfig.GLOBALCONFIG.strictgrammar = True
-        UnixProgram.__init__(self, optionsdict)
-        self.__sgrammar = load(optionsdict.sgrammar) 
-    
-    def execute(self):
-        import sys
-        result = None
-        if not self._opt["part"]:
-            print("Grouplist: " + "\n".join(self.__sgrammar.groups()))
-            return True
-        myinput = None
-        if self._opt["expression"]: 
-            myinput = self._opt["expression"]
-        elif self._opt["inputfile"]:
-            with open(self._opt["inputfile"], "rb") as f:
-                myinput = f.read()
-        else:
-            raise Exception #No input method
-        result = self.__sgrammar.get_groups(myinput, self._opt["part"])
-        dataresults = []
-        for left,right in result:
-            dataresults.append(myinput[left:right])
+def parts(grammar, outputformat = None, expression = None, inputfile = None):
+    import sys
+    result = None
+    from pydsl.Memory.Loader import load
+    sgrammar = load(grammar) 
+    if not part:
+        print("Grouplist: " + "\n".join(sgrammar.groups()))
+        return True
+    myinput = None
+    if expression: 
+        myinput = expression
+    elif inputfile:
+        with open(inputfile, "rb") as f:
+            myinput = f.read()
+    else:
+        raise Exception("No input method")
+    result = sgrammar.get_groups(myinput, part)
+    dataresults = []
+    for left,right in result:
+        dataresults.append(myinput[left:right])
 
-        if self._opt["outputformat"] == "str":
-            for x in range(len(result)):
-                print("(" + str(result[x][0]) + "," + str(result[x][1]) + ") " +  str(dataresults[x]))
-            return True
+    if outputformat == "str":
+        for x in range(len(result)):
+            print("(" + str(result[x][0]) + "," + str(result[x][1]) + ") " +  str(dataresults[x]))
+        return True
 
-        elif self._opt["outputformat"] == "json":
-            mylist = []
-            for x in range(len(result)):
-                mylist.append((result[x][0],result[x][1],dataresults[x]))
-            import json
-            print(json.dumps(mylist))
-            return True
+    elif outputformat == "json":
+        mylist = []
+        for x in range(len(result)):
+            mylist.append((result[x][0],result[x][1],dataresults[x]))
+        import json
+        print(json.dumps(mylist))
+        return True
 
 
 if __name__ == "__main__":

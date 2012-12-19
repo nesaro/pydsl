@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python
 
 # -*- coding: utf-8 -*-
 #This file is part of pydsl.
@@ -27,9 +27,8 @@ __email__ = "nesaro@gmail.com"
 import logging
 from pydsl.Exceptions import BadFileFormat
 from pydsl.Interaction.Shell import parse_shell_dict, open_files_dict 
-from pydsl.Interaction.Program import UnixProgram
 
-CURRENTGRAMMAR = ""
+#CURRENTGRAMMAR = ""
 
 def checkfun(inputdic, auxboarddic, inputgt, outputgt):
     output = auxboarddic["checker"]({"string":inputdic["input"], "grammar":CURRENTGRAMMAR})
@@ -45,64 +44,51 @@ def bool_dict_values(dic):
             dic[key] = bool(dic[key])
     return dic
 
-class Checker(UnixProgram):
-    """Read input file contents, creates grammar and transform objects, create connections, 
-    and afterwards reads required input/launch main loop"""
-    def __init__(self, optionsdict):
-        from pydsl.Function.Python import HostPythonTransformer
-        #import pydsl.GlobalConfig
-        #pydsl.GlobalConfig.GLOBALCONFIG.strictgrammar = True
-        self.__maingt = HostPythonTransformer({"input":"cstring"},{"output":"TrueFalse"},{"checker":"GrammarChecker"}, checkfun) 
-        UnixProgram.__init__(self, optionsdict)
-    
-    def execute(self):
-        #Generating and connecting output
-        #listen to user, open read file, or other
-        #configure output, write file, or other
-        #print self._opt
-        if self._opt["expression"] and self._opt["outputfiledic"]: #input type: expression #output: file
-            myexpression = {"input":self._opt["expression"]}
-            outputdic = parse_shell_dict(self._opt["outputfiledic"])
-            resultdic = self.__maingt(myexpression, outputdic)
-            resultdic = bool_dict_values(resultdic)
-            from .Shell import save_result_to_output
-            save_result_to_output(resultdic, outputdic)
-            return resultdic
-        elif self._opt["expression"] and not self._opt["outputfiledic"]:
-            myexpression = {"input":self._opt["expression"]}
-            result = self.__maingt(myexpression)["output"]
-            #result = bool_dict_values(str(result["output"]))
-            print(result)
-            return result #FIXME: Only expression mode expects a returned result
-        elif self._opt["inputfiledic"]:
-            inputdic = parse_shell_dict(self._opt["inputfiledic"])
-            outputdic = {"output":"stdout"}
-            if self._opt["outputfiledic"]:
-                outputdic = parse_shell_dict(self._opt["outputfiledic"])
-            stringdic = open_files_dict(inputdic)
-            resultdic = self.__maingt(stringdic)
-            resultdic = bool_dict_values(resultdic)
-            from pydsl.Interaction.Shell import save_result_to_output
-            save_result_to_output(resultdic, outputdic)
-        elif self._opt["pipemode"]:
-            from pydsl.Interaction.Shell import StreamFileToTransformerInteraction
-            assert(len(self.__maingt.inputchanneldic) == 1)
-            assert(len(self.__maingt.outputchanneldic) == 1)
-            inputname = list(self.__maingt.inputchanneldic.keys())[0]
-            outputname = list(self.__maingt.outputchanneldic.keys())[0]
-            interactor = StreamFileToTransformerInteraction(self.__maingt, {inputname:"stdin"} , {outputname:"stdout"})
-            interactor.start()
-        elif not self._opt["inputfiledic"] and not self._opt["outputfiledic"] and not self._opt["expression"]:
-            from pydsl.Interaction.Shell import CommandLineToTransformerInteraction
-            interactor = CommandLineToTransformerInteraction(self.__maingt)
-            interactor.start()
-        else:
-            raise Exception
-        return True
-
-    def readT(self, newtype):
-        global CURRENTGRAMMAR
-        CURRENTGRAMMAR = newtype
+def checker(expression = None, outputfiledic = None, inputfiledic = None, pipemode = None, **kwargs ):
+    #Generating and connecting output
+    #listen to user, open read file, or other
+    #configure output, write file, or other
+    from pydsl.Function.Python import HostPythonTransformer
+    maingt = HostPythonTransformer({"input":"cstring"},{"output":"TrueFalse"},{"checker":"GrammarChecker"}, checkfun) 
+    if expression and outputfiledic: #input type: expression #output: file
+        myexpression = {"input":expression}
+        outputdic = parse_shell_dict(outputfiledic)
+        resultdic = maingt(myexpression, outputdic)
+        resultdic = bool_dict_values(resultdic)
+        from .Shell import save_result_to_output
+        save_result_to_output(resultdic, outputdic)
+        return resultdic
+    elif expression and not outputfiledic:
+        myexpression = {"input":expression}
+        result = maingt(myexpression)["output"]
+        #result = bool_dict_values(str(result["output"]))
+        print(result)
+        return result #FIXME: Only expression mode expects a returned result
+    elif inputfiledic:
+        inputdic = parse_shell_dict(inputfiledic)
+        outputdic = {"output":"stdout"}
+        if outputfiledic:
+            outputdic = parse_shell_dict(outputfiledic)
+        stringdic = open_files_dict(inputdic)
+        resultdic = maingt(stringdic)
+        resultdic = bool_dict_values(resultdic)
+        from pydsl.Interaction.Shell import save_result_to_output
+        save_result_to_output(resultdic, outputdic)
+    elif pipemode:
+        from pydsl.Interaction.Shell import StreamFileToTransformerInteraction
+        assert(len(maingt.inputchanneldic) == 1)
+        assert(len(maingt.outputchanneldic) == 1)
+        inputname = list(maingt.inputchanneldic.keys())[0]
+        outputname = list(maingt.outputchanneldic.keys())[0]
+        interactor = StreamFileToTransformerInteraction(maingt, {inputname:"stdin"} , {outputname:"stdout"})
+        interactor.start()
+    elif not inputfiledic and not outputfiledic and not expression:
+        from pydsl.Interaction.Shell import CommandLineToTransformerInteraction
+        interactor = CommandLineToTransformerInteraction(maingt)
+        interactor.start()
+    else:
+        raise Exception
+    return True
 
 if __name__ == "__main__":
     import argparse
@@ -121,9 +107,9 @@ if __name__ == "__main__":
     DEBUGLEVEL = ARGS.debuglevel or logging.WARNING
     
     logging.basicConfig(level = DEBUGLEVEL)
-    program = Checker(ARGS)
     try: 
-        program.readT(ARGS.tname)
+        global CURRENTGRAMMAR
+        CURRENTGRAMMAR = ARGS.tname
     except BadFileFormat:
         print("Error reading input file")
         sys.exit(1)
@@ -131,7 +117,7 @@ if __name__ == "__main__":
         print("Unable to load " + str(le))
         sys.exit(1)
     try:
-        result = program.execute()
+        result = checker(**vars(ARGS))
     except EOFError:
         sys.exit(0)
     if not result:
