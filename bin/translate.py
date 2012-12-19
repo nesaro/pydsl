@@ -26,70 +26,60 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 from pydsl.Interaction.Shell import parse_shell_dict, open_files_dict, StreamFileToTransformerInteraction, save_result_to_output
-from pydsl.Interaction.Program import UnixProgram
 from pydsl.Exceptions import BadFileFormat
+from pydsl.Memory.Loader import load
 LOG = logging.getLogger(__name__)
 
 #FIXME Some parts of this class should call separated functions. This code is a mess
-class Translate(UnixProgram):
+def translate(transformer = None, expression = None, inputfiledic = None, outputfiledic = None, inputstreamdic = None, pipemode = None, **kwargs):
     """Read input file contents, creates grammar and transform objects, create connections, 
     and afterwards reads required input/launch main loop"""
-    def __init__(self, optionsdict):
-        self.__mainfunc = None
-        UnixProgram.__init__(self, optionsdict)
-        
-    def readTR(self, gtname):
-        from pydsl.Memory.Loader import load
-        self.__mainfunc = load(gtname) 
-    
-    def execute(self):
-        #Generating and connecting output
-        #listen to user, open read file, or other
-        #configure output, write file, or other
-        #print self._opt
-        LOG.debug(self._opt)
-        if self._opt["expression"] and  self._opt["outputfiledic"]: #input type: expression #output: file
-            inputdic = parse_shell_dict(self._opt["expression"])
-            if not isinstance(inputdic, dict):
-                raise TypeError
-            outputdic = parse_shell_dict(self._opt["outputfiledic"])
-            resultdic = self.__mainfunc(inputdic)
-            save_result_to_output(resultdic, outputdic)
-            return resultdic
-        elif self._opt["expression"] and not self._opt["outputfiledic"]:
-            myexpression = parse_shell_dict(self._opt["expression"])
-            result = self.__mainfunc(myexpression)
-            from pydsl.Function.Function import Error
-            if result:
-                for key in result.keys():
-                    result[key] = str(result[key])
-            print(result)
-            return result #FIXME: this is the only condition that returns a result. Because of tests
-        elif self._opt["inputstreamdic"] and self._opt["outputfiledic"]:
-            interactor = StreamFileToTransformerInteraction(self.__mainfunc, parse_shell_dict(self._opt["inputstreamdic"]), parse_shell_dict(self._opt["outputfiledic"]))
-            interactor.start()
-        elif self._opt["inputfiledic"] and self._opt["outputfiledic"]:
-            inputdic = parse_shell_dict(self._opt["inputfiledic"])
-            outputdic = parse_shell_dict(self._opt["outputfiledic"])
-            stringdic = open_files_dict(inputdic)
-            resultdic = self.__mainfunc(stringdic)
-            save_result_to_output(resultdic, outputdic)
-            return resultdic
-        elif self._opt["pipemode"]:
-            assert(len(self.__mainfunc.inputchanneldic) == 1)
-            assert(len(self.__mainfunc.outputchanneldic) == 1)
-            inputname = list(self.__mainfunc.inputchanneldic.keys())[0]
-            outputname = list(self.__mainfunc.outputchanneldic.keys())[0]
-            interactor = StreamFileToTransformerInteraction(self.__mainfunc, {inputname:"stdin"} , {outputname:"stdout"})
-            interactor.start()
-        elif not self._opt["inputfiledic"] and not self._opt["outputfiledic"] \
-                and not self._opt["expression"]:
-            from pydsl.Interaction.Shell import CommandLineToTransformerInteraction
-            interactor = CommandLineToTransformerInteraction(self.__mainfunc)
-            interactor.start()
-        else:
-            raise Exception
-        return True
+    #Generating and connecting output
+    #listen to user, open read file, or other
+    #configure output, write file, or other
+    #print self._opt
+    mainfunc = load(transformer) 
+    if expression and  outputfiledic: #input type: expression #output: file
+        inputdic = parse_shell_dict(expression)
+        if not isinstance(inputdic, dict):
+            raise TypeError
+        outputdic = parse_shell_dict(outputfiledic)
+        resultdic = mainfunc(inputdic)
+        save_result_to_output(resultdic, outputdic)
+        return resultdic
+    elif expression and not outputfiledic:
+        myexpression = parse_shell_dict(expression)
+        result = mainfunc(myexpression)
+        if result:
+            for key in result.keys():
+                result[key] = str(result[key])
+        print(result)
+        return result #FIXME: this is the only condition that returns a result. Because of tests
+    elif inputstreamdic and outputfiledic:
+        interactor = StreamFileToTransformerInteraction(mainfunc, parse_shell_dict(inputstreamdic), parse_shell_dict(outputfiledic))
+        interactor.start()
+    elif inputfiledic and outputfiledic:
+        inputdic = parse_shell_dict(inputfiledic)
+        outputdic = parse_shell_dict(outputfiledic)
+        stringdic = open_files_dict(inputdic)
+        resultdic = mainfunc(stringdic)
+        save_result_to_output(resultdic, outputdic)
+        return resultdic
+    elif pipemode:
+        assert(len(mainfunc.inputchanneldic) == 1)
+        assert(len(mainfunc.outputchanneldic) == 1)
+        inputname = list(mainfunc.inputchanneldic.keys())[0]
+        outputname = list(mainfunc.outputchanneldic.keys())[0]
+        interactor = StreamFileToTransformerInteraction(mainfunc, {inputname:"stdin"} , {outputname:"stdout"})
+        interactor.start()
+    elif not inputfiledic and not outputfiledic and not expression:
+        from pydsl.Interaction.Shell import CommandLineToTransformerInteraction
+        interactor = CommandLineToTransformerInteraction(mainfunc)
+        interactor.start()
+    else:
+        raise Exception
+    return True
+
 if __name__ == "__main__":
     import argparse
     TUSAGE = "usage: %(prog)s [options] transformername"
@@ -109,12 +99,6 @@ if __name__ == "__main__":
     if ARGS.debuglevel:
         DEBUGLEVEL = ARGS.debuglevel
     logging.basicConfig(level = DEBUGLEVEL)
-    MANAGER = Translate(ARGS)
-    try: 
-        MANAGER.readTR(ARGS.transformer)
-    except BadFileFormat:
-        print("Error reading input file")
-        sys.exit(1)
     #except KeyError as le:
     #    print("Unable to load " + str(le))
     #    sys.exit(1)
@@ -122,9 +106,12 @@ if __name__ == "__main__":
     #    print(TUSAGE)
     #    sys.exit(0)
     try:
-        result = MANAGER.execute()
+        result = translate(**vars(ARGS))
     except EOFError:
         sys.exit(0)
+    except BadFileFormat:
+        print("Error reading input file")
+        sys.exit(1)
     if not result:
         sys.exit(-1)
     sys.exit(0)
