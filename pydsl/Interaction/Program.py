@@ -21,11 +21,10 @@ __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
-from abc import ABCMeta, abstractmethod
 import logging
 LOG = logging.getLogger(__name__)
 
-class UnixProgram(metaclass=ABCMeta):
+class UnixProgram:
     """a unix program. Deals with argparse dict and requires an execute method"""
     def __init__(self, options):
         import argparse
@@ -35,6 +34,5 @@ class UnixProgram(metaclass=ABCMeta):
             raise TypeError
         self._opt = options
 
-    @abstractmethod
     def execute(self):
-        pass
+        raise NotImplementedError

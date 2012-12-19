@@ -19,13 +19,14 @@ __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
-import unittest
 
 
 from bnfgrammar import *
+from pydsl.Grammar.Parser.RecursiveDescent import RecursiveDescentParser
+from pydsl.Grammar.Parser.Weighted import WeightedParser
+import unittest
 
 class TestParsers(unittest.TestCase):
-
     #def testLeftRecursion(self):
     #    from pydsl.Grammar.Parser.RecursiveDescent import RecursiveDescentParser
     #    descentparser = RecursiveDescentParser(productionsetlr)
@@ -33,37 +34,31 @@ class TestParsers(unittest.TestCase):
     #    self.assertTrue(result)
 
     def testRightRecursion(self):
-        from pydsl.Grammar.Parser.RecursiveDescent import RecursiveDescentParser
         descentparser = RecursiveDescentParser(productionsetrr)
         result = descentparser(dots)
         self.assertTrue(result)
 
     def testCenterRecursion(self):
-        from pydsl.Grammar.Parser.RecursiveDescent import RecursiveDescentParser
         descentparser = RecursiveDescentParser(productionsetcr)
         result = descentparser(dots)
         self.assertTrue(result)
 
     def testRecursiveDescentParserStore(self):
-        from pydsl.Grammar.Parser.RecursiveDescent import RecursiveDescentParser
         descentparser = RecursiveDescentParser(productionset1)
         result = descentparser(string1)
         self.assertTrue(result)
 
     def testRecursiveDescentParserBad(self):
-        from pydsl.Grammar.Parser.RecursiveDescent import RecursiveDescentParser
         descentparser = RecursiveDescentParser(productionset1)
         result = descentparser(string2)
         self.assertFalse(result)
 
     def testRecursiveDescentParserNull(self):
-        from pydsl.Grammar.Parser.RecursiveDescent import RecursiveDescentParser
         descentparser = RecursiveDescentParser(productionset2)
         result = descentparser(string3)
         self.assertTrue(result)
 
     def testRecursiveDescentParserNullBad(self):
-        from pydsl.Grammar.Parser.RecursiveDescent import RecursiveDescentParser
         descentparser = RecursiveDescentParser(productionset2)
         result = descentparser(string4)
         self.assertFalse(result)
@@ -84,42 +79,36 @@ class TestParsers(unittest.TestCase):
 
     @unittest.skip
     def testWeightedRightRecursion(self):
-        from pydsl.Grammar.Parser.Weighted import WeightedParser
         parser = WeightedParser(productionsetrr)
         result = parser(dots)
         self.assertTrue(result)
 
     @unittest.skip
     def testWeightedCenterRecursion(self):
-        from pydsl.Grammar.Parser.RecursiveDescent import RecursiveDescentParser
         descentparser = RecursiveDescentParser(productionsetcr)
         result = descentparser(dots)
         self.assertTrue(result)
 
     @unittest.skip
     def testWeightedParserStore(self):
-        from pydsl.Grammar.Parser.Weighted import WeightedParser
         parser = WeightedParser(productionset1)
         result = parser(string1)
         self.assertTrue(result)
 
     @unittest.skip
     def testWeightedParserBad(self):
-        from pydsl.Grammar.Parser.Weighted import WeightedParser
         parser = WeightedParser(productionset1)
         result = parser(string2)
         self.assertFalse(result)
 
     @unittest.skip
     def testWeightedParserNull(self):
-        from pydsl.Grammar.Parser.Weighted import WeightedParser
         parser = WeightedParser(productionset2)
         result = parser(string3)
         self.assertTrue(result)
 
     @unittest.skip
     def testWeightedParserNullBad(self):
-        from pydsl.Grammar.Parser.Weighted import WeightedParser
         parser = WeightedParser(productionset2)
         result = parser(string4)
         self.assertFalse(result)
@@ -127,7 +116,6 @@ class TestParsers(unittest.TestCase):
 class TestWeightedParser(unittest.TestCase):
     @unittest.skip
     def testLeftRecursion(self):
-        from pydsl.Grammar.Parser.Weighted import WeightedParser
         parser = WeightedParser(productionsetlr)
         result = parser(dots)
         self.assertTrue(result)

@@ -58,7 +58,7 @@ def escapedsplitby(inputstring, separator):
     return result
 
 
-def parse_shell_dict(inputstring) -> dict:
+def parse_shell_dict(inputstring): # -> dict:
     """Parses commandline input dicts. Example: a:b,c:d,e:f."""
     result = {}
     arglist = escapedsplitby(inputstring, ",")
@@ -68,7 +68,7 @@ def parse_shell_dict(inputstring) -> dict:
     return result
 
 
-def open_files_dict(inputdic) -> dict:
+def open_files_dict(inputdic): # -> dict:
     """Converts a all str filename values into file objects"""
     result = {}
     for channel, filename in inputdic.items():
@@ -90,7 +90,7 @@ def save_result_to_output(resultdic, outputdic):
             print(resultdic[key])
         else:
             with open(outputdic[key], 'w') as currentfile:  # print to file
-                currentfile.write(resultdic[key].string)
+                currentfile.write(str(resultdic[key]))
 
 
 class CommandLineToTransformerInteraction:
@@ -111,7 +111,10 @@ class CommandLineToTransformerInteraction:
                         resultdic[key] = str(resultdic[key])
                     except UnicodeDecodeError:
                         resultdic[key] = "Unprintable"
-                print(str(resultdic) + "\n")
+                if len(resultdic) == 1:
+                    print(str(list(resultdic.values())[0]) + "\n")
+                else:
+                    print(str(resultdic) + "\n")
             value = self._getInput()
         print("Bye Bye")
 
@@ -138,7 +141,7 @@ class CommandLineToTransformerInteraction:
 
 class StreamFileToTransformerInteraction:
     """Write to file n times"""
-    def __init__(self, gt, inputfiledic: dict, outputfiledic: dict={}):
+    def __init__(self, gt, inputfiledic, outputfiledic={}):
         self._tinstance = gt
         self._inputfiledic = inputfiledic
         self._outputfiledic = outputfiledic

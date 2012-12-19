@@ -23,8 +23,6 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
-from abc import ABCMeta, abstractproperty
-
 
 class Singleton(type):
     """singleton pattern metaclass"""
@@ -59,11 +57,10 @@ class InmutableDict(dict):
         return True
 
 
-class Indexable(metaclass=ABCMeta):
+class Indexable:
     """ This class is searchable """
-    @abstractproperty
-    def summary(self) -> InmutableDict:
-        pass
+    def summary(self): #-> InmutableDict:
+        raise NotImplementedError
 
     @classmethod
     def ancestors(cls):

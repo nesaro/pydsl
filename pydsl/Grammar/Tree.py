@@ -22,7 +22,6 @@ __copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
-from abc import ABCMeta
 LOG = logging.getLogger(__name__)
 from pydsl.Grammar.Symbol import TerminalSymbol
 
@@ -48,7 +47,7 @@ def traversePostOrder(item):
     result.append(item)
     return result
 
-class Tree(metaclass = ABCMeta):
+class Tree:
     def __init__(self, childlist = []):
         self.childlist = []
 
@@ -75,7 +74,7 @@ class Tree(metaclass = ABCMeta):
 
 class PositionTree(Tree):
     """Stores the position of the original tree"""
-    def __init__(self, leftpos, rightpos, content, production = None, valid = True, childlist:list = []):
+    def __init__(self, leftpos, rightpos, content, production = None, valid = True, childlist = []):
         self.leftpos = leftpos
         self.rightpos = rightpos
         self.childlist = list(childlist) #creates a copy
@@ -162,7 +161,7 @@ class PositionTree(Tree):
 
 class ParseTree(PositionTree):
     """ Stores a descent parser iteration result """
-    def __init__(self, leftpos, rightpos, symbollist:list, content, production, childlist:list = [], valid:bool = True):
+    def __init__(self, leftpos, rightpos, symbollist, content, production, childlist = [], valid = True):
         if not isinstance(leftpos, int) and leftpos is not None:
             raise TypeError
         if not isinstance(rightpos, int) and rightpos is not None:
@@ -217,7 +216,7 @@ def zss_distance(tree1, tree2):
                 treedists[i] = {} 
             treedists[i][j] = v
         forestdists = {}
-        def gfd(a:tuple, b:tuple): # get an item from the forest dists dict
+        def gfd(a, b): # get an item from the forest dists dict
             if (a,b) in forestdists:
                 return forestdists[(a,b)]
             if a[0] >= a[1] and b[0] >= b[1]: # δ(θ, θ) = 0

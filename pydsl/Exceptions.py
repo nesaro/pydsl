@@ -30,7 +30,7 @@ class ProcessingError(Exception):
     def __init__(self, errortype, source = []):
         Exception.__init__(self)
         self.source = source
-        from .Config import ERRORLIST
+        from pydsl.Config import ERRORLIST
         assert(errortype in ERRORLIST)
         self.errortype = errortype
 

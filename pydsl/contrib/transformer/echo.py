@@ -1,6 +1,5 @@
 def function(inputdic, inputgt, outputgt):
-    palabras = str(inputdic["input"])
-    return {"output":palabras.upper()}
+    return {"output":inputdic['input']}
 
 
 iclass = "PythonTransformer"

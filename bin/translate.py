@@ -25,7 +25,7 @@ __copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
-from pydsl.Interaction.Shell import parse_shell_dict, open_files_dict
+from pydsl.Interaction.Shell import parse_shell_dict, open_files_dict, StreamFileToTransformerInteraction, save_result_to_output
 from pydsl.Interaction.Program import UnixProgram
 from pydsl.Exceptions import BadFileFormat
 LOG = logging.getLogger(__name__)
@@ -39,8 +39,8 @@ class Translate(UnixProgram):
         UnixProgram.__init__(self, optionsdict)
         
     def readTR(self, gtname):
-        from pydsl.Memory.Loader import load_transformer
-        self.__mainfunc = load_transformer(gtname) 
+        from pydsl.Memory.Loader import load
+        self.__mainfunc = load(gtname) 
     
     def execute(self):
         #Generating and connecting output
@@ -54,8 +54,7 @@ class Translate(UnixProgram):
                 raise TypeError
             outputdic = parse_shell_dict(self._opt["outputfiledic"])
             resultdic = self.__mainfunc(inputdic)
-            from .Shell import file_output
-            file_output(resultdic, outputdic)
+            save_result_to_output(resultdic, outputdic)
             return resultdic
         elif self._opt["expression"] and not self._opt["outputfiledic"]:
             myexpression = parse_shell_dict(self._opt["expression"])
@@ -67,7 +66,6 @@ class Translate(UnixProgram):
             print(result)
             return result #FIXME: this is the only condition that returns a result. Because of tests
         elif self._opt["inputstreamdic"] and self._opt["outputfiledic"]:
-            from pydsl.Interaction.Shell import StreamFileToTransformerInteraction
             interactor = StreamFileToTransformerInteraction(self.__mainfunc, parse_shell_dict(self._opt["inputstreamdic"]), parse_shell_dict(self._opt["outputfiledic"]))
             interactor.start()
         elif self._opt["inputfiledic"] and self._opt["outputfiledic"]:
@@ -75,12 +73,9 @@ class Translate(UnixProgram):
             outputdic = parse_shell_dict(self._opt["outputfiledic"])
             stringdic = open_files_dict(inputdic)
             resultdic = self.__mainfunc(stringdic)
-            from .Shell import file_output
-            file_output(resultdic, outputdic)
-            close_input_dic(stringdic)
+            save_result_to_output(resultdic, outputdic)
             return resultdic
         elif self._opt["pipemode"]:
-            from pydsl.Interaction.Shell import StreamFileToTransformerInteraction
             assert(len(self.__mainfunc.inputchanneldic) == 1)
             assert(len(self.__mainfunc.outputchanneldic) == 1)
             inputname = list(self.__mainfunc.inputchanneldic.keys())[0]
@@ -114,7 +109,6 @@ if __name__ == "__main__":
     if ARGS.debuglevel:
         DEBUGLEVEL = ARGS.debuglevel
     logging.basicConfig(level = DEBUGLEVEL)
-    from pydsl.Interaction.Translate import Translate
     MANAGER = Translate(ARGS)
     try: 
         MANAGER.readTR(ARGS.transformer)

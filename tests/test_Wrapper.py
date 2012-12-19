@@ -15,31 +15,22 @@
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Grammar FileLibraries"""
+"""Test wrapper"""
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
-from ..File.Grammar import _isRELFileName, _isGDLFileName, load_grammar_file
+import unittest
 
-import logging
-LOG = logging.getLogger("Storage.Directory.Grammar")
-from .DirStorage import DirStorage
-
-class GrammarDirStorage(DirStorage):
-    """generate instances of grammars"""
-    def __init__(self, path):
-        DirStorage.__init__(self, path, [".py", ".bnf", ".re"])
-
-    def load(self, identifier:str):
-        #TODO: What happens when we have > 1 result
-        resultdic = self._searcher.search(identifier)
-        for value in resultdic: 
-            filename = value["filepath"]
-            return load_grammar_file(filename)
-        raise KeyError("Grammar " + identifier)
-
-    def provided_iclasses(self) -> list:
-        return ["PythonGrammarTools","re","BNFGrammar"]
+class TestWrapper(unittest.TestCase):
+    def testBasic(self):
+        from pydsl.Wrapper import Content, FunctionPool
+        a = Content("abcde")
+        #a.available_alphabet()
+        #a.select_alphabet("unicode") #Autodetected as encoding
+        a.available_grammars()
+        a.select_grammar("cstring")
+        transformlist = FunctionPool.available_transforms(a)
+        result = FunctionPool.lowerCase(a.content) #Result should be a content with the right alphabet/grammar
 

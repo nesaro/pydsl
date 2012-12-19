@@ -54,7 +54,7 @@ class SymbolGrammarTools(GrammarTools):
     def groups(self):
         return [x.name for x in self.productionset.getSymbols()]
 
-    def get_groups(self, word, propertyname:str) -> list:
+    def get_groups(self, word, propertyname):# -> list:
         """ Allow to ask for a grammar property of a valid sentence. Example: (English)ask for verb in a phrase: askProperty("verb","desk is clean") Maybe there is a method to pass it through __init__ (like _matchFun) """
         treelist = self.__parser.get_trees(word)
         for tree in treelist:
@@ -62,7 +62,7 @@ class SymbolGrammarTools(GrammarTools):
                 return tree.get_by_symbol(propertyname)
             return []
 
-    def get_trees(self, word, showErrors = False) -> list:
+    def get_trees(self, word, showErrors = False): # -> list:
         """Returns a decomposition tree. askProperty and checkWord should rely on this
         parser returns DescentParserResult, but this function should return SymbolTokenTreeNode.
         It should work also for errors
@@ -79,7 +79,7 @@ class SymbolGrammarTools(GrammarTools):
             self.__checker = load_checker(self.__bnf)
         return self.__checker.check(word)
 
-    def genealogy(self, information, index) -> list:
+    def genealogy(self, information, index): # -> list:
         """Given a word(token) index, will tell all parent symbols  until root node"""
         raise NotImplementedError
 

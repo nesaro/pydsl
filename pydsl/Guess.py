@@ -24,6 +24,7 @@ __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 #FIXME: Use globalconfig memories
+#TODO: Add Alphabet support
 
 
 import logging
@@ -45,7 +46,7 @@ class Guesser:
         self.memorylist = memorylist
         self.searcher = MemorySearcher([x.indexer() for x in memorylist])
 
-    def __call__(self, inputstring) -> set:
+    def __call__(self, inputstring): #-> set:
         result = set()
         for summary in self.searcher.search():
             typ = None

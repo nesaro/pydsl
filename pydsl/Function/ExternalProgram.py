@@ -30,7 +30,7 @@ LOG = logging.getLogger("Function.ExternalProgram")
 
 class ExternalProgramFunction(HostChannel):
     """returns stdout from program call"""
-    def __init__(self, inputdic, outputdic, programcall:list):
+    def __init__(self, inputdic, outputdic, programcall):
         #programlist ["program","-s","#{inputchannelname1}","-e","#{inputchannelname2}"]
         if len(outputdic) != 1:
             raise ValueError

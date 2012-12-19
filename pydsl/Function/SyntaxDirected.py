@@ -27,11 +27,11 @@ import logging
 LOG = logging.getLogger(__name__)
 
 class SyntaxDirectedTransformer:
-    def __init__(self, inputgrammar, outputgrammar, blockdic:dict):
+    def __init__(self, inputgrammar, outputgrammar, blockdic):
         self.blockdic = blockdic
         if isinstance(inputgrammar, str):
-            from pydsl.Memory.Loader import load_grammar
-            inputgrammar = load_grammar(inputgrammar)
+            from pydsl.Memory.Loader import load
+            inputgrammar = load(inputgrammar)
         from pydsl.Grammar.Parser.RecursiveDescent import RecursiveDescentParser
         self.parser = RecursiveDescentParser(inputgrammar)
         self.blockdic = blockdic

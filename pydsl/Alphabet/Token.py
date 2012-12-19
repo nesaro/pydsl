@@ -15,31 +15,24 @@
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Grammar FileLibraries"""
-
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 
-import logging
-LOG = logging.getLogger(__name__)
-from .Python import getFileTuple
+class Token:
+    """ Stores a symbol and its associated input """
+    def __init__(self, terminalsymbol, string):
+        self.symbol = terminalsymbol
+        self.string = string
 
-def _isGDLFileName(path):
-    return path.endswith(".bnf")
+    def __str__(self):
+        return self.string
 
-def _isRELFileName(path):
-    return path.endswith(".re")
+class TokenList(list):
+    def __bool__(self):
+        return len(self) > 1
 
-def load_grammar_file(filepath):
-    if _isRELFileName(filepath):
-        from pydsl.Memory.Storage.File.Regexp import load_re_from_file
-        return load_re_from_file(filepath)
-    if _isGDLFileName(filepath):
-        from pydsl.Memory.Storage.File.BNF import load_bnf_file
-        return load_bnf_file(filepath)
-    from .Python import load_python_file 
-    return load_python_file(filepath)
-    
+    def __str__(self):
+        return "".join([str(x[1]) for x in self[:-1]])
 

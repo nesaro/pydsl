@@ -1,8 +1,9 @@
 DESCRIPTION
 ===========
 
-pydsl is a language workbench written in python
-The main idea is to allow an easy way to define, use and combine DSLs to create programs.
+pydsl is a language library written in python
+The main idea is to allow an easy way to define, use and combine DSLs to create programs and provide tools around them.
+
 pydsl support several grammar specification formats:
  * regular expressions
  * pydsl BNF format
@@ -17,18 +18,28 @@ each grammar definition have the following properties:
  * maxsize(gd): length of the biggest accepted word
 
 pydsl offer a set of functionalities that use _grammar definitions_
- * check(gd, input): test the input string against the spec
  * validate(gd, input): test the input string against the spec. In case of failure, it returns a list of errors
- * guess(input, [gd]): returns a list of _grammar definitions_ that are compatible with the input
  * partition(gd, input, tag): returns the parts of the input according to a tag
- * extract(gd, input): extract all the slices of the input that are accepted by _grammar definition_
- * distance(gd, input1, input2): returns the distance between two inputs according to _grammar definition_
- * translate(gd, input): generic translator
-   * ast(astdefinition, input): creates an abstract syntax tree according to astdefinition
-   * sdt( sdt, ast): Performs an AST translation using a Syntax Directed
-   Translator
 
-It also offers library related functionalities:
+alphabet abstraction is also available. Alphabets are a set of symbols that are recognized using a regular grammar. Properties:
+ * symbols(ad): return the list of allowed symbols for this alphabet
+
+functionalities that use _alphabets_:
+ * lexer(ad, input): Generates a tokenlist from a string (it is a special case of translate)
+ * mapper(ad, input): Converts a tokenlist from an alphabet into another alphabet
+ 
+functionalities that use both _alphabets_ and _grammar definitions_:
+ * guess(input, [gd]): returns a list of _grammar definitions_ that are compatible with the input
+ * distance(gd, input1, input2): returns the distance between two inputs according to _grammar definition_
+ * check(d, input): test the input string against the spec
+ * extract(gd, input): extract all the slices of the input that are accepted by the definition 
+
+translation functionalities
+ * translate(td, input): generic translator
+   * ast(astdefinition, input): creates an abstract syntax tree according to astdefinition
+   * sdt( sdt, ast): Performs an AST translation using a Syntax Directed Translator
+
+pydsl also offers library related functionalities:
  * search(query): search for an element within a memory
  * info(identifier): returns information about the element
  * translations(identifier): returns a list of available translators for identifier
@@ -112,13 +123,13 @@ guess returns a list of the types that match the input element
 
 REQUIREMENTS
 ============
- * python >= 3.0
- * pydsl contrib package ( https://github.com/nesaro/pydsl-contrib )
+ * python >= 2.7
  * optional: ply library ( http://www.dabeaz.com/ply/ )
 
 HELP
 ====
  * http://github.com/nesaro/pydsl
+ * http://pydsl.blogspot.co.uk
  * nesaro@gmail.com
 
 LICENSE
@@ -127,5 +138,5 @@ GPLv3, see LICENSE file
 
 ABOUT
 =====
-pydsl is a formal and natural language framework.
+pydsl is a formal language framework.
 Copyright (C) 2008-2012 Nestor Arocha (nesaro@gmail.com)

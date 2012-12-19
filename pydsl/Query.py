@@ -79,13 +79,13 @@ class NotQueryOperator(QueryElement):
 
 class Query:
     """A generic query"""
-    def __init__(self, content:QueryElement):
+    def __init__(self, content):
         self.content = content 
 
-    def qand(self, element:QueryElement):
+    def qand(self, element):
         self.content = AndQueryOperator(self.content, element)
 
-    def qor(self, element:QueryElement):
+    def qor(self, element):
         self.content = OrQueryOperator(self.content, element)
 
     def __str__(self):

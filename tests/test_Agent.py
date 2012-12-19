@@ -20,13 +20,20 @@ __copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
-from bnfgrammar import *
+from pydsl.Agent import AgentNetwork
 
-class TestLexer(unittest.TestCase):
-    def testLexer(self):
-        """Lexer call"""
-        from pydsl.Alphabet.Lexer import BNFLexer
-        lexer = BNFLexer(productionset1)
-        result = list(lexer(string1))
-        self.assertTrue(result)
+def fun1(parent, obj):
+    print("FUN !")
+    parent.emit_message('output',obj['message'])
 
+
+class TestAgentNetwork(unittest.TestCase):
+    def setUp(self):
+        pass
+
+    def testNetwork(self):
+        initlist = [("agent1", {'input':fun1})]
+        #initlist = [("agent1", {'input':lambda parent,obj:'OK'})]
+        mynetwork = AgentNetwork("ExampleExchange", initlist)
+        result = mynetwork.call("1234")
+        print(result)
