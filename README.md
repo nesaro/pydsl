@@ -31,6 +31,7 @@ functionalities that use _alphabets_:
 functionalities that use both _alphabets_ and _grammar definitions_:
  * guess(input, [gd]): returns a list of _grammar definitions_ that are compatible with the input
  * distance(gd, input1, input2): returns the distance between two inputs according to _grammar definition_
+ * diff(gd, input1, input2): returns the differences according to _grammar definition_/_alphabet_
  * check(d, input): test the input string against the spec
  * extract(gd, input): extract all the slices of the input that are accepted by the definition 
 
