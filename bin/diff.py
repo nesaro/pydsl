@@ -25,20 +25,21 @@ __copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
+import sys
+import argparse
 
 def diff2(elem1, elem2):
     #Generating and connecting output
     #listen to user, open read file, or other
     #configure output, write file, or other
     #print self._opt
-    from Diff import diff
+    from pydsl.Diff import diff
     result = diff(elem1, elem2)
     #result = bool_dict_values(str(result["output"]))
     print(result)
     return result
 
 if __name__ == "__main__":
-    import argparse
     TUSAGE = "usage: %(prog)s [options] type"
     PARSER = argparse.ArgumentParser(usage = TUSAGE)
     PARSER.add_argument("-d", "--debuglevel", action="store", type=int, dest="debuglevel", help="Sets debug level")
@@ -47,9 +48,6 @@ if __name__ == "__main__":
     PARSER.add_argument("elem1", metavar="elem1", help="First Element")
     PARSER.add_argument("elem2", metavar="elem2", help="Second Element")
     ARGS = PARSER.parse_args()
-    import sys
-    if ((ARGS.outputfiledic and not ARGS.expression) and (ARGS.outputfiledic and not ARGS.inputfiledic)):
-        PARSER.error("options -o require -e or -i")
     DEBUGLEVEL = ARGS.debuglevel or logging.WARNING
     
     logging.basicConfig(level = DEBUGLEVEL)

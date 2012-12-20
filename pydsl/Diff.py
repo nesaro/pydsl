@@ -22,11 +22,13 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
+from pydsl.Guess import Guesser
 
 
 def diff(content1, content2, grammarlist = [], alphabetlist = []):
     result = {}
     if not grammarlist and not alphabetlist:
+        guess = Guesser()
         guess1 = set(guess(content1))
         guess2 = set(guess(content2))
         grammarlist = list(guess1.union(guess2))
