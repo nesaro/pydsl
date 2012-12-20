@@ -35,14 +35,10 @@ from pydsl.Memory.Loader import load_checker
 class Guesser:
     def __init__(self, memorylist = []):
         from pydsl.Memory.Search.Searcher import MemorySearcher
-        from pydsl.Memory.Storage.Directory.Grammar import GrammarDirStorage 
+        from pydsl.Memory.Storage.Directory import DirStorage
         if not memorylist:
-            try:
-                dirname = resource_filename(Requirement.parse("pydsl_contrib"),"")
-            except DistributionNotFound:
-                pass
-            else:
-                memorylist.append(GrammarDirStorage(dirname + "/grammar/"))
+            dirname = resource_filename("pydsl.contrib","")
+            memorylist.append(DirStorage(dirname + "/grammar/"))
         self.memorylist = memorylist
         self.searcher = MemorySearcher([x.indexer() for x in memorylist])
 

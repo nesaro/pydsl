@@ -18,6 +18,7 @@
 
 from pydsl.Memory.Memory import Memory
 from pydsl.Query import QueryEquality, QueryInclusion, QueryTerm, QueryGreaterThan, QueryPartial
+import collections
 
 class Indexer:
     """Indexes memory content. Current implementation just copy Memory iterator (Inmutabledicts) into a cache dict. This is possible because Memory iterator format is suitable for search, but it might change in the future"""
@@ -29,6 +30,8 @@ class Indexer:
     def __init_index(self):
         """Stores all data in the index"""
         for element in self.memory:
+            if not isinstance(element, collections.Hashable):
+                raise TypeError("Adding non hashable element %s to index" % str(element))
             self.index.append(element)
 
     def show_all(self):# -> list:

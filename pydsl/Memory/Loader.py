@@ -20,7 +20,6 @@
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
-from pkg_resources import Requirement, resource_filename
 
 def load_checker(grammar):
     from pydsl.Grammar.BNF import BNFGrammar
