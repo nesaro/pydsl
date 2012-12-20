@@ -1,8 +1,8 @@
 DESCRIPTION
 ===========
 
-pydsl is a language workbench written in python
-The main idea is to allow an easy way to define, use and combine DSLs to create programs.
+pydsl is a language library written in python
+The main idea is to allow an easy way to define, use and combine DSLs to create programs and provide tools around them.
 
 pydsl support several grammar specification formats:
  * regular expressions
@@ -67,9 +67,9 @@ Loading content from a directory
 --------------------------------
 First store your grammar definitions in a directory,
 
-    from pydsl.Memory.Storage.Directory.Grammar import GrammarDirStorage
+    from pydsl.Memory.Storage.Directory import DirStorage
     from pydsl.Guess import Guesser
-    a = GrammarDirStorage("directory/")
+    a = DirStorage("directory/")
     guess = Guesser([a])
     guess('string')
 
@@ -123,12 +123,13 @@ guess returns a list of the types that match the input element
 
 REQUIREMENTS
 ============
- * python >= 3.0
+ * python >= 2.7
  * optional: ply library ( http://www.dabeaz.com/ply/ )
 
 HELP
 ====
  * http://github.com/nesaro/pydsl
+ * http://pydsl.blogspot.co.uk
  * nesaro@gmail.com
 
 LICENSE
@@ -137,5 +138,5 @@ GPLv3, see LICENSE file
 
 ABOUT
 =====
-pydsl is a formal and natural language framework.
+pydsl is a formal language framework.
 Copyright (C) 2008-2012 Nestor Arocha (nesaro@gmail.com)

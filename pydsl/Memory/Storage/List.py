@@ -23,16 +23,14 @@ __copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 
-from abc import abstractmethod, ABCMeta
-
 import logging
 LOG = logging.getLogger("Storage.List")
-from .Storage import Storage
+from pydsl.Memory.Memory import Memory
 
-class ListStorage(Storage, metaclass = ABCMeta):
+class ListStorage(Memory):
     """Stores element in a python file using a python list"""
-    def __init__(self, fullpath:str):
-        Storage.__init__(self)
+    def __init__(self, fullpath):
+        Memory.__init__(self)
         self._content = {}
         from pydsl.Memory.Search.Searcher import MemorySearcher
         self._searcher = MemorySearcher(self)
@@ -58,15 +56,13 @@ class ListStorage(Storage, metaclass = ABCMeta):
         self.index += 1
         return result
 
-    @abstractmethod
     def _generatekey(self, element):
         """Generates a identifier for the input element to use in this memory"""
-        pass
+        raise NotImplementedError
 
-    @abstractmethod
     def generate_all_summaries(self):
         """generates the full list of element summaries"""
-        pass
+        raise NotImplementedError
         
     def __contains__(self, index):
         return index in self._content

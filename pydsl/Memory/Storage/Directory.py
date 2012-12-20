@@ -73,7 +73,7 @@ class DirStorage(Memory):
         else:
             from pydsl.Memory.Storage.File.Python import summary_python_file
             result = summary_python_file(modulepath)
-        return result
+        return InmutableDict(result)
 
     def all_files(self):
         import glob

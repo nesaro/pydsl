@@ -39,6 +39,7 @@ class Board:
 
     @property
     def inputchanneldic(self):
+        #FIXME This should be the same that a HostChannel. It is here because it has the same length
         return self.__inputGTDict
 
     @property

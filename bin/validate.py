@@ -25,8 +25,6 @@ __copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
-from pydsl.Interaction.Program import UnixProgram
-
 
 def print_errors(postnode):
     result = ""
@@ -44,40 +42,36 @@ def errors_to_list(postnode):
             result += errors_to_list(child)
     return result
 
-class Validate(UnixProgram):
+def validate2(sgrammar, expression = None, inputfile = None, outputformat = None, **kwargs):
     """Read input file contents, creates grammar and transform objects, create connections, 
     and afterwards reads required input/launch main loop"""
-    def __init__(self, optionsdict):
-        from pydsl.Memory.External.Loader import load
-        UnixProgram.__init__(self, optionsdict)
-        self.__sgrammar = load(optionsdict.sgrammar) 
-    
-    def execute(self):
-        resulttrees = None
-        from pydsl.Validate import validate
-        if self._opt["expression"]: 
-            resulttrees = validate(self.__sgrammar, self._opt["expression"])
-        elif self._opt["inputfile"]:
-            with open(self._opt["inputfile"], "rb") as f:
-                resulttrees = validate(self.__sgrammar, f.read())
-        else:
-            raise Exception #No input method
-        jsonlist = []
-        for index, posttree in enumerate(resulttrees):
-            if self._opt["outputformat"] == "str":
-                print("Tree: " + str(index) + "\n")
-            if self._opt["outputformat"] == "str":
-                if posttree.valid:
-                    print("Result OK")
-                else:
-                    print("Errors:")
-                    print(print_errors(posttree))
-            elif self._opt["outputformat"] == "json":
-                jsonlist.append(errors_to_list(posttree))
-        if self._opt["outputformat"] == "json":
-            import json
-            print(json.dumps(jsonlist))
-        return True
+    resulttrees = None
+    from pydsl.Validate import validate
+    from pydsl.Memory.Loader import load
+    sgrammar = load_parser(sgrammar) 
+    if expression: 
+        resulttrees = validate(sgrammar, expression)
+    elif inputfile:
+        with open(inputfile, "rb") as f:
+            resulttrees = validate(sgrammar, f.read())
+    else:
+        raise Exception #No input method
+    jsonlist = []
+    for index, posttree in enumerate(resulttrees):
+        if outputformat == "str":
+            print("Tree: " + str(index) + "\n")
+        if outputformat == "str":
+            if posttree.valid:
+                print("Result OK")
+            else:
+                print("Errors:")
+                print(print_errors(posttree))
+        elif outputformat == "json":
+            jsonlist.append(errors_to_list(posttree))
+    if outputformat == "json":
+        import json
+        print(json.dumps(jsonlist))
+    return True
 
 if __name__ == "__main__":
     import argparse
@@ -93,9 +87,8 @@ if __name__ == "__main__":
     DEBUGLEVEL = ARGS.debuglevel or logging.WARNING
     
     logging.basicConfig(level = DEBUGLEVEL)
-    manager = Validate(ARGS)
     try:
-        result = manager.execute()
+        result = validate2(**vars(ARGS))
     except EOFError:
         sys.exit(0)
     if not result:

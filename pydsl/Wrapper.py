@@ -26,36 +26,29 @@ LOG = logging.getLogger(__name__)
 from abc import ABCMeta, abstractmethod, abstractproperty
 from pydsl.Memory.Loader import load
 
-class Cstr(str):
+class Content:
     """String wrapper"""
-    def __init__(self, *args, **kwargs):
-        str.__init__(*args, **kwargs)
-        self.grammarlist = None
-        self.functionlist = None
+    def __init__(self, content):
+        self.content = content
+        self.grammar = None
             
-    def guess(self):
-        if self.grammarlist == None:
-            from pydsl.Guess import Guesser
-            guess = Guesser()
-            self.grammarlist = guess(self)
-        return self.grammarlist
 
     def check(self, grammar):
         return grammar in self.guess()
 
-    def available_transforms(self):
-        if self.functionlist == None:
-            from pydsl.Memory.Search.Searcher import MemorySearcher
-            from pydsl.Memory.Search.Indexer import Indexer
-            from pydsl.Config import GLOBALCONFIG
-            searcher = MemorySearcher([Indexer(x) for x in GLOBALCONFIG.memorylist])
-            resultlist = []
-            for element in self.guess():
-                resultlist += searcher.search({"input":{"$part":{"input":element}}})
-            self.functionlist = resultlist
-        return self.functionlist
+    def available_alphabets(self):
+        return []
 
+    def available_grammars(self):
+        from pydsl.Guess import Guesser
+        guess = Guesser()
+        return guess(self.content)
 
+    def select_grammar(self, grammar):
+        if grammar not in self.available_grammars():
+            print(self.available_grammars())
+            raise Exception
+        self.grammar = grammar
 
 class FunctionsMeta(type):
     def __dir__(cls):
@@ -68,8 +61,24 @@ class FunctionsMeta(type):
     def __getattr__(cls, key):
         return load(key)
 
-class Functions(metaclass=FunctionsMeta):
+    @staticmethod
+    def available_transforms(content):
+        from pydsl.Memory.Search.Searcher import MemorySearcher
+        from pydsl.Memory.Search.Indexer import Indexer
+        from pydsl.Config import GLOBALCONFIG
+        searcher = MemorySearcher([Indexer(x) for x in GLOBALCONFIG.memorylist])
+        resultlist = []
+        if content.grammar:
+            grammarlist = [content.grammar]
+        else:
+            grammarlist = content.available_grammars()
+        for element in grammarlist:
+            resultlist += searcher.search({"input":{"$part":{"input":element}}})
+        return [x['identifier'] for x in resultlist]
+
+class FunctionPool(metaclass=FunctionsMeta):
     pass
 
-
+class NetworkPool:
+    pass
 

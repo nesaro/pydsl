@@ -15,17 +15,22 @@
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Function base classes"""
+"""Test wrapper"""
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
-import logging
-LOG = logging.getLogger(__name__)
+import unittest
 
-class FunctionInterface:
-    """A method applied to a function to comunicate with other functions"""
-    def __init__(self):
-        pass
+class TestWrapper(unittest.TestCase):
+    def testBasic(self):
+        from pydsl.Wrapper import Content, FunctionPool
+        a = Content("abcde")
+        #a.available_alphabet()
+        #a.select_alphabet("unicode") #Autodetected as encoding
+        a.available_grammars()
+        a.select_grammar("cstring")
+        transformlist = FunctionPool.available_transforms(a)
+        result = FunctionPool.lowerCase(a.content) #Result should be a content with the right alphabet/grammar
 

@@ -90,7 +90,7 @@ def save_result_to_output(resultdic, outputdic):
             print(resultdic[key])
         else:
             with open(outputdic[key], 'w') as currentfile:  # print to file
-                currentfile.write(resultdic[key].string)
+                currentfile.write(str(resultdic[key]))
 
 
 class CommandLineToTransformerInteraction:
@@ -111,7 +111,10 @@ class CommandLineToTransformerInteraction:
                         resultdic[key] = str(resultdic[key])
                     except UnicodeDecodeError:
                         resultdic[key] = "Unprintable"
-                print(str(resultdic) + "\n")
+                if len(resultdic) == 1:
+                    print(str(list(resultdic.values())[0]) + "\n")
+                else:
+                    print(str(resultdic) + "\n")
             value = self._getInput()
         print("Bye Bye")
 
@@ -138,7 +141,7 @@ class CommandLineToTransformerInteraction:
 
 class StreamFileToTransformerInteraction:
     """Write to file n times"""
-    def __init__(self, gt, inputfiledic: dict, outputfiledic: dict={}):
+    def __init__(self, gt, inputfiledic, outputfiledic={}):
         self._tinstance = gt
         self._inputfiledic = inputfiledic
         self._outputfiledic = outputfiledic
