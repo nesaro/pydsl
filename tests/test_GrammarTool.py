@@ -109,7 +109,7 @@ class TestHostPythonGrammars(unittest.TestCase):
 class TestSymbolGrammars(unittest.TestCase):
     def setUp(self):
         from pydsl.Grammar.Tool.Symbol import SymbolGrammarTools
-        from pydsl.Memory.Storage.File.BNF import strlist_to_production_set
+        from pydsl.Memory.File.BNF import strlist_to_production_set
         productionset = strlist_to_production_set(["#parser=descent","S ::= dayofmonth separator number separator number", "separator := String,/","number := Word,integer,max,1","dayofmonth := Word,DayOfMonth,max,1"])
         self.g1 = SymbolGrammarTools(productionset)
 

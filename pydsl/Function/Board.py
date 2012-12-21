@@ -119,7 +119,7 @@ class Board:
 
     def __loadTfromDefinitionList(self):
         """GTDefinitions -> Instances"""
-        from pydsl.Memory.Storage.File.BoardSection import BoardDefinitionSection
+        from pydsl.Memory.File.BoardSection import BoardDefinitionSection
         auxnametype = {}
         for definition in self.__GTDefinitionlist:
             if not isinstance(definition, BoardDefinitionSection):

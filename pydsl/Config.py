@@ -30,8 +30,8 @@ from pkg_resources import Requirement, resource_filename, DistributionNotFound
 def generate_memory_list(): #-> list:
     """loads default memories"""
     result = []
-    from pydsl.Memory.Storage.Directory import DirStorage
-    from pydsl.Memory.Storage.Dict import RegexpDictStorage
+    from pydsl.Memory.Directory import DirStorage
+    from pydsl.Memory.Dict import RegexpDictStorage
     try:
         dirname = resource_filename("pydsl.contrib", "")
     except DistributionNotFound:

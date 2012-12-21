@@ -30,7 +30,8 @@ import logging
 LOG = logging.getLogger(__name__)
 from pydsl.Memory.Memory import Memory
 
-class PersistentStorage(Memory):
+class ShelveStorage(Memory):
+    """Memory implementation using python shelve"""
     def __init__(self, dbname, allowedclass = None):
         Memory.__init__(self)
         self.identifier = dbname

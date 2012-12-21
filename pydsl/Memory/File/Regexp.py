@@ -40,8 +40,7 @@ def load_re_from_file(filepath):
                 flagstr = cleanline[1:]
                 continue
             if regexp != None: 
-                LOG.error("Regular expression file format error")
-                raise Exception #TODO find proper exception
+                raise Exception("Regular expression file format error")
             else:
                 regexp = cleanline.rstrip('\n')
     flags = 0
