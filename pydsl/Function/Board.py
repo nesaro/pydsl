@@ -100,7 +100,6 @@ class Board:
     def __extractExternalChannelGrammarsFromDefinitions(self):
         """Extracts grammars from definition.
         generated channel must be connected to outside elements"""
-        #TODO: Store connections in a dictionary
         #{"part1":["part2","part3"],
         # "part2":....
         # "partn":...}
@@ -132,7 +131,6 @@ class Board:
 
     def __connectAllGTs(self):
         """Connect all instances"""
-        from pydsl.Memory.Storage.File.BoardSection import BoardConnectionDefinition
         for definition in self.__GTDefinitionlist:
             gtname = definition.name
             outputgrammarlist = definition.outputConnectionDefinitions

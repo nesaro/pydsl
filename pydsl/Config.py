@@ -24,7 +24,7 @@ __email__ = "nesaro@gmail.com"
 from pydsl.Abstract import Singleton
 import logging
 LOG = logging.getLogger(__name__)
-from pkg_resources import Requirement, resource_filename, DistributionNotFound
+from pkg_resources import resource_filename, DistributionNotFound
 
 
 def generate_memory_list(): #-> list:
