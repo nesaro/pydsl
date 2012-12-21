@@ -18,8 +18,8 @@
 
 """ Directory storage """
 
-from ..Memory import Memory
-from .File.Python import getFileTuple
+from .Memory import Memory
+from pydsl.Memory.File.Python import getFileTuple
 from pydsl.Abstract import InmutableDict
 import logging
 LOG = logging.getLogger(__name__)
@@ -71,7 +71,7 @@ class DirStorage(Memory):
         elif _isBoardFileName(modulepath):
             result = {"iclass":"Board", "identifier":fileBaseName, "filepath":modulepath}
         else:
-            from pydsl.Memory.Storage.File.Python import summary_python_file
+            from pydsl.Memory.File.Python import summary_python_file
             result = summary_python_file(modulepath)
         return InmutableDict(result)
 
@@ -118,15 +118,15 @@ class DirStorage(Memory):
             raise KeyError(self.__class__.__name__ + name)
         filepath = list(resultlist)[0]["filepath"]
         if _isRELFileName(filepath):
-            from pydsl.Memory.Storage.File.Regexp import load_re_from_file
+            from pydsl.Memory.File.Regexp import load_re_from_file
             return load_re_from_file(filepath)
         if _isGDLFileName(filepath):
-            from pydsl.Memory.Storage.File.BNF import load_bnf_file
+            from pydsl.Memory.File.BNF import load_bnf_file
             return load_bnf_file(filepath)
         if _isBoardFileName(filepath):
-            from pydsl.Memory.Storage.File.Board import load_board_file
+            from pydsl.Memory.File.Board import load_board_file
             return load_board_file(filepath)
-        from pydsl.Memory.Storage.File.Python import load_python_file
+        from pydsl.Memory.File.Python import load_python_file
         return load_python_file(filepath, **kwargs)
 
     def __contains__(self, key):

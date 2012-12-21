@@ -139,8 +139,7 @@ class RecursiveDescentParser(TopDownParser):
                                 x.shift(totalpos)
                                 success = alternativetree.append(x, totalpos)
                                 if not success:
-                                    #TODO: Add as an error to the tree or to
-                                    # another place
+                                    #TODO: Add as an error to the tree or to another place
                                     LOG.debug("Discarded symbol :" + str(symbol) + " position:" + str(totalpos))
                                 else:
                                     LOG.debug("Added symbol :" + str(symbol) + " position:" + str(totalpos))

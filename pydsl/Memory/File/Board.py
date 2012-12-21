@@ -21,7 +21,6 @@ __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
-from .Python import getFileTuple
 import logging
 try:
     # 3.x name
@@ -33,7 +32,7 @@ LOG = logging.getLogger("Storage.Directory.Function")
 
 def _readBoardFileRightSideArgs(thestring, basegtname):
     """Reads input or output definition, and splits it accordingly"""
-    from .BoardSection import BoardConnectionDefinition
+    from pydsl.Memory.File.BoardSection import BoardConnectionDefinition
     finallist = []
     tmplist = thestring.split(",")
     for gt in tmplist:
@@ -52,7 +51,7 @@ def sectionToBoardDefinition(configparser, sectionname):
     myinput = _readBoardFileRightSideArgs(configparser.get(sectionname, "input"), sectionname)
     output = _readBoardFileRightSideArgs(configparser.get(sectionname, "output"), sectionname)
     mytype = configparser.get(sectionname, "type")
-    from .BoardSection import BoardDefinitionSection
+    from pydsl.Memory.File.BoardSection import BoardDefinitionSection
     return BoardDefinitionSection(sectionname, mytype, myinput, output)
 
 def parseRegularSections(configparser):

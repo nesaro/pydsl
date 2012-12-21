@@ -5,7 +5,7 @@
 
 import unittest
 from pydsl.Grammar.Parser.RecursiveDescent import RecursiveDescentParser
-from pydsl.Memory.Storage.File.BNF import load_bnf_file
+from pydsl.Memory.File.BNF import load_bnf_file
 
 class TestLogicGrammars(unittest.TestCase):
     def setUp(self):

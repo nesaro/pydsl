@@ -113,6 +113,7 @@ class MongoChecker(Checker):
         return self.__auxcheck(self.mongodic, data)
 
     def __auxcheck(self, specdict, data):
+        """Recursive checker implementation"""
         for key, spec in specdict.items():
             value = data.get(key)
             if key == "$or" and len(specdict) == 1:
