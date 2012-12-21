@@ -45,7 +45,6 @@ def load_checker(grammar):
     elif isinstance(grammar, AlphabetDictDefinition):
         from pydsl.Checker import AlphabetDictChecker
         return AlphabetDictChecker(grammar)
-
     else:
         raise ValueError(grammar)
 
@@ -64,6 +63,16 @@ def load_grammar_tool(grammar):
     elif isinstance(grammar, dict) and "matchFun" in grammar:
         from pydsl.Grammar.Tool.Python import PythonGrammarTools
         return PythonGrammarTools(grammar)
+    else:
+        raise ValueError(grammar)
+
+def load_parser(grammar):
+    from pydsl.Grammar.BNF import BNFGrammar
+    if isinstance(grammar, str):
+        grammar = load(grammar)
+    if isinstance(grammar, BNFGrammar):
+        from pydsl.Grammar.Parser.RecursiveDescent import RecursiveDescentParser
+        return RecursiveDescentParser(grammar)
     else:
         raise ValueError(grammar)
 
