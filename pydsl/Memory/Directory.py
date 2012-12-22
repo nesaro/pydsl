@@ -33,10 +33,9 @@ def _isRELFileName(path):
 def _isBoardFileName(path):
     return path.endswith(".board")
 
-
 class DirStorage(Memory):
     """A collection of elements stored inside a directory"""
-    def __init__(self, dirpath, allowedextensions = [".py",".bnf",".re",".board"]):
+    def __init__(self, dirpath, allowedextensions = (".py",".bnf",".re",".board")):
         self.path = dirpath
         self._allowedextensions = allowedextensions
         from pydsl.Memory.Search.Searcher import MemorySearcher
