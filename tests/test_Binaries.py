@@ -27,3 +27,6 @@ class TestBinaries(unittest.TestCase):
         p = Popen(['python3', 'bin/search.py'], stdout=PIPE)
         p.communicate()
         self.assertEqual(p.returncode, 0)
+
+    def testDiff(self):
+        pass

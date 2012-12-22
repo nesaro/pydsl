@@ -15,7 +15,6 @@
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
-
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
@@ -23,9 +22,15 @@ __email__ = "nesaro@gmail.com"
 import logging
 LOG = logging.getLogger(__name__)
 from pydsl.Guess import Guesser
+from pydsl.Memory.Loader import load_parser, load_lexer#, load_diff
+
+def lcs(list1, list2):
+    import difflib
+    differences = difflib.SequenceMatcher(None, list1, list2)
+    return differences.get_matching_blocks()
 
 
-def diff(content1, content2, grammarlist = [], alphabetlist = []):
+def diff(content1, content2, grammarlist = (), alphabetlist = ()):
     result = {}
     if not grammarlist and not alphabetlist:
         guess = Guesser()
@@ -33,13 +38,18 @@ def diff(content1, content2, grammarlist = [], alphabetlist = []):
         guess2 = set(guess(content2))
         grammarlist = list(guess1.union(guess2))
     for al in alphabetlist:
-        tknlist1 = al.parse(content1)
-        tknlist2 = al.parse(content2)
-        result[al] = string_distance(tknlist1, tknlist2)
+        lexer = load_lexer(al)
+        tknlist1 = lexer(content1)
+        tknlist2 = lexer(content2)
+        result[al] = lcs(tknlist1, tknlist2)
     for grammar in grammarlist:
-        if is_bnf_grammar:
-            tree1 = grammar.to_parse_tree(content1)
-            tree2 = grammar.to_parse_tree(content2)
+        try:
+            parser = load_parser(grammar)
+        except:
+            continue
+        else:
+            tree1 = parser.to_parse_tree(content1)
+            tree2 = parser.to_parse_tree(content2)
             diff = load_diff("tree")
             result[grammar + "_tree"] = diff(tree1, tree2)
         diff = load_diff(grammar)

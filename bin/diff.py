@@ -28,13 +28,9 @@ import logging
 import sys
 import argparse
 
-def diff2(elem1, elem2):
-    #Generating and connecting output
-    #listen to user, open read file, or other
-    #configure output, write file, or other
-    #print self._opt
+def diff2(elem1, elem2, grammarlist=(), alphabetlist=()):
     from pydsl.Diff import diff
-    result = diff(elem1, elem2)
+    result = diff(elem1, elem2, grammarlist=grammarlist, alphabetlist=alphabetlist)
     #result = bool_dict_values(str(result["output"]))
     print(result)
     return result
@@ -43,16 +39,20 @@ if __name__ == "__main__":
     TUSAGE = "usage: %(prog)s [options] type"
     PARSER = argparse.ArgumentParser(usage = TUSAGE)
     PARSER.add_argument("-d", "--debuglevel", action="store", type=int, dest="debuglevel", help="Sets debug level")
-    PARSER.add_argument("-g", "--gramarlist", action="store", dest="grammarlist", help="Grammar list")
-    PARSER.add_argument("-o", "--alphabetlist", action="store", dest="alphabetlist", help="Alphabet list")
+    PARSER.add_argument("-g", "--gramarlist", action="store", dest="grammarlist", help="Grammar list", default="")
+    PARSER.add_argument("-a", "--alphabetlist", action="store", dest="alphabetlist", help="Alphabet list", default="")
     PARSER.add_argument("elem1", metavar="elem1", help="First Element")
     PARSER.add_argument("elem2", metavar="elem2", help="Second Element")
     ARGS = PARSER.parse_args()
     DEBUGLEVEL = ARGS.debuglevel or logging.WARNING
     
     logging.basicConfig(level = DEBUGLEVEL)
+    dargs = vars(ARGS)
+    del dargs["debuglevel"]
+    dargs['alphabetlist'] = dargs['alphabetlist'].split(',')
+    dargs['grammarlist'] = dargs['grammarlist'].split(',')
     try:
-        result = diff2(**vars(ARGS))
+        result = diff2(**dargs)
     except EOFError:
         sys.exit(0)
     if not result:
