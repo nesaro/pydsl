@@ -25,13 +25,14 @@ import logging
 LOG = logging.getLogger(__name__)
 from pydsl.Memory.Loader import load_checker
 finalchar = "EOF"
+unknownchar = "UNKNOWN"
 
 
 class Lexer:
     """Lexer follows an alphabet definition, which is like a grammar definition but generates a list of tokens and it is always Readable using a regular grammar"""
-    def __init__(self):
-        self.string = None
-        self.index = 0
+    def __init__(self, generate_unknown=False):
+        self.load(None)
+        self.generate_unknown = generate_unknown
 
     @property
     def current(self):
@@ -87,8 +88,12 @@ class BNFLexer(Lexer):
         while self.current != finalchar:
             validelements = [x for x in self.symbollist if self.current[0] in x.first()]
             if not validelements:
-                raise Exception("Not found")
-            if len(validelements) == 1:
+                if not self.generate_unknown:
+                    raise Exception("Not found")
+                string = self.current[0]
+                self.consume()
+                return (unknownchar, string)
+            elif len(validelements) == 1:
                 element = validelements[0]
                 string = self.current[:len(element)]
                 for _ in range(len(element)):
@@ -116,8 +121,12 @@ class AlphabetDictLexer(Lexer):
         while self.current:
             validelements = [(x,y) for x,y in self.alphabet.grammardict.items() if self.current[0] in y.first]
             if not validelements:
-                raise Exception("Not found")
-            if len(validelements) == 1:
+                if not self.generate_unknown:
+                    raise Exception("Not found")
+                string = self.current[0]
+                self.consume()
+                return (unknownchar, string)
+            elif len(validelements) == 1:
                 element = validelements[0][1]
                 size = 0
                 checker = load_checker(element)
