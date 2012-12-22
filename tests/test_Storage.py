@@ -8,7 +8,7 @@ import unittest
 class TestLoader(unittest.TestCase):
     """Test loaders"""
     def setUp(self):
-        from pydsl.Memory.Storage.Directory import DirStorage
+        from pydsl.Memory.Directory import DirStorage
         self.glibrary = DirStorage("/usr/share/pydsl/lib_contrib/grammar")
         from pydsl.Config import GLOBALCONFIG
         GLOBALCONFIG.strictgrammar = False 

@@ -61,8 +61,3 @@ class GrammarTools:
     @property
     def maxsize(self):
         raise NotImplementedError
-
-#TODO
-class NGramGrammar(GrammarTools):
-    """Grammar defined by an ngram and a threshold"""
-    pass

@@ -23,19 +23,19 @@ guess which types are the input data.
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
-#FIXME: Use globalconfig memories
+#FIXME: Use globalconfig memory list
 #TODO: Add Alphabet support
 
 
 import logging
 LOG = logging.getLogger(__name__)
-from pkg_resources import Requirement, resource_filename, DistributionNotFound
+from pkg_resources import resource_filename
 from pydsl.Memory.Loader import load_checker
 
 class Guesser:
     def __init__(self, memorylist = []):
         from pydsl.Memory.Search.Searcher import MemorySearcher
-        from pydsl.Memory.Storage.Directory import DirStorage
+        from pydsl.Memory.Directory import DirStorage
         if not memorylist:
             dirname = resource_filename("pydsl.contrib","")
             memorylist.append(DirStorage(dirname + "/grammar/"))
@@ -65,16 +65,3 @@ class Guesser:
             except TypeError:
                 continue
         return result
-
-#class FileGuesser(Guesser):
-#    """Guesser subclass for files only. Works like file command"""
-#    def __init__(self, memorylist = []):
-#        from pydsl.Memory.Search.Searcher import MemorySearcher
-#        from pydsl.Memory.Storage.Dict import FileTypeDictStorage
-#
-#        if not memorylist:
-#            dirname = resource_filename(Requirement.parse("pydsl_contrib"),"")
-#            memorylist.append(FileTypeDictStorage(dirname + "/dict/filetype.dict"))
-#        Guesser.__init__(self, memorylist)
-
-

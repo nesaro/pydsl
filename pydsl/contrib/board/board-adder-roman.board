@@ -1,0 +1,9 @@
+[sadder]
+type: simple-adder
+input: input.Main.input
+output: output.roman.input
+
+[roman]
+type: decimalToRomannumeral
+input: input.sadder.output
+output: output.Main.output

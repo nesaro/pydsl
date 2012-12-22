@@ -34,8 +34,7 @@ class ListStorage(Memory):
         self._content = {}
         from pydsl.Memory.Search.Searcher import MemorySearcher
         self._searcher = MemorySearcher(self)
-        from pydsl.Config import GLOBALCONFIG
-        from pydsl.Memory.Storage.File.Python import getFileTuple
+        from pydsl.Memory.File.Python import getFileTuple
         (_, _, fileBaseName, _) = getFileTuple(fullpath)
         import imp
         myobj = imp.load_source(fileBaseName, fullpath)

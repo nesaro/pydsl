@@ -29,7 +29,7 @@ symbolb = StringTerminalSymbol("B")
 nonterminal = NonTerminalSymbol("res")
 rulea = Production ([nonterminal], [symbola, NullSymbol(), symbolb])
 productionset2 = BNFGrammar(nonterminal, [rulea, symbola, symbolb])
-from pydsl.Memory.Storage.File.BNF import strlist_to_production_set
+from pydsl.Memory.File.BNF import strlist_to_production_set
 productionsetlr = strlist_to_production_set(leftrecursive)
 productionsetrr = strlist_to_production_set(rightrecursive)
 productionsetcr = strlist_to_production_set(centerrecursive)
