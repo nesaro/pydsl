@@ -38,3 +38,8 @@ class AlphabetDictDefinition(AlphabetDefinition):
     @property
     def symbols(self):
         return list(self.grammardict.keys())
+
+class Encoding(AlphabetDefinition):
+    """Defines an alphabet using an encoding string"""
+    def __init__(self, encoding):
+        self.encoding = encoding
