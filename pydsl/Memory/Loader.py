@@ -81,7 +81,7 @@ def load_lexer(alphabet):
     else:
         raise ValueError(grammar)
 
-def load(identifier, memorylist = []):
+def load(identifier, memorylist = None):
     if not memorylist:
         from pydsl.Config import GLOBALCONFIG
         memorylist = GLOBALCONFIG.memorylist
