@@ -16,6 +16,7 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 """Global (per execution) elements"""
+from pydsl.Memory.List import EncodingStorage
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2012, Nestor Arocha"
@@ -41,6 +42,7 @@ def generate_memory_list(): #-> list:
         result.append(DirStorage(dirname + "/board/"))
         result.append(DirStorage(dirname + "/transformer/"))
         result.append(RegexpDictStorage(dirname + "/dict/regexp.dict"))
+        result.append(EncodingStorage(dirname + "/list/encoding.py"))
     return result
 
 
