@@ -39,9 +39,9 @@ translation functions:
    * ast(astdefinition, input): creates an abstract syntax tree according to astdefinition
    * sdt( sdt, ast): Performs an AST translation using a Syntax Directed Translator
 
-pydsl also offers library related  functions:
- * search(query): search for an element within a memory
- * info(identifier): returns information about the element
+pydsl also offers library related functions:
+ * manager s query: search for an element within a memory
+ * manager i identifier: returns information about the element
  * translations(identifier): returns a list of available translators for identifier
 
 INSTALLATION
@@ -84,8 +84,7 @@ BINARIES
 ========
 Memory Management
 -----------------
- * info.py: Retrieves an element from memory and shows a summary
- * search.py: Searchs memory 
+ * manager.py : Searchs element, displays information
 
 Grammars
 --------

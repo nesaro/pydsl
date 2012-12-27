@@ -1,66 +1,113 @@
 #!/usr/bin/python3
 
-"""Gestiona las memorias
-uso: manager.py [opciones] comando MemURI Identifier
-   comandos: n new element
-             r read element
-             s save element
-             a append to element
-             d delete element
+""" Memory management
+   verbs:    i info
+             s search
              l list elements
-
-   opciones: -e input expression
-             -i input URI
-             -o output URI or stdout
-
-   MemURI: La URI de la memoria
-   Identifier: El identificador del elemento en cuestión. Solo si no esta incluido en la URI
-   """
+"""
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
+from pydsl import VERSION
+from pydsl.Config import GLOBALCONFIG
 
-def load_memory(identifier):
-    """Intenta adivinar el tipo de memoria de la URI pasada y la carga"""
-    import os
-    if os.path.isdir(identifier):
-        from pydsl.Memory.Directory.DirStorage import StrDirStorage
-        return StrDirStorage(identifier)
+def search_pp(inputset: set, filterlist = None) -> str:
+    """Search pretty print"""
+    result = ""
+    for element in inputset:
+        for key in element:
+            if filterlist == None or key in filterlist:
+                if isinstance(element[key], tuple):
+                    result += key + "-> " + str(element[key]) + " "
+                else:
+                    result += key + ": " + str(element[key]) + " "
+        result += '\n'
+    return result
 
+def filterset(inputset: set, filterlist = None) -> set:
+    if filterlist == None:
+        return inputset #Don't filter at all
+    from pydsl.Abstract import InmutableDict
+    result = set()
+    for element in inputset:
+        telement = {}
+        for key in element:
+            if key in filterlist:
+                telement[key] = element[key]
+        result.add(InmutableDict(telement))
+    return result
+
+
+def info(identifier, outputformat):
+    memorylist = GLOBALCONFIG.memorylist
+    for memory in memorylist:
+        if identifier in memory:
+            instance = memory.load(identifier)
+            break
+    else:
+        print("Not found")
+        return False
+    if instance:
+        if hasattr(instance, "summary"):
+            resultdic = instance.summary
+        else:
+            resultdic = {"instance":instance}
+        if outputformat == "str":
+            for key in resultdic:
+                print(key + ": " + str(resultdic[key]))
+        elif outputformat == "json":
+            import json
+            print(json.dumps(resultdic))
+        else:
+            print("Raw format not supported")
+            return False
+    else:
+        if outputformat == "str":
+            print(str(instance))
+        elif outputformat == "raw":
+            import sys
+            sys.stdout.write(str(instance))
+        else:
+            print("JSON format not supported")
+            return False
+    return True
 
 if __name__ == "__main__":
     import argparse
-    TUSAGE = "usage: %(prog)s [options] command URI [Identifier]"
+    TUSAGE = "usage: %(prog)s [options] verb [identifier]"
     PARSER = argparse.ArgumentParser(usage = TUSAGE)
     PARSER.add_argument("-d", "--debuglevel", action="store", type=int, dest="debuglevel", help="Sets debug level")
-    PARSER.add_argument("-i", "--input", action="store", dest="inputuri", help="input filename dict")
-    PARSER.add_argument("-o", "--output", action="store", dest="outputuri", help="output filename dict")
-    PARSER.add_argument("-e", "--expression", action="store", dest="expression", help="input expression")
-    PARSER.add_argument("command", metavar="command" , help="command")
-    PARSER.add_argument("uri", metavar="uri" , help="command")
+    PARSER.add_argument('-o', dest='outputformat',nargs='?', choices=["str","json","raw"], default="str", help="output format")
+    PARSER.add_argument('--version', action='version', version = VERSION)
+    PARSER.add_argument('--filter', dest='myfilter',nargs='?', default=None, help="comma separated field list")
+    PARSER.add_argument("verb", metavar="verb" , help="verb")
     PARSER.add_argument("identifier", metavar="identifier" , nargs='?', help="command")
     ARGS = PARSER.parse_args()
     import sys
     DEBUGLEVEL = ARGS.debuglevel or logging.WARNING
     logging.basicConfig(level = DEBUGLEVEL)
-    if ARGS.command == "n":
-        pass
-    elif ARGS.command == "r":
-        pass
-    elif ARGS.command == "s":
-        pass
-    elif ARGS.command == "a":
-        pass
-    elif ARGS.command == "d":
-        pass
-    elif ARGS.command == "l":
-        mem = load_memory(ARGS.uri)
-        for element in mem:
-            print(element)
+    if ARGS.verb == "i":
+        info(ARGS.identifier, ARGS. outputformat)
+    elif ARGS.verb in ("s","l"):
+        if ARGS.verb == "s":
+            query = ARGS.identifier
+        else:
+            query = ""
+        from pydsl.Memory.Search.Searcher import MemorySearcher
+        from pydsl.Memory.Search.Indexer import Indexer
+        searcher = MemorySearcher([Indexer(x) for x in GLOBALCONFIG.memorylist])
+        myfilter = None
+        if ARGS.myfilter:
+            myfilter = ARGS.myfilter.split(',')
+        if ARGS.outputformat == "str":
+            print(search_pp(searcher.search(ARGS.identifier), myfilter))
+        elif ARGS.outputformat == "json":
+            import json
+            print(json.dumps(list(filterset(searcher.search(ARGS.identifier), myfilter))))
     else:
-        print("Unknown command")
+        print("Unknown verb")
         print(TUSAGE)
         sys.exit(-1)
