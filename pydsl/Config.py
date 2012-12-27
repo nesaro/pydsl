@@ -88,7 +88,6 @@ class GlobalConfig(object):
 
 GlobalConfig2 = Singleton('GlobalConfig2', (GlobalConfig, ), {})
 GLOBALCONFIG = GlobalConfig2()  # The only instance available
-ERRORLIST = ["Grammar", "Timeout", "Transformer"]
 
 
 def all_classes(module):# -> set:
