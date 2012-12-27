@@ -87,7 +87,6 @@ class GlobalConfig(object):
         self.__debuglevel = level
 
 GlobalConfig2 = Singleton('GlobalConfig2', (GlobalConfig, ), {})
-VERSION = "pydsl pre-version\n Copyright (C) 2008-2012 Nestor Arocha"
 GLOBALCONFIG = GlobalConfig2()  # The only instance available
 ERRORLIST = ["Grammar", "Timeout", "Transformer"]
 

@@ -52,7 +52,8 @@ def filterset(inputset: set, filterlist = None) -> set:
 
 if __name__ == "__main__":
     import argparse
-    from pydsl.Config import VERSION, GLOBALCONFIG
+    from pydsl import VERSION
+    from pydsl.Config import GLOBALCONFIG
     TUSAGE = "usage: %(prog)s [options] query"
     PARSER = argparse.ArgumentParser(usage = TUSAGE)
     PARSER.add_argument("query", nargs="?", default="/.*/", metavar="query", help="Query to search")
