@@ -50,7 +50,7 @@ class TestMemory(unittest.TestCase):
 class TestPersistentMemory(unittest.TestCase):
     """Tests Transformers"""
     def setUp(self):
-        from pydsl.Memory.Storage import ShelveStorage
+        from pydsl.Memory.Shelve import ShelveStorage
         from pydsl.Checker import Checker
         self.mem = ShelveStorage("tmp", Checker)
         
