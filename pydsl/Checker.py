@@ -181,3 +181,25 @@ class AlphabetDictChecker(Checker):
                 return False
         return True
 
+class EncodingChecker(Checker):
+    def __init__(self, gd):
+        Checker.__init__(self)
+        self.gd = gd
+
+    def check(self,data):
+        encoding = self.gd.encoding
+        if isinstance(data, str):
+            try:
+                data.encode(encoding)
+            except UnicodeEncodeError:
+                return False
+            else:
+                return True
+        elif isinstance(data, bytes):
+            try:
+                data.decode(encoding)
+            except UnicodeDecodeError:
+                return False
+            else:
+                return True
+        return False

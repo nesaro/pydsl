@@ -16,6 +16,7 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 """loader class"""
+from pydsl.Alphabet.Definition import Encoding
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2012, Nestor Arocha"
@@ -45,7 +46,9 @@ def load_checker(grammar):
     elif isinstance(grammar, AlphabetDictDefinition):
         from pydsl.Checker import AlphabetDictChecker
         return AlphabetDictChecker(grammar)
-
+    elif isinstance(grammar, Encoding):
+        from pydsl.Checker import EncodingChecker
+        return EncodingChecker(grammar)
     else:
         raise ValueError(grammar)
 
@@ -81,7 +84,7 @@ def load_lexer(alphabet):
     else:
         raise ValueError(grammar)
 
-def load(identifier, memorylist = []):
+def load(identifier, memorylist = None):
     if not memorylist:
         from pydsl.Config import GLOBALCONFIG
         memorylist = GLOBALCONFIG.memorylist
