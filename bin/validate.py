@@ -17,7 +17,8 @@
 
 
 """
-validates input against the Grammar
+Generic validator for BNF Grammars. 
+Displays the part of the tree that doesn't conform the grammar definition
 """
 
 __author__ = "Nestor Arocha"

@@ -28,8 +28,6 @@ import logging
 from pydsl.Exceptions import BadFileFormat
 from pydsl.Interaction.Shell import parse_shell_dict, open_files_dict 
 
-#CURRENTGRAMMAR = ""
-
 def checkfun(inputdic, auxboarddic, inputgt, outputgt):
     output = auxboarddic["checker"]({"string":inputdic["input"], "grammar":CURRENTGRAMMAR})
     if not output:
@@ -39,7 +37,7 @@ def checkfun(inputdic, auxboarddic, inputgt, outputgt):
 def bool_dict_values(dic):
     for key in dic:
         if str(dic[key]) == "False":
-            dic[key] == False
+            dic[key] = False
         else:
             dic[key] = bool(dic[key])
     return dic

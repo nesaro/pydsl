@@ -33,6 +33,8 @@ class SyntaxDirectedTransformer:
             from pydsl.Memory.Loader import load
             inputgrammar = load(inputgrammar)
         from pydsl.Grammar.Parser.RecursiveDescent import RecursiveDescentParser
+        self.inputgrammar = inputgrammar
+        self.outputgrammar = outputgrammar
         self.parser = RecursiveDescentParser(inputgrammar)
         self.blockdic = blockdic
 
@@ -55,4 +57,4 @@ class SyntaxDirectedTransformer:
 
     @property
     def summary(self):
-        return {"iclass":"SyntaxDirectedTransformer", "identifier":self.identifier, "input":self.inputgrammar, "output":self.outputgrammar }
+        return {"iclass":"SyntaxDirectedTransformer", "input":self.inputgrammar, "output":self.outputgrammar }

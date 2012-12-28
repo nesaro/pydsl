@@ -34,11 +34,12 @@ from pkg_resources import resource_filename
 from pydsl.Memory.Loader import load_checker
 
 class Guesser:
-    def __init__(self, memorylist = []):
+    def __init__(self, memorylist = None):
         from pydsl.Memory.Search.Searcher import MemorySearcher
         from pydsl.Memory.Directory import DirStorage
         if not memorylist:
             dirname = resource_filename("pydsl.contrib","")
+            memorylist = []
             memorylist.append(DirStorage(dirname + "/grammar/"))
             memorylist.append(EncodingStorage(dirname + "/list/encoding.py"))
         self.memorylist = memorylist

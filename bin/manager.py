@@ -19,7 +19,7 @@ def search_pp(inputset: set, filterlist = None) -> str:
     result = ""
     for element in inputset:
         for key in element:
-            if filterlist == None or key in filterlist:
+            if filterlist is None or key in filterlist:
                 if isinstance(element[key], tuple):
                     result += key + "-> " + str(element[key]) + " "
                 else:
@@ -28,7 +28,7 @@ def search_pp(inputset: set, filterlist = None) -> str:
     return result
 
 def filterset(inputset: set, filterlist = None) -> set:
-    if filterlist == None:
+    if filterlist is None:
         return inputset #Don't filter at all
     from pydsl.Abstract import InmutableDict
     result = set()
