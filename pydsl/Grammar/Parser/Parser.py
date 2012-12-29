@@ -152,6 +152,7 @@ def mix_results(resultll, productionset):
         elif middleresult[0].leftpos != None and middleresult[-1].rightpos != None:
             #Creates a node with all elements, and originals nodes are the childs of the new node
             symbollist = []
+            compoundword = ""
             for element in middleresult:
                 compoundword += element.content
                 symbollist += element.symbollist
