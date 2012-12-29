@@ -101,7 +101,3 @@ class RegularExpressionGrammarTools(GrammarTools):
     def alphabet(self):
         #FIXME:It is not working with groups
         return regexp_alphabet_helper(self.__gd.regexpstr)[0]
-
-    @property
-    def summary(self):
-        return {"iclass":"RegularExpressionGrammar", "groups":self.groups(), "regexp":self.__gd}

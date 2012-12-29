@@ -63,8 +63,3 @@ class PythonGrammarTools(GrammarTools):
         if self._alphabetFun != None:
             return set(self._alphabetFun())
         return set()
-
-    @property
-    def summary(self):
-        return {"iclass":"PythonGrammar", "ancestors":self.ancestors() }
-
