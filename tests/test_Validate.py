@@ -25,7 +25,8 @@ import unittest
 
 class TestValidate(unittest.TestCase):
     def testBasic(self):
-        from pydsl.Validate import validate
-        from pydsl.Memory.Loader import load
-        grammar = load('Date')
-        print(validate(grammar, "11/11/ab"))
+        from pydsl.Memory.Loader import load_parser
+        parser = load_parser('Date', 'descent')
+        self.assertFalse(parser.get_trees("11/11/ab", True)[0].valid)
+        self.assertTrue(parser.get_trees("11/11/2011", True)[0].valid)
+
