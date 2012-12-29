@@ -134,7 +134,6 @@ class Board:
         for definition in self.__GTDefinitionlist:
             gtname = definition.name
             outputgrammarlist = definition.outputConnectionDefinitions
-            gtinstance = self._hostT[gtname]
             self.connectionsdict[gtname] = {}
             for gtcondef in outputgrammarlist:
                 hostt = None     

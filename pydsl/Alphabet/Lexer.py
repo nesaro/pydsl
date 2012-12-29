@@ -84,7 +84,6 @@ class BNFLexer(Lexer):
             return finalchar
 
     def nextToken(self):
-        import re
         while self.current != finalchar:
             validelements = [x for x in self.symbollist if self.current[0] in x.first()]
             if not validelements:
@@ -128,7 +127,6 @@ class AlphabetDictLexer(Lexer):
                 return (unknownchar, string)
             elif len(validelements) == 1:
                 element = validelements[0][1]
-                size = 0
                 checker = load_checker(element)
                 for size in range(element.maxsize or len(self.current), element.minsize, -1):
                     if checker.check(self.current[:size]):
@@ -138,9 +136,9 @@ class AlphabetDictLexer(Lexer):
                 string = self.current[:size]
                 for _ in range(size):
                     self.consume()
-                return (validelements[0][0], string)
+                return validelements[0][0], string
             else:
                 raise Exception("Multiple choices")
 
-        return ("EOF_TYPE", "")
+        return "EOF_TYPE", ""
 

@@ -22,7 +22,6 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
-from pydsl.Abstract import Indexable
 
 class Memory:
     """Memory Abstraction"""
@@ -32,7 +31,7 @@ class Memory:
     def load(self, index, **kwargs):
         raise NotImplementedError
     
-    def save(self, element):
+    def save(self, element, identifier):
         raise NotImplementedError
 
     def __iter__(self):
@@ -68,6 +67,7 @@ class Memory:
 class LocalMemory(Memory):
     """Execution time memory"""
     def __init__(self):
+        Memory.__init__(self)
         self.content = {}
     
     def load(self, index):

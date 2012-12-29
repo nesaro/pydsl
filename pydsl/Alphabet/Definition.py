@@ -25,7 +25,7 @@ class AlphabetDefinition:
     @property
     def symbols(self):
         """Returns a list of allowed symbols"""
-        return []
+        raise NotImplementedError
 
 class AlphabetDictDefinition(AlphabetDefinition):
     """Uses a dict of grammardefinitions"""
@@ -38,3 +38,8 @@ class AlphabetDictDefinition(AlphabetDefinition):
     @property
     def symbols(self):
         return list(self.grammardict.keys())
+
+class Encoding(AlphabetDefinition):
+    """Defines an alphabet using an encoding string"""
+    def __init__(self, encoding):
+        self.encoding = encoding

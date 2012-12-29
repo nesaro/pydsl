@@ -19,6 +19,7 @@
 """
 guess which types are the input data. 
 """
+from pydsl.Memory.List import EncodingStorage
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2012, Nestor Arocha"
@@ -33,12 +34,14 @@ from pkg_resources import resource_filename
 from pydsl.Memory.Loader import load_checker
 
 class Guesser:
-    def __init__(self, memorylist = []):
+    def __init__(self, memorylist = None):
         from pydsl.Memory.Search.Searcher import MemorySearcher
         from pydsl.Memory.Directory import DirStorage
         if not memorylist:
             dirname = resource_filename("pydsl.contrib","")
+            memorylist = []
             memorylist.append(DirStorage(dirname + "/grammar/"))
+            memorylist.append(EncodingStorage(dirname + "/list/encoding.py"))
         self.memorylist = memorylist
         self.searcher = MemorySearcher([x.indexer() for x in memorylist])
 

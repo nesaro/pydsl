@@ -59,7 +59,7 @@ class RegularExpressionChecker(Checker):
 
 
 class BNFChecker(Checker):
-    """Calls another program to perform checking. Args are always filenames"""
+    """Calls another program to perform checking. Args are always file names"""
     def __init__(self, bnf, parser = "auto"):
         Checker.__init__(self)
         parser = bnf.options.get("parser",parser)
@@ -78,11 +78,10 @@ class BNFChecker(Checker):
             return len(self.__parser.get_trees(data)) > 0
         except IndexError:
             return False 
-        return False
         
     @property
     def summary(self):
-        return {"iclass":"BNFChecker", "identifier":self.identifier, "description":self.description}
+        return {"iclass":"BNFChecker"}
 
 
 class PythonChecker(Checker):
@@ -181,3 +180,25 @@ class AlphabetDictChecker(Checker):
                 return False
         return True
 
+class EncodingChecker(Checker):
+    def __init__(self, gd):
+        Checker.__init__(self)
+        self.gd = gd
+
+    def check(self,data):
+        encoding = self.gd.encoding
+        if isinstance(data, str):
+            try:
+                data.encode(encoding)
+            except UnicodeEncodeError:
+                return False
+            else:
+                return True
+        elif isinstance(data, bytes):
+            try:
+                data.decode(encoding)
+            except UnicodeDecodeError:
+                return False
+            else:
+                return True
+        return False

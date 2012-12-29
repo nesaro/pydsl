@@ -20,9 +20,7 @@ def print_errors(postnode):
             result += print_errors(child) + "\n"
     return result
 
-def parts(grammar, outputformat = None, expression = None, inputfile = None):
-    import sys
-    result = None
+def parts(grammar, part, outputformat = None, expression = None, inputfile = None):
     from pydsl.Memory.Loader import load
     sgrammar = load(grammar) 
     if not part:
@@ -69,10 +67,9 @@ if __name__ == "__main__":
     DEBUGLEVEL = ARGS.debuglevel or logging.WARNING
     
     logging.basicConfig(level = DEBUGLEVEL)
-    manager = Parts(ARGS)
     import sys
     try:
-        result = manager.execute()
+        result = parts(vars(**ARGS))
     except EOFError:
         sys.exit(0)
     if not result:
