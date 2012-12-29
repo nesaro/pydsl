@@ -218,7 +218,7 @@ class TopDownParser(Parser):
 class BottomUpParser(Parser):
     """ leaf to root parser"""
     def __init__(self, bnfgrammar, packagedependencies = None):
-        from pydsl.Grammar.Lexer import BNFLexer
+        from pydsl.Alphabet.Lexer import BNFLexer
         self._lexer = BNFLexer(bnfgrammar)
         terminalsymbollist = bnfgrammar.getTerminalSymbols()
         for ts in terminalsymbollist:
