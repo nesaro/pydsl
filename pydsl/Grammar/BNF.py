@@ -27,7 +27,7 @@ __email__ = "nesaro@gmail.com"
 
 class Production:
     def __init__(self, leftside, rightside):
-        #Left side must have at least one nonterminal symbol
+        #Left side must have at least one non terminal symbol
         for element in rightside:
             if not isinstance(element, Symbol):
                 raise TypeError
@@ -99,7 +99,7 @@ class BNFGrammar(GrammarDefinition): #Only stores a ruleset, and methods to ask 
 
     @property
     def is_abstract(self):
-        """Returns true if the grammar contains an unknownsymbol"""
+        """Returns true if the grammar contains an unknown symbol"""
         return UnknownSymbol in self.fulllist
 
     def __eq__(self, other):
