@@ -27,5 +27,5 @@ class TestValidate(unittest.TestCase):
     def testBasic(self):
         from pydsl.Validate import validate
         from pydsl.Memory.Loader import load
-        grammar = load('date')
+        grammar = load('Date')
         print(validate(grammar, "11/11/ab"))
