@@ -69,29 +69,23 @@ def regexp_alphabet_helper(string, endchar = None): # -> set:
 
 class RegularExpressionGrammarTools(GrammarTools):
     def __init__(self, regexp, flags = ""):
-        GrammarTools.__init__(self)
         if isinstance(regexp, str):
             from pydsl.Grammar.Definition import RegularExpressionDefinition
             regexp = RegularExpressionDefinition(regexp)
-        self.__gd = regexp
-
-    def check(self, word):
-        from pydsl.Checker import RegularExpressionChecker
-        checker = RegularExpressionChecker(self.__gd)
-        return checker.check(word)
+        GrammarTools.__init__(self, regexp)
 
     def get_groups(self, word, groupname):
         """Match against specific rule"""
         data = str(word)
         if not data:
             return []
-        groupdict = self.__gd.match(data).groupdict()
+        groupdict = self.gd.match(data).groupdict()
         if not groupname in groupdict:
             return []
-        return [(self.__gd.match(data).start(groupname),self.__gd.match(data).end(groupname))] #Returns a list
+        return [(self.gd.match(data).start(groupname),self.gd.match(data).end(groupname))] #Returns a list
 
     def groups(self):
-        return list(self.__gd.groupindex.keys())
+        return list(self.gd.groupindex.keys())
 
     def tokenize(self, information):
         """Uses python str iteration"""
@@ -100,4 +94,4 @@ class RegularExpressionGrammarTools(GrammarTools):
 
     def alphabet(self):
         #FIXME:It is not working with groups
-        return regexp_alphabet_helper(self.__gd.regexpstr)[0]
+        return regexp_alphabet_helper(self.gd.regexpstr)[0]
