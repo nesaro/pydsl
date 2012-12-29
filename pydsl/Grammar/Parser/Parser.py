@@ -23,7 +23,6 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
-from pydsl.Grammar.BNF import BNFGrammar
 
 
 def terminal_symbol_reducer(symbol, word, production):
@@ -94,7 +93,6 @@ def terminal_symbol_consume(symbol, word):
 def mix_results(resultll, productionset):
     """ Mix n sets of results """
     from pydsl.Grammar.Tree import ParseTree
-    production = None
     midlist = [] #All blocks combinations are stored here
     firstindex = 0
     while firstindex < len(resultll) and len(resultll[firstindex]) == 0: 
@@ -123,7 +121,6 @@ def mix_results(resultll, productionset):
             #for each result
             tmp = []
             for middleresult in midlist:
-                #combinamos todos los elementos con los ya apuntados en la lista intermedia
                 #Here we mix every result with intermediate results list
                 lastresult = middleresult[-1]
                 if lastresult.production != result.production:
@@ -132,30 +129,27 @@ def mix_results(resultll, productionset):
                     result.rightpos = lastresult.rightpos
                     result.leftpos = lastresult.rightpos
                 if lastresult.rightpos is None or result.leftpos is None:
-                    tmp.append(middleresult + [ParseTree(result.leftpos, result.rightpos, \
-                            result.symbollist, result.content, result.production, \
-                            list(result.childlist), result.valid)])
+                    tmp.append(middleresult + [ParseTree(result.leftpos, result.rightpos,
+                        result.symbollist, result.content, result.production,
+                        list(result.childlist), result.valid)])
                 elif lastresult.rightpos == result.leftpos:
-                    tmp.append(middleresult + [ParseTree(result.leftpos, result.rightpos, \
-                            result.symbollist, result.content, result.production, \
-                            list(result.childlist), result.valid)])
+                    tmp.append(middleresult + [ParseTree(result.leftpos, result.rightpos,
+                        result.symbollist, result.content, result.production,
+                        list(result.childlist), result.valid)])
             midlist += tmp
         validsets += 1
     
-        #eliminamos los resultados intermedios que no contienen tantos elementos como hemos procesado. Es decir, no se ha encontrado una combinacion valida en la ultima mezcla
         #Removes all results that have less elements than the number of valid sets
         for element in midlist[:]:
             if len(element) != validsets:
                 midlist.remove(element)
 
-    #Combinamos resultados en la lista final
     #We mix all results into final result
     finallist = []
     for middleresult in midlist:
         if len(middleresult) == 1:
             finallist.append(middleresult[0])
         elif middleresult[0].leftpos != None and middleresult[-1].rightpos != None:
-            #mezclamos la coleccion y dejamos los originales como hijos
             #Creates a node with all elements, and originals nodes are the childs of the new node
             symbollist = []
             for element in middleresult:
@@ -164,7 +158,6 @@ def mix_results(resultll, productionset):
             finalresult = ParseTree(middleresult[0].leftpos, middleresult[-1].rightpos, symbollist, compoundword, middleresult[0].production, valid = result.valid)
             psl = middleresult[0].production
             #Add childs to result. FIXME El problema es que estamos añadiendo como hijos del nuevo los elementos ya creados
-            error = False
             rightside = []
             for child in middleresult:
                 assert(child != finalresult)
@@ -173,9 +166,6 @@ def mix_results(resultll, productionset):
                     rightside += child.production.leftside
                 if not child.valid:
                     finalresult.valid = False #valid status propagates upwards
-            #if error:
-            #    print([str(x.production) for x in middleresult])
-            #    continue
             if productionset:
                 try:
                     finalresult.production = productionset.getProductionsBySide(rightside, "right")
@@ -200,7 +190,7 @@ def locate_result_borders(results):
             leftborder = leftpos
         if rightpos < rightborder:
             rightborder = rightpos
-    return (leftborder, rightborder)
+    return leftborder, rightborder
 
 class Parser:
     """Parser abstract class. At this time, all parsers are tree based"""

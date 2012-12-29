@@ -22,13 +22,13 @@ LOG = logging.getLogger(__name__)
 from .Parser import TopDownParser, mix_results, locate_result_borders, terminal_symbol_reducer
 from ..Tree import ParseTree
 
-def locate_heavier_symbol(symbollist):
-    """ Locates the heavier symbol inside inputlist"""
-    currentsymbol = None
-    for symbol in symbollist:
-        if currentsymbol is None or symbol.weight > currentsymbol.weight:
-            currentsymbol = symbol
-    return currentsymbol
+def locate_heavier_symbol(symbols):
+    """ Locates the heavier symbol inside input list"""
+    current_symbol = None
+    for symbol in symbols:
+        if current_symbol is None or symbol.weight > current_symbol.weight:
+            current_symbol = symbol
+    return current_symbol
 
 class WeightedParser(TopDownParser):
     """Weighted Parser class"""
@@ -73,7 +73,7 @@ class WeightedParser(TopDownParser):
         onlysymbol = symbols[0]
         from ..Symbol import TerminalSymbol, NonTerminalSymbol, NullSymbol
         if isinstance(onlysymbol, TerminalSymbol):
-            #Locate every ocurrence of word and return a set of results. Follow boundariesrules
+            #Locate every occurrence of word and return a set of results. Follow boundariesrules
             LOG.debug("Iteration: terminalsymbol")
             sproduction = self._productionset.getProductionsBySide([onlysymbol])[0]
             result =  terminal_symbol_reducer(onlysymbol, data, sproduction)
