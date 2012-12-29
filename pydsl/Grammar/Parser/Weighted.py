@@ -75,10 +75,9 @@ class WeightedParser(TopDownParser):
         if isinstance(onlysymbol, TerminalSymbol):
             #Locate every occurrence of word and return a set of results. Follow boundariesrules
             LOG.debug("Iteration: terminalsymbol")
-            sproduction = self._productionset.getProductionsBySide([onlysymbol])[0]
-            result =  terminal_symbol_reducer(onlysymbol, data, sproduction)
+            result =  terminal_symbol_reducer(onlysymbol, data, None) #FIXME add information about production
             if showerrors and not result:
-                return [ParseTree(0,len(data), [onlysymbol] , data, sproduction, valid = False)]
+                return [ParseTree(0,len(data), [onlysymbol] , data, None, valid = False)] #FIXME add information about production
             return result
         elif isinstance(onlysymbol, NonTerminalSymbol):
             result = []

@@ -116,7 +116,7 @@ class RecursiveDescentParser(TopDownParser):
             LOG.debug("Iteration: terminalsymbol")
             result = terminal_symbol_consume(onlysymbol, data)
             if showerrors and not result:
-                return [ParseTree(0,len(data), [onlysymbol] , data, sproduction, valid = False)]
+                return [ParseTree(0,len(data), [onlysymbol] , data, None, valid = False)] #FIXME add information about production
             return result
         elif isinstance(onlysymbol, NullSymbol):
             return [ParseTree(0, 0, [onlysymbol], "", production)]
@@ -186,7 +186,7 @@ class RecursiveDescentParser(TopDownParser):
             if showerrors and not result:
                 erroresult = ParseTree(0,len(data), [onlysymbol] , data, production, valid = False)
                 for invalid in invalidstack:
-                    if invalid.production.leftside[0] in production.rightside:
+                    if invalid and invalid.production.leftside[0] in production.rightside:
                         erroresult.append_child(invalid)
                 return [erroresult]
             return result
