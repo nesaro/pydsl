@@ -27,21 +27,12 @@ LOG = logging.getLogger(__name__)
 
 class PythonGrammarTools(GrammarTools):
     def __init__(self, dictionary):
-        GrammarTools.__init__(self)
+        GrammarTools.__init__(self, dictionary)
         self.dictionary = dictionary
         self._matchFun = None
         self._askprop = dictionary.get('propFun')
         self._enumFun = dictionary.get('enumFun')
         self._alphabetFun = dictionary.get('alphabetFun')
-
-    def check(self, word):
-        from pydsl.Alphabet.Token import TokenList
-        if isinstance(word, TokenList):
-            word = str(word)
-        if not self._matchFun:
-            from pydsl.Memory.Loader import load_checker
-            self._matchFun = load_checker(self.dictionary)
-        return self._matchFun.check(word)
 
     def get_groups(self, word, propertyname):
         if self._askprop != None:
