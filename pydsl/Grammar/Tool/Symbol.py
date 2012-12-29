@@ -32,19 +32,8 @@ class SymbolGrammarTools(GrammarTools):
         parser = bnf.options.get("parser",parser)
         self.__bnf = bnf
         self.__checker = None
-        if parser == "descent":
-            from ..Parser.RecursiveDescent import RecursiveDescentParser
-            self.__parser = RecursiveDescentParser(bnf)
-        elif parser == "weighted":
-            self.__parser = WeightedParser(bnf)
-            raise Exception
-        elif parser == "auto" or parser == "default":
-            #TODO Guess best parser
-            from ..Parser.Weighted import WeightedParser
-            self.__parser = WeightedParser(bnf)
-        else:
-            LOG.error("Wrong parser name: " + parser)
-            raise Exception
+        from pydsl.Memory.Loader import load_parser
+        self.__parser = load_parser(bnf)
 
     @property
     def productionset(self):
