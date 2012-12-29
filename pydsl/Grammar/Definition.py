@@ -39,6 +39,10 @@ class GrammarDefinition:
     def maxsize(self):
         return None
 
+    def alphabet(self):
+        """Returns the alphabet required by this grammar"""
+        raise NotImplementedError
+
 class PLYGrammar(GrammarDefinition):
     """PLY based grammar"""
     def __init__(self, module):
