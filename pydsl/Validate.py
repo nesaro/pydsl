@@ -27,12 +27,16 @@ __email__ = "nesaro@gmail.com"
 import logging
 LOG = logging.getLogger(__name__)
 
+#TODO test this  function
+#FIXME This function doesn't do what it advertises.
+
 def validate(sgrammar, expression): # -> "[AST]":
     """Returns a list of postTreeNodes"""
-    resulttrees = sgrammar.get_trees(expression, True)
+    from pydsl.Memory.Loader import load_parser
+    parser = load_parser(sgrammar, "descent")
+    resulttrees = parser.get_trees(expression, True)
     treelist = []
     for tree in resulttrees:
-        from pydsl.Grammar.Tree import parser_to_post_tree
-        treelist.append(parser_to_post_tree(tree))
+        treelist.append(tree)
     return treelist
 
