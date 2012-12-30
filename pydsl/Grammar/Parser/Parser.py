@@ -57,14 +57,12 @@ def terminal_symbol_reducer(symbol, word, production):
                 LOG.debug("__auxReducer: parsed:"+ str(word[begin:begin + size]))
                 validresults.append(ParseTree(begin, begin + size, [symbol], word[begin:begin + size], production))
     else:
-        LOG.warning("terminal_symbol_reducer: Unknown size policy")
-        return []
+        raise Exception("terminal_symbol_reducer: Unknown size policy")
     return validresults
 
 def terminal_symbol_consume(symbol, word):
     """ Reduces a terminal symbol. Always start from left"""
     from pydsl.Grammar.Tree import ParseTree
-    validresults = []
     begin = 0
     if symbol.boundariesrules.policy == "min":
         for end in range(begin, len(word)+1):
@@ -86,9 +84,8 @@ def terminal_symbol_consume(symbol, word):
         if len(word) >= size and symbol.check(word[:size]):
             return [ParseTree(0, size, [symbol], word[:size], symbol)]
     else:
-        LOG.warning("terminal_symbol_consume: Unknown size policy")
-        return []
-    return validresults
+        raise Exception("terminal_symbol_consume: Unknown size policy")
+    return []
 
 def mix_results(resultll, productionset):
     """ Mix n sets of results """
