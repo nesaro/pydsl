@@ -127,14 +127,13 @@ class RecursiveDescentParser(TopDownParser):
                 alternativetree = RecursiveDescentResultTree(None)
                 alternativeinvalidstack = []
                 for symbol in alternative.rightside: # Symbol
-                    symbolsuccess = False
+                    symbol_success = False
                     for totalpos in alternativetree.right_limit_list(): # Right limit
                         if totalpos >= len(data):
                             continue
                         thisresult =  self.__recursive_parser(symbol, data[totalpos:], alternative, showerrors)
-                        allvalids = all([x.valid for x in thisresult])
-                        if thisresult and allvalids:
-                            symbolsuccess = True
+                        if thisresult and all(thisresult):
+                            symbol_success = True
                             for x in thisresult:
                                 x.shift(totalpos)
                                 success = alternativetree.append(x, totalpos)
@@ -144,9 +143,9 @@ class RecursiveDescentParser(TopDownParser):
                                 else:
                                     LOG.debug("Added symbol :" + str(symbol) + " position:" + str(totalpos))
                         else:
-                            alternativeinvalidstack += [x for x in thisresult if not x.valid]
+                            alternativeinvalidstack += [x for x in thisresult if not x]
 
-                    if not symbolsuccess:
+                    if not symbol_success:
                         LOG.debug("Symbol doesn't work" + str(symbol))
                         break #Try next alternative
                 else: # Alternative success (no break happened)
