@@ -49,7 +49,7 @@ class ListStorage(Memory):
         self.cache += self.generate_all_summaries()
         return self
 
-    def __next__(self):
+    def next(self):
         try:
             result = self.cache[self.index]
         except IndexError:
