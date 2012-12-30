@@ -24,7 +24,7 @@ __email__ = "nesaro@gmail.com"
 import logging
 LOG = logging.getLogger(__name__)
 
-class BoundariesRules:
+class BoundariesRules(object):
     """Rules and policies for symbol conflicts"""
     def __init__(self, policy, priority, size=-1):
         self.priority = priority
@@ -38,7 +38,7 @@ class BoundariesRules:
         else:
             raise TypeError
             
-class Symbol:
+class Symbol(object):
     def __init__(self, name, weight): 
         self.name = name
         self._weight = weight

@@ -23,7 +23,7 @@ __email__ = "nesaro@gmail.com"
 import logging
 LOG = logging.getLogger(__name__)
 
-class Memory:
+class Memory(object):
     """Memory Abstraction"""
     def __init__(self):
         pass

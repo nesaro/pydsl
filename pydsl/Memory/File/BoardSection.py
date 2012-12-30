@@ -21,7 +21,7 @@ __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
-class BoardConnectionDefinition:
+class BoardConnectionDefinition(object):
     """Transformer connection definition"""
     def __init__(self, basename, source, gtname, destination):
         self.source = basename
@@ -34,7 +34,7 @@ class BoardConnectionDefinition:
         result += " -> " + self.externalgtname + ":" + self.destinationchannel
         return result
 
-class BoardDefinitionSection:
+class BoardDefinitionSection(object):
     """Board and its connections definition"""
     def __init__(self, name, gttype, inputconnections, outputconnections):
         self.name = name

@@ -20,7 +20,7 @@ from pydsl.Memory.Memory import Memory
 from pydsl.Query import QueryEquality, QueryInclusion, QueryTerm, QueryGreaterThan, QueryPartial
 import collections
 
-class Indexer:
+class Indexer(object):
     """Indexes memory content. Current implementation just copy Memory iterator (Inmutabledicts) into a cache dict. This is possible because Memory iterator format is suitable for search, but it might change in the future"""
     def __init__(self, memory):
         self.memory = memory #One memory per indexer

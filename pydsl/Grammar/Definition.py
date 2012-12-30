@@ -20,7 +20,7 @@ __copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 
-class GrammarDefinition: 
+class GrammarDefinition(object):
     def __init__(self):
         pass
 

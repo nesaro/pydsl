@@ -24,7 +24,7 @@ __email__ = "nesaro@gmail.com"
 import logging
 LOG = logging.getLogger(__name__)
 
-class Board:
+class Board(object):
     """A Transformer where you can call other Transformer. Doesn't perform any computation"""
 
     def __init__(self, gtenvdefinitionslist):

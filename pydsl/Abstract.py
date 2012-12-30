@@ -57,7 +57,7 @@ class InmutableDict(dict):
         return True
 
 
-class Indexable:
+class Indexable(object):
     """ This class is searchable """
     def summary(self): #-> InmutableDict:
         raise NotImplementedError

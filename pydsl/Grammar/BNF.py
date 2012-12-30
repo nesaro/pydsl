@@ -25,7 +25,7 @@ __copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 
-class Production:
+class Production(object):
     def __init__(self, leftside, rightside):
         #Left side must have at least one nonterminal symbol
         for element in rightside:
