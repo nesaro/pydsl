@@ -89,7 +89,7 @@ class LocalMemory(Memory):
             self.cache.append(element.summary)
         return self
     
-    def __next__(self):
+    def next(self):
         try:
             result = self.cache[self.cacheindex]
         except IndexError:
