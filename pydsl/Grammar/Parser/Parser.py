@@ -87,21 +87,6 @@ def terminal_symbol_consume(symbol, word):
         raise Exception("terminal_symbol_consume: Unknown size policy")
     return []
 
-def locate_result_borders(results):
-    """ Finds the most conservative borders values"""
-    leftborder = 0
-    rightborder = 10**10
-    for result in results:
-        leftpos = result.leftpos
-        rightpos = result.rightpos
-        if leftpos is None and rightpos is None:
-            return (rightborder, leftborder)
-        if leftpos > leftborder:
-            leftborder = leftpos
-        if rightpos < rightborder:
-            rightborder = rightpos
-    return leftborder, rightborder
-
 class Parser(object):
     """Parser abstract class. At this time, all parsers are tree based"""
     def __init__(self, bnfgrammar):

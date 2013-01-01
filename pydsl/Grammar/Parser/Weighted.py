@@ -19,7 +19,7 @@
 
 import logging
 LOG = logging.getLogger(__name__)
-from .Parser import TopDownParser, locate_result_borders, terminal_symbol_reducer
+from .Parser import TopDownParser, terminal_symbol_reducer
 from pydsl.Grammar.Tree import ParseTree
 
 
@@ -120,43 +120,39 @@ def locate_heavier_symbol(symbols):
 class WeightedParser(TopDownParser):
     """Weighted Parser class"""
     def get_trees(self, data, showerrors = False):
-        result = self.__recursive_parser([self._productionset.initialsymbol], data, self._productionset.main_production, showerrors)
+        result = self.__recursive_parser(self._productionset.initialsymbol, data, self._productionset.main_production, showerrors)
         finalresult = []
         for eresult in result:
             if eresult.leftpos == 0 and eresult.rightpos == len(data):
                 finalresult.append(eresult)
         return finalresult
 
-    def __recursive_parser(self, symbols, data, production, showerrors = False):
-        """ Main function. It is recursive """
-        if not symbols:
+    def __handle_alternative(self,symbols, data, production, showerrors):
+        currentsymbol = locate_heavier_symbol(symbols)
+        index = symbols.index(currentsymbol)
+        heavyresult = self.__recursive_parser(currentsymbol, data, production, showerrors)
+        if not heavyresult:
             return []
-        if len(symbols) > 1:
-            currentsymbol = locate_heavier_symbol(symbols)
-            index = symbols.index(currentsymbol)
-            LOG.debug("Iteration: Call recursive heavy")
-            heavyresult = self.__recursive_parser([currentsymbol], data, production, showerrors)
-            if not heavyresult:
-                return []
-            leftpos, rightpos = locate_result_borders(heavyresult)
-            leftside = []
-            rightside = []
-            if index > 0:
-                LOG.debug("Iteration: Call recursive left")
-                leftside = self.__recursive_parser(symbols[:index], data[:leftpos], production, showerrors)
-                if not leftside:
-                    return []
-            LOG.debug("Iteration: Call recursive right")
-            if (index + 1) < len(symbols):
-                rightside = self.__recursive_parser(symbols[(index+1):], data[rightpos:], production, showerrors)
-                if not rightside:
-                    return []
+        leftpos = max([x.leftpos for x in heavyresult])
+        rightpos = min([x.rightpos for x in heavyresult])
+        leftside = []
+        rightside = []
+        if symbols[:index]:
+            LOG.debug("Iteration: Call recursive left")
+            leftside = self.__handle_alternative(symbols[:index], data[:leftpos], production, showerrors)
+        LOG.debug("Iteration: Call recursive right")
+        if symbols[(index+1):]:
+            rightside = self.__handle_alternative(symbols[(index+1):], data[rightpos:], production, showerrors)
             #shift right results
-            for rsresult in rightside:
-                rsresult.shift(rightpos)
-            result = mix_results([leftside, heavyresult, rightside], self._productionset) 
-            return result
-        onlysymbol = symbols[0]
+        for rsresult in rightside:
+            rsresult.shift(rightpos)
+        if not leftside and not rightside:
+            return heavyresult
+        result = mix_results([leftside, heavyresult, rightside], self._productionset)
+        return result
+
+    def __recursive_parser(self, onlysymbol, data, production, showerrors = False):
+        """ Main function. It is recursive """
         from ..Symbol import TerminalSymbol, NonTerminalSymbol, NullSymbol
         if isinstance(onlysymbol, TerminalSymbol):
             #Locate every occurrence of word and return a set of results. Follow boundariesrules
@@ -168,7 +164,7 @@ class WeightedParser(TopDownParser):
         elif isinstance(onlysymbol, NonTerminalSymbol):
             result = []
             for alternative in self._productionset.getProductionsBySide([onlysymbol]):
-                result += self.__recursive_parser(alternative.rightside, data, alternative, showerrors)
+                result += self.__handle_alternative(alternative.rightside, data, alternative, showerrors)
             if showerrors and not result:
                 return [ParseTree(0, len(data), [onlysymbol], data, production, valid = False)]
             return result
