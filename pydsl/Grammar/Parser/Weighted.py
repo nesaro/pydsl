@@ -23,24 +23,21 @@ from .Parser import TopDownParser, terminal_symbol_reducer
 from pydsl.Grammar.Tree import ParseTree
 
 
-def _create_combined_list(resultll):
+def _create_combined_list(input_list):
     """
     Creates a list of lists, each sublist contains a permutation of inputs. E.g:
     [a, b, c] -> [[a1,b1,c1],[a2,b1,c1]] ....
     """
 
-    if len(resultll) != 3:
-        raise ValueError
-
     midlist = [] #All blocks combinations are stored here. Each element is a list of viable sequences
-    resultll = [x for x in resultll if x]
-    if not resultll:
+    input_list = [x for x in input_list if x]
+    if not input_list:
         return []
     validsets = 1
 
     #Processing head set
 
-    for result in resultll[0]:
+    for result in input_list[0]:
         if not(isinstance(result, ParseTree)):
             raise TypeError
         if result.leftpos == 0:
@@ -49,24 +46,20 @@ def _create_combined_list(resultll):
             raise Exception #FIXME:What's the right thing to do here?
 
     #Processing Tail sets
-    for resultl in resultll[1:]:
+    for resultl in input_list[1:]:
         #For each result list
         if not resultl:
             continue
         for result in resultl:
             #for each result
-            tmp = []
-            for middleresult in midlist:
+            for middleresult in midlist[:]:
                 #Here we mix every result with intermediate results list
                 lastresult = middleresult[-1]
                 if result.rightpos is None: #NullSymbol
                     result.rightpos = lastresult.rightpos
                     result.leftpos = lastresult.rightpos
                 if (lastresult.rightpos is None or result.leftpos is None) or lastresult.rightpos == result.leftpos:
-                    tmp.append(middleresult + [ParseTree(result.leftpos, result.rightpos,
-                        result.symbollist, result.content, result.production,
-                        list(result.childlist), result.valid)])
-            midlist += tmp
+                    midlist.append(middleresult + [result])
         validsets += 1
 
         #Removes all results that have less elements than the number of valid sets
@@ -128,9 +121,14 @@ class WeightedParser(TopDownParser):
         return finalresult
 
     def __handle_alternative(self,symbols, data, production, showerrors):
-        currentsymbol = locate_heavier_symbol(symbols)
-        index = symbols.index(currentsymbol)
-        heavyresult = self.__recursive_parser(currentsymbol, data, production, showerrors)
+        """Multiple symbols
+        returns a list of possible reductions"""
+        if len(symbols) == 1:
+            return self.__recursive_parser(symbols[0], data, production, showerrors)
+        heavy_symbol = locate_heavier_symbol(symbols)
+        index = symbols.index(heavy_symbol)
+        LOG.debug("Iteration: Call recursive heavy" + str(heavy_symbol) + str(index))
+        heavyresult = self.__recursive_parser(heavy_symbol, data, production, showerrors)
         if not heavyresult:
             return []
         leftpos = max([x.leftpos for x in heavyresult])
@@ -144,8 +142,8 @@ class WeightedParser(TopDownParser):
         if symbols[(index+1):]:
             rightside = self.__handle_alternative(symbols[(index+1):], data[rightpos:], production, showerrors)
             #shift right results
-        for rsresult in rightside:
-            rsresult.shift(rightpos)
+        for x in rightside:
+            x.shift(rightpos)
         if not leftside and not rightside:
             return heavyresult
         result = mix_results([leftside, heavyresult, rightside], self._productionset)
@@ -157,14 +155,17 @@ class WeightedParser(TopDownParser):
         if isinstance(onlysymbol, TerminalSymbol):
             #Locate every occurrence of word and return a set of results. Follow boundariesrules
             LOG.debug("Iteration: terminalsymbol")
-            result =  terminal_symbol_reducer(onlysymbol, data, None) #FIXME add information about production
+            result =  terminal_symbol_reducer(onlysymbol, data, onlysymbol) #FIXME add information about production
             if showerrors and not result:
-                return [ParseTree(0,len(data), [onlysymbol] , data, None, valid = False)] #FIXME add information about production
+                return [ParseTree(0,len(data), [onlysymbol] , data, onlysymbol, valid = False)] #FIXME add information about production
             return result
         elif isinstance(onlysymbol, NonTerminalSymbol):
             result = []
             for alternative in self._productionset.getProductionsBySide([onlysymbol]):
-                result += self.__handle_alternative(alternative.rightside, data, alternative, showerrors)
+                #result += self.__recursive_parser(alternative.rightside, data, alternative, showerrors)
+                alternative_result = self.__handle_alternative(alternative.rightside, data, alternative, showerrors)
+                for x in alternative_result:
+                    result.append(ParseTree(0, len(x), [onlysymbol], data[x.leftpos:x.rightpos], production, valid = True))
             if showerrors and not result:
                 return [ParseTree(0, len(data), [onlysymbol], data, production, valid = False)]
             return result

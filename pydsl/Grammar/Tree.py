@@ -105,7 +105,6 @@ class PositionTree(Tree):
     def __str__(self):
         result = "<PositionTree: "
         result += "(" + str(self.leftpos) + "," + str(self.rightpos)
-        result += ") SymbolList: "
         if self.childlist:
             result += ", children: " + str(self.childlist)
         result += " >"
@@ -194,6 +193,15 @@ class ParseTree(PositionTree):
             LOG.warning("Unable to add parser results")
             raise Exception
 
+    def __str__(self):
+        result = "<ParseTree: "
+        result += "(" + str(self.leftpos) + "," + str(self.rightpos)
+        result += ") SymbolList: "
+        result += str(self.symbollist)
+        if self.childlist:
+            result += ", children: " + str(self.childlist)
+        result += " >"
+        return result
 #Original implementation: https://github.com/irskep/zhang-shasha and https://github.com/timtadh/zhang-shasha
 
 def zss_distance(tree1, tree2):
