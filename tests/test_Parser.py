@@ -21,17 +21,23 @@ __email__ = "nesaro@gmail.com"
 
 
 
-from bnfgrammar import *
+from pydsl.contrib.bnfgrammar import *
 from pydsl.Grammar.Parser.RecursiveDescent import RecursiveDescentParser
 from pydsl.Grammar.Parser.Weighted import WeightedParser
 import unittest
 
 class TestParsers(unittest.TestCase):
-    #def testLeftRecursion(self):
-    #    from pydsl.Grammar.Parser.RecursiveDescent import RecursiveDescentParser
-    #    descentparser = RecursiveDescentParser(productionsetlr)
-    #    result = descentparser(dots)
-    #    self.assertTrue(result)
+    @unittest.skip
+    def testRecursiveLeftRecursion(self):
+        descentparser = RecursiveDescentParser(productionsetlr)
+        result = descentparser(dots)
+        self.assertTrue(result)
+
+    @unittest.skip
+    def testWeightedLeftRecursion(self):
+        parser = WeightedParser(productionsetlr)
+        result = parser(dots)
+        self.assertTrue(result)
 
     def testRightRecursion(self):
         descentparser = RecursiveDescentParser(productionsetrr)
@@ -114,12 +120,6 @@ class TestParsers(unittest.TestCase):
         self.assertFalse(result)
 
 class TestWeightedParser(unittest.TestCase):
-    @unittest.skip
-    def testLeftRecursion(self):
-        parser = WeightedParser(productionsetlr)
-        result = parser(dots)
-        self.assertTrue(result)
-
     @unittest.skip
     def testMixResults(self):
         from pydsl.Grammar.Parser.Parser import mix_results
