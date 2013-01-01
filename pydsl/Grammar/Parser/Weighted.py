@@ -132,7 +132,7 @@ class WeightedParser(TopDownParser):
         if not heavyresult:
             return []
         leftpos = max([x.leftpos for x in heavyresult])
-        rightpos = min([x.rightpos for x in heavyresult])
+        rightpos = min([x.rightpos for x in heavyresult]) or 0
         leftside = []
         rightside = []
         if symbols[:index]:
