@@ -166,6 +166,8 @@ class ParseTree(PositionTree):
             raise TypeError
         if not isinstance(rightpos, int) and rightpos is not None:
             raise TypeError
+        if not isinstance(symbollist, list):
+            raise TypeError
         from .BNF import Production
         if production is not None and not (isinstance(production, Production) or
                 isinstance(production, TerminalSymbol)):

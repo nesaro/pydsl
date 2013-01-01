@@ -38,6 +38,7 @@ class RecursiveDescentResultTree(Tree):
         self.content = content
 
     def get_lists(self):
+        """Converts the tree into a list of lists"""
         result = []
         mylist = [self.content]
         if not self.childlist and self.content:
