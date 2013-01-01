@@ -190,7 +190,7 @@ def locate_result_borders(results):
             rightborder = rightpos
     return leftborder, rightborder
 
-class Parser:
+class Parser(object):
     """Parser abstract class. At this time, all parsers are tree based"""
     def __init__(self, bnfgrammar):
         self._productionset = bnfgrammar

@@ -34,7 +34,7 @@ def _loadGrammarTools(originaldic):
         result[key] = load_grammar_tool(str(originaldic[key]))
     return result
 
-class HostChannel:
+class HostChannel(object):
     """A class that contains input and output string-named channels. Each channel must contain a Type object
     Any class which inherites from this must also inherit from HostChannel
     """

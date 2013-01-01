@@ -47,7 +47,7 @@ def traversePostOrder(item):
     result.append(item)
     return result
 
-class Tree:
+class Tree(object):
     def __init__(self, childlist = []):
         self.childlist = []
 

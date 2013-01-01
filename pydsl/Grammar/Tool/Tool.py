@@ -22,7 +22,7 @@ __email__ = "nesaro@gmail.com"
 import logging
 LOG = logging.getLogger(__name__)
 
-class GrammarTools:
+class GrammarTools(object):
     """Easy to access class that has members for checking, groups, tokenizing"""
     def __init__(self, gd):
         self.gd = gd

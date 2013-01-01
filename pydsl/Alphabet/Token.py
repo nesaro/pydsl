@@ -20,7 +20,7 @@ __copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 
-class Token:
+class Token(object):
     """ Stores a symbol and its associated input """
     def __init__(self, terminalsymbol, string):
         self.symbol = terminalsymbol

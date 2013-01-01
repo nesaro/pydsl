@@ -51,7 +51,7 @@ class Agent(threading.Thread):
                               no_ack=False)
         self.channelinput.start_consuming()
 
-class AgentNetwork:
+class AgentNetwork(object):
     #generates the network from a list
     def __init__(self, exchange, initlist):
         """initlist allows agent declaration,

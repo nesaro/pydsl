@@ -24,7 +24,7 @@ import logging
 LOG = logging.getLogger(__name__)
 from pydsl.Memory.Loader import load_checker
 
-class Checker:
+class Checker(object):
     """ Ensures information follows a rule, protocol or has a shape.
     Provides only check function, for complex operations, use Grammar"""
     def __init__(self):

@@ -33,7 +33,7 @@ LOG = logging.getLogger(__name__)
 from pkg_resources import resource_filename
 from pydsl.Memory.Loader import load_checker
 
-class Guesser:
+class Guesser(object):
     def __init__(self, memorylist = None):
         from pydsl.Memory.Search.Searcher import MemorySearcher
         from pydsl.Memory.Directory import DirStorage

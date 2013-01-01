@@ -26,7 +26,7 @@ __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
-class QueryElement:
+class QueryElement(object):
     pass
 
 class QueryTerm(QueryElement):
@@ -77,7 +77,7 @@ class NotQueryOperator(QueryElement):
     def __str__(self):
         return "<!" + str(self.element) + ">"
 
-class Query:
+class Query(object):
     """A generic query"""
     def __init__(self, content):
         self.content = content 

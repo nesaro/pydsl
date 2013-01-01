@@ -26,7 +26,7 @@ __email__ = "nesaro@gmail.com"
 import logging
 LOG = logging.getLogger(__name__)
 
-class SyntaxDirectedTransformer:
+class SyntaxDirectedTransformer(object):
     def __init__(self, inputgrammar, outputgrammar, blockdic):
         self.blockdic = blockdic
         if isinstance(inputgrammar, str):

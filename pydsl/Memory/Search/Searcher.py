@@ -30,7 +30,7 @@ __email__ = "nesaro@gmail.com"
 from .Indexer import Indexer
 from .Query import Query, QueryElement
 
-class Searcher:
+class Searcher(object):
     def search(self, query):
         raise NotImplementedError
 

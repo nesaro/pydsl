@@ -139,7 +139,7 @@ def __slr_build_parser_table(productionruleset):
                 raise LRConflictException
     return result
     
-class ParserTable:
+class ParserTable(object):
     """ Stores a state/symbol/action/new state relation """
     def __init__(self):
         self.__internalstate = None
@@ -188,7 +188,7 @@ class ParserTable:
         self.__internalstate = 0
 
 
-class LR0Item:
+class LR0Item(object):
     """LR0 table item"""
     def __init__(self, rule, cursorposition):
         if not isinstance(rule, NonTerminalProduction):
@@ -226,7 +226,7 @@ class LR0Item:
         """Returns true if cursor if after last element"""
         return self.position > len(self.rule.rightside)
 
-class LR0ItemSet:
+class LR0ItemSet(object):
     """Stores LR0Items, and a dic with symbols and destination states"""
     def __init__(self):
         self.itemlist = []

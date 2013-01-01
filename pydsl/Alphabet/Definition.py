@@ -20,7 +20,7 @@ __copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 
-class AlphabetDefinition:
+class AlphabetDefinition(object):
     """Defines an alphabet"""
     @property
     def symbols(self):

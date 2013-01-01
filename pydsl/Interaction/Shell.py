@@ -93,7 +93,7 @@ def save_result_to_output(resultdic, outputdic):
                 currentfile.write(str(resultdic[key]))
 
 
-class CommandLineToTransformerInteraction:
+class CommandLineToTransformerInteraction(object):
     """Shell interaction for functions"""
     def __init__(self, gt):
         self._tinstance = gt
@@ -139,7 +139,7 @@ class CommandLineToTransformerInteraction:
             return inputdic
 
 
-class StreamFileToTransformerInteraction:
+class StreamFileToTransformerInteraction(object):
     """Write to file n times"""
     def __init__(self, gt, inputfiledic, outputfiledic={}):
         self._tinstance = gt
