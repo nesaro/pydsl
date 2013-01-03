@@ -137,8 +137,8 @@ class WeightedParser(TopDownParser):
         if symbols[:index]:
             LOG.debug("Iteration: Call recursive left")
             leftside = self.__handle_alternative(symbols[:index], data[:leftpos], production, showerrors)
-        LOG.debug("Iteration: Call recursive right")
         if symbols[(index+1):]:
+            LOG.debug("Iteration: Call recursive right")
             rightside = self.__handle_alternative(symbols[(index+1):], data[rightpos:], production, showerrors)
             #shift right results
         for x in rightside:
