@@ -83,37 +83,31 @@ class TestParsers(unittest.TestCase):
         result = parser(string2)
         self.assertFalse(result)
 
-    @unittest.skip
     def testWeightedRightRecursion(self):
         parser = WeightedParser(productionsetrr)
         result = parser(dots)
         self.assertTrue(result)
 
-    @unittest.skip
     def testWeightedCenterRecursion(self):
         descentparser = RecursiveDescentParser(productionsetcr)
         result = descentparser(dots)
         self.assertTrue(result)
 
-    @unittest.skip
     def testWeightedParserStore(self):
         parser = WeightedParser(productionset1)
         result = parser(string1)
         self.assertTrue(result)
 
-    @unittest.skip
     def testWeightedParserBad(self):
         parser = WeightedParser(productionset1)
         result = parser(string2)
         self.assertFalse(result)
 
-    @unittest.skip
     def testWeightedParserNull(self):
         parser = WeightedParser(productionset2)
         result = parser(string3)
         self.assertTrue(result)
 
-    @unittest.skip
     def testWeightedParserNullBad(self):
         parser = WeightedParser(productionset2)
         result = parser(string4)

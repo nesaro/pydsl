@@ -90,13 +90,12 @@ def mix_results(resultll, productionset):
             for child in combination:
                 assert(child != finalresult) #Avoid recursion
                 finalresult.append_child(child)
-                assert(len(child.symbollist) == 1)
                 rightside += child.symbollist #Creating the rightside of the production to guess the full production #FIXME doesn't work with terminals
             try:
                 finalresult.production = productionset.getProductionsBySide(rightside, "right")
             except IndexError:
-                pass
-            else:
+                finalresult.production = None
+            finally:
                 finallist.append(finalresult) #rule found; we add binded together version
         else:
             raise Exception
@@ -165,7 +164,9 @@ class WeightedParser(TopDownParser):
                 #result += self.__recursive_parser(alternative.rightside, data, alternative, showerrors)
                 alternative_result = self.__handle_alternative(alternative.rightside, data, alternative, showerrors)
                 for x in alternative_result:
-                    result.append(ParseTree(0, len(x), [onlysymbol], data[x.leftpos:x.rightpos], production, valid = True))
+                    if x.symbollist == alternative.rightside: #Filters incomplete attempts
+                        result.append(ParseTree(0, len(x), [onlysymbol], data[x.leftpos:x.rightpos], production, valid = True))
+                    #TODO: Add child
             if showerrors and not result:
                 return [ParseTree(0, len(data), [onlysymbol], data, production, valid = False)]
             return result
