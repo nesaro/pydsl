@@ -61,7 +61,7 @@ class NonTerminalSymbol(Symbol):
 class TerminalSymbol(Symbol): 
     def __init__(self, name, weight, boundariesrules): 
         Symbol.__init__(self, name, weight)
-        if boundariesrules not in ("min","max","fixed"):
+        if boundariesrules not in ("min","max","any","fixed"):
             raise TypeError
         self.boundariesrules = boundariesrules
 

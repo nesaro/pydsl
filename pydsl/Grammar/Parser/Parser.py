@@ -49,6 +49,12 @@ def terminal_symbol_reducer(symbol, word, production):
                     maxword = end
             if maxword > 0:
                 validresults.append(ParseTree(begin, maxword, [symbol], word[begin:maxword], production))
+    elif symbol.boundariesrules == "any":
+        LOG.debug("terminal_symbol_reducer: policy: any")
+        for begin in range(0, len(word)):
+            for end in range(begin, len(word)+1):
+                if symbol.check(word[begin:end]):
+                    validresults.append(ParseTree(begin, end, [symbol], word[begin:end], production))
     elif symbol.boundariesrules == "fixed":
         LOG.debug("terminal_symbol_reducer: policy: fixed")
         size = len(symbol)
@@ -78,13 +84,19 @@ def terminal_symbol_consume(symbol, word):
         if maxword > 0:
            return[ParseTree(begin, maxword, [symbol], word[begin:maxword],
                symbol)]
+    elif symbol.boundariesrules == "any":
+        validresults = []
+        for end in range(begin, len(word)+1):
+            if symbol.check(word[begin:end]):
+                validresults.append(ParseTree(begin, end, [symbol], word[begin:end], symbol))
+        return validresults
     elif symbol.boundariesrules == "fixed":
         size = len(symbol)
         LOG.debug("terminal_symbol_consume: policy: fixed " + str(size))
         if len(word) >= size and symbol.check(word[:size]):
             return [ParseTree(0, size, [symbol], word[:size], symbol)]
     else:
-        raise Exception("terminal_symbol_consume: Unknown size policy")
+        raise Exception("terminal_symbol_consume: Unknown size policy" + str(symbol.boundariesrules))
     return []
 
 class Parser(object):
