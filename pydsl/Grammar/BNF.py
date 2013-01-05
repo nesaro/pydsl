@@ -21,7 +21,7 @@ from pydsl.Grammar.Symbol import Symbol, TerminalSymbol
 from pydsl.Grammar.Definition import GrammarDefinition
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha"
+__copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 
@@ -64,12 +64,13 @@ class Production(object):
 
 
 class BNFGrammar(GrammarDefinition): #Only stores a ruleset, and methods to ask properties or validity check 
-    def __init__(self, initialsymbol, fulllist, options = {}):
+    def __init__(self, initialsymbol, fulllist, options=None):
         self._initialsymbol = initialsymbol
         for rule in fulllist:
             if fulllist.count(rule) >1:
                 raise ValueError
         self.fulllist = fulllist
+        if not options: options = {}
         self.options = options
 
     @property
