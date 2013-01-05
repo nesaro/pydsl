@@ -19,12 +19,12 @@
 """BNF format functions"""
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha"
+__copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
 import re
-from pydsl.Grammar.Symbol import StringTerminalSymbol, WordTerminalSymbol, BoundariesRules, NonTerminalSymbol, NullSymbol
+from pydsl.Grammar.Symbol import StringTerminalSymbol, WordTerminalSymbol,  NonTerminalSymbol, NullSymbol
 from pydsl.Grammar.BNF import Production
 LOG = logging.getLogger(__name__)
 
@@ -43,7 +43,7 @@ def __generateWordSymbol(rightside):
     args = rightside.split(",")
     if args[0] != "Word":
         raise TypeError
-    br = BoundariesRules(args[2], int(args[3]))
+    br = args[2] #Boundary rule policy
     return WordTerminalSymbol(args[1], {"grammarname":args[1]}, br)
 
 

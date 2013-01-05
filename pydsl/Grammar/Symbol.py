@@ -18,26 +18,12 @@
 """Symbols"""
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha"
+__copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
 
-class BoundariesRules(object):
-    """Rules and policies for symbol conflicts"""
-    def __init__(self, policy, priority, size=-1):
-        self.priority = priority
-        if policy == "min":
-            self.policy = policy
-        elif policy == "max":
-            self.policy = policy
-        elif policy == "fixed" and size > 0:
-            self.policy = policy
-            self.size = size
-        else:
-            raise TypeError
-            
 class Symbol(object):
     def __init__(self, name, weight): 
         self.name = name
@@ -75,11 +61,12 @@ class NonTerminalSymbol(Symbol):
 class TerminalSymbol(Symbol): 
     def __init__(self, name, weight, boundariesrules): 
         Symbol.__init__(self, name, weight)
-        if not isinstance(boundariesrules, BoundariesRules):
+        if boundariesrules not in ("min","max","fixed"):
             raise TypeError
         self.boundariesrules = boundariesrules
 
     def check(self, data):# ->bool:
+        """Checks if input is recognized as this symbol"""
         raise NotImplementedError
 
 
@@ -87,8 +74,7 @@ class StringTerminalSymbol(TerminalSymbol): #FIXME This class is equivalent to a
     def __init__(self, string):
         if len(string) < 1:
             raise TypeError
-        br = BoundariesRules("fixed", 0, len(string))
-        TerminalSymbol.__init__(self, "StrSymbol " + string, 99, br)
+        TerminalSymbol.__init__(self, "StrSymbol " + string, 99, "fixed")
         self.definition = string
 
     def check(self, tokenlist):# -> bool:
@@ -107,7 +93,7 @@ class StringTerminalSymbol(TerminalSymbol): #FIXME This class is equivalent to a
         return True
 
     def __len__(self):
-        return self.definition
+        return len(self.definition)
 
     def first(self):
         return self.definition[0]
@@ -116,7 +102,7 @@ class StringTerminalSymbol(TerminalSymbol): #FIXME This class is equivalent to a
         return "<StringTS: " + self.definition + ">"
 
 
-class WordTerminalSymbol(TerminalSymbol):#boundariesrules: priority, [max,min,fixedsize]
+class WordTerminalSymbol(TerminalSymbol):#boundariesrules: [max,min,fixedsize]
     def __init__(self, name, definitionrequirementsdic, boundariesrules):
         TerminalSymbol.__init__(self, name, 49, boundariesrules)
         self.grammarname = definitionrequirementsdic["grammarname"]

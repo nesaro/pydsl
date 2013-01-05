@@ -1,10 +1,10 @@
 """BNF grammars for testing"""
 
-from pydsl.Grammar.Symbol import StringTerminalSymbol, WordTerminalSymbol, NonTerminalSymbol, BoundariesRules, NullSymbol
+from pydsl.Grammar.Symbol import StringTerminalSymbol, WordTerminalSymbol, NonTerminalSymbol, NullSymbol
 from pydsl.Grammar.BNF import Production, BNFGrammar
 from pydsl.Memory.File.BNF import strlist_to_production_set
 
-br = BoundariesRules("max", 1)
+br = "max"
 leftrecursive=["S ::= E","E ::= E dot | dot","dot := String,."]
 rightrecursive=["S ::= E","E ::= dot E | dot","dot := String,."]
 centerrecursive=["S ::= E","E ::= dot E dot | dot","dot := String,."]

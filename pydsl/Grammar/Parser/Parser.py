@@ -18,7 +18,7 @@
 """Parser module"""
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha"
+__copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
@@ -31,7 +31,7 @@ def terminal_symbol_reducer(symbol, word, production):
     if not isinstance(word, str):
         word = str(word)
     validresults = []
-    if symbol.boundariesrules.policy == "min":
+    if symbol.boundariesrules == "min":
         LOG.debug("terminal_symbol_reducer: policy: min")
         for begin in range(0, len(word)):
             for end in range(begin, len(word)+1):
@@ -39,7 +39,7 @@ def terminal_symbol_reducer(symbol, word, production):
                     LOG.debug("terminal_symbol_reducer: parsed:"+ str(word[begin:end]))
                     validresults.append(ParseTree(begin, end, [symbol], word[begin:end], production))
                     break #found the smallest valid symbol at begin
-    elif symbol.boundariesrules.policy == "max":
+    elif symbol.boundariesrules == "max":
         LOG.debug("terminal_symbol_reducer: policy: max")
         for begin in range(0, len(word)):
             maxword = 0
@@ -49,9 +49,9 @@ def terminal_symbol_reducer(symbol, word, production):
                     maxword = end
             if maxword > 0:
                 validresults.append(ParseTree(begin, maxword, [symbol], word[begin:maxword], production))
-    elif symbol.boundariesrules.policy == "fixed":
+    elif symbol.boundariesrules == "fixed":
         LOG.debug("terminal_symbol_reducer: policy: fixed")
-        size = symbol.boundariesrules.size
+        size = len(symbol)
         for begin in range(0, len(word)):
             if symbol.check(word[begin:begin + size]):
                 LOG.debug("__auxReducer: parsed:"+ str(word[begin:begin + size]))
@@ -64,11 +64,11 @@ def terminal_symbol_consume(symbol, word):
     """ Reduces a terminal symbol. Always start from left"""
     from pydsl.Grammar.Tree import ParseTree
     begin = 0
-    if symbol.boundariesrules.policy == "min":
+    if symbol.boundariesrules == "min":
         for end in range(begin, len(word)+1):
             if symbol.check(word[begin:end]):
                 return [ParseTree(begin, end, [symbol], word[begin:end], symbol)]
-    elif symbol.boundariesrules.policy == "max":
+    elif symbol.boundariesrules == "max":
         LOG.debug("terminal_symbol_consume: policy: max")
         maxword = 0
         for end in range(begin, len(word)+1):
@@ -78,8 +78,8 @@ def terminal_symbol_consume(symbol, word):
         if maxword > 0:
            return[ParseTree(begin, maxword, [symbol], word[begin:maxword],
                symbol)]
-    elif symbol.boundariesrules.policy == "fixed":
-        size = symbol.boundariesrules.size
+    elif symbol.boundariesrules == "fixed":
+        size = len(symbol)
         LOG.debug("terminal_symbol_consume: policy: fixed " + str(size))
         if len(word) >= size and symbol.check(word[:size]):
             return [ParseTree(0, size, [symbol], word[:size], symbol)]
