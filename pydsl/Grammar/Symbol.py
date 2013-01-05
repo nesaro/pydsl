@@ -146,9 +146,5 @@ class UnknownSymbol(Symbol):
     def __eq__(self, other):
         return isinstance(other, UnknownSymbol)
     
-
-class BeginSymbol(TerminalSymbol):
-    pass
-
 class EndSymbol(TerminalSymbol):
     pass
