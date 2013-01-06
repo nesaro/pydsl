@@ -40,10 +40,8 @@ def _create_combined_list(input_list):
     for result in input_list[0]:
         if not(isinstance(result, ParseTree)):
             raise TypeError
-        if result.leftpos == 0:
+        if result.leftpos == 0 or result.leftpos is None:
             midlist.append([result])
-        elif result.leftpos is None:
-            raise Exception #FIXME:What's the right thing to do here?
 
     #Processing Tail sets
     for resultl in input_list[1:]:
@@ -54,11 +52,8 @@ def _create_combined_list(input_list):
             #for each result
             for middleresult in midlist[:]:
                 #Here we mix every result with intermediate results list
-                lastresult = middleresult[-1]
-                if result.rightpos is None: #NullSymbol
-                    result.rightpos = lastresult.rightpos
-                    result.leftpos = lastresult.rightpos
-                if (lastresult.rightpos is None or result.leftpos is None) or lastresult.rightpos == result.leftpos:
+                prevright = [x.rightpos for x in middleresult if x.rightpos is not None][-1]
+                if result.leftpos is None or prevright == result.leftpos:
                     midlist.append(middleresult + [result])
         validsets += 1
 
@@ -77,14 +72,16 @@ def mix_results(resultll, productionset):
     for combination in midlist:
         if len(combination) == 1:
             finallist.append(combination[0])
-        elif combination[0].leftpos != None and combination[-1].rightpos != None:
+        else:
+            left_pos = [x.leftpos for x in combination if x.leftpos is not None][0]
+            right_pos = [x.rightpos for x in combination if x.rightpos is not None][-1]
             #Creates a node with all elements, and originals nodes are the childs of the new node
             symbollist = []
             compoundword = ""
             for element in combination:
                 compoundword += element.content
                 symbollist += element.symbollist
-            finalresult = ParseTree(combination[0].leftpos, combination[-1].rightpos, symbollist, compoundword, combination[0].production, valid = all([x for x in combination]))
+            finalresult = ParseTree(left_pos, right_pos, symbollist, compoundword, combination[0].production, valid = all([x for x in combination]))
             #Add childs to result. FIXME El problema es que estamos añadiendo como hijos del nuevo los elementos ya creados
             rightside = []
             for child in combination:
@@ -97,8 +94,6 @@ def mix_results(resultll, productionset):
                 finalresult.production = None
             finally:
                 finallist.append(finalresult) #rule found; we add binded together version
-        else:
-            raise Exception
     return finallist
 
 def locate_heavier_symbol(symbols):
