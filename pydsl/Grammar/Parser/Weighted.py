@@ -165,11 +165,11 @@ class WeightedParser(TopDownParser):
                 alternative_result = self.__handle_alternative(alternative.rightside, data, alternative, showerrors)
                 for x in alternative_result:
                     if x.symbollist == alternative.rightside: #Filters incomplete attempts
-                        result.append(ParseTree(0, len(x), [onlysymbol], data[x.leftpos:x.rightpos], production, valid = True))
+                        result.append(ParseTree(x.leftpos, x.rightpos, [onlysymbol], data[x.leftpos:x.rightpos], production, valid = True))
                     #TODO: Add child
             if showerrors and not result:
                 return [ParseTree(0, len(data), [onlysymbol], data, production, valid = False)]
             return result
         elif isinstance(onlysymbol, NullSymbol):
-            return[ParseTree(0, 0, [onlysymbol], "", production)]
+            return[ParseTree(None, None, [onlysymbol], "", production)]
         raise Exception

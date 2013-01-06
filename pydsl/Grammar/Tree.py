@@ -116,6 +116,8 @@ class PositionTree(Tree):
         self.rightpos += amount
 
     def __len__(self):
+        if self.rightpos is None and self.leftpos is None:
+            return 0
         return self.rightpos - self.leftpos
 
     def coverage(self):
