@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-#Copyright (C) 2008-2011 Néstor Arocha Rodríguez
+#Copyright (C) 2008-2013 Nestor Arocha
 
 def matchFun(myinput):
     strnumber = str(myinput)

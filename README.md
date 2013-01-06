@@ -7,7 +7,6 @@ The main idea is to allow an easy way to define, use and combine DSLs to create 
 pydsl support several grammar specification formats:
  * regular expressions
  * pydsl BNF format
- * ANLTR .g format (not supported yet)
  * mongo database query dictionaries
  * python ply module (only check support)
 
@@ -138,4 +137,4 @@ GPLv3, see LICENSE file
 ABOUT
 =====
 pydsl is a formal language framework.
-Copyright (C) 2008-2012 Nestor Arocha (nesaro@gmail.com)
+Copyright (C) 2008-2013 Nestor Arocha (nesaro@gmail.com)
