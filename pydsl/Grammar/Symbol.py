@@ -145,6 +145,9 @@ class NullSymbol(Symbol):
 
     def __eq__(self, other):
         return isinstance(other, NullSymbol)
-    
+
+    def bool(self):
+        return False
+
 class EndSymbol(TerminalSymbol):
     pass
