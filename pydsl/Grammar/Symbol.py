@@ -132,19 +132,19 @@ class WordTerminalSymbol(TerminalSymbol):#boundariesrules: [max,min,fixedsize]
         return "<WordTS: " + self.grammarname + ">"
 
 
+class UnknownSymbol(TerminalSymbol):
+    def __init__(self):
+        TerminalSymbol.__init__(self, "Unknown", 1, "any")
+
+    def __eq__(self, other):
+        return isinstance(other, UnknownSymbol)
+
 class NullSymbol(Symbol):
     def __init__(self):
         Symbol.__init__(self, "Null", 100)
 
     def __eq__(self, other):
         return isinstance(other, NullSymbol)
-    
-class UnknownSymbol(Symbol):
-    def __init__(self):
-        Symbol.__init__(self, "Unknown", 100)
-
-    def __eq__(self, other):
-        return isinstance(other, UnknownSymbol)
     
 class EndSymbol(TerminalSymbol):
     pass
