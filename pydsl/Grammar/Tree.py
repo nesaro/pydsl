@@ -112,8 +112,10 @@ class PositionTree(Tree):
 
     def shift(self, amount):
         """ shifts position """
-        self.leftpos += amount
-        self.rightpos += amount
+        if self.leftpos is not None:
+            self.leftpos += amount
+        if self.leftpos is not None:
+            self.rightpos += amount
 
     def __len__(self):
         if self.rightpos is None and self.leftpos is None:
