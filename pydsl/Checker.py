@@ -67,8 +67,8 @@ class BNFChecker(Checker):
             from .Grammar.Parser.RecursiveDescent import RecursiveDescentParser
             self.__parser = RecursiveDescentParser(bnf)
         elif parser == "weighted":
+            from .Grammar.Parser.Weighted import WeightedParser
             self.__parser = WeightedParser(bnf)
-            raise Exception
         else:
             LOG.error("Wrong parser name: " + parser)
             raise Exception
