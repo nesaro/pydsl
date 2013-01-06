@@ -1,0 +1,10 @@
+//List
+#parser=weighted
+
+S ::= start unk optional end
+optional ::= null | separator unk optional
+start := String,[
+end := String,]
+separator := String,,
+unk := Unk
+null := Null
