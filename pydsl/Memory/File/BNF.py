@@ -24,19 +24,19 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 import re
-from pydsl.Grammar.Symbol import StringTerminalSymbol, WordTerminalSymbol,  NonTerminalSymbol, NullSymbol
+from pydsl.Grammar.Symbol import StringTerminalSymbol, WordTerminalSymbol,  NonTerminalSymbol, NullSymbol, UnknownSymbol
 from pydsl.Grammar.BNF import Production
 LOG = logging.getLogger(__name__)
 
 """ pydsl Grammar definition file parser """
 
 def __generateStringSymbol(rightside):
-    args = rightside.split(",")
-    if args[0] != "String":
+    head, tail = rightside.split(",", 1)
+    if head != "String":
         raise TypeError
-    content = args[1]
-    if args[1][0] == "'" and args[1][-1] == "'":
-        content = args[1][1:-1]
+    content = tail
+    if len(tail) > 2 and tail[1][0] == "'" and tail[1][-1] == "'":
+        content = tail[1][1:-1]
     return StringTerminalSymbol(content)
 
 def __generateWordSymbol(rightside):
@@ -69,17 +69,13 @@ def read_nonterminal_production(line, symboldict):
     return result
 
 def read_terminal_production(line):
-    sidesarray = line.split(":=")
-    if len(sidesarray) != 2:
-        raise ValueError("Error reading terminal production rule")
-    leftside = sidesarray[0]
+    leftside, rightside = line.split(":=")
     leftside = leftside.strip()
     symbolnames = leftside.split(" ")
     if len(symbolnames) != 1:
         LOG.error("Error generating terminal rule: " + line + "At left side")
         raise ValueError("Error reading left side of terminal production rule")
     #leftside is symbolname
-    rightside = sidesarray[1]
     rightside = rightside.strip()
     #regexp to detect rightside: String, Grammar
     newsymbol = None
@@ -87,8 +83,12 @@ def read_terminal_production(line):
         newsymbol = __generateStringSymbol(rightside)
     elif re.search("^Word", rightside):
         newsymbol = __generateWordSymbol(rightside)
+    elif re.search("^Null", rightside):
+        newsymbol = NullSymbol()
+    elif re.search("^Unk", rightside):
+        newsymbol = UnknownSymbol()
     else:
-        raise ValueError("Unknown terminal production type")
+        raise ValueError("Unknown terminal production type " + str(rightside))
     return (symbolnames[0], newsymbol)
 
 
