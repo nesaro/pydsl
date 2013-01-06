@@ -171,5 +171,5 @@ class WeightedParser(TopDownParser):
                 return [ParseTree(0, len(data), [onlysymbol], data, production, valid = False)]
             return result
         elif isinstance(onlysymbol, NullSymbol):
-            return[ParseTree(None, None, [onlysymbol], "", production)]
+            return[ParseTree(0, 0, [onlysymbol], "", production)]
         raise Exception
