@@ -62,7 +62,7 @@ class _ListParser(_Parser):
 class _ListLexer(_Lexer):
     def nextToken(self):
         import re
-        from pydsl.Grammar.Lexer import finalchar
+        from pydsl.Alphabet.Lexer import finalchar
         while self.current != finalchar:
             if self.current == "/":
                 self.comment(tl)
@@ -100,7 +100,7 @@ class _ListLexer(_Lexer):
     def name(self):
         import re
         string = ""
-        from pydsl.Grammar.Lexer import finalchar
+        from pydsl.Alphabet.Lexer import finalchar
         while self.current != finalchar and re.match("[a-zA-Z]", self.current):
             string += self.current
             self.consume()

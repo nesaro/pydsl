@@ -22,7 +22,6 @@ __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 
-from abc import ABCMeta, abstractmethod, abstractproperty
 import logging
 LOG = logging.getLogger(__name__)
 

@@ -53,7 +53,7 @@ def checker(expression = None, outputfiledic = None, inputfiledic = None, pipemo
         outputdic = parse_shell_dict(outputfiledic)
         resultdic = maingt(myexpression, outputdic)
         resultdic = bool_dict_values(resultdic)
-        from .Shell import save_result_to_output
+        from pydsl.Interaction.Shell import save_result_to_output
         save_result_to_output(resultdic, outputdic)
         return resultdic
     elif expression and not outputfiledic:

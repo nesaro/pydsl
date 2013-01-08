@@ -8,10 +8,10 @@ Token example grammar.
 accepts only "1+1"
 """
 
-from pydsl.Grammar.Symbol import StringTerminalSymbol as _CTS, WordTerminalSymbol as _WTS, NonTerminalSymbol as _NTS, BoundariesRules as _BR
+from pydsl.Grammar.Symbol import StringTerminalSymbol as _CTS, WordTerminalSymbol as _WTS, NonTerminalSymbol as _NTS
 from pydsl.Grammar.BNF import Production as _NTP
 
-_br = _BR("max", 1)
+_br = "max"
 
 
 _symbol1 = _WTS("one", {"grammarname":"integer"}, _br)

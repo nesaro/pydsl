@@ -1,5 +1,4 @@
 import pika
-import sys
 import json
 import threading
 import time

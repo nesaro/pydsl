@@ -101,6 +101,7 @@ class BNFGrammar(GrammarDefinition): #Only stores a ruleset, and methods to ask 
     @property
     def is_abstract(self):
         """Returns true if the grammar contains an unknown symbol"""
+        from pydsl.Grammar.Symbol import UnknownSymbol
         return UnknownSymbol in self.fulllist
 
     def __eq__(self, other):

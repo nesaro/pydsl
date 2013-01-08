@@ -43,7 +43,6 @@ class TestBNFChecker(unittest.TestCase):
     """BNF Checker"""
     def testCheck(self):
         """Test checker instantiation and call"""
-        from pydsl.Checker import BNFChecker
         raise NotImplementedError
 
 @unittest.skip
@@ -51,7 +50,6 @@ class TestRegularExpressionChecker(unittest.TestCase):
     """BNF Checker"""
     def testCheck(self):
         """Test checker instantiation and call"""
-        from pydsl.Checker import RegularExpressionChecker
         raise NotImplementedError
 
 class TestPLYChecker(unittest.TestCase):

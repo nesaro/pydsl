@@ -28,7 +28,6 @@ __email__ = "nesaro@gmail.com"
 #A searcher is linked with an indexer. Users creates a query, and then searcher iterates the indexer to find matches
 
 from .Indexer import Indexer
-from .Query import Query, QueryElement
 
 class Searcher(object):
     def search(self, query):

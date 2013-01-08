@@ -16,8 +16,7 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from pydsl.Memory.Memory import Memory
-from pydsl.Query import QueryEquality, QueryInclusion, QueryTerm, QueryGreaterThan, QueryPartial
+from pydsl.Query import QueryEquality, QueryInclusion, QueryGreaterThan, QueryPartial
 import collections
 
 class Indexer(object):

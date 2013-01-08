@@ -46,7 +46,7 @@ def extract(expression = None, outputfiledic = None, pipemode = None, inputfiled
         myexpression = {"input":expression}
         outputdic = parse_shell_dict(outputfiledic)
         resultdic = maingt(myexpression, outputdic)
-        from .Shell import save_result_to_output
+        from pydsl.Interaction.Shell import save_result_to_output
         save_result_to_output(resultdic, outputdic)
         return resultdic
     elif expression and not outputfiledic:

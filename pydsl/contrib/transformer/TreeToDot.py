@@ -39,8 +39,8 @@ def aux_stt_dot(stt, names = [], relations = []):
 
 def function(inputdic, inputgt, outputgt):
     grammarname =  inputdic['grammar'].string  
-    from pydsl.Memory.Loader import load_grammar
-    grammar = load_grammar(grammarname)
+    from pydsl.Memory.Loader import load_parser
+    grammar = load_parser(grammarname)
     result = grammar.get_trees(inputdic['string'])
     #print(result)
     #print(result[0])

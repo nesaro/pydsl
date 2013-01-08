@@ -24,7 +24,7 @@ __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 
-from pydsl.Query import Query, QueryEquality, QueryElement, QueryInclusion, QueryGreaterThan
+from pydsl.Query import Query, QueryEquality, QueryInclusion, QueryGreaterThan
 
 def str_to_memoryquery(string, escape = '\\'):# -> Query:
     """String a query"""
@@ -78,7 +78,6 @@ def str_to_memoryquery(string, escape = '\\'):# -> Query:
             pos += 1
     elementlist.append(currentword)
     if len(elementlist) == 1: #Only one str received
-        from pydsl.Config import GLOBALCONFIG
         likestr = "/.*" + string + ".*/"
         return Query(QueryEquality("identifier",string))
     else:
@@ -119,7 +118,7 @@ def dict_to_query(querydict): # -> Query:
 def recursive_dict_to_query(querydict, parentkey = None): # -> QueryElement:
     if isinstance(querydict, str):
         return querydict
-    from pydsl.Query import Query, QueryEquality, QueryElement, QueryInclusion, QueryGreaterThan, AndQueryOperator, NotQueryOperator, QueryPartial
+    from pydsl.Query import QueryEquality, QueryInclusion, QueryGreaterThan, AndQueryOperator, NotQueryOperator, QueryPartial
     resultlist = []
     for key, value in querydict.items():
         if isinstance(value, dict):

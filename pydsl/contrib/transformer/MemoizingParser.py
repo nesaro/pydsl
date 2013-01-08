@@ -21,8 +21,6 @@ NAME : ('a'..'z' |'A'..'Z' )+ ; // NAME is sequence of >=1 letter
 from pydsl.Alphabet.Lexer import Lexer as _Lexer
 
 
-import functools
-
 class memoized:
     def __init__(self, name):
         self.name = name 
