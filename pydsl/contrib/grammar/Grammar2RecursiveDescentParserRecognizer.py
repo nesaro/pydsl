@@ -1,8 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-#Copyright (c) 2008-2012 Nestor Arocha Rodriguez
-
 """Grammar 2 Recursive Descent Parser Recognizer
 First recipe of the book "Language implementation patterns
 

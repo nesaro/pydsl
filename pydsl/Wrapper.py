@@ -20,7 +20,7 @@
 #FIXME: python3 support only
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha"
+__copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging

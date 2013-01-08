@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-#Copyright (c) 2008-2012 Nestor Arocha Rodriguez
+#Copyright (c) 2008-2013 Nestor Arocha Rodriguez
 
 """LL(1) Recursive Descent Lexer
 second recipe of the book "Language implementation patterns

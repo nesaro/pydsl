@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-#Copyright (C) 2008-2012 Nestor Arocha 
+#Copyright (C) 2008-2013 Nestor Arocha
 
 """
 Token example grammar.   

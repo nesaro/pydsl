@@ -21,7 +21,7 @@ extracts input slices that are a Type
 """
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2012, Néstor Arocha"
+__copyright__ = "Copyright 2008-2013, Néstor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
