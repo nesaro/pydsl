@@ -31,7 +31,7 @@ class BoardConnectionDefinition(object):
 
     def __str__(self):
         result = "<BoardConnectionDefinition: " + self.source + " " + self.sourcechannel
-        result += " -> " + self.externalgtname + ":" + self.destinationchannel
+        result += " -> " + self.destination + ":" + self.destinationchannel
         return result
 
 class BoardDefinitionSection(object):

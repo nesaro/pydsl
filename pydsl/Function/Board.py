@@ -46,7 +46,7 @@ class Board(object):
     def summary(self):
         from pydsl.Abstract import InmutableDict
         #TODO: inputs and outputs
-        result = {"iclass":"Board", "ancestors":self.ancestors()}
+        result = {"iclass":"Board"}
         return InmutableDict(result)
 
     def __call__(self, inputdict):
@@ -142,7 +142,7 @@ class Board(object):
                 self.connectionsdict[gtname][gtcondef.sourcechannel] = (gtcondef.destinationchannel, hostt, gtcondef.destination)
 
     def __str__(self):
-        result = "<B " + str(self.identifier) + " "
+        result = "<B "
         result += "input: " + str(self.inputchanneldic)
         result += "output: " + str(self.outputchanneldic)
         result += "inputGT: " + str(self.__inputGTDict)

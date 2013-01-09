@@ -123,12 +123,12 @@ class PositionTree(Tree):
         return self.rightpos - self.leftpos
 
     def coverage(self):
-        if not(self):
+        if not self:
             return 0, len(self)
-        if childlist:
+        if self.childlist:
             childtotal = 0
             childcoverage = 0
-            for child in childlist:
+            for child in self.childlist:
                 newcoverage, newtotal = child.coverage()
                 childcoverage += newcoverage
                 childtotal += newtotal

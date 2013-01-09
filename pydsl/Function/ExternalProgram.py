@@ -76,4 +76,4 @@ class ExternalProgramFunction(HostChannel):
     def summary(self):
         inputdic = [ x.identifier for x in self.inputchanneldic.values() ]
         outputdic = [ x.identifier for x in self.outputchanneldic.values() ]
-        return {"iclass":"ExternalProgramFunction", "description":self.description, "input":inputdic, "output":outputdic }
+        return {"iclass":"ExternalProgramFunction", "input":inputdic, "output":outputdic }

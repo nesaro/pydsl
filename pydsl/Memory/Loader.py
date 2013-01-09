@@ -82,7 +82,7 @@ def load_lexer(alphabet):
         from pydsl.Alphabet.Lexer import BNFLexer
         return BNFLexer(alphabet)
     else:
-        raise ValueError(grammar)
+        raise ValueError(alphabet)
 
 def load_parser(grammar, parser = "auto"):
     if isinstance(grammar, str):

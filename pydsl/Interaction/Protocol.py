@@ -32,7 +32,7 @@ def protocol_split(content):
         return {"protocol":""}
     result =  {"protocol":protocol}
     if "?" in path:
-        npath, identifier = rest.split("?")
+        npath, identifier = path.split("?")
         result["path"] = npath
         result["identifier"] = identifier
     else:
