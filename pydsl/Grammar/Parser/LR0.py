@@ -155,13 +155,13 @@ class ParserTable(object):
         """Appends a new rule"""
         if not __check_action(action) or action == "Reduce":
             raise TypeError
-        if not self.__table.has_key(state):
+        if not state in self.__table:
             self.__table[state] = {}
         self.__table[state][symbol.name] = {"action":action, "dest":destinationstate}
 
     def append_reduction(self, state, symbol, destinationstate, rule):
         """Appends a reduce action. It also stores which ProductionRule must follow on reduction"""
-        if not self.__table.has_key(state):
+        if not state in self.__table:
             self.__table[state] = {}
         self.__table[state][symbol.name] = {"action":"Reduce", "dest":destinationstate, "rule":rule}
 
@@ -260,7 +260,7 @@ class LR0ItemSet(object):
 
     def append_transition(self, symbol, targetset):
         """Appends a transition"""
-        if self.__transitiondic.has_key(symbol.name):
+        if symbol.name in self.__transitiondic:
             return
         self.__transitiondic[symbol.name] = targetset
 
