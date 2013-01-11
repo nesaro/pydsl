@@ -32,7 +32,7 @@ class _Parser:
 
     def match(self, x):
         if self.LT(1)[0] == x:
-            self.consume();
+            self.consume()
         else:
             raise Exception("Not matched")
 
@@ -153,27 +153,27 @@ class _ListLexer(_Lexer):
                 return self.name()
             else:
                 raise Exception
-        return ("EOF_TYPE", "")
+        return "EOF_TYPE", ""
 
     def comma(self):
         current = self.current
         self.match(",")
-        return ("COMMA", current)
+        return "COMMA", current
 
     def equals(self):
         current = self.current
         self.match("=")
-        return ("EQUAL", current)
+        return "EQUAL", current
 
     def lbrack(self):
         current = self.current
         self.match("[")
-        return ("LBRACK", current)
+        return "LBRACK", current
 
     def rbrack(self):
         current = self.current
         self.match("]")
-        return ("RBRACK", current)
+        return "RBRACK", current
 
     def name(self):
         import re
@@ -182,7 +182,7 @@ class _ListLexer(_Lexer):
         while self.current != finalchar and re.match("[a-zA-Z]", self.current):
             string += self.current
             self.consume()
-        return ("NAME", string)
+        return "NAME", string
 
 
 def function(inputdic, inputgrammar, outputdic):

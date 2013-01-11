@@ -28,8 +28,6 @@ import logging
 from pydsl.Exceptions import BadFileFormat
 from pydsl.Interaction.Shell import parse_shell_dict, open_files_dict 
 
-#CURRENTGRAMMAR = ""
-
 def checkfun(inputdic, auxboarddic, inputgt, outputgt):
     output = auxboarddic["checker"]({"string":inputdic["input"], "grammar":CURRENTGRAMMAR})
     if not output:
@@ -109,7 +107,7 @@ if __name__ == "__main__":
     PARSER.add_argument("tname", metavar="tname", help="Type name")
     ARGS = PARSER.parse_args()
     import sys
-    if ((ARGS.outputfiledic and not ARGS.expression) and (ARGS.outputfiledic and not ARGS.inputfiledic)):
+    if (ARGS.outputfiledic and not ARGS.expression) and (ARGS.outputfiledic and not ARGS.inputfiledic):
         PARSER.error("options -o require -e or -i")
     DEBUGLEVEL = ARGS.debuglevel or logging.WARNING
     

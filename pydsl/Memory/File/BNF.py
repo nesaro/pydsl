@@ -78,7 +78,6 @@ def read_terminal_production(line):
     #leftside is symbolname
     rightside = rightside.strip()
     #regexp to detect rightside: String, Grammar
-    newsymbol = None
     if re.search("^String", rightside):
         newsymbol = __generateStringSymbol(rightside)
     elif re.search("^Word", rightside):
@@ -89,7 +88,7 @@ def read_terminal_production(line):
         newsymbol = UnknownSymbol()
     else:
         raise ValueError("Unknown terminal production type " + str(rightside))
-    return (symbolnames[0], newsymbol)
+    return symbolnames[0], newsymbol
 
 
 def strlist_to_production_set(linelist):

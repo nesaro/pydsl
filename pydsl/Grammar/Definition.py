@@ -51,11 +51,11 @@ class PLYGrammar(GrammarDefinition):
 
     @property
     def maxsize(self):
-        pass
+        raise NotImplementedError
 
     @property
     def minsize(self):
-        pass
+        raise NotImplementedError
 
 class RegularExpressionDefinition(GrammarDefinition):
     def __init__(self, regexp, flags = 0):

@@ -26,16 +26,13 @@ LOG = logging.getLogger(__name__)
 from pydsl.Grammar.Symbol import TerminalSymbol
 
 def traversePreOrder(item):
-    result = []
-    result.append(item)
+    result = [item]
     for child in item.childlist:
         result += traversePreOrder(child)
     return result
 
 def traverseInOrder(item):
-    result = []
-    result.append(traverseInOrder(item.childlist[0]))
-    result.append(item)
+    result = [traverseInOrder(item.childlist[0]), item]
     for child in item.childlist[1:]:
         result += traverseInOrder(child)
     return result
@@ -48,8 +45,9 @@ def traversePostOrder(item):
     return result
 
 class Tree(object):
-    def __init__(self, childlist = []):
-        self.childlist = []
+    def __init__(self, childlist=None):
+        if not childlist: childlist = []
+        self.childlist = childlist
 
     def append_child(self, dpr):
         """appends dpr to childlist"""
@@ -248,7 +246,7 @@ def zss_distance(tree1, tree2):
 
         for x in range(l1[i], i+1):
             for y in range(l2[j], j+1):
-                if (l1[i] == l1[x] and l2[j] == l2[y]):
+                if l1[i] == l1[x] and l2[j] == l2[y]:
                     #Inside the same keyroot
                     forestdists[((l1[i],x),(l2[j],y))] = min(
                             (gfd((l1[i],x-1),(l2[j],y)) + 1),

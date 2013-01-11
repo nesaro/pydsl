@@ -26,8 +26,7 @@ def parts(grammar, part, outputformat = None, expression = None, inputfile = Non
     if not part:
         print("Grouplist: " + "\n".join(sgrammar.groups()))
         return True
-    myinput = None
-    if expression: 
+    if expression:
         myinput = expression
     elif inputfile:
         with open(inputfile, "rb") as f:

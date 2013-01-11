@@ -56,7 +56,7 @@ class AgentNetwork(object):
         """initlist allows agent declaration,
         outputsubscription tells the key to connect to for outputs"""
         self.exchange = exchange
-        self.connection = connection = pika.BlockingConnection(pika.ConnectionParameters( host='localhost', credentials=credentials))
+        self.connection = pika.BlockingConnection(pika.ConnectionParameters( host='localhost', credentials=credentials))
         self.channelinput = self.connection.channel()
         self.channelinput.exchange_declare(exchange=self.exchange, type='topic')
         result = self.channelinput.queue_declare(exclusive=True)

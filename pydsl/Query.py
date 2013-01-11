@@ -89,5 +89,5 @@ class Query(object):
         self.content = OrQueryOperator(self.content, element)
 
     def __str__(self):
-        return("<Query:"+str(self.content)+">")
+        return"<Query:"+str(self.content)+">"
 

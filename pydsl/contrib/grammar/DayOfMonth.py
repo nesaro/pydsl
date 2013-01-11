@@ -9,7 +9,7 @@ def matchFun(myinput):
         number = int(strnumber)
     except ValueError:
         return False
-    if number > 0 and number < 32:
+    if 0 < number < 32:
         return True
     return False
 

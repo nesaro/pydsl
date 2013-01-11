@@ -39,7 +39,7 @@ def load_re_from_file(filepath):
             if re.search ("^#.*$", cleanline):
                 flagstr = cleanline[1:]
                 continue
-            if regexp != None: 
+            if regexp is not None:
                 raise Exception("Regular expression file format error")
             else:
                 regexp = cleanline.rstrip('\n')

@@ -99,7 +99,6 @@ def recursive_str_to_query(query_list): # -> QueryElement:
         index = query_list.index("!")
         term = recursive_str_to_query(query_list[index+2:])
         return NotQueryOperator(term)
-    pair = None
     if query_list.count("=") == 1:
         pair = query_list.split("=")
         return QueryEquality(pair[0],pair[1])

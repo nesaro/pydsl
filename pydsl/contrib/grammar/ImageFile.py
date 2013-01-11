@@ -8,7 +8,7 @@
 def matchFun(input):
     content = input #assuming bytes
     import imghdr
-    return(bool(imghdr.what(None, content)))
+    return bool(imghdr.what(None, content))
 
 
 iclass = "PythonGrammar"

@@ -93,7 +93,7 @@ if __name__ == "__main__":
     PARSER.add_argument("transformer", help="Transformer name")
     ARGS = PARSER.parse_args()
     import sys
-    if ((ARGS.outputfiledic and not ARGS.expression) and (ARGS.outputfiledic and not ARGS.inputfiledic)):
+    if (ARGS.outputfiledic and not ARGS.expression) and (ARGS.outputfiledic and not ARGS.inputfiledic):
         PARSER.error("options -o and -e or -i must be together")
     DEBUGLEVEL = logging.WARNING
     if ARGS.debuglevel:

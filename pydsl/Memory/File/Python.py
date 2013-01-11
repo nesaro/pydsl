@@ -67,7 +67,7 @@ def getFileTuple(fullname):
     import os.path
     (dirName, fileName) = os.path.split(fullname)
     (fileBaseName, fileExtension) = os.path.splitext(fileName)
-    return (dirName, fileName, fileBaseName, fileExtension) 
+    return dirName, fileName, fileBaseName, fileExtension
 
 def summary_python_file(modulepath):
     import imp

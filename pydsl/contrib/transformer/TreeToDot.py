@@ -34,7 +34,7 @@ def aux_stt_dot(stt, names = [], relations = []):
     for child in stt.childlist:
         relations.append((currentname, treenode_to_name(child))) #+ symbollist_print(child.production.rightside)))
         aux_stt_dot(child, names, relations) 
-    return(names,relations)
+    return names,relations
     
 
 def function(inputdic, inputgt, outputgt):

@@ -39,9 +39,7 @@ class Guesser(object):
         from pydsl.Memory.Directory import DirStorage
         if not memorylist:
             dirname = resource_filename("pydsl.contrib","")
-            memorylist = []
-            memorylist.append(DirStorage(dirname + "/grammar/"))
-            memorylist.append(EncodingStorage(dirname + "/list/encoding.py"))
+            memorylist = [DirStorage(dirname + "/grammar/"), EncodingStorage(dirname + "/list/encoding.py")]
         self.memorylist = memorylist
         self.searcher = MemorySearcher([x.indexer() for x in memorylist])
 

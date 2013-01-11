@@ -91,17 +91,17 @@ class BNFLexer(Lexer):
                     raise Exception("Not found")
                 string = self.current[0]
                 self.consume()
-                return (unknownchar, string)
+                return unknownchar, string
             elif len(validelements) == 1:
                 element = validelements[0]
                 string = self.current[:len(element)]
                 for _ in range(len(element)):
                     self.consume()
-                return (validelements[0].name, string)
+                return validelements[0].name, string
             else:
                 raise Exception("Multiple choices")
 
-        return ("EOF_TYPE", "")
+        return "EOF_TYPE", ""
 
 class AlphabetDictLexer(Lexer):
     def __init__(self, alphabet):
@@ -124,7 +124,7 @@ class AlphabetDictLexer(Lexer):
                     raise Exception("Not found")
                 string = self.current[0]
                 self.consume()
-                return (unknownchar, string)
+                return unknownchar, string
             elif len(validelements) == 1:
                 element = validelements[0][1]
                 checker = load_checker(element)

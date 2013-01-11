@@ -35,22 +35,22 @@ class PythonGrammarTools(GrammarTools):
         self._alphabetFun = dictionary.get('alphabetFun')
 
     def get_groups(self, word, propertyname):
-        if self._askprop != None:
+        if self._askprop is not None:
             return [self._askprop(word, propertyname)]
         return []
 
     def enum(self):
-        if self._enumFun != None:
+        if self._enumFun is not None:
             return set(self._enumFun())
         return set()
 
     def tokenize(self, data):
-        if self._iterFun != None:
+        if self._iterFun is not None:
             for x in self._iterFun(data):
                 yield x
 
     @property
     def alphabet(self): # -> set:
-        if self._alphabetFun != None:
+        if self._alphabetFun is not None:
             return set(self._alphabetFun())
         return set()

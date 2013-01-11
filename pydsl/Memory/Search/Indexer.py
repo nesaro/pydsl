@@ -69,7 +69,7 @@ class Indexer(object):
                         #Expresion regular
                         import re
                         rexp = re.compile(qpart[1:-1])
-                        if rexp.match(elementright) == None:
+                        if rexp.match(elementright) is None:
                             ismatch = False
                     else:
                         #Cadena normal
@@ -94,7 +94,7 @@ class Indexer(object):
                         rexp = re.compile(qpart[1:-1])
                         ismatch = False
                         for item in element[queryterm.left]:
-                            if rexp.match(item) != None:
+                            if rexp.match(item) is not None:
                                 ismatch = True
                                 break
                     else:
