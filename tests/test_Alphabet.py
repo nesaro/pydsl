@@ -22,6 +22,7 @@ __email__ = "nesaro@gmail.com"
 import unittest
 from pydsl.Memory.Loader import load, load_checker, load_lexer
 from pydsl.Alphabet.Token import TokenList, Token
+from pydsl.Alphabet.Definition import Encoding
 
 class TestAlphabet(unittest.TestCase):
     def setUp(self):
@@ -44,6 +45,11 @@ class TestAlphabet(unittest.TestCase):
 
     def testProperties(self):
         self.alphabet.symbols #list allowed symbols
+
+    def testGenerateSymbol(self):
+        alphabet = Encoding('ascii')
+        print(alphabet['a'])
+        print(self.alphabet['integer'])
 
 
 @unittest.skip

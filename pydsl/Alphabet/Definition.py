@@ -27,6 +27,9 @@ class AlphabetDefinition(object):
         """Returns a list of allowed symbols"""
         raise NotImplementedError
 
+    def __getitem__(self, item):
+        raise NotImplementedError
+
 class AlphabetDictDefinition(AlphabetDefinition):
     """Uses a dict of grammardefinitions"""
     def __init__(self, grammardict):
@@ -34,6 +37,10 @@ class AlphabetDictDefinition(AlphabetDefinition):
         self.grammardict = {}
         for x in grammardict:
             self.grammardict[x] = load(grammardict[x])
+
+    def __getitem__(self, item):
+        from pydsl.Grammar.Symbol import WordTerminalSymbol
+        return WordTerminalSymbol(self.grammardict[item], self.grammardict[item], "max")
 
     @property
     def symbols(self):
@@ -43,3 +50,10 @@ class Encoding(AlphabetDefinition):
     """Defines an alphabet using an encoding string"""
     def __init__(self, encoding):
         self.encoding = encoding
+
+    def __getitem__(self, item):
+        from pydsl.Checker import EncodingChecker
+        if EncodingChecker(self).check(item):
+            from pydsl.Grammar.Symbol import StringTerminalSymbol
+            return StringTerminalSymbol(item)
+        raise KeyError
