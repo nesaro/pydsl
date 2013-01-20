@@ -124,16 +124,16 @@ class ANLTRGrammarLexer(Lexer):
                 self.consume()
                 continue
             elif self.current in chardict.keys():
-                return self.matchchar(self.current)
+                yield self.matchchar(self.current)
             elif re.match("[0-9]", self.current):
-                return self.number()
+                yield self.number()
             elif self.current == "'":
-                return self.rawstring()
+                yield self.rawstring()
             elif re.match("[a-zA-Z]", self.current):
-                return self.name()
+                yield self.name()
             else:
                 raise Exception("Unknown char '%s'" % self.current)
-        return Token("EOF_TYPE", "")
+        yield Token("EOF_TYPE", "")
 
 
 def load_anltr_from_text(text):

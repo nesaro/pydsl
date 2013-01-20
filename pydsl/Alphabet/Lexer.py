@@ -62,11 +62,9 @@ class Lexer(object):
     def __call__(self, string):# -> "TokenList":
         """Tokenizes input, generating a list of tokens"""
         self.string = string
-        result = []
         while True:
-            nt = self.nextToken()
-            result.append(nt)
-            if nt.symbol == "EOF_TYPE":
+            result = [x for x in self.nextToken()]
+            if result[-1].symbol == "EOF_TYPE":
                 return result
 
 
@@ -92,17 +90,17 @@ class BNFLexer(Lexer):
                     raise Exception("Not found")
                 string = self.current[0]
                 self.consume()
-                return Token(unknownchar, string)
+                yield Token(unknownchar, string)
             elif len(validelements) == 1:
                 element = validelements[0]
                 string = self.current[:len(element)]
                 for _ in range(len(element)):
                     self.consume()
-                return Token(validelements[0].name, string)
+                yield Token(validelements[0].name, string)
             else:
                 raise Exception("Multiple choices")
 
-        return Token("EOF_TYPE", "")
+        yield Token("EOF_TYPE", "")
 
 class AlphabetDictLexer(Lexer):
     def __init__(self, alphabet):
@@ -125,7 +123,7 @@ class AlphabetDictLexer(Lexer):
                     raise Exception("Not found")
                 string = self.current[0]
                 self.consume()
-                return Token(unknownchar, string)
+                yield Token(unknownchar, string)
             elif len(validelements) == 1:
                 element = validelements[0][1]
                 checker = load_checker(element)
@@ -137,9 +135,9 @@ class AlphabetDictLexer(Lexer):
                 string = self.current[:size]
                 for _ in range(size):
                     self.consume()
-                return Token(validelements[0][0], string)
+                yield Token(validelements[0][0], string)
             else:
                 raise Exception("Multiple choices")
 
-        return Token("EOF_TYPE", "")
+        yield Token("EOF_TYPE", "")
 
