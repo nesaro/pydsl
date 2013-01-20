@@ -120,17 +120,16 @@ class TopDownParser(Parser):
     """Top down parser like descent parser"""
     def __init__(self, bnfgrammar):
         Parser.__init__(self, bnfgrammar)
-        
+
 class BottomUpParser(Parser):
     """ leaf to root parser"""
-    def __init__(self, bnfgrammar, packagedependencies = None):
+    def __init__(self, bnfgrammar):
         from pydsl.Alphabet.Lexer import BNFLexer
         self._lexer = BNFLexer(bnfgrammar)
         terminalsymbollist = bnfgrammar.getTerminalSymbols()
         for ts in terminalsymbollist:
             from pydsl.Grammar.Symbol import WordTerminalSymbol
             if isinstance(ts, WordTerminalSymbol):
-                LOG.critical("BottomUp parsers can't handle WordTerminalSymbol yet")
-                raise Exception
+                raise Exception("BottomUp parsers can't handle WordTerminalSymbol yet")
         Parser.__init__(self, bnfgrammar)
         

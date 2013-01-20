@@ -25,6 +25,7 @@ __email__ = "nesaro@gmail.com"
 import logging
 LOG = logging.getLogger(__name__)
 from pydsl.Alphabet.Lexer import Lexer, finalchar
+from pydsl.Alphabet.Token import Token
 import re
 
 #manual lexer
@@ -68,7 +69,7 @@ class ANLTRGrammarLexer(Lexer):
             raise Exception
         current = self.current
         self.match(char)
-        return chardict[char], current
+        return Token(chardict[char], current)
 
     def comment(self):
         self.match("/")
@@ -88,11 +89,11 @@ class ANLTRGrammarLexer(Lexer):
             string += self.current
             self.consume()
         if string in protectedwords:
-            return string, protectedwords[string]
+            return Token(string, protectedwords[string])
         if string == string.lower():
-            return string, "PARSERID"
+            return Token(string, "PARSERID")
         else:
-            return string, "LEXERID"
+            return Token(string, "LEXERID")
 
     def rawstring(self):
         self.match("'")
@@ -104,7 +105,7 @@ class ANLTRGrammarLexer(Lexer):
                 string += self.current
                 self.consume()
         self.match("'")
-        return string, "STRING"
+        return Token(string, "STRING")
 
     def number(self):
         import re
@@ -112,7 +113,7 @@ class ANLTRGrammarLexer(Lexer):
         while self.current != finalchar and re.match("[0-9]", self.current):
             string += self.current
             self.consume()
-        return "NUMBER", string
+        return Token("NUMBER", string)
 
     def nextToken(self):
         while self.current != finalchar:
@@ -132,7 +133,7 @@ class ANLTRGrammarLexer(Lexer):
                 return self.name()
             else:
                 raise Exception("Unknown char '%s'" % self.current)
-        return "EOF_TYPE", ""
+        return Token("EOF_TYPE", "")
 
 
 def load_anltr_from_text(text):
