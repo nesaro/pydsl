@@ -103,9 +103,9 @@ class StringTerminalSymbol(TerminalSymbol): #FIXME This class is equivalent to a
 
 
 class WordTerminalSymbol(TerminalSymbol):#boundariesrules: [max,min,fixedsize]
-    def __init__(self, name, definitionrequirementsdic, boundariesrules):
+    def __init__(self, name, grammarname, boundariesrules):
         TerminalSymbol.__init__(self, name, 49, boundariesrules)
-        self.grammarname = definitionrequirementsdic["grammarname"]
+        self.grammarname = grammarname
         self.__checker =  None 
 
     @property

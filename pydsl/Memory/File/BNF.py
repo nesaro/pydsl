@@ -44,7 +44,7 @@ def __generateWordSymbol(rightside):
     if args[0] != "Word":
         raise TypeError
     br = args[2] #Boundary rule policy
-    return WordTerminalSymbol(args[1], {"grammarname":args[1]}, br)
+    return WordTerminalSymbol(args[1], args[1], br)
 
 
 def read_nonterminal_production(line, symboldict):
