@@ -129,8 +129,7 @@ def strlist_to_production_set(linelist):
                 linestodrop.append(myindex)
         linestodrop.reverse()
         if len(linestodrop) == 0:
-            LOG.error("No rule found: ")
-            raise Exception
+            raise Exception("No rule found: ")
         for myindex in linestodrop:
             del nonterminalrulelist[myindex]
     from pydsl.Grammar.BNF import BNFGrammar

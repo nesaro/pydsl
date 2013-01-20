@@ -26,6 +26,8 @@ import logging
 LOG = logging.getLogger(__name__)
 
 promptstr = "Insert data (q to exit)"
+try: input = raw_input #Python2 workaround http://stackoverflow.com/questions/954834/how-do-i-use-raw-input-in-python-3-1
+except: pass
 
 
 def escapedsplitby(inputstring, separator):

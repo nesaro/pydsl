@@ -68,7 +68,7 @@ class BNFGrammar(GrammarDefinition): #Only stores a ruleset, and methods to ask 
         self._initialsymbol = initialsymbol
         for rule in fulllist:
             if fulllist.count(rule) >1:
-                raise ValueError
+                raise ValueError("Duplicated rule: " + str(rule))
         self.fulllist = fulllist
         if not options: options = {}
         self.options = options
@@ -79,8 +79,7 @@ class BNFGrammar(GrammarDefinition): #Only stores a ruleset, and methods to ask 
 
     @property
     def terminalsymbollist(self):
-        return [x for x in self.fulllist if isinstance(x,
-            TerminalSymbol)]
+        return [x for x in self.fulllist if isinstance(x, TerminalSymbol)]
 
     @property
     def first(self):
