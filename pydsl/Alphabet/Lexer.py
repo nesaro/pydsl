@@ -28,9 +28,28 @@ from pydsl.Alphabet.Token import Token
 finalchar = "EOF"
 unknownchar = "UNKNOWN"
 
+class AlphabetTranslator(object):
+    @property
+    def input_alphabet(self):
+        raise NotImplementedError
 
-class Lexer(object):
-    """Lexer follows an alphabet definition, which is like a grammar definition but generates a list of tokens and it is always Readable using a regular grammar"""
+    @property
+    def output_alphabet(self):
+        raise NotImplementedError
+
+class EncodingLexer(AlphabetTranslator):
+    """Special Lexer that encodes from a string a reads a string"""
+    def __init__(self, encoding):
+        self.encoding = encoding
+
+    def __call__(self, string):
+        for x in string:
+            yield Token("CHAR", x)
+
+class Lexer(AlphabetTranslator):
+    """Lexer follows an alphabet definition.
+    generates a list of tokens and it
+    is always described with a regular grammar"""
     def __init__(self, generate_unknown=False):
         self.load(None)
         self.generate_unknown = generate_unknown

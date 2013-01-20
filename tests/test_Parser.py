@@ -142,3 +142,8 @@ class TestLexer(unittest.TestCase):
         result = list(lexer(string1))
         self.assertTrue(result)
 
+    def testencodingLexer(self):
+        from pydsl.Alphabet.Lexer import EncodingLexer
+        lexer = EncodingLexer('utf8')
+        result = list(lexer("abcde"))
+        print([str(x) for x in result])
