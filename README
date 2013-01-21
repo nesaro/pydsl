@@ -41,14 +41,13 @@ translation functions:
 pydsl also offers library related functions:
  * manager s query: search for an element within a memory
  * manager i identifier: returns information about the element
- * translations(identifier): returns a list of available translators for identifier
 
 INSTALLATION
 ============
  * disttools:
    * python3 setup.py install
  * pip:
-   * pip install git+http://github.com/nesaro/pydsl.git
+   * pip install pydsl
 
 USAGE
 =====
@@ -126,7 +125,7 @@ REQUIREMENTS
 
 HELP
 ====
- * http://github.com/nesaro/pydsl
+ * https://github.com/nesaro/pydsl
  * http://pydsl.blogspot.co.uk
  * nesaro@gmail.com
 
