@@ -1,5 +1,4 @@
 import pika
-import sys
 import json
 import threading
 import time
@@ -51,13 +50,13 @@ class Agent(threading.Thread):
                               no_ack=False)
         self.channelinput.start_consuming()
 
-class AgentNetwork:
+class AgentNetwork(object):
     #generates the network from a list
     def __init__(self, exchange, initlist):
         """initlist allows agent declaration,
         outputsubscription tells the key to connect to for outputs"""
         self.exchange = exchange
-        self.connection = connection = pika.BlockingConnection(pika.ConnectionParameters( host='localhost', credentials=credentials))
+        self.connection = pika.BlockingConnection(pika.ConnectionParameters( host='localhost', credentials=credentials))
         self.channelinput = self.connection.channel()
         self.channelinput.exchange_declare(exchange=self.exchange, type='topic')
         result = self.channelinput.queue_declare(exclusive=True)

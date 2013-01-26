@@ -18,7 +18,7 @@
 """Protocols"""
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha"
+__copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
@@ -32,7 +32,7 @@ def protocol_split(content):
         return {"protocol":""}
     result =  {"protocol":protocol}
     if "?" in path:
-        npath, identifier = rest.split("?")
+        npath, identifier = path.split("?")
         result["path"] = npath
         result["identifier"] = identifier
     else:

@@ -19,20 +19,24 @@ __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
+import unittest
 
-class Token(object):
-    """ Stores a symbol and its associated input """
-    def __init__(self, terminalsymbol, string):
-        self.symbol = terminalsymbol
-        self.string = string
+class TestUnknown(unittest.TestCase):
+    """Tests elements that generates unknown symbols"""
+    def setUp(self):
+        pass
 
-    def __str__(self):
-        return self.string
+    def testListAlphabet(self):
+        listalphabet = Alphabet(alphabetdefinition)
+        lexer = load_lexer(listalphabet)
+        result, probability = lexer("[x,y,z]")
+        #THINK An special flag for trying to guess the content
+        self.assertEqual(result,TokenList(["OPEN_LIST","UNK","SEPARATOR","UNK","SEPARATOR"]))
 
-class TokenList(list):
-    def __bool__(self):
-        return len(self) > 1
+    def testListLen(self):
+        gd = GrammarDefinition(grammardefinition)
+        tf = load("ListLen")
+        result, probability = tf("[x,y,z]")
+        self.assertEqual(result,3)
 
-    def __str__(self):
-        return "".join([str(x[1]) for x in self[:-1]])
 

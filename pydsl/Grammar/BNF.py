@@ -21,13 +21,13 @@ from pydsl.Grammar.Symbol import Symbol, TerminalSymbol
 from pydsl.Grammar.Definition import GrammarDefinition
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha"
+__copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 
-class Production:
+class Production(object):
     def __init__(self, leftside, rightside):
-        #Left side must have at least one nonterminal symbol
+        #Left side must have at least one non terminal symbol
         for element in rightside:
             if not isinstance(element, Symbol):
                 raise TypeError
@@ -64,12 +64,13 @@ class Production:
 
 
 class BNFGrammar(GrammarDefinition): #Only stores a ruleset, and methods to ask properties or validity check 
-    def __init__(self, initialsymbol, fulllist, options = {}):
+    def __init__(self, initialsymbol, fulllist, options=None):
         self._initialsymbol = initialsymbol
         for rule in fulllist:
             if fulllist.count(rule) >1:
-                raise ValueError
+                raise ValueError("Duplicated rule: " + str(rule))
         self.fulllist = fulllist
+        if not options: options = {}
         self.options = options
 
     @property
@@ -78,8 +79,7 @@ class BNFGrammar(GrammarDefinition): #Only stores a ruleset, and methods to ask 
 
     @property
     def terminalsymbollist(self):
-        return [x for x in self.fulllist if isinstance(x,
-            TerminalSymbol)]
+        return [x for x in self.fulllist if isinstance(x, TerminalSymbol)]
 
     @property
     def first(self):
@@ -96,6 +96,12 @@ class BNFGrammar(GrammarDefinition): #Only stores a ruleset, and methods to ask 
         """Tests if exists right recursion"""
         #TODO
         raise NotImplementedError
+
+    @property
+    def is_abstract(self):
+        """Returns true if the grammar contains an unknown symbol"""
+        from pydsl.Grammar.Symbol import UnknownSymbol
+        return UnknownSymbol in self.fulllist
 
     def __eq__(self, other):
         if not isinstance(other,BNFGrammar):

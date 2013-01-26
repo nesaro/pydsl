@@ -21,14 +21,12 @@ extracts input slices that are a Type
 """
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2012, Néstor Arocha"
+__copyright__ = "Copyright 2008-2013, Néstor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
 from pydsl.Exceptions import BadFileFormat
 from pydsl.Interaction.Shell import parse_shell_dict, open_files_dict 
-
-#CURRENTGRAMMAR = ""
 
 def checkfun(inputdic, auxboarddic, inputgt, outputgt):
     output = auxboarddic["checker"]({"string":inputdic["input"], "grammar":CURRENTGRAMMAR})
@@ -46,7 +44,7 @@ def extract(expression = None, outputfiledic = None, pipemode = None, inputfiled
         myexpression = {"input":expression}
         outputdic = parse_shell_dict(outputfiledic)
         resultdic = maingt(myexpression, outputdic)
-        from .Shell import save_result_to_output
+        from pydsl.Interaction.Shell import save_result_to_output
         save_result_to_output(resultdic, outputdic)
         return resultdic
     elif expression and not outputfiledic:
@@ -109,7 +107,7 @@ if __name__ == "__main__":
     PARSER.add_argument("tname", metavar="tname", help="Type name")
     ARGS = PARSER.parse_args()
     import sys
-    if ((ARGS.outputfiledic and not ARGS.expression) and (ARGS.outputfiledic and not ARGS.inputfiledic)):
+    if (ARGS.outputfiledic and not ARGS.expression) and (ARGS.outputfiledic and not ARGS.inputfiledic):
         PARSER.error("options -o require -e or -i")
     DEBUGLEVEL = ARGS.debuglevel or logging.WARNING
     

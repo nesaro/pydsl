@@ -17,13 +17,14 @@
 
 """Wrapper Classes"""
 
+#FIXME: python3 support only
+
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha"
+__copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
-from abc import ABCMeta, abstractmethod, abstractproperty
 from pydsl.Memory.Loader import load
 
 class Content:

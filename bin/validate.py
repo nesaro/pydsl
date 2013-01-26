@@ -17,11 +17,12 @@
 
 
 """
-validates input against the Grammar
+Generic validator for BNF Grammars. 
+Displays the part of the tree that doesn't conform the grammar definition
 """
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha"
+__copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
@@ -42,20 +43,18 @@ def errors_to_list(postnode):
             result += errors_to_list(child)
     return result
 
-def validate2(sgrammar, expression = None, inputfile = None, outputformat = None, **kwargs):
+def validate(sgrammar, expression = None, inputfile = None, outputformat = None, **kwargs):
     """Read input file contents, creates grammar and transform objects, create connections, 
     and afterwards reads required input/launch main loop"""
-    resulttrees = None
-    from pydsl.Validate import validate
-    from pydsl.Memory.Loader import load
-    sgrammar = load_parser(sgrammar) 
-    if expression: 
-        resulttrees = validate(sgrammar, expression)
+    from pydsl.Memory.Loader import load_parser
+    parser = load_parser(sgrammar, "descent")
+    if expression:
+        resulttrees = parser.get_trees(expression, True)
     elif inputfile:
         with open(inputfile, "rb") as f:
-            resulttrees = validate(sgrammar, f.read())
+            resulttrees = parser.get_trees(f.read(), True)
     else:
-        raise Exception #No input method
+        raise Exception("No input method")
     jsonlist = []
     for index, posttree in enumerate(resulttrees):
         if outputformat == "str":
@@ -88,7 +87,7 @@ if __name__ == "__main__":
     
     logging.basicConfig(level = DEBUGLEVEL)
     try:
-        result = validate2(**vars(ARGS))
+        result = validate(**vars(ARGS))
     except EOFError:
         sys.exit(0)
     if not result:

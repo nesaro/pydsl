@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-#Copyright (c) 2008-2012 Nestor Arocha Rodriguez
+#Copyright (c) 2008-2013 Nestor Arocha Rodriguez
 
 """LL(1) Recursive Descent Lexer
 second recipe of the book "Language implementation patterns
@@ -30,18 +30,18 @@ def function(inputdic, inputgrammar, outputdic):
                 continue
             elif current == ",":
                 tl.pop(0)
-                return ("COMMA", current)
+                return "COMMA", current
             elif current == "[":
                 tl.pop(0)
-                return ("LBRACK", current)
+                return "LBRACK", current
             elif current == "]":
                 tl.pop(0)
-                return ("RBRACK", current)
+                return "RBRACK", current
             elif re.match("[a-zA-Z]", current):
                 return name(tl)
             else:
                 raise Exception
-        return ("EOF_TYPE", "")
+        return "EOF_TYPE", ""
 
 
     def name(tl):
@@ -50,11 +50,10 @@ def function(inputdic, inputgrammar, outputdic):
         while tl and re.match("[a-zA-Z]", tl[0]):
             char = tl.pop(0)
             string += char
-        return ("NAME", string)
+        return "NAME", string
 
     inputlist = [x for x in inputdic["input"]]
-    result = []
-    result.append(nextToken(inputlist))
+    result = [nextToken(inputlist)]
     while result[-1][0] != "EOF_TYPE":
         result.append(nextToken(inputlist))
     return {"output":result}

@@ -16,16 +16,18 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 """ListLibrary"""
-
-
-__author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha"
-__email__ = "nesaro@gmail.com"
-
-
+from pydsl.Abstract import InmutableDict
 import logging
 LOG = logging.getLogger("Storage.List")
 from pydsl.Memory.Memory import Memory
+from pydsl.Alphabet.Definition import Encoding
+
+
+
+__author__ = "Nestor Arocha"
+__copyright__ = "Copyright 2008-2013, Nestor Arocha"
+__email__ = "nesaro@gmail.com"
+
 
 class ListStorage(Memory):
     """Stores element in a python file using a python list"""
@@ -47,7 +49,7 @@ class ListStorage(Memory):
         self.cache += self.generate_all_summaries()
         return self
 
-    def __next__(self):
+    def next(self):
         try:
             result = self.cache[self.index]
         except IndexError:
@@ -66,3 +68,16 @@ class ListStorage(Memory):
     def __contains__(self, index):
         return index in self._content
 
+
+class EncodingStorage(ListStorage):
+    def _generatekey(self, element):
+        return element
+
+    def load(self, index):
+        return Encoding(index)
+
+    def generate_all_summaries(self):
+        result = []
+        for x in self._content:
+            result.append(InmutableDict({"identifier":x, "value":x, "iclass":"Encoding"}))
+        return result

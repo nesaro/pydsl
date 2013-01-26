@@ -18,7 +18,7 @@
 """External program Transformer"""
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha"
+__copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 
@@ -76,4 +76,4 @@ class ExternalProgramFunction(HostChannel):
     def summary(self):
         inputdic = [ x.identifier for x in self.inputchanneldic.values() ]
         outputdic = [ x.identifier for x in self.outputchanneldic.values() ]
-        return {"iclass":"ExternalProgramFunction", "description":self.description, "input":inputdic, "output":outputdic }
+        return {"iclass":"ExternalProgramFunction", "input":inputdic, "output":outputdic }

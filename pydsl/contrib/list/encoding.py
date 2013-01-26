@@ -15,18 +15,9 @@
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
-__author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha"
-__email__ = "nesaro@gmail.com"
+"""Encoding list"""
 
-import unittest
-from bnfgrammar import *
 
-class TestLexer(unittest.TestCase):
-    def testLexer(self):
-        """Lexer call"""
-        from pydsl.Alphabet.Lexer import BNFLexer
-        lexer = BNFLexer(productionset1)
-        result = list(lexer(string1))
-        self.assertTrue(result)
+mylist = ["ascii"]
+
 

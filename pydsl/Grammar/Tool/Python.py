@@ -18,7 +18,7 @@
 """Python Function Grammar"""
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha"
+__copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 from .Tool import GrammarTools
@@ -27,44 +27,30 @@ LOG = logging.getLogger(__name__)
 
 class PythonGrammarTools(GrammarTools):
     def __init__(self, dictionary):
-        GrammarTools.__init__(self)
+        GrammarTools.__init__(self, dictionary)
         self.dictionary = dictionary
         self._matchFun = None
         self._askprop = dictionary.get('propFun')
         self._enumFun = dictionary.get('enumFun')
         self._alphabetFun = dictionary.get('alphabetFun')
 
-    def check(self, word):
-        from pydsl.Alphabet.Token import TokenList
-        if isinstance(word, TokenList):
-            word = str(word)
-        if not self._matchFun:
-            from pydsl.Memory.Loader import load_checker
-            self._matchFun = load_checker(self.dictionary)
-        return self._matchFun.check(word)
-
     def get_groups(self, word, propertyname):
-        if self._askprop != None:
+        if self._askprop is not None:
             return [self._askprop(word, propertyname)]
         return []
 
     def enum(self):
-        if self._enumFun != None:
+        if self._enumFun is not None:
             return set(self._enumFun())
         return set()
 
     def tokenize(self, data):
-        if self._iterFun != None:
+        if self._iterFun is not None:
             for x in self._iterFun(data):
                 yield x
 
     @property
     def alphabet(self): # -> set:
-        if self._alphabetFun != None:
+        if self._alphabetFun is not None:
             return set(self._alphabetFun())
         return set()
-
-    @property
-    def summary(self):
-        return {"iclass":"PythonGrammar", "ancestors":self.ancestors() }
-

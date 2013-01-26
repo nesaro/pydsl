@@ -19,7 +19,7 @@
 
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha"
+__copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 
@@ -28,7 +28,7 @@ LOG = logging.getLogger("Storage.Dict")
 from .Memory import Memory
 
 class DictStorage(Memory):
-    """Stores element in a python file using a python dictionaty"""
+    """Stores element in a python file using a python dictionary"""
     def __init__(self, fullpath):
         Memory.__init__(self)
         self._content = {}

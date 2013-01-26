@@ -20,11 +20,11 @@ Search Queries
 """
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha"
+__copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 
-from pydsl.Query import Query, QueryEquality, QueryElement, QueryInclusion, QueryGreaterThan
+from pydsl.Query import Query, QueryEquality, QueryInclusion, QueryGreaterThan
 
 def str_to_memoryquery(string, escape = '\\'):# -> Query:
     """String a query"""
@@ -78,7 +78,6 @@ def str_to_memoryquery(string, escape = '\\'):# -> Query:
             pos += 1
     elementlist.append(currentword)
     if len(elementlist) == 1: #Only one str received
-        from pydsl.Config import GLOBALCONFIG
         likestr = "/.*" + string + ".*/"
         return Query(QueryEquality("identifier",string))
     else:
@@ -100,7 +99,6 @@ def recursive_str_to_query(query_list): # -> QueryElement:
         index = query_list.index("!")
         term = recursive_str_to_query(query_list[index+2:])
         return NotQueryOperator(term)
-    pair = None
     if query_list.count("=") == 1:
         pair = query_list.split("=")
         return QueryEquality(pair[0],pair[1])
@@ -119,7 +117,7 @@ def dict_to_query(querydict): # -> Query:
 def recursive_dict_to_query(querydict, parentkey = None): # -> QueryElement:
     if isinstance(querydict, str):
         return querydict
-    from pydsl.Query import Query, QueryEquality, QueryElement, QueryInclusion, QueryGreaterThan, AndQueryOperator, NotQueryOperator, QueryPartial
+    from pydsl.Query import QueryEquality, QueryInclusion, QueryGreaterThan, AndQueryOperator, NotQueryOperator, QueryPartial
     resultlist = []
     for key, value in querydict.items():
         if isinstance(value, dict):

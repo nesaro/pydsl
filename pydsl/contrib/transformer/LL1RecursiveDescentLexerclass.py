@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-#Copyright (c) 2008-2012 Nestor Arocha Rodriguez
+#Copyright (c) 2008-2013 Nestor Arocha Rodriguez
 
 """LL(1) Recursive Descent Lexer
 second recipe of the book "Language implementation patterns
@@ -20,7 +20,7 @@ from pydsl.Alphabet.Lexer import Lexer as _Lexer
 class _ListLexer(_Lexer):
     def nextToken(self):
         import re
-        from pydsl.Grammar.Lexer import finalchar
+        from pydsl.Alphabet.Lexer import finalchar
         while self.current != finalchar:
             if self.current == "/":
                 self.comment(tl)
@@ -38,37 +38,36 @@ class _ListLexer(_Lexer):
                 return self.name()
             else:
                 raise Exception
-        return ("EOF_TYPE", "")
+        return "EOF_TYPE", ""
 
     def comma(self):
         current = self.current
         self.match(",")
-        return ("COMMA", current)
+        return "COMMA", current
 
     def lbrack(self):
         current = self.current
         self.match("[")
-        return ("LBRACK", current)
+        return "LBRACK", current
 
     def rbrack(self):
         current = self.current
         self.match("]")
-        return ("RBRACK", current)
+        return "RBRACK", current
 
     def name(self):
         import re
         string = ""
-        from pydsl.Grammar.Lexer import finalchar
+        from pydsl.Alphabet.Lexer import finalchar
         while self.current != finalchar and re.match("[a-zA-Z]", self.current):
             string += self.current
             self.consume()
-        return ("NAME", string)
+        return "NAME", string
 
 
 def function(inputdic, inputgrammar, outputdic):
     a = _ListLexer(inputdic["input"])
-    result = []
-    result.append(a.nextToken())
+    result = [a.nextToken()]
     while result[-1][0] != "EOF_TYPE":
         result.append(a.nextToken())
     return {"output":result}

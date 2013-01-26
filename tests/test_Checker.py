@@ -16,7 +16,7 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha"
+__copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
@@ -43,7 +43,6 @@ class TestBNFChecker(unittest.TestCase):
     """BNF Checker"""
     def testCheck(self):
         """Test checker instantiation and call"""
-        from pydsl.Checker import BNFChecker
         raise NotImplementedError
 
 @unittest.skip
@@ -51,7 +50,6 @@ class TestRegularExpressionChecker(unittest.TestCase):
     """BNF Checker"""
     def testCheck(self):
         """Test checker instantiation and call"""
-        from pydsl.Checker import RegularExpressionChecker
         raise NotImplementedError
 
 class TestPLYChecker(unittest.TestCase):

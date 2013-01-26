@@ -1,18 +1,14 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-#Copyright (C) 2008-2012 Nestor Arocha 
+__copyright__ = "Copyright 2008-2013, Nestor Arocha"
 
 import unittest
 
 def maketestFromGT(gtname, inputexpression, outputdic):
     """Makes a test and returns True if it finishes successfully"""
-    values = {}
-    values["expression"] = inputexpression
-    values["directreturn"] = True
-    values["outputfiledic"] = None    
-    values["inputfiledic"] = None
-    values["pipemode"] = None    
+    values = {"expression": inputexpression, "directreturn": True, "outputfiledic": None, "inputfiledic": None,
+              "pipemode": None}
     from pydsl.Memory.Loader import load
     gt = load(gtname)
     result = gt(inputexpression)

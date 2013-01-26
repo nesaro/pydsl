@@ -16,11 +16,10 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from pydsl.Memory.Memory import Memory
-from pydsl.Query import QueryEquality, QueryInclusion, QueryTerm, QueryGreaterThan, QueryPartial
+from pydsl.Query import QueryEquality, QueryInclusion, QueryGreaterThan, QueryPartial
 import collections
 
-class Indexer:
+class Indexer(object):
     """Indexes memory content. Current implementation just copy Memory iterator (Inmutabledicts) into a cache dict. This is possible because Memory iterator format is suitable for search, but it might change in the future"""
     def __init__(self, memory):
         self.memory = memory #One memory per indexer
@@ -70,7 +69,7 @@ class Indexer:
                         #Expresion regular
                         import re
                         rexp = re.compile(qpart[1:-1])
-                        if rexp.match(elementright) == None:
+                        if rexp.match(elementright) is None:
                             ismatch = False
                     else:
                         #Cadena normal
@@ -95,7 +94,7 @@ class Indexer:
                         rexp = re.compile(qpart[1:-1])
                         ismatch = False
                         for item in element[queryterm.left]:
-                            if rexp.match(item) != None:
+                            if rexp.match(item) is not None:
                                 ismatch = True
                                 break
                     else:

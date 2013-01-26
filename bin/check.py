@@ -21,14 +21,12 @@ check if input data belongs to a Type
 """
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha"
+__copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
 from pydsl.Exceptions import BadFileFormat
 from pydsl.Interaction.Shell import parse_shell_dict, open_files_dict 
-
-#CURRENTGRAMMAR = ""
 
 def checkfun(inputdic, auxboarddic, inputgt, outputgt):
     output = auxboarddic["checker"]({"string":inputdic["input"], "grammar":CURRENTGRAMMAR})
@@ -39,7 +37,7 @@ def checkfun(inputdic, auxboarddic, inputgt, outputgt):
 def bool_dict_values(dic):
     for key in dic:
         if str(dic[key]) == "False":
-            dic[key] == False
+            dic[key] = False
         else:
             dic[key] = bool(dic[key])
     return dic
@@ -55,7 +53,7 @@ def checker(expression = None, outputfiledic = None, inputfiledic = None, pipemo
         outputdic = parse_shell_dict(outputfiledic)
         resultdic = maingt(myexpression, outputdic)
         resultdic = bool_dict_values(resultdic)
-        from .Shell import save_result_to_output
+        from pydsl.Interaction.Shell import save_result_to_output
         save_result_to_output(resultdic, outputdic)
         return resultdic
     elif expression and not outputfiledic:
@@ -102,7 +100,7 @@ if __name__ == "__main__":
     PARSER.add_argument("tname", metavar="tname", help="Type name")
     ARGS = PARSER.parse_args()
     import sys
-    if ((ARGS.outputfiledic and not ARGS.expression) and (ARGS.outputfiledic and not ARGS.inputfiledic)):
+    if (ARGS.outputfiledic and not ARGS.expression) and (ARGS.outputfiledic and not ARGS.inputfiledic):
         PARSER.error("options -o require -e or -i")
     DEBUGLEVEL = ARGS.debuglevel or logging.WARNING
     

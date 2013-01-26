@@ -18,13 +18,14 @@
 """LR0 unfinished implementation"""
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha"
+__copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
 from pydsl.Grammar.Parser.Parser import BottomUpParser
 from pydsl.Grammar.Symbol import NonTerminalSymbol, TerminalSymbol, EndSymbol, Symbol
+from pydsl.Grammar.BNF import NonTerminalProduction
 
 def __check_action(action):
     """Valid actions string"""
@@ -139,7 +140,7 @@ def __slr_build_parser_table(productionruleset):
                 raise LRConflictException
     return result
     
-class ParserTable:
+class ParserTable(object):
     """ Stores a state/symbol/action/new state relation """
     def __init__(self):
         self.__internalstate = None
@@ -154,13 +155,13 @@ class ParserTable:
         """Appends a new rule"""
         if not __check_action(action) or action == "Reduce":
             raise TypeError
-        if not self.__table.has_key(state):
+        if not state in self.__table:
             self.__table[state] = {}
         self.__table[state][symbol.name] = {"action":action, "dest":destinationstate}
 
     def append_reduction(self, state, symbol, destinationstate, rule):
         """Appends a reduce action. It also stores which ProductionRule must follow on reduction"""
-        if not self.__table.has_key(state):
+        if not state in self.__table:
             self.__table[state] = {}
         self.__table[state][symbol.name] = {"action":"Reduce", "dest":destinationstate, "rule":rule}
 
@@ -188,7 +189,7 @@ class ParserTable:
         self.__internalstate = 0
 
 
-class LR0Item:
+class LR0Item(object):
     """LR0 table item"""
     def __init__(self, rule, cursorposition):
         if not isinstance(rule, NonTerminalProduction):
@@ -226,7 +227,7 @@ class LR0Item:
         """Returns true if cursor if after last element"""
         return self.position > len(self.rule.rightside)
 
-class LR0ItemSet:
+class LR0ItemSet(object):
     """Stores LR0Items, and a dic with symbols and destination states"""
     def __init__(self):
         self.itemlist = []
@@ -259,7 +260,7 @@ class LR0ItemSet:
 
     def append_transition(self, symbol, targetset):
         """Appends a transition"""
-        if self.__transitiondic.has_key(symbol.name):
+        if symbol.name in self.__transitiondic:
             return
         self.__transitiondic[symbol.name] = targetset
 

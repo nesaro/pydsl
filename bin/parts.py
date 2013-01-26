@@ -6,7 +6,7 @@ Show input's components according to a language
 """
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha"
+__copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
@@ -20,16 +20,13 @@ def print_errors(postnode):
             result += print_errors(child) + "\n"
     return result
 
-def parts(grammar, outputformat = None, expression = None, inputfile = None):
-    import sys
-    result = None
+def parts(grammar, part, outputformat = None, expression = None, inputfile = None):
     from pydsl.Memory.Loader import load
     sgrammar = load(grammar) 
     if not part:
         print("Grouplist: " + "\n".join(sgrammar.groups()))
         return True
-    myinput = None
-    if expression: 
+    if expression:
         myinput = expression
     elif inputfile:
         with open(inputfile, "rb") as f:
@@ -69,10 +66,9 @@ if __name__ == "__main__":
     DEBUGLEVEL = ARGS.debuglevel or logging.WARNING
     
     logging.basicConfig(level = DEBUGLEVEL)
-    manager = Parts(ARGS)
     import sys
     try:
-        result = manager.execute()
+        result = parts(vars(**ARGS))
     except EOFError:
         sys.exit(0)
     if not result:

@@ -17,7 +17,7 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha"
+__copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
@@ -28,23 +28,10 @@ class SymbolGrammarTools(GrammarTools):
     """Ask sentences to other grammars. Works with tokens"""
     def __init__(self, bnf, parser = "auto"):
         LOG.debug("SymbolGrammarTools.__init__: Begin")
-        GrammarTools.__init__(self)
+        GrammarTools.__init__(self, bnf)
         parser = bnf.options.get("parser",parser)
-        self.__bnf = bnf
-        self.__checker = None
-        if parser == "descent":
-            from ..Parser.RecursiveDescent import RecursiveDescentParser
-            self.__parser = RecursiveDescentParser(bnf)
-        elif parser == "weighted":
-            self.__parser = WeightedParser(bnf)
-            raise Exception
-        elif parser == "auto" or parser == "default":
-            #TODO Guess best parser
-            from ..Parser.Weighted import WeightedParser
-            self.__parser = WeightedParser(bnf)
-        else:
-            LOG.error("Wrong parser name: " + parser)
-            raise Exception
+        from pydsl.Memory.Loader import load_parser
+        self.__parser = load_parser(bnf, parser)
 
     @property
     def productionset(self):
@@ -69,16 +56,6 @@ class SymbolGrammarTools(GrammarTools):
         """
         return self.__parser.get_trees(word, showErrors)
     
-    @property
-    def summary(self):
-        return {"iclass":"SymbolGrammarTools", "groups":tuple(self.groups())}
-
-    def check(self, word):
-        if not self.__checker:
-            from pydsl.Memory.Loader import load_checker
-            self.__checker = load_checker(self.__bnf)
-        return self.__checker.check(word)
-
     def genealogy(self, information, index): # -> list:
         """Given a word(token) index, will tell all parent symbols  until root node"""
         raise NotImplementedError

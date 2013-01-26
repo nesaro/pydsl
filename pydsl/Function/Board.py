@@ -18,13 +18,13 @@
 """Boards"""
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha"
+__copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
 
-class Board:
+class Board(object):
     """A Transformer where you can call other Transformer. Doesn't perform any computation"""
 
     def __init__(self, gtenvdefinitionslist):
@@ -46,7 +46,7 @@ class Board:
     def summary(self):
         from pydsl.Abstract import InmutableDict
         #TODO: inputs and outputs
-        result = {"iclass":"Board", "ancestors":self.ancestors()}
+        result = {"iclass":"Board"}
         return InmutableDict(result)
 
     def __call__(self, inputdict):
@@ -134,7 +134,6 @@ class Board:
         for definition in self.__GTDefinitionlist:
             gtname = definition.name
             outputgrammarlist = definition.outputConnectionDefinitions
-            gtinstance = self._hostT[gtname]
             self.connectionsdict[gtname] = {}
             for gtcondef in outputgrammarlist:
                 hostt = None     
@@ -143,7 +142,7 @@ class Board:
                 self.connectionsdict[gtname][gtcondef.sourcechannel] = (gtcondef.destinationchannel, hostt, gtcondef.destination)
 
     def __str__(self):
-        result = "<B " + str(self.identifier) + " "
+        result = "<B "
         result += "input: " + str(self.inputchanneldic)
         result += "output: " + str(self.outputchanneldic)
         result += "inputGT: " + str(self.__inputGTDict)

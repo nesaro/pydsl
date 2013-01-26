@@ -46,11 +46,8 @@ def load_python_file(moduleobject, **kwargs):
         from pydsl.Function.Python import HostPythonTransformer
         return HostPythonTransformer(**resultdic)
     elif iclass == "ExternalProgramTransformer":
-        from pydsl.Function.ExternalProgram import ExternalProgramTransformer
-        return ExternalProgramTransformer(**resultdic)
-    elif iclass == "ExternalProgramFileFunction":
-        from pydsl.Function.ExternalProgram import ExternalProgramFileFunction
-        return ExternalProgramFileFunction(**resultdic)
+        from pydsl.Function.ExternalProgram import ExternalProgramFunction
+        return ExternalProgramFunction(**resultdic)
     elif iclass == "SymbolGrammar":
         from pydsl.Grammar.BNF import BNFGrammar
         return BNFGrammar(**resultdic)
@@ -70,7 +67,7 @@ def getFileTuple(fullname):
     import os.path
     (dirName, fileName) = os.path.split(fullname)
     (fileBaseName, fileExtension) = os.path.splitext(fileName)
-    return (dirName, fileName, fileBaseName, fileExtension) 
+    return dirName, fileName, fileBaseName, fileExtension
 
 def summary_python_file(modulepath):
     import imp

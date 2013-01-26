@@ -15,24 +15,18 @@
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
-
-"""
-"""
+"""Test wrapper"""
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha"
+__copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
+import unittest
 
-import logging
-LOG = logging.getLogger(__name__)
-
-def validate(sgrammar, expression): # -> "[AST]":
-    """Returns a list of postTreeNodes"""
-    resulttrees = sgrammar.get_trees(expression, True)
-    treelist = []
-    for tree in resulttrees:
-        from pydsl.Grammar.Tree import parser_to_post_tree
-        treelist.append(parser_to_post_tree(tree))
-    return treelist
+class TestValidate(unittest.TestCase):
+    def testBasic(self):
+        from pydsl.Memory.Loader import load_parser
+        parser = load_parser('Date', 'descent')
+        self.assertFalse(parser.get_trees("11/11/ab", True)[0].valid)
+        self.assertTrue(parser.get_trees("11/11/2011", True)[0].valid)
 

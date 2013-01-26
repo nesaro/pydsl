@@ -20,19 +20,21 @@
 """Syntax Directed Transformers"""
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha"
+__copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
 
-class SyntaxDirectedTransformer:
+class SyntaxDirectedTransformer(object):
     def __init__(self, inputgrammar, outputgrammar, blockdic):
         self.blockdic = blockdic
         if isinstance(inputgrammar, str):
             from pydsl.Memory.Loader import load
             inputgrammar = load(inputgrammar)
         from pydsl.Grammar.Parser.RecursiveDescent import RecursiveDescentParser
+        self.inputgrammar = inputgrammar
+        self.outputgrammar = outputgrammar
         self.parser = RecursiveDescentParser(inputgrammar)
         self.blockdic = blockdic
 
@@ -55,4 +57,4 @@ class SyntaxDirectedTransformer:
 
     @property
     def summary(self):
-        return {"iclass":"SyntaxDirectedTransformer", "identifier":self.identifier, "input":self.inputgrammar, "output":self.outputgrammar }
+        return {"iclass":"SyntaxDirectedTransformer", "input":self.inputgrammar, "output":self.outputgrammar }

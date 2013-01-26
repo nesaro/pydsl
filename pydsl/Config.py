@@ -16,9 +16,10 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 """Global (per execution) elements"""
+from pydsl.Memory.List import EncodingStorage
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha"
+__copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 from pydsl.Abstract import Singleton
@@ -41,6 +42,7 @@ def generate_memory_list(): #-> list:
         result.append(DirStorage(dirname + "/board/"))
         result.append(DirStorage(dirname + "/transformer/"))
         result.append(RegexpDictStorage(dirname + "/dict/regexp.dict"))
+        result.append(EncodingStorage(dirname + "/list/encoding.py"))
     return result
 
 
@@ -85,9 +87,7 @@ class GlobalConfig(object):
         self.__debuglevel = level
 
 GlobalConfig2 = Singleton('GlobalConfig2', (GlobalConfig, ), {})
-VERSION = "pydsl pre-version\n Copyright (C) 2008-2012 Nestor Arocha"
 GLOBALCONFIG = GlobalConfig2()  # The only instance available
-ERRORLIST = ["Grammar", "Timeout", "Transformer"]
 
 
 def all_classes(module):# -> set:

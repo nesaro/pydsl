@@ -34,13 +34,13 @@ def aux_stt_dot(stt, names = [], relations = []):
     for child in stt.childlist:
         relations.append((currentname, treenode_to_name(child))) #+ symbollist_print(child.production.rightside)))
         aux_stt_dot(child, names, relations) 
-    return(names,relations)
+    return names,relations
     
 
 def function(inputdic, inputgt, outputgt):
-    grammarname =  inputdic['grammar'].string  
-    from pydsl.Memory.Loader import load_grammar
-    grammar = load_grammar(grammarname)
+    grammarname =  inputdic['grammar']
+    from pydsl.Memory.Loader import load_parser
+    grammar = load_parser(grammarname)
     result = grammar.get_trees(inputdic['string'])
     #print(result)
     #print(result[0])

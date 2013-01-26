@@ -19,31 +19,31 @@
 """BNF format functions"""
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha"
+__copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
 import re
-from pydsl.Grammar.Symbol import StringTerminalSymbol, WordTerminalSymbol, BoundariesRules, NonTerminalSymbol, NullSymbol
+from pydsl.Grammar.Symbol import StringTerminalSymbol, WordTerminalSymbol,  NonTerminalSymbol, NullSymbol, UnknownSymbol
 from pydsl.Grammar.BNF import Production
 LOG = logging.getLogger(__name__)
 
 """ pydsl Grammar definition file parser """
 
 def __generateStringSymbol(rightside):
-    args = rightside.split(",")
-    if args[0] != "String":
+    head, tail = rightside.split(",", 1)
+    if head != "String":
         raise TypeError
-    content = args[1]
-    if args[1][0] == "'" and args[1][-1] == "'":
-        content = args[1][1:-1]
+    content = tail
+    if len(tail) > 2 and tail[1][0] == "'" and tail[1][-1] == "'":
+        content = tail[1][1:-1]
     return StringTerminalSymbol(content)
 
 def __generateWordSymbol(rightside):
     args = rightside.split(",")
     if args[0] != "Word":
         raise TypeError
-    br = BoundariesRules(args[2], int(args[3]))
+    br = args[2] #Boundary rule policy
     return WordTerminalSymbol(args[1], {"grammarname":args[1]}, br)
 
 
@@ -69,27 +69,26 @@ def read_nonterminal_production(line, symboldict):
     return result
 
 def read_terminal_production(line):
-    sidesarray = line.split(":=")
-    if len(sidesarray) != 2:
-        raise ValueError("Error reading terminal production rule")
-    leftside = sidesarray[0]
+    leftside, rightside = line.split(":=")
     leftside = leftside.strip()
     symbolnames = leftside.split(" ")
     if len(symbolnames) != 1:
         LOG.error("Error generating terminal rule: " + line + "At left side")
         raise ValueError("Error reading left side of terminal production rule")
     #leftside is symbolname
-    rightside = sidesarray[1]
     rightside = rightside.strip()
     #regexp to detect rightside: String, Grammar
-    newsymbol = None
     if re.search("^String", rightside):
         newsymbol = __generateStringSymbol(rightside)
     elif re.search("^Word", rightside):
         newsymbol = __generateWordSymbol(rightside)
+    elif re.search("^Null", rightside):
+        newsymbol = NullSymbol()
+    elif re.search("^Unk", rightside):
+        newsymbol = UnknownSymbol()
     else:
-        raise ValueError("Unknown terminal production type")
-    return (symbolnames[0], newsymbol)
+        raise ValueError("Unknown terminal production type " + str(rightside))
+    return symbolnames[0], newsymbol
 
 
 def strlist_to_production_set(linelist):
@@ -130,8 +129,7 @@ def strlist_to_production_set(linelist):
                 linestodrop.append(myindex)
         linestodrop.reverse()
         if len(linestodrop) == 0:
-            LOG.error("No rule found: ")
-            raise Exception
+            raise Exception("No rule found: ")
         for myindex in linestodrop:
             del nonterminalrulelist[myindex]
     from pydsl.Grammar.BNF import BNFGrammar

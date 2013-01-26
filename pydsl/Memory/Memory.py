@@ -17,14 +17,13 @@
 
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha"
+__copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
-from pydsl.Abstract import Indexable
 
-class Memory:
+class Memory(object):
     """Memory Abstraction"""
     def __init__(self):
         pass
@@ -32,7 +31,7 @@ class Memory:
     def load(self, index, **kwargs):
         raise NotImplementedError
     
-    def save(self, element):
+    def save(self, element, identifier):
         raise NotImplementedError
 
     def __iter__(self):
@@ -68,6 +67,7 @@ class Memory:
 class LocalMemory(Memory):
     """Execution time memory"""
     def __init__(self):
+        Memory.__init__(self)
         self.content = {}
     
     def load(self, index):
@@ -89,7 +89,7 @@ class LocalMemory(Memory):
             self.cache.append(element.summary)
         return self
     
-    def __next__(self):
+    def next(self):
         try:
             result = self.cache[self.cacheindex]
         except IndexError:

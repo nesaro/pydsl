@@ -16,7 +16,7 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha"
+__copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
@@ -50,7 +50,7 @@ class TestMemory(unittest.TestCase):
 class TestPersistentMemory(unittest.TestCase):
     """Tests Transformers"""
     def setUp(self):
-        from pydsl.Memory.Storage import ShelveStorage
+        from pydsl.Memory.Shelve import ShelveStorage
         from pydsl.Checker import Checker
         self.mem = ShelveStorage("tmp", Checker)
         

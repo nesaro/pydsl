@@ -16,22 +16,28 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha"
+__copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 
 
-from bnfgrammar import *
+from pydsl.contrib.bnfgrammar import *
 from pydsl.Grammar.Parser.RecursiveDescent import RecursiveDescentParser
 from pydsl.Grammar.Parser.Weighted import WeightedParser
 import unittest
 
 class TestParsers(unittest.TestCase):
-    #def testLeftRecursion(self):
-    #    from pydsl.Grammar.Parser.RecursiveDescent import RecursiveDescentParser
-    #    descentparser = RecursiveDescentParser(productionsetlr)
-    #    result = descentparser(dots)
-    #    self.assertTrue(result)
+    @unittest.skip
+    def testRecursiveLeftRecursion(self):
+        descentparser = RecursiveDescentParser(productionsetlr)
+        result = descentparser(dots)
+        self.assertTrue(result)
+
+    @unittest.skip
+    def testWeightedLeftRecursion(self):
+        parser = WeightedParser(productionsetlr)
+        result = parser(dots)
+        self.assertTrue(result)
 
     def testRightRecursion(self):
         descentparser = RecursiveDescentParser(productionsetrr)
@@ -77,37 +83,31 @@ class TestParsers(unittest.TestCase):
         result = parser(string2)
         self.assertFalse(result)
 
-    @unittest.skip
     def testWeightedRightRecursion(self):
         parser = WeightedParser(productionsetrr)
         result = parser(dots)
         self.assertTrue(result)
 
-    @unittest.skip
     def testWeightedCenterRecursion(self):
         descentparser = RecursiveDescentParser(productionsetcr)
         result = descentparser(dots)
         self.assertTrue(result)
 
-    @unittest.skip
     def testWeightedParserStore(self):
         parser = WeightedParser(productionset1)
         result = parser(string1)
         self.assertTrue(result)
 
-    @unittest.skip
     def testWeightedParserBad(self):
         parser = WeightedParser(productionset1)
         result = parser(string2)
         self.assertFalse(result)
 
-    @unittest.skip
     def testWeightedParserNull(self):
         parser = WeightedParser(productionset2)
         result = parser(string3)
         self.assertTrue(result)
 
-    @unittest.skip
     def testWeightedParserNullBad(self):
         parser = WeightedParser(productionset2)
         result = parser(string4)
@@ -115,14 +115,8 @@ class TestParsers(unittest.TestCase):
 
 class TestWeightedParser(unittest.TestCase):
     @unittest.skip
-    def testLeftRecursion(self):
-        parser = WeightedParser(productionsetlr)
-        result = parser(dots)
-        self.assertTrue(result)
-
-    @unittest.skip
     def testMixResults(self):
-        from pydsl.Grammar.Parser.Parser import mix_results
+        from pydsl.Grammar.Parser.Weighted import mix_results
         from pydsl.Grammar.Tree import ParseTree
         from pydsl.Grammar.Symbol import NullSymbol
         result1 = ParseTree(0, 3, [NullSymbol()], "", None)
@@ -139,4 +133,12 @@ class TestWeightedParser(unittest.TestCase):
         result = mix_results([set1b, set2b, set3b], None)
         #TODO: check result
         self.assertTrue(len(result) == 1)
+
+class TestLexer(unittest.TestCase):
+    def testLexer(self):
+        """Lexer call"""
+        from pydsl.Alphabet.Lexer import BNFLexer
+        lexer = BNFLexer(productionset1)
+        result = list(lexer(string1))
+        self.assertTrue(result)
 

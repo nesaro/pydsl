@@ -16,16 +16,17 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha"
+__copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
 
-class GrammarTools:
-    """Convenience class that have members for checking, groups, tokenizing"""
-    def __init__(self):
-        pass
+class GrammarTools(object):
+    """Easy to access class that has members for checking, groups, tokenizing"""
+    def __init__(self, gd):
+        self.gd = gd
+        self._checker = None
 
     def get_groups(self, information, propertyname = None):# -> list:
         """  
@@ -61,3 +62,10 @@ class GrammarTools:
     @property
     def maxsize(self):
         raise NotImplementedError
+
+    def check(self, word):
+        if not self._checker:
+            from pydsl.Memory.Loader import load_checker
+            self._checker = load_checker(self.gd)
+        return self._checker.check(word)
+

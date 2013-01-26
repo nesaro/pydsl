@@ -1,17 +1,14 @@
 from setuptools import setup, find_packages
-import glob
-
 setup(name='pydsl',
-      version='0.1',
+      version='0.0.2',
       description='Python Domain Specific Language Tools',
       author='Nestor Arocha',
       author_email='nesaro@gmail.com',
       url='https://github.com/nesaro/pydsl',
-      packages = find_packages(),
-      scripts=['bin/extract.py', 'bin/translate.py','bin/check.py','bin/search.py', 'bin/guess.py', 'bin/info.py', 'bin/validate.py', 'bin/parts.py'],
+      packages = find_packages(exclude=['tests','tests.*']),
+      scripts=['bin/extract.py', 'bin/translate.py','bin/check.py', 'bin/manager.py', 'bin/guess.py', 'bin/validate.py', 'bin/parts.py'],
       install_requires=['ply'],
-      package_data={'pydsl.contrib.grammar':['*.re', '*.bnf'] ,
-          'pydsl.contrib.board':['*.board'],
-          'pydsl.contrib.dict':['*.dict'],},
+      package_dir={'pydsl.contrib': 'pydsl/contrib'},
+      package_data={'pydsl.contrib': ['board/*.board','grammar/*.re','grammar/*.bnf','dict/*.dict']},
      )
 

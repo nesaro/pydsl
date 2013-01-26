@@ -20,7 +20,7 @@ Searcher class
 """
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha"
+__copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 #En esta implementacion, el searcher se enlaza con un indexer. El usuario introduce un Query, y se utiliza el indexer para averiguar que documentos cumplen cada una de las condiciones. El uso de operadores and y or se realizara despues de obtener los resultados con operaciones de conjuntos
@@ -28,9 +28,8 @@ __email__ = "nesaro@gmail.com"
 #A searcher is linked with an indexer. Users creates a query, and then searcher iterates the indexer to find matches
 
 from .Indexer import Indexer
-from .Query import Query, QueryElement
 
-class Searcher:
+class Searcher(object):
     def search(self, query):
         raise NotImplementedError
 

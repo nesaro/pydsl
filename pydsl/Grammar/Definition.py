@@ -16,11 +16,11 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha"
+__copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 
-class GrammarDefinition: 
+class GrammarDefinition(object):
     def __init__(self):
         pass
 
@@ -39,6 +39,10 @@ class GrammarDefinition:
     def maxsize(self):
         return None
 
+    def alphabet(self):
+        """Returns the alphabet required by this grammar"""
+        raise NotImplementedError
+
 class PLYGrammar(GrammarDefinition):
     """PLY based grammar"""
     def __init__(self, module):
@@ -47,11 +51,11 @@ class PLYGrammar(GrammarDefinition):
 
     @property
     def maxsize(self):
-        pass
+        raise NotImplementedError
 
     @property
     def minsize(self):
-        pass
+        raise NotImplementedError
 
 class RegularExpressionDefinition(GrammarDefinition):
     def __init__(self, regexp, flags = 0):

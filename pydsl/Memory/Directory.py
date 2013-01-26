@@ -33,13 +33,15 @@ def _isRELFileName(path):
 def _isBoardFileName(path):
     return path.endswith(".board")
 
-
 class DirStorage(Memory):
     """A collection of elements stored inside a directory"""
-    def __init__(self, dirpath, allowedextensions = [".py",".bnf",".re",".board"]):
+
+    def __init__(self, dirpath, allowedextensions=(".py", ".bnf", ".re", ".board")):
+        Memory.__init__(self)
         self.path = dirpath
         self._allowedextensions = allowedextensions
         from pydsl.Memory.Search.Searcher import MemorySearcher
+
         self._searcher = MemorySearcher(self)
 
     def __iter__(self):
@@ -63,7 +65,6 @@ class DirStorage(Memory):
 
     def summary_from_filename(self, modulepath):
         (_, _, fileBaseName, ext) = getFileTuple(modulepath)
-        result = None
         if _isRELFileName(modulepath):
             result =  {"iclass":"re","identifier":fileBaseName, "filepath":modulepath}
         elif _isGDLFileName(modulepath):
@@ -79,8 +80,7 @@ class DirStorage(Memory):
         import glob
         if self._allowedextensions:
             for extension in self._allowedextensions:
-                tmpresult = []
-                searchstring = self.path + "*" + extension 
+                searchstring = self.path + "*" + extension
                 tmpresult = glob.glob(searchstring)
                 for result in tmpresult:
                     if result.endswith("__init__.py"):
@@ -112,7 +112,7 @@ class DirStorage(Memory):
 
     def load(self, name, **kwargs):
         resultlist = self._searcher.search(name)
-        if(len(resultlist) > 1):
+        if len(resultlist) > 1:
             LOG.error("Found two or more matches, FIXME: processing the first, should raise exception")
         if len(resultlist) == 0:
             raise KeyError(self.__class__.__name__ + name)

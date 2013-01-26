@@ -18,7 +18,7 @@
 """pydsl element Interaction"""
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha"
+__copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import sys
@@ -26,6 +26,8 @@ import logging
 LOG = logging.getLogger(__name__)
 
 promptstr = "Insert data (q to exit)"
+try: input = raw_input #Python2 workaround http://stackoverflow.com/questions/954834/how-do-i-use-raw-input-in-python-3-1
+except: pass
 
 
 def escapedsplitby(inputstring, separator):
@@ -93,7 +95,7 @@ def save_result_to_output(resultdic, outputdic):
                 currentfile.write(str(resultdic[key]))
 
 
-class CommandLineToTransformerInteraction:
+class CommandLineToTransformerInteraction(object):
     """Shell interaction for functions"""
     def __init__(self, gt):
         self._tinstance = gt
@@ -139,9 +141,10 @@ class CommandLineToTransformerInteraction:
             return inputdic
 
 
-class StreamFileToTransformerInteraction:
+class StreamFileToTransformerInteraction(object):
     """Write to file n times"""
-    def __init__(self, gt, inputfiledic, outputfiledic={}):
+    def __init__(self, gt, inputfiledic, outputfiledic=None):
+        if not outputfiledic: outputfiledic = {}
         self._tinstance = gt
         self._inputfiledic = inputfiledic
         self._outputfiledic = outputfiledic

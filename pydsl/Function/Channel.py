@@ -18,11 +18,10 @@
 """ Channels: Where words are sent and received """
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha"
+__copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 
-from abc import ABCMeta, abstractmethod, abstractproperty
 import logging
 LOG = logging.getLogger(__name__)
 
@@ -34,7 +33,7 @@ def _loadGrammarTools(originaldic):
         result[key] = load_grammar_tool(str(originaldic[key]))
     return result
 
-class HostChannel:
+class HostChannel(object):
     """A class that contains input and output string-named channels. Each channel must contain a Type object
     Any class which inherites from this must also inherit from HostChannel
     """

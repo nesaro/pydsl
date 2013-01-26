@@ -16,16 +16,16 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha"
+__copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 
-class AlphabetDefinition:
+class AlphabetDefinition(object):
     """Defines an alphabet"""
     @property
     def symbols(self):
         """Returns a list of allowed symbols"""
-        return []
+        raise NotImplementedError
 
 class AlphabetDictDefinition(AlphabetDefinition):
     """Uses a dict of grammardefinitions"""
@@ -38,3 +38,8 @@ class AlphabetDictDefinition(AlphabetDefinition):
     @property
     def symbols(self):
         return list(self.grammardict.keys())
+
+class Encoding(AlphabetDefinition):
+    """Defines an alphabet using an encoding string"""
+    def __init__(self, encoding):
+        self.encoding = encoding
