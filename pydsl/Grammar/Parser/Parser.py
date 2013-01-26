@@ -55,9 +55,9 @@ def terminal_symbol_reducer(symbol, word, production):
             for end in range(begin, len(word)+1):
                 if symbol.check(word[begin:end]):
                     validresults.append(ParseTree(begin, end, [symbol], word[begin:end], production))
-    elif symbol.boundariesrules == "fixed":
+    elif isinstance(symbol.boundariesrules , int):
         LOG.debug("terminal_symbol_reducer: policy: fixed")
-        size = len(symbol)
+        size = symbol.boundariesrules
         for begin in range(0, len(word)):
             if symbol.check(word[begin:begin + size]):
                 LOG.debug("__auxReducer: parsed:"+ str(word[begin:begin + size]))
@@ -90,8 +90,8 @@ def terminal_symbol_consume(symbol, word):
             if symbol.check(word[begin:end]):
                 validresults.append(ParseTree(begin, end, [symbol], word[begin:end], symbol))
         return validresults
-    elif symbol.boundariesrules == "fixed":
-        size = len(symbol)
+    elif isinstance(symbol.boundariesrules,int):
+        size = symbol.boundariesrules
         LOG.debug("terminal_symbol_consume: policy: fixed " + str(size))
         if len(word) >= size and symbol.check(word[:size]):
             return [ParseTree(0, size, [symbol], word[:size], symbol)]

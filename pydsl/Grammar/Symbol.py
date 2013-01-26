@@ -61,7 +61,7 @@ class NonTerminalSymbol(Symbol):
 class TerminalSymbol(Symbol): 
     def __init__(self, name, weight, boundariesrules): 
         Symbol.__init__(self, name, weight)
-        if boundariesrules not in ("min","max","any","fixed"):
+        if boundariesrules not in ("min","max","any") and not isinstance(boundariesrules, int):
             raise TypeError
         self.boundariesrules = boundariesrules
 
@@ -74,7 +74,7 @@ class StringTerminalSymbol(TerminalSymbol): #FIXME This class is equivalent to a
     def __init__(self, string):
         if len(string) < 1:
             raise TypeError
-        TerminalSymbol.__init__(self, "StrSymbol " + string, 99, "fixed")
+        TerminalSymbol.__init__(self, "StrSymbol " + string, 99, len(string))
         self.definition = string
 
     def check(self, tokenlist):# -> bool:
