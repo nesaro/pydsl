@@ -81,6 +81,9 @@ def load_lexer(alphabet):
     elif isinstance(alphabet, BNFGrammar):
         from pydsl.Alphabet.Lexer import BNFLexer
         return BNFLexer(alphabet)
+    elif isinstance(alphabet, Encoding):
+        from pydsl.Alphabet.Lexer import EncodingLexer
+        return EncodingLexer(alphabet)
     else:
         raise ValueError(alphabet)
 
