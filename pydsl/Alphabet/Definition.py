@@ -40,7 +40,7 @@ class AlphabetDictDefinition(AlphabetDefinition):
 
     def __getitem__(self, item):
         from pydsl.Grammar.Symbol import WordTerminalSymbol
-        return WordTerminalSymbol(self.grammardict[item], self.grammardict[item], "max")
+        return WordTerminalSymbol(self.grammardict[item], "max")
 
     @property
     def symbols(self):

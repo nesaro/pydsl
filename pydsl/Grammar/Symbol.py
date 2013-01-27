@@ -25,18 +25,8 @@ import logging
 LOG = logging.getLogger(__name__)
 
 class Symbol(object):
-    def __init__(self, name, weight): 
-        self.name = name
+    def __init__(self, weight):
         self._weight = weight
-
-    def __eq__(self, other):
-        if not isinstance(other, Symbol):
-            return False
-        return self.name == other.name
-
-    def __ne__(self, other):
-        """Operator != """
-        return not self.__eq__(other)
 
     @property
     def weight(self):
@@ -48,7 +38,8 @@ class Symbol(object):
 
 class NonTerminalSymbol(Symbol):
     def __init__(self, name,  weight = 50):
-        Symbol.__init__(self, name, weight)
+        Symbol.__init__(self, weight)
+        self.name = name
 
     def __str__(self):
         return "<NonTS: " + self.name + ">"
@@ -59,82 +50,59 @@ class NonTerminalSymbol(Symbol):
         return self.name == other.name
 
 class TerminalSymbol(Symbol): 
-    def __init__(self, name, weight, boundariesrules): 
-        Symbol.__init__(self, name, weight)
+    def __init__(self, type, name, weight = None, boundariesrules = None):
+        if type == "string":
+            weight = weight or 99
+            boundariesrules = len(name)
+        elif type == "grammar":
+            weight = weight or 49
+        elif type == "token":
+            weight = weight or 49
+            boundariesrules = 1
+        Symbol.__init__(self, weight)
         if boundariesrules not in ("min","max","any") and not isinstance(boundariesrules, int):
             raise TypeError
+        self.type = type
+        self.name = name
         self.boundariesrules = boundariesrules
+
+    def __hash__(self):
+        return hash(self.type) ^ hash(self.name) ^ hash(self.boundariesrules)
 
     def check(self, data):# ->bool:
         """Checks if input is recognized as this symbol"""
-        raise NotImplementedError
+        if self.type == "string":
+            return data == self.name
+        elif self.type == "grammar":
+            from pydsl.Memory.Loader import load_checker
+            checker = load_checker(self.name)
+            return checker.check(data)
+        elif self.type == "token":
+            alphabet, token = self.name.split(".")
+            alphabet = load(alphabet)
+            symboldefinition = alphabet[token]
+            checker = load_checker(symboldefinition)
+            return checker.check(data)
+        else:
+            raise Exception
 
-
-class StringTerminalSymbol(TerminalSymbol): #FIXME This class is equivalent to a StaticGrammarDefinition
-    def __init__(self, string):
-        if len(string) < 1:
-            raise TypeError
-        TerminalSymbol.__init__(self, "StrSymbol " + string, 99, len(string))
-        self.definition = string
-
-    def check(self, tokenlist):# -> bool:
-        return tokenlist == self.definition
 
     def __eq__(self, other):
         """StringTerminalSymbol are equals if definition and names are equal"""
-        if isinstance(other, str):
-            return self.definition == other
-        if not isinstance(other, StringTerminalSymbol):
+        try:
+            if isinstance(other, str) and self.type == "string":
+                return self.name == other
+            return self.name == other.name and self.type == other.type and self.boundariesrules == other.boundariesrules
+        except AttributeError:
             return False
-        if self.definition != other.definition:
-            return False
-        if self.name != other.name:
-            return False
-        return True
-
-    def __len__(self):
-        return len(self.definition)
-
-    def first(self):
-        return self.definition[0]
 
     def __str__(self):
-        return "<StringTS: " + self.definition + ">"
+        return "<TS: " + str(self.type) + str(self.name) + ">"
 
-
-class WordTerminalSymbol(TerminalSymbol):#boundariesrules: [max,min,fixedsize]
-    def __init__(self, name, grammarname, boundariesrules):
-        TerminalSymbol.__init__(self, name, 49, boundariesrules)
-        self.grammarname = grammarname
-        self.__checker =  None 
-
-    @property
-    def checker(self):
-        if self.__checker is None:
-            from pydsl.Memory.Loader import load_checker
-            self.__checker = load_checker(self.grammarname)
-        return self.__checker
-
-    def __eq__(self, other):
-        if not isinstance(other, WordTerminalSymbol):
-            return False
-        if self.grammarname != other.grammarname:
-            return False
-        if self.name != other.name:
-            return False
-        return True
-
-    def check(self, string):
-        result =  self.checker.check(string)
-        return result
-
-    def __str__(self):
-        return "<WordTS: " + self.grammarname + ">"
-
-
-class UnknownSymbol(TerminalSymbol):
+class UnknownSymbol(Symbol):
     def __init__(self):
-        TerminalSymbol.__init__(self, "Unknown", 1, "any")
+        Symbol.__init__(self, 1)
+        self.boundariesrules = "any"
 
     def __eq__(self, other):
         return isinstance(other, UnknownSymbol)
@@ -144,12 +112,12 @@ class UnknownSymbol(TerminalSymbol):
 
 class NullSymbol(Symbol):
     def __init__(self):
-        Symbol.__init__(self, "Null", 100)
+        Symbol.__init__(self, 100)
 
     def __eq__(self, other):
         return isinstance(other, NullSymbol)
 
-    def bool(self):
+    def __bool__(self):
         return False
 
 class EndSymbol(TerminalSymbol):

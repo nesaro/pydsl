@@ -24,7 +24,7 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 import re
-from pydsl.Grammar.Symbol import StringTerminalSymbol, WordTerminalSymbol,  NonTerminalSymbol, NullSymbol, UnknownSymbol
+from pydsl.Grammar.Symbol import TerminalSymbol,  NonTerminalSymbol, NullSymbol, UnknownSymbol
 from pydsl.Grammar.BNF import Production
 LOG = logging.getLogger(__name__)
 
@@ -37,14 +37,14 @@ def __generateStringSymbol(rightside):
     content = tail
     if len(tail) > 2 and tail[1][0] == "'" and tail[1][-1] == "'":
         content = tail[1][1:-1]
-    return StringTerminalSymbol(content)
+    return TerminalSymbol("string", content)
 
 def __generateWordSymbol(rightside):
     args = rightside.split(",")
     if args[0] != "Word":
         raise TypeError
     br = args[2] #Boundary rule policy
-    return WordTerminalSymbol(args[1], args[1], br)
+    return TerminalSymbol("grammar",args[1], None, br)
 
 
 def read_nonterminal_production(line, symboldict):

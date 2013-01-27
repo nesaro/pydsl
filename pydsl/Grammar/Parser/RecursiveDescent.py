@@ -186,7 +186,7 @@ class RecursiveDescentParser(TopDownParser):
             if showerrors and not result:
                 erroresult = ParseTree(0,len(data), [onlysymbol] , data, production, valid = False)
                 for invalid in invalidstack:
-                    current_symbol = invalid.production if isinstance(invalid.production, TerminalSymbol) else invalid.production.leftside[0]
+                    current_symbol = invalid.production if isinstance(invalid.production, (TerminalSymbol, NullSymbol)) else invalid.production.leftside[0]
                     if current_symbol in production.rightside:
                         erroresult.append_child(invalid)
                 return [erroresult]

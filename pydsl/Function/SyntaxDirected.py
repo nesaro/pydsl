@@ -41,8 +41,8 @@ class SyntaxDirectedTransformer(object):
     def __parseSymbolTokenTree(self, stt):
         """Returns a tokenlist"""
         #productionruleset = list(self.inputchanneldic.values())[0].productionset
-        from pydsl.Grammar.Symbol import TerminalSymbol
-        if isinstance(stt.production, TerminalSymbol):
+        from pydsl.Grammar.Symbol import TerminalSymbol, NullSymbol
+        if isinstance(stt.production, (TerminalSymbol, NullSymbol)):
             return stt.content
         childlist = []
         for child in stt.childlist:

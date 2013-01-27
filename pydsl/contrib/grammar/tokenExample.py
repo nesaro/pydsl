@@ -14,7 +14,7 @@ from pydsl.Grammar.BNF import Production as _NTP
 _br = "max"
 
 
-_symbol1 = _WTS("one", "integer", _br)
+_symbol1 = _WTS("integer", _br)
 _symbol2 = _CTS("+")
 initialsymbol = _NTS("exp") 
 
