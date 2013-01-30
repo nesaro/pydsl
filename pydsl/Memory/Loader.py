@@ -24,7 +24,7 @@ __email__ = "nesaro@gmail.com"
 
 def load_checker(grammar):
     from pydsl.Grammar.BNF import BNFGrammar
-    from pydsl.Grammar.Definition import PLYGrammar, RegularExpressionDefinition, MongoGrammar
+    from pydsl.Grammar.Definition import PLYGrammar, RegularExpressionDefinition, MongoGrammar, StringGrammarDefinition
     from pydsl.Alphabet.Definition import AlphabetDictDefinition
     if isinstance(grammar, str):
         grammar = load(grammar)
@@ -46,6 +46,9 @@ def load_checker(grammar):
     elif isinstance(grammar, AlphabetDictDefinition):
         from pydsl.Checker import AlphabetDictChecker
         return AlphabetDictChecker(grammar)
+    elif isinstance(grammar, StringGrammarDefinition):
+        from pydsl.Checker import StringChecker
+        return StringChecker(grammar)
     elif isinstance(grammar, Encoding):
         from pydsl.Checker import EncodingChecker
         return EncodingChecker(grammar)

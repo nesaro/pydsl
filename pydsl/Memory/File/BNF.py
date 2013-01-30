@@ -37,14 +37,17 @@ def __generateStringSymbol(rightside):
     content = tail
     if len(tail) > 2 and tail[1][0] == "'" and tail[1][-1] == "'":
         content = tail[1][1:-1]
-    return TerminalSymbol("string", content)
+    from pydsl.Grammar.Definition import StringGrammarDefinition
+    return TerminalSymbol(StringGrammarDefinition(content))
 
 def __generateWordSymbol(rightside):
     args = rightside.split(",")
     if args[0] != "Word":
         raise TypeError
     br = args[2] #Boundary rule policy
-    return TerminalSymbol("grammar",args[1], None, br)
+
+    from pydsl.Memory.Loader import load
+    return TerminalSymbol(load(args[1]), None, br)
 
 
 def read_nonterminal_production(line, symboldict):

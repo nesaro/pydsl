@@ -153,6 +153,13 @@ class PLYChecker(Checker):
         else:
             return True
 
+class StringChecker(Checker):
+    def __init__(self, gd):
+        Checker.__init__(self)
+        self.gd = gd
+
+    def check(self, data):
+        return self.gd.string == data
 
 class JsonSchemaChecker(Checker):
     def __init__(self, gd):

@@ -81,10 +81,43 @@ class RegularExpressionDefinition(GrammarDefinition):
     def __getattr__(self, attr):
         return getattr(self.regexp, attr)
 
+class StringGrammarDefinition(GrammarDefinition):
+    def __init__(self, string):
+        self.string = string
+
+    @property
+    def first(self):
+        return self.string[0]
+
+    def enum(self):
+        yield self.string
+
+    @property
+    def maxsize(self):
+        return len(self.string)
+
+    @property
+    def minsize(self):
+        return len(self.string)
+
+    def __str__(self):
+        return str(self.string)
+
 class JsonSchema(GrammarDefinition, dict):
-    pass
+    def __init__(self, *args, **kwargs):
+        GrammarDefinition.__init__(self)
+        dict.__init__(self, *args, **kwargs)
 
 class MongoGrammar(GrammarDefinition, dict):
+    def __init__(self, *args, **kwargs):
+        GrammarDefinition.__init__(self)
+        dict.__init__(self, *args, **kwargs)
+
     @property
     def first(self):
         return "{"
+
+class PythonGrammar(GrammarDefinition, dict):
+    def __init__(self, *args, **kwargs):
+        GrammarDefinition.__init__(self)
+        dict.__init__(self, *args, **kwargs)

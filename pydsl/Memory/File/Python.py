@@ -58,7 +58,8 @@ def load_python_file(moduleobject, **kwargs):
         from pydsl.Grammar.Definition import MongoGrammar
         return MongoGrammar(resultdic)
     elif iclass in ["PythonGrammar"]:
-        return resultdic
+        from pydsl.Grammar.Definition import PythonGrammar
+        return PythonGrammar(resultdic)
     else:
         raise ValueError(str(moduleobject))
 

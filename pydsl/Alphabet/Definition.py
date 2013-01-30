@@ -39,8 +39,8 @@ class AlphabetDictDefinition(AlphabetDefinition):
             self.grammardict[x] = load(grammardict[x])
 
     def __getitem__(self, item):
-        from pydsl.Grammar.Symbol import WordTerminalSymbol
-        return WordTerminalSymbol(self.grammardict[item], "max")
+        from pydsl.Grammar.Definition import StringGrammarDefinition
+        return StringGrammarDefinition(self.grammardict[item])
 
     @property
     def symbols(self):
@@ -54,6 +54,6 @@ class Encoding(AlphabetDefinition):
     def __getitem__(self, item):
         from pydsl.Checker import EncodingChecker
         if EncodingChecker(self).check(item):
-            from pydsl.Grammar.Symbol import StringTerminalSymbol
-            return StringTerminalSymbol(item)
+            from pydsl.Grammar.Definition import StringGrammarDefinition
+            return StringGrammarDefinition(item)
         raise KeyError

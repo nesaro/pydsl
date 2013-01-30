@@ -23,6 +23,7 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
+from pydsl.Grammar.Definition import StringGrammarDefinition, GrammarDefinition
 
 class Symbol(object):
     def __init__(self, weight):
@@ -50,54 +51,41 @@ class NonTerminalSymbol(Symbol):
         return self.name == other.name
 
 class TerminalSymbol(Symbol): 
-    def __init__(self, type, name, weight = None, boundariesrules = None):
-        if type == "string":
+    def __init__(self, gd, weight = None, boundariesrules = None):
+        if isinstance(gd, StringGrammarDefinition):
             weight = weight or 99
-            boundariesrules = len(name)
-        elif type == "grammar":
+            boundariesrules = len(gd.string)
+        else:
             weight = weight or 49
-        elif type == "token":
-            weight = weight or 49
-            boundariesrules = 1
         Symbol.__init__(self, weight)
         if boundariesrules not in ("min","max","any") and not isinstance(boundariesrules, int):
             raise TypeError
-        self.type = type
-        self.name = name
+        self.gd = gd
         self.boundariesrules = boundariesrules
 
     def __hash__(self):
-        return hash(self.type) ^ hash(self.name) ^ hash(self.boundariesrules)
+        return hash(self.gd) ^ hash(self.boundariesrules)
 
     def check(self, data):# ->bool:
         """Checks if input is recognized as this symbol"""
-        if self.type == "string":
-            return data == self.name
-        elif self.type == "grammar":
-            from pydsl.Memory.Loader import load_checker
-            checker = load_checker(self.name)
-            return checker.check(data)
-        elif self.type == "token":
-            alphabet, token = self.name.split(".")
-            alphabet = load(alphabet)
-            symboldefinition = alphabet[token]
-            checker = load_checker(symboldefinition)
-            return checker.check(data)
-        else:
-            raise Exception
+        from pydsl.Memory.Loader import load_checker
+        checker = load_checker(self.gd)
+        return checker.check(data)
+
+    @property
+    def first(self):
+        return self.gd.first
 
 
     def __eq__(self, other):
         """StringTerminalSymbol are equals if definition and names are equal"""
         try:
-            if isinstance(other, str) and self.type == "string":
-                return self.name == other
-            return self.name == other.name and self.type == other.type and self.boundariesrules == other.boundariesrules
+            return self.gd == other.gd and self.boundariesrules == other.boundariesrules
         except AttributeError:
             return False
 
     def __str__(self):
-        return "<TS: " + str(self.type) + str(self.name) + ">"
+        return "<TS: " + str(self.gd) + ">"
 
 class UnknownSymbol(Symbol):
     def __init__(self):
