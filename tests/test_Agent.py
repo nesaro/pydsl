@@ -20,7 +20,7 @@ __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
-from pydsl.Agent import AgentNetwork
+import sys
 
 def fun1(parent, obj):
     print("FUN !")
@@ -31,7 +31,9 @@ class TestAgentNetwork(unittest.TestCase):
     def setUp(self):
         pass
 
+    @unittest.skipIf(sys.version_info >= (3, 0, 0), "requires python2")
     def testNetwork(self):
+        from pydsl.Agent import AgentNetwork
         initlist = [("agent1", {'input':fun1})]
         #initlist = [("agent1", {'input':lambda parent,obj:'OK'})]
         mynetwork = AgentNetwork("ExampleExchange", initlist)
