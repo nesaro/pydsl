@@ -45,10 +45,13 @@ class NonTerminalSymbol(Symbol):
     def __str__(self):
         return "<NonTS: " + self.name + ">"
 
+    def __hash__(self):
+        return hash(self.name) ^ hash(self.weight)
+
     def __eq__(self, other):
         if not isinstance(other, NonTerminalSymbol):
             return False
-        return self.name == other.name
+        return self.name == other.name and self.weight == other.weight
 
 class TerminalSymbol(Symbol): 
     def __init__(self, gd, weight = None, boundariesrules = None):
@@ -60,6 +63,8 @@ class TerminalSymbol(Symbol):
         Symbol.__init__(self, weight)
         if boundariesrules not in ("min","max","any") and not isinstance(boundariesrules, int):
             raise TypeError
+        if not gd:
+            raise Exception
         self.gd = gd
         self.boundariesrules = boundariesrules
 
