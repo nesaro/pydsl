@@ -50,7 +50,7 @@ class DirStorage(Memory):
         for filename in self.all_files():
             try:
                 self.cache.append(self.summary_from_filename(filename))
-            except (AttributeError,ImportError) as e:
+            except (AttributeError,ImportError, TypeError) as e:
                 LOG.debug("Error while loading %s file summary" % filename )
         return self
 

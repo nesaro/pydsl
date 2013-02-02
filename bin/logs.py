@@ -26,17 +26,16 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 
-
 def input_file_generator(filename):
-    with open(filename,'r') as f:
-        while True:
-            content = f.readline()
-            if content:
-                yield content
-            else:
-                import time
-                time.sleep(1)
-
+    """yields lines from a file"""
+    from subprocess import Popen,PIPE,STDOUT
+    process = Popen('tail -n 0 -F ' + filename, stdout=PIPE,bufsize=0, stderr=STDOUT, shell=True)
+    while True:
+        line = process.stdout.readline()
+        if line:
+            yield line.decode().strip()
+        else:
+            sleep(0.1)
 
 process_list = [
     {'input':{'type':'file','location':'/var/log/syslog'},
@@ -77,8 +76,15 @@ if __name__ == "__main__":
     ARGS = PARSER.parse_args()
     DEBUGLEVEL = ARGS.debuglevel or logging.WARNING
     logging.basicConfig(level = DEBUGLEVEL)
+    import os
+    os.setpgrp()
     from multiprocessing import Pool
     p = Pool(processes=max(len(process_list),2))
-    #result = [p.apply_async(executeprocess,process) for process in process_list]
-    p.map(executeprocess, process_list)
-
+    try:
+        p.map_async(executeprocess, process_list).get(99999) # http://stackoverflow.com/questions/1408356/keyboard-interrupts-with-pythons-multiprocessing-pool
+        p.close()
+    except Exception as e:
+        print(e)
+    finally:
+        import signal
+        os.killpg(0, signal.SIGKILL) #kill subprocess
