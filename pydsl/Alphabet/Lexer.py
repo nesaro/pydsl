@@ -91,7 +91,7 @@ class BNFLexer(Lexer):
     """Generates a Lexer from a BNFGrammar instance"""
     def __init__(self, bnfgrammar):
         Lexer.__init__(self)
-        self.symbollist = bnfgrammar.getTerminalSymbols()
+        self.symbollist = bnfgrammar.terminalsymbollist
 
     @property
     def current(self):

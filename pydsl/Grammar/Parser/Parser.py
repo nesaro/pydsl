@@ -126,7 +126,7 @@ class BottomUpParser(Parser):
     def __init__(self, bnfgrammar):
         from pydsl.Alphabet.Lexer import BNFLexer
         self._lexer = BNFLexer(bnfgrammar)
-        terminalsymbollist = bnfgrammar.getTerminalSymbols()
+        terminalsymbollist = bnfgrammar.terminalsymbollist
         for ts in terminalsymbollist:
             from pydsl.Grammar.Symbol import WordTerminalSymbol
             if isinstance(ts, WordTerminalSymbol):

@@ -191,10 +191,6 @@ class BNFGrammar(GrammarDefinition): #Only stores a ruleset, and methods to ask 
     def getProductions(self):
         return self.productionlist
 
-    def getTerminalSymbols(self):
-        """Returns a list with every terminal symbol """
-        return self.terminalsymbollist
-
     def getProductionIndex(self, rule):
         return self.productionlist.index(rule)
 
