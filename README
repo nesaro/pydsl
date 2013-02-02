@@ -75,8 +75,8 @@ Using contrib
 -------------------
     from pydsl.Memory.Loader import *
     mychecker = load_checker(integer)
-    mytransformer = load_function('inttohex')
-    result = a({'input':'123'})
+    mytransformer = load('inttohex')
+    result = mytransformer({'input':'123'})
 
 BINARIES
 ========
@@ -112,7 +112,7 @@ contrib directory contains several types of elements. Those elements are either 
  * board: Transformer are Functions too:
    * translate: translate -e input -t functionname
  * dict/filetype.dict: A list of filetypes, which are types
- * dict/refexp.dict: A list of Regular expressions, which are types
+ * dict/regexp.dict: A list of Regular expressions, which are types
 
 search program will find any element within the library.
 info gives a summary for an element
