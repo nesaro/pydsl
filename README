@@ -89,6 +89,7 @@ Grammars
  * check.py: Checks if input data belongs to a grammar
  * guess:py: Determines input data type
  * validate.py: Perform a validation routine for user data according to a grammar
+ * lexer.py: Generates a token list from an input according to an alphaber
 
 Functions
 ---------
