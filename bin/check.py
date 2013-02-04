@@ -42,7 +42,7 @@ def bool_dict_values(dic):
             dic[key] = bool(dic[key])
     return dic
 
-def checker(expression = None, outputfiledic = None, inputfiledic = None, pipemode = None, **kwargs ):
+def checker(expression = None, outputfiledic = None, inputfiledic = None, **kwargs ):
     #Generating and connecting output
     #listen to user, open read file, or other
     #configure output, write file, or other
@@ -72,18 +72,9 @@ def checker(expression = None, outputfiledic = None, inputfiledic = None, pipemo
         resultdic = bool_dict_values(resultdic)
         from pydsl.Interaction.Shell import save_result_to_output
         save_result_to_output(resultdic, outputdic)
-    elif pipemode:
-        from pydsl.Interaction.Shell import StreamFileToTransformerInteraction
-        assert(len(maingt.inputchanneldic) == 1)
-        assert(len(maingt.outputchanneldic) == 1)
-        inputname = list(maingt.inputchanneldic.keys())[0]
-        outputname = list(maingt.outputchanneldic.keys())[0]
-        interactor = StreamFileToTransformerInteraction(maingt, {inputname:"stdin"} , {outputname:"stdout"})
-        interactor.start()
     elif not inputfiledic and not outputfiledic and not expression:
-        from pydsl.Interaction.Shell import CommandLineToTransformerInteraction
-        interactor = CommandLineToTransformerInteraction(maingt)
-        interactor.start()
+        from pydsl.Interaction.Shell import command_line_to_transformer
+        command_line_to_transformer(maingt)
     else:
         raise Exception
     return True
@@ -96,7 +87,6 @@ if __name__ == "__main__":
     PARSER.add_argument("-i", "--inputfile", action="store", dest="inputfiledic", help="input filename dict")
     PARSER.add_argument("-o", "--outputfile", action="store", dest="outputfiledic", help="output filename dict")
     PARSER.add_argument("-e", "--expression", action="store", dest="expression", help="input expression")
-    PARSER.add_argument("-p", "--pipe", action="store_true", dest="pipemode", help="Pipe interaction mode")
     PARSER.add_argument("tname", metavar="tname", help="Type name")
     ARGS = PARSER.parse_args()
     import sys

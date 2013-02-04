@@ -25,7 +25,7 @@ import sys
 import logging
 LOG = logging.getLogger(__name__)
 
-promptstr = "Insert data (q to exit)"
+promptstr = "Insert data (Control-d to exit)"
 try: input = raw_input #Python2 workaround http://stackoverflow.com/questions/954834/how-do-i-use-raw-input-in-python-3-1
 except: pass
 
@@ -94,114 +94,37 @@ def save_result_to_output(resultdic, outputdic):
             with open(outputdic[key], 'w') as currentfile:  # print to file
                 currentfile.write(str(resultdic[key]))
 
-
-class CommandLineToTransformerInteraction(object):
-    """Shell interaction for functions"""
-    def __init__(self, gt):
-        self._tinstance = gt
-
-    def start(self):
-        print("Input: " + ",".join(self._tinstance.inputchanneldic.keys()))
-        value = self._getInput()
-        while value is not None:
-            resultdic = self._tinstance(value)
-            if not resultdic:
-                print(str(resultdic) + "\n")
-            else:
-                for key in resultdic.keys():
-                    try:
-                        resultdic[key] = str(resultdic[key])
-                    except UnicodeDecodeError:
-                        resultdic[key] = "Unprintable"
-                if len(resultdic) == 1:
-                    print(str(list(resultdic.values())[0]) + "\n")
-                else:
-                    print(str(resultdic) + "\n")
-            value = self._getInput()
-        print("Bye Bye")
-
-    def _getInput(self):
-        print(promptstr)
-        var = "Anything"
-        while True:
-            inputdic = {}
-            try:
-                for channel in self._tinstance.inputchanneldic.keys():
-                    var = input(channel + ":\n")
-                    if var == "q":
-                        return None
-                    inputdic[channel] = var
-            except (SyntaxError, NameError, TypeError):
-                pass
-            for channel in self._tinstance.inputchanneldic.keys():
-                if channel not in inputdic:
-                    print('Invalid python dict. Example: {"key":"value1",...}')
-                    var = input(promptstr)  # TODO use AST
-                continue
-            return inputdic
-
-
-class StreamFileToTransformerInteraction(object):
-    """Write to file n times"""
-    def __init__(self, gt, inputfiledic, outputfiledic=None):
-        if not outputfiledic: outputfiledic = {}
-        self._tinstance = gt
-        self._inputfiledic = inputfiledic
-        self._outputfiledic = outputfiledic
-
-    def start(self):
+def getInput(tinstance):
+    print(promptstr)
+    var = "Anything"
+    while True:
         inputdic = {}
-        stringdic = {}
-        for channel, filename in self._inputfiledic.items():
-            if filename == "stdin":
-                inputdic[channel] = "stdin"
-                stringdic[channel] = "stdin"
-            else:
-                inputdic[channel] = open(filename, 'r')
-                stringdic[channel] = inputdic[channel].readline()
-        myand = lambda a, b: a and b
-        from functools import reduce
-        while reduce(myand, stringdic.values()):
-            stringdiccopy = dict(stringdic)
-            endofstdin = False
-            for channel, content in stringdiccopy.items():
-                if content == "stdin":
-                    line = sys.stdin.readline()
-                    if not line:
-                        endofstdin = True
-                    else:
-                        stringdic[channel] = line.rstrip('\n')
-                    break
-            if endofstdin:
-                break  # No new line received
-            resultdic = self._tinstance(stringdic)
-            self.__showOutput(resultdic)
-            for channel, filename in self._inputfiledic.items():
-                if filename == "stdin":
-                    stringdic[channel] = "stdin"
-                else:
-                    stringdic[channel] = inputdic[channel].readline()
-                    if not stringdic[channel]:
-                        break
-        for key, filehandler in inputdic.items():
-            if key != "input" and filehandler != "stdin":
-                filehandler.close()
+        try:
+            for channel in tinstance.inputchanneldic.keys():
+                var = input(channel + ":\n")
+                inputdic[channel] = var
+        except (SyntaxError, NameError, TypeError):
+            pass
+        return inputdic
 
-    def __showOutput(self, resultdic):
-        #TODO: check if is an error. if stdout is used, use stderr
+def command_line_to_transformer(tinstance, inputfunc = getInput):
+    """Shell interaction for functions"""
+    print("Input: " + ",".join(tinstance.inputchanneldic.keys()))
+    value = inputfunc(tinstance)
+    while value is not None:
+        resultdic = tinstance(value)
         if not resultdic:
-            sys.stderr.write(str(resultdic) + "\n")
-        elif not self._outputfiledic:
-            #No output information, stdout assumed
-            for key in resultdic:
-                print(resultdic[key].string.strip())
+            print(str(resultdic) + "\n")
         else:
-            for key in self._outputfiledic:
-                if not key in resultdic:
-                    raise Exception("No output channel detected")
-            for key in self._outputfiledic:
-                if self._outputfiledic[key] == "stdout":  # print to screen
-                    print(resultdic[key].string.strip())
-                else:  # print to file
-                    with open(self._outputfiledic[key], 'a') as currentfile:
-                        currentfile.write(resultdic[key].string + "\n")
+            for key in resultdic.keys():
+                try:
+                    resultdic[key] = str(resultdic[key])
+                except UnicodeDecodeError:
+                    resultdic[key] = "Unprintable"
+            if len(resultdic) == 1:
+                print(str(list(resultdic.values())[0]) + "\n")
+            else:
+                print(str(resultdic) + "\n")
+        value = inputfunc(tinstance)
+    print("Bye Bye")
+
