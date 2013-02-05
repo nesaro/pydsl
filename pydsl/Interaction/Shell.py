@@ -95,13 +95,20 @@ def save_result_to_output(resultdic, outputdic):
                 currentfile.write(str(resultdic[key]))
 
 def getInput(tinstance):
-    print(promptstr)
+    if not sys.stdin.isatty():
+        if len(tinstance.inputchanneldic) != 1:
+            raise Exception("More than one channel required and no tty detected")
+    else:
+        print(promptstr)
     var = "Anything"
     while True:
         inputdic = {}
         try:
             for channel in tinstance.inputchanneldic.keys():
-                var = input(channel + ":\n")
+                inputstr = ""
+                if sys.stdin.isatty():
+                    inputstr = channel + ":\n"
+                var = input(inputstr)
                 inputdic[channel] = var
         except (SyntaxError, NameError, TypeError):
             pass
@@ -109,7 +116,8 @@ def getInput(tinstance):
 
 def command_line_to_transformer(tinstance, inputfunc = getInput):
     """Shell interaction for functions"""
-    print("Input: " + ",".join(tinstance.inputchanneldic.keys()))
+    if sys.stdin.isatty():
+        print("Input: " + ",".join(tinstance.inputchanneldic.keys()))
     value = inputfunc(tinstance)
     while value is not None:
         resultdic = tinstance(value)
