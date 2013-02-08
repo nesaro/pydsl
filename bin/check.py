@@ -28,53 +28,28 @@ import logging
 from pydsl.Exceptions import BadFileFormat
 from pydsl.Interaction.Shell import parse_shell_dict, open_files_dict 
 
-def checkfun(inputdic, auxboarddic, inputgt, outputgt):
-    output = auxboarddic["checker"]({"string":inputdic["input"], "grammar":CURRENTGRAMMAR})
-    if not output:
-        return output
-    return {"output":str(output["output"])}
-
-def bool_dict_values(dic):
-    for key in dic:
-        if str(dic[key]) == "False":
-            dic[key] = False
-        else:
-            dic[key] = bool(dic[key])
-    return dic
-
-def checker(expression = None, outputfiledic = None, inputfiledic = None, **kwargs ):
+def checker(grammar, expression = None, inputfiledic = None, **kwargs ):
     #Generating and connecting output
     #listen to user, open read file, or other
     #configure output, write file, or other
-    from pydsl.Function.Python import HostPythonTransformer
-    maingt = HostPythonTransformer({"input":"cstring"},{"output":"TrueFalse"},{"checker":"GrammarChecker"}, checkfun) 
-    if expression and outputfiledic: #input type: expression #output: file
-        myexpression = {"input":expression}
-        outputdic = parse_shell_dict(outputfiledic)
-        resultdic = maingt(myexpression, outputdic)
-        resultdic = bool_dict_values(resultdic)
-        from pydsl.Interaction.Shell import save_result_to_output
-        save_result_to_output(resultdic, outputdic)
-        return resultdic
-    elif expression and not outputfiledic:
-        myexpression = {"input":expression}
-        result = maingt(myexpression)["output"]
+    if expression:
+        from pydsl.Memory.Loader import load_checker
+        checker = load_checker(grammar)
+        result = checker.check(expression)
         #result = bool_dict_values(str(result["output"]))
         print(result)
         return result #FIXME: Only expression mode expects a returned result
     elif inputfiledic:
         inputdic = parse_shell_dict(inputfiledic)
         outputdic = {"output":"stdout"}
-        if outputfiledic:
-            outputdic = parse_shell_dict(outputfiledic)
         stringdic = open_files_dict(inputdic)
-        resultdic = maingt(stringdic)
+        resultdic = checkfun(stringdic)
         resultdic = bool_dict_values(resultdic)
         from pydsl.Interaction.Shell import save_result_to_output
         save_result_to_output(resultdic, outputdic)
-    elif not inputfiledic and not outputfiledic and not expression:
+    elif not inputfiledic and not expression:
         from pydsl.Interaction.Shell import command_line_to_transformer
-        command_line_to_transformer(maingt)
+        command_line_to_transformer(checkfun)
     else:
         raise Exception
     return True
@@ -85,25 +60,13 @@ if __name__ == "__main__":
     PARSER = argparse.ArgumentParser(usage = TUSAGE)
     PARSER.add_argument("-d", "--debuglevel", action="store", type=int, dest="debuglevel", help="Sets debug level")
     PARSER.add_argument("-i", "--inputfile", action="store", dest="inputfiledic", help="input filename dict")
-    PARSER.add_argument("-o", "--outputfile", action="store", dest="outputfiledic", help="output filename dict")
     PARSER.add_argument("-e", "--expression", action="store", dest="expression", help="input expression")
-    PARSER.add_argument("tname", metavar="tname", help="Type name")
+    PARSER.add_argument("grammar", metavar="grammar", help="Grammar name")
     ARGS = PARSER.parse_args()
     import sys
-    if (ARGS.outputfiledic and not ARGS.expression) and (ARGS.outputfiledic and not ARGS.inputfiledic):
-        PARSER.error("options -o require -e or -i")
     DEBUGLEVEL = ARGS.debuglevel or logging.WARNING
     
     logging.basicConfig(level = DEBUGLEVEL)
-    try: 
-        global CURRENTGRAMMAR
-        CURRENTGRAMMAR = ARGS.tname
-    except BadFileFormat:
-        print("Error reading input file")
-        sys.exit(1)
-    except KeyError as le:
-        print("Unable to load " + str(le))
-        sys.exit(1)
     try:
         result = checker(**vars(ARGS))
     except EOFError:

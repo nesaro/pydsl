@@ -33,11 +33,6 @@ functions that use both _alphabets_ and _grammar definitions_:
  * check(d, input): test the input string against the spec
  * extract(gd, input): extract all the slices of the input that are accepted by the definition 
 
-translation functions:
- * translate(td, input): generic translator
-   * ast(astdefinition, input): creates an abstract syntax tree according to astdefinition
-   * sdt( sdt, ast): Performs an AST translation using a Syntax Directed Translator
-
 pydsl also offers library related functions:
  * manager s query: search for an element within a memory
  * manager i identifier: returns information about the element
@@ -75,8 +70,7 @@ Using contrib
 -------------------
     from pydsl.Memory.Loader import *
     mychecker = load_checker(integer)
-    mytransformer = load('inttohex')
-    result = mytransformer({'input':'123'})
+    mychecker.check("1234")
 
 BINARIES
 ========
@@ -90,26 +84,16 @@ Grammars
  * guess:py: Determines input data type
  * validate.py: Perform a validation routine for user data according to a grammar
 
-Functions
----------
- * translate.py: Process user input using a function
-
 
 CONTRIB
 =======
 
 contrib directory contains several types of elements. Those elements are either imported by colony or used as a function argument for their binaries.
 
- * board: Boards are Functions, therefore they can be used as an argument for:
-   * translate: translate -e input -t boardname
  * grammar: Grammar are Types; they can be used with the following programs:
    * check: check -e expression grammarname
    * extract: extract -e expression grammarname
    * validate: extract -e expression grammarname
- * procedure: procedure are functions, but have no input 
-   * translate: translate -t procedurename
- * board: Transformer are Functions too:
-   * translate: translate -e input -t functionname
  * dict/filetype.dict: A list of filetypes, which are types
  * dict/regexp.dict: A list of Regular expressions, which are types
 
