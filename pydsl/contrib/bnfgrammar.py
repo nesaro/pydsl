@@ -11,6 +11,16 @@ leftrecursive=["S ::= E","E ::= E dot | dot","dot := String,."]
 rightrecursive=["S ::= E","E ::= dot E | dot","dot := String,."]
 centerrecursive=["S ::= E","E ::= dot E dot | dot","dot := String,."]
 
+#productionset0 definition
+
+symbol1 = TerminalSymbol(StringGrammarDefinition("S"))
+symbol2 = TerminalSymbol(StringGrammarDefinition("R"))
+final1 = NonTerminalSymbol("exp")
+rule1 = Production([final1], [symbol1, symbol2])
+productionset0 = BNFGrammar(final1, [rule1])
+p0good = "SR"
+p0bad = "SRL"
+
 
 #productionset1 definition
 symbol1 = TerminalSymbol(StringGrammarDefinition("S"))
