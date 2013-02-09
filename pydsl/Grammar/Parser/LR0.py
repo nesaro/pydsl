@@ -212,13 +212,14 @@ class LR0ItemSet(object):
     """Stores LR0Items, and a dic with symbols and destination states"""
     def __init__(self):
         self.itemlist = []
-        self.__transitiondic = {}
+        self.transitions = {}
 
     def __str__(self):
         result = "<LR0ItemSet: \n"
         for item in self.itemlist:
             result += str(item) + ","
-        result += "transitions:" + str(self.__transitiondic)
+        if self.transitions:
+            result += "transitions:" + str([str(x) + str(y) for (x,y) in self.transitions.items()])
         result += ">"
         return result
 
@@ -241,16 +242,16 @@ class LR0ItemSet(object):
 
     def append_transition(self, symbol, targetset):
         """Appends a transition"""
-        if symbol in self.__transitiondic:
+        if symbol in self.transitions:
             return
-        self.__transitiondic[symbol] = targetset
+        self.transitions[symbol] = targetset
 
     def has_transition(self, symbol):
-        return symbol in self.__transitiondic
+        return symbol in self.transitions
 
     def get_transition(self, symbol):
         """gets a transition"""
-        return self.__transitiondic[symbol]
+        return self.transitions[symbol]
 
 class LR0Parser(BottomUpParser):
     """LR0 bottomup parser. Not finished"""
