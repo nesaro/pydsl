@@ -63,8 +63,8 @@ def item_set_goto(itemset, inputsymbol, productionset):
     return _build_item_closure(resultset, productionset)
 
 def build_states_sets(productionset):
-    symbollist = productionset.getSymbols()
-    mainproductionrule =  Production([NonTerminalSymbol("EI")] , [productionset.initialsymbol])
+    symbollist = productionset.getSymbols() + [EndSymbol()]
+    mainproductionrule =  Production([NonTerminalSymbol("EI")] , [productionset.initialsymbol, EndSymbol()])
     mainproductionruleitem = LR0Item(mainproductionrule)
     mainproductionruleitemset = LR0ItemSet()
     mainproductionruleitemset.append_item(mainproductionruleitem)
@@ -96,7 +96,7 @@ def _slr_build_parser_table(productionset):
     for itemindex in range(len(statesset)):
         itemset = statesset[itemindex]
         LOG.debug("_slr_build_parser_table: Evaluating itemset:" + str(itemset))
-        for symbol in productionset.getSymbols() + [EndSymbol]:
+        for symbol in productionset.getSymbols() + [EndSymbol()]:
             numberoptions = 0
             for lritem in itemset.itemlist:
                 #if cursor is before a terminal, and there is a transition to another itemset with the following terminal, append shift rule
