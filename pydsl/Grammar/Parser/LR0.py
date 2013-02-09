@@ -182,7 +182,9 @@ class LR0Item(object):
         self.position = position
 
     def __str__(self):
-        return "<LR0Item - Rule: " + str(self.rule) + " Position: " + str(self.position) + ">"
+        rscopy = [str(x) for x in self.rule.rightside]
+        rscopy.insert(self.position, ".")
+        return str([str(x) for x in self.rule.leftside]) + ": " + str(rscopy) 
 
     def __eq__(self, other):
         if not isinstance(other, LR0Item):
