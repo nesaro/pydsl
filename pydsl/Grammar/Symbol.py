@@ -113,5 +113,18 @@ class NullSymbol(Symbol):
     def __bool__(self):
         return False
 
-class EndSymbol(TerminalSymbol):
-    pass
+class EndSymbol(Symbol):
+    def __init__(self):
+        Symbol.__init__(self, 100)
+
+    def __hash__(self):
+        return hash(str(self))
+
+    def __eq__(self, other):
+        return isinstance(other, EndSymbol)
+
+    def __bool__(self):
+        return False
+
+    def __str__(self):
+        return "$"

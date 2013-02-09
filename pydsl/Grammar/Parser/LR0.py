@@ -129,6 +129,9 @@ class ParserTable(object):
         #Default for every state: Fail state
         self.__table = {}
 
+    def __len__(self):
+        return len(self.__table)
+
     def __str__(self):
         return "<ParserTable - State:" + str(self.__internalstate) + " Table: " + str(self.__table) + ">"
 
@@ -222,6 +225,9 @@ class LR0ItemSet(object):
             result += "transitions:" + str([str(x) + str(y) for (x,y) in self.transitions.items()])
         result += ">"
         return result
+
+    def __bool__(self):
+        return bool(self.itemlist)
 
     def __eq__(self, anotherset):
         """Tests on itemlist equality"""
