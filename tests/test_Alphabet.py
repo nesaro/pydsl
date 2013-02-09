@@ -38,11 +38,6 @@ class TestAlphabet(unittest.TestCase):
         lexer = load_lexer(self.alphabet)
         self.assertListEqual(lexer("1234"), TokenList((Token("integer", "1234"), Token("EOF_TYPE", ""))))
 
-    def testTranslator(self):
-        translator = load("upperCase")
-        y = translator(TokenList((Token("cstring", "abcde"), Token("EOF_TYPE", ""))))
-        self.assertEqual(y["output"], "ABCDE")
-
     def testProperties(self):
         self.alphabet.symbols #list allowed symbols
 

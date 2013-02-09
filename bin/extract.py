@@ -34,7 +34,7 @@ def checkfun(inputdic, auxboarddic, inputgt, outputgt):
         return output
     return {"output":str(output["output"])}
 
-def extract(expression = None, outputfiledic = None, pipemode = None, inputfiledic = None, **kwargs):
+def extract(expression = None, outputfiledic = None, inputfiledic = None, **kwargs):
     #Generating and connecting output
     #listen to user, open read file, or other
     #configure output, write file, or other
@@ -61,14 +61,6 @@ def extract(expression = None, outputfiledic = None, pipemode = None, inputfiled
         resultdic = bool_dict_values(resultdic)
         from pydsl.Interaction.Shell import save_result_to_output
         save_result_to_output(resultdic, outputdic)
-    elif pipemode:
-        from pydsl.Interaction.Shell import StreamFileToTransformerInteraction
-        assert(len(maingt.inputchanneldic) == 1)
-        assert(len(maingt.outputchanneldic) == 1)
-        inputname = list(maingt.inputchanneldic.keys())[0]
-        outputname = list(maingt.outputchanneldic.keys())[0]
-        interactor = StreamFileToTransformerInteraction(maingt, {inputname:"stdin"} , {outputname:"stdout"})
-        interactor.start()
     else:
         raise Exception
     return True
