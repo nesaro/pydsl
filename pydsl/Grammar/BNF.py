@@ -82,6 +82,15 @@ class BNFGrammar(GrammarDefinition): #Only stores a ruleset, and methods to ask 
         return [x for x in self.fulllist if isinstance(x, TerminalSymbol)]
 
     @property
+    def symbollist(self):
+        result = []
+        for x in self.productionlist:
+            for y in x.leftside + x.rightside:
+                if y not in result:
+                    result.append(y)
+        return result
+
+    @property
     def first(self):
         """Returns the list of terminalsymbols that can be the first element of this grammar"""
         return [x.first for x in self.terminalsymbollist]
