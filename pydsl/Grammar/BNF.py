@@ -83,7 +83,16 @@ class BNFGrammar(GrammarDefinition): #Only stores a ruleset, and methods to ask 
 
     @property
     def first(self):
+        """Returns the list of terminalsymbols that can be the first element of this grammar"""
         return [x.first for x in self.terminalsymbollist]
+
+    def first_lookup(self, symbol = None):
+        """Returns the first TerminalSymbols produced by the input symbol within this grammar definition"""
+        pass
+
+    def next_lookup(self, symbol = None):
+        """Returns the next TerminalSymbols produced by the input symbol within this grammar definition"""
+        pass
 
     @property
     def left_recursive(self):# -> bool:
