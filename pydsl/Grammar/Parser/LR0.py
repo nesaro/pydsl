@@ -209,7 +209,7 @@ class LR0Item(object):
 
     def is_last_position(self):
         """Returns true if cursor if after last element"""
-        return self.position > len(self.rule.rightside)
+        return self.position >= len(self.rule.rightside)
 
 class LR0ItemSet(object):
     """Stores LR0Items, and a dic with symbols and destination states"""
