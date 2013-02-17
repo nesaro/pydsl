@@ -85,6 +85,12 @@ class StringGrammarDefinition(GrammarDefinition):
     def __init__(self, string):
         self.string = string
 
+    def __eq__(self, other):
+        try:
+            return self.string == other.string
+        except AttributeError:
+            return False
+
     @property
     def first(self):
         return self.string[0]
