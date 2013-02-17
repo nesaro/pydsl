@@ -17,7 +17,7 @@
 
 """Production rules"""
 
-from pydsl.Grammar.Symbol import Symbol, TerminalSymbol
+from pydsl.Grammar.Symbol import Symbol, TerminalSymbol, NullSymbol
 from pydsl.Grammar.Definition import GrammarDefinition
 
 __author__ = "Nestor Arocha"
@@ -95,11 +95,24 @@ class BNFGrammar(GrammarDefinition): #Only stores a ruleset, and methods to ask 
         """Returns the list of terminalsymbols that can be the first element of this grammar"""
         return [x.first for x in self.terminalsymbollist]
 
-    def first_lookup(self, symbol = None):
+    def first_lookup(self, symbol):
         """Returns the first TerminalSymbols produced by the input symbol within this grammar definition"""
-        pass
+        if isinstance(symbol, (TerminalSymbol, NullSymbol)):
+            return [symbol]
+        result = []
+        for x in self.productionlist:
+            if x.leftside[0] != symbol:
+                continue
+            for y in x.rightside:
+                current_symbol_first = self.first_lookup(y)
+                result += current_symbol_first
+                if NullSymbol not in current_symbol_first:
+                    break # This element doesn't have Null in its first set so there is no need to continue
+        if not result:
+            raise KeyError("Symbol doesn't exist in this grammar")
+        return result
 
-    def next_lookup(self, symbol = None):
+    def next_lookup(self, symbol):
         """Returns the next TerminalSymbols produced by the input symbol within this grammar definition"""
         pass
 

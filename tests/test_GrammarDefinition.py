@@ -43,23 +43,32 @@ class TestGrammarDefinitionRegularExpression(unittest.TestCase):
         self.grammardef.maxsize()
 
 
-@unittest.skip
 class TestGrammarDefinitionBNF(unittest.TestCase):
     def setUp(self):
-        self.grammardef = None
+        from pydsl.contrib.bnfgrammar import productionset0
+        self.grammardef = productionset0
 
+    @unittest.skip
     def testEnumerate(self):
         self.grammardef.enum()
 
+    @unittest.skip
     def testFirst(self):
         self.grammardef.first()
 
+    @unittest.skip
     def testMin(self):
         self.grammardef.minsize()
 
+    @unittest.skip
     def testMax(self):
         self.grammardef.maxsize()
 
+    def testFirstLookup(self):
+        from pydsl.Grammar.Symbol import NonTerminalSymbol, TerminalSymbol
+        from pydsl.Grammar.Definition import StringGrammarDefinition
+        print(self.grammardef.first_lookup(NonTerminalSymbol("exp"))[0])
+        self.assertListEqual(self.grammardef.first_lookup(NonTerminalSymbol("exp")),[TerminalSymbol(StringGrammarDefinition("S"))])
 
 @unittest.skip
 class TestGrammarDefinitionMongoDb(unittest.TestCase):
