@@ -72,10 +72,11 @@ class Tree(object):
 
 class PositionTree(Tree):
     """Stores the position of the original tree"""
-    def __init__(self, leftpos, rightpos, content, production = None, valid = True, childlist = []):
+    def __init__(self, leftpos, rightpos, content, production=None, valid=True, childlist=None):
         self.leftpos = leftpos
         self.rightpos = rightpos
-        self.childlist = list(childlist) #creates a copy
+        if not childlist: childlist = []
+        self.childlist = childlist
         self.content = content
         self.valid = valid
         self.production = production
