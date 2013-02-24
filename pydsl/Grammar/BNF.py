@@ -17,7 +17,7 @@
 
 """Production rules"""
 
-from pydsl.Grammar.Symbol import Symbol, TerminalSymbol, NullSymbol
+from pydsl.Grammar.Symbol import Symbol, TerminalSymbol, NullSymbol, EndSymbol
 from pydsl.Grammar.Definition import GrammarDefinition
 
 __author__ = "Nestor Arocha"
@@ -114,7 +114,23 @@ class BNFGrammar(GrammarDefinition): #Only stores a ruleset, and methods to ask 
 
     def next_lookup(self, symbol):
         """Returns the next TerminalSymbols produced by the input symbol within this grammar definition"""
-        pass
+        result = []
+        if symbol == self.initialsymbol:
+            result.append(EndSymbol())
+        for production in self.productionlist:
+            if symbol in production.rightside:
+                nextindex = production.rightside.index(symbol)+1
+                while nextindex < len(production.rightside):
+                    nextsymbol = production.rightside[nextindex]
+                    firstlist = self.first_lookup(nextsymbol)
+                    cleanfirstlist = [x for x in firstlist if x != NullSymbol()]
+                    result.append(cleanfirstlist)
+                    if NullSymbol() not in firstlist:
+                        break
+                else:
+                    result += self.next_lookup(production.leftside[0]) #reached the end of the rightside
+
+        return result
 
     @property
     def left_recursive(self):# -> bool:
