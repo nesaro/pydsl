@@ -159,7 +159,7 @@ class StringChecker(Checker):
         self.gd = gd
 
     def check(self, data):
-        return self.gd.string == data
+        return self.gd.string == str(data)
 
 class JsonSchemaChecker(Checker):
     def __init__(self, gd):

@@ -24,6 +24,8 @@ __email__ = "nesaro@gmail.com"
 from pydsl.contrib.bnfgrammar import *
 from pydsl.Grammar.Parser.RecursiveDescent import RecursiveDescentParser
 from pydsl.Grammar.Parser.Weighted import WeightedParser
+from pydsl.Grammar.Parser.LR0 import LR0Parser
+from pydsl.Alphabet.Lexer import EncodingLexer
 import unittest
 
 class TestParsers(unittest.TestCase):
@@ -69,16 +71,36 @@ class TestParsers(unittest.TestCase):
         result = descentparser(string4)
         self.assertFalse(result)
 
-    @unittest.skip
+    def testLR0ParseTable(self):
+        """Tests the lr0 table generation"""
+        from pydsl.Grammar.Parser.LR0 import _slr_build_parser_table, build_states_sets
+        from pprint import pprint
+        state_sets = build_states_sets(productionset0)
+        self.assertEqual(len(state_sets), 5)
+        #1 . EI: : . exp $ , 
+        #   exp : .SR
+        #       transitions: S -> 3,
+        #2 EI:  exp . $ ,
+        #       transitions: $ -> 4
+        #3 exp:  S . R,
+        #       transitions: R -> 5
+        #4 EI: exp $ .
+        #5 exp:  S R .
+
+        parsetable = _slr_build_parser_table(productionset0)
+        print(parsetable)
+        #self.assertEqual(len(parsetable), 3)
+
+
     def testLR0ParserStore(self):
-        from pydsl.Grammar.Parser.LR0 import LR0Parser
-        parser = LR0Parser(productionset1)
-        result = parser(string1)
+        from pydsl.Alphabet.Token import TokenList
+        parser = LR0Parser(productionset0)
+        tokelist = TokenList([x for x in EncodingLexer('utf8')(p0good)])
+        result = parser.check(tokelist)
         self.assertTrue(result)
 
     @unittest.skip
     def testLR0ParserBad(self):
-        from pydsl.Grammar.Parser.LR0 import LR0Parser
         parser = LR0Parser(productionset1)
         result = parser(string2)
         self.assertFalse(result)
@@ -143,7 +165,6 @@ class TestLexer(unittest.TestCase):
         self.assertTrue(result)
 
     def testencodingLexer(self):
-        from pydsl.Alphabet.Lexer import EncodingLexer
         lexer = EncodingLexer('utf8')
         result = list(lexer("abcde"))
         print([str(x) for x in result])
