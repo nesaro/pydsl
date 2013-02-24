@@ -85,6 +85,9 @@ class StringGrammarDefinition(GrammarDefinition):
     def __init__(self, string):
         self.string = string
 
+    def __hash__(self):
+        return hash(self.string)
+
     def __eq__(self, other):
         try:
             return self.string == other.string
