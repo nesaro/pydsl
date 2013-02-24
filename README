@@ -2,7 +2,6 @@ DESCRIPTION
 ===========
 
 pydsl is a language library written in python
-The main idea is to allow an easy way to define, use and combine DSLs to create programs and provide tools around them.
 
 pydsl support several grammar specification formats:
  * regular expressions
@@ -10,7 +9,7 @@ pydsl support several grammar specification formats:
  * mongo database query dictionaries
  * python ply module (only check support)
 
-each grammar definition have the following properties:
+each grammar definition has the following properties:
  * enum(gd): yields a list of accepted words
  * first(gd): yields a list of the first accepted subword/char
  * minsize(gd): length of the smaller accepted word
@@ -76,12 +75,12 @@ BINARIES
 ========
 Memory Management
 -----------------
- * manager.py : Searchs element, displays information
+ * manager.py : Searchs and displays information about grammar/alphabets
 
 Grammars
 --------
  * check.py: Checks if input data belongs to a grammar
- * guess:py: Determines input data type
+ * guess:py: Returns a list of the types that match the input element
  * validate.py: Perform a validation routine for user data according to a grammar
  * lexer.py: Generates a token list from an input according to an alphaber
 
@@ -97,11 +96,6 @@ contrib directory contains several types of elements. Those elements are either 
    * validate: extract -e expression grammarname
  * dict/filetype.dict: A list of filetypes, which are types
  * dict/regexp.dict: A list of Regular expressions, which are types
-
-search program will find any element within the library.
-info gives a summary for an element
-guess returns a list of the types that match the input element
-
 
 REQUIREMENTS
 ============
