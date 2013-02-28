@@ -70,6 +70,12 @@ class TestGrammarDefinitionBNF(unittest.TestCase):
         print(self.grammardef.first_lookup(NonTerminalSymbol("exp"))[0])
         self.assertListEqual(self.grammardef.first_lookup(NonTerminalSymbol("exp")),[TerminalSymbol(StringGrammarDefinition("S"))])
 
+    def testNextLookup(self):
+        from pydsl.Grammar.Symbol import NonTerminalSymbol, TerminalSymbol
+        from pydsl.Grammar.Definition import StringGrammarDefinition
+        print(self.grammardef.next_lookup(NonTerminalSymbol("exp"))[0])
+        self.assertListEqual(self.grammardef.next_lookup(NonTerminalSymbol("exp")),[EndSymbol()])
+
 @unittest.skip
 class TestGrammarDefinitionMongoDb(unittest.TestCase):
     def setUp(self):
