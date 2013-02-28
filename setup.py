@@ -6,9 +6,9 @@ setup(name='pydsl',
       author_email='nesaro@gmail.com',
       url='https://github.com/nesaro/pydsl',
       packages = find_packages(exclude=['tests','tests.*']),
-      scripts=['bin/extract.py', 'bin/translate.py','bin/check.py', 'bin/manager.py', 'bin/guess.py', 'bin/validate.py', 'bin/parts.py'],
+      scripts=['bin/extract.py', 'bin/lexer.py','bin/check.py', 'bin/manager.py', 'bin/guess.py', 'bin/validate.py', 'bin/parts.py'],
       install_requires=['ply'],
       package_dir={'pydsl.contrib': 'pydsl/contrib'},
-      package_data={'pydsl.contrib': ['board/*.board','grammar/*.re','grammar/*.bnf','dict/*.dict']},
+      package_data={'pydsl.contrib': ['grammar/*.re','grammar/*.bnf','dict/*.dict']},
      )
 
