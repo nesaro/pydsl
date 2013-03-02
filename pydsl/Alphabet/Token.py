@@ -19,11 +19,15 @@ __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
+from pydsl.Grammar.Definition import StringGrammarDefinition
 
 class Token(object):
-    """ Stores a symbol and its associated input """
-    def __init__(self, terminalsymbol, string):
-        self.symbol = terminalsymbol
+    """ Stores a token and its associated, grammardefinition """
+    def __init__(self, string, gd=None):
+        if gd is None:
+            self.gd = StringGrammarDefinition(string)
+        else:
+            self.gd = gd
         self.string = string
 
     def __str__(self):
@@ -31,7 +35,7 @@ class Token(object):
 
     def __eq__(self, other):
         try:
-            return self.symbol == other.symbol and self.string == other.string
+            return self.gd == other.gd and self.string == other.string
         except AttributeError:
             return False
 

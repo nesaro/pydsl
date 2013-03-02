@@ -83,8 +83,7 @@ class Lexer(AlphabetTranslator):
         self.string = string
         while True:
             result = [x for x in self.nextToken()]
-            if result[-1].symbol == "EOF_TYPE":
-                return result
+            return result
 
 
 class BNFLexer(Lexer):
@@ -109,17 +108,15 @@ class BNFLexer(Lexer):
                     raise Exception("Not found")
                 string = self.current[0]
                 self.consume()
-                yield Token(unknownchar, string)
+                yield Token(string)
             elif len(validelements) == 1:
                 element = validelements[0]
                 string = self.current[:len(str(element))]
                 for _ in range(len(str(element))):
                     self.consume()
-                yield Token(validelements[0], string)
+                yield Token(string)
             else:
                 raise Exception("Multiple choices")
-
-        yield Token("EOF_TYPE", "")
 
 class AlphabetDictLexer(Lexer):
     def __init__(self, alphabet):
