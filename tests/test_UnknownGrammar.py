@@ -21,7 +21,7 @@ __email__ = "nesaro@gmail.com"
 
 import unittest
 from pydsl.Memory.Loader import load, load_lexer
-from pydsl.Alphabet.Token import TokenList
+from pydsl.Alphabet.Token import Token
 
 class TestUnknown(unittest.TestCase):
     """Tests elements that generates unknown symbols"""
@@ -33,7 +33,7 @@ class TestUnknown(unittest.TestCase):
         lexer = load_lexer(listgrammar)
         result = lexer("[x,y,z]")
         #THINK An special flag for trying to guess the content
-        self.assertEqual(result,TokenList(["OPEN_LIST","UNK","SEPARATOR","UNK","SEPARATOR"]))
+        self.assertListEqual(result,["OPEN_LIST","UNK","SEPARATOR","UNK","SEPARATOR"])
 
     def testListLen(self):
         gd = GrammarDefinition(grammardefinition)

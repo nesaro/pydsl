@@ -93,9 +93,8 @@ class TestParsers(unittest.TestCase):
 
 
     def testLR0ParserStore(self):
-        from pydsl.Alphabet.Token import TokenList
         parser = LR0Parser(productionset0)
-        tokelist = TokenList([x for x in EncodingLexer('utf8')(p0good)])
+        tokelist = [x for x in EncodingLexer('utf8')(p0good)]
         result = parser.check(tokelist)
         self.assertTrue(result)
 

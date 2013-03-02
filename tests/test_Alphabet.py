@@ -20,8 +20,8 @@ __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
-from pydsl.Memory.Loader import load, load_checker, load_lexer
-from pydsl.Alphabet.Token import TokenList, Token
+from pydsl.Memory.Loader import load_checker, load_lexer
+from pydsl.Alphabet.Token import  Token
 from pydsl.Alphabet.Definition import Encoding
 
 class TestAlphabet(unittest.TestCase):
@@ -36,7 +36,7 @@ class TestAlphabet(unittest.TestCase):
 
     def testLexer(self):
         lexer = load_lexer(self.alphabet)
-        self.assertListEqual(lexer("1234"), TokenList((Token("integer", "1234"), Token("EOF_TYPE", ""))))
+        self.assertListEqual(lexer("1234"), ((Token("integer", "1234"), Token("EOF_TYPE", ""))))
 
     def testProperties(self):
         self.alphabet.symbols #list allowed symbols
@@ -45,20 +45,6 @@ class TestAlphabet(unittest.TestCase):
         alphabet = Encoding('ascii')
         print(alphabet['a'])
         print(self.alphabet['integer'])
-
-
-@unittest.skip
-class TestTokenList(unittest.TestCase):
-    def setUp(self):
-        pass
-
-    def testInstance(self):
-        from pydsl.Alphabet.Token import Token
-        a = Token()
-        b = Token()
-        c = Token()
-        tl = TokenList(a,b,c)
-
 
 class TestLexerExamples:
     pass

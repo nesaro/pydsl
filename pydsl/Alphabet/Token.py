@@ -38,16 +38,3 @@ class Token(object):
             return self.gd == other.gd and self.string == other.string
         except AttributeError:
             return False
-
-class TokenList(list):
-    def __init__(self, *args, **kwargs):
-        list.__init__(self, *args, **kwargs)
-        for x in self:
-            if not isinstance(x, Token):
-                raise TypeError(x)
-    def __bool__(self):
-        return len(self) > 1
-
-    def __str__(self):
-        return "".join([str(x) for x in self]) #TODO delete the EOF element
-
