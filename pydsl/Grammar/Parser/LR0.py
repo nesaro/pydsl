@@ -246,7 +246,7 @@ class LR0ItemSet(object):
         return True
 
     def append_item(self, item):
-        """Apend new item to set"""
+        """Append new item to set"""
         if not isinstance(item, LR0Item):
             raise TypeError
         self.itemlist.append(item)

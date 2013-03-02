@@ -23,7 +23,7 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
-from pydsl.Grammar.Definition import StringGrammarDefinition, GrammarDefinition
+from pydsl.Grammar.Definition import StringGrammarDefinition
 
 class Symbol(object):
     def __init__(self, weight):
