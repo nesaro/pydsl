@@ -73,7 +73,7 @@ class Lexer(AlphabetTranslator):
         if self.current == char:
             self.consume()
         else:
-            raise Exception
+            raise Exception("%s doesn't match %s"%(self.current,char))
 
     def nextToken(self):
         raise NotImplementedError
