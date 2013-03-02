@@ -25,19 +25,6 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
-ERRORLIST = ["Grammar", "Timeout", "Transformer"]
-
-class ProcessingError(Exception):
-    def __init__(self, errortype, source=None):
-        Exception.__init__(self)
-        if not source:
-            source = []
-        self.source = source
-        assert(errortype in ERRORLIST)
-        self.errortype = errortype
-
-    def append(self, element):
-        self.source.append(element)
 
 class LRConflictException(Exception):
     pass
