@@ -25,7 +25,6 @@ import logging
 LOG = logging.getLogger(__name__)
 from pydsl.Memory.Loader import load_checker
 from pydsl.Alphabet.Token import Token
-finalchar = "EOF"
 unknownchar = "UNKNOWN"
 
 class AlphabetTranslator(object):
@@ -60,7 +59,7 @@ class Lexer(AlphabetTranslator):
         try:
             return self.string[self.index]
         except IndexError:
-            return finalchar
+            return None
 
     def load(self, string):
         self.string = string
@@ -95,13 +94,10 @@ class BNFLexer(Lexer):
     @property
     def current(self):
         """Returns the element under the cursor until the end of the string"""
-        try:
-            return self.string[self.index:]
-        except IndexError:
-            return finalchar
+        return self.string[self.index:]
 
     def nextToken(self):
-        while self.current and self.current != finalchar:
+        while self.current:
             validelements = [x for x in self.symbollist if self.current[0] in x.first]
             if not validelements:
                 if not self.generate_unknown:
@@ -154,6 +150,4 @@ class AlphabetDictLexer(Lexer):
                 yield Token(validelements[0][0], string)
             else:
                 raise Exception("Multiple choices")
-
-        yield Token("EOF_TYPE", "")
 
