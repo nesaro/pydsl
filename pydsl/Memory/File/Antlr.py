@@ -69,7 +69,7 @@ class ANLTRGrammarLexer(Lexer):
             raise Exception
         current = self.current
         self.match(char)
-        return Token(chardict[char], current)
+        return Token(current, alias = chardict[char])
 
     def comment(self):
         self.match("/")
@@ -89,11 +89,11 @@ class ANLTRGrammarLexer(Lexer):
             string += self.current
             self.consume()
         if string in protectedwords:
-            return Token(string, protectedwords[string])
+            return Token(string, alias = protectedwords[string])
         if string == string.lower():
-            return Token(string, "PARSERID")
+            return Token(string, alias = "PARSERID")
         else:
-            return Token(string, "LEXERID")
+            return Token(string, alias = "LEXERID")
 
     def rawstring(self):
         self.match("'")
@@ -105,7 +105,7 @@ class ANLTRGrammarLexer(Lexer):
                 string += self.current
                 self.consume()
         self.match("'")
-        return Token(string, "STRING")
+        return Token(string, alias="STRING")
 
     def number(self):
         import re
@@ -113,7 +113,7 @@ class ANLTRGrammarLexer(Lexer):
         while self.current and re.match("[0-9]", self.current):
             string += self.current
             self.consume()
-        return Token("NUMBER", string)
+        return Token(string, alias="NUMBER")
 
     def nextToken(self):
         while self.current:

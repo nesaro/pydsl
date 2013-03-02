@@ -43,7 +43,7 @@ class EncodingLexer(AlphabetTranslator):
 
     def __call__(self, string):
         for x in string:
-            yield Token("CHAR", x)
+            yield Token(x)
 
 class Lexer(AlphabetTranslator):
     """Lexer follows an alphabet definition.

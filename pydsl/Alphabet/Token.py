@@ -19,22 +19,25 @@ __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
-from pydsl.Grammar.Definition import StringGrammarDefinition
+from pydsl.Grammar.Definition import GrammarDefinition, StringGrammarDefinition
 
 class Token(object):
-    """ Stores a token and its associated, grammardefinition """
-    def __init__(self, string, gd=None):
+    """ Stores a token and the associated grammar definition.
+    Alias is an alternative name for this token"""
+    def __init__(self, string, gd=None, alias = None):
         if gd is None:
-            self.gd = StringGrammarDefinition(string)
-        else:
-            self.gd = gd
+            gd = StringGrammarDefinition(string)
+        if not isinstance(gd, GrammarDefinition):
+            raise TypeError
+        self.gd = gd
         self.string = string
+        self.alias = alias
 
     def __str__(self):
         return self.string
 
     def __eq__(self, other):
         try:
-            return self.gd == other.gd and self.string == other.string
+            return self.gd == other.gd and self.string == other.string and self.alias == other.alias
         except AttributeError:
             return False
