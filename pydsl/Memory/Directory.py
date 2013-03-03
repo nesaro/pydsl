@@ -30,9 +30,6 @@ def _isGDLFileName(path):
 def _isRELFileName(path):
     return path.endswith(".re")
 
-def _isBoardFileName(path):
-    return path.endswith(".board")
-
 class DirStorage(Memory):
     """A collection of elements stored inside a directory"""
 
@@ -69,8 +66,6 @@ class DirStorage(Memory):
             result =  {"iclass":"re","identifier":fileBaseName, "filepath":modulepath}
         elif _isGDLFileName(modulepath):
             result = {"iclass":"BNFGrammar","identifier":fileBaseName, "filepath":modulepath}
-        elif _isBoardFileName(modulepath):
-            result = {"iclass":"Board", "identifier":fileBaseName, "filepath":modulepath}
         else:
             from pydsl.Memory.File.Python import summary_python_file
             result = summary_python_file(modulepath)
@@ -123,9 +118,6 @@ class DirStorage(Memory):
         if _isGDLFileName(filepath):
             from pydsl.Memory.File.BNF import load_bnf_file
             return load_bnf_file(filepath)
-        if _isBoardFileName(filepath):
-            from pydsl.Memory.File.Board import load_board_file
-            return load_board_file(filepath)
         from pydsl.Memory.File.Python import load_python_file
         return load_python_file(filepath, **kwargs)
 

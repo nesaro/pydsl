@@ -25,22 +25,26 @@ class GrammarDefinition(object):
         pass
 
     def enum(self):
+        """Generates every possible accepted string"""
         raise NotImplementedError
 
     @property
     def first(self):# -> set:
-        raise NotImplementedError
+        """List of possible first elements"""
+        return [x for x in self.alphabet]
 
     @property
     def minsize(self):# -> int:
+        """Returns the minimum size in alphabet tokens"""
         return 0
 
     @property
     def maxsize(self):
+        """Returns the max size in alphabet tokens"""
         return None
 
     def alphabet(self):
-        """Returns the alphabet required by this grammar"""
+        """Returns the alphabet used by this grammar"""
         raise NotImplementedError
 
 class PLYGrammar(GrammarDefinition):
