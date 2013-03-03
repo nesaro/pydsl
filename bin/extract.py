@@ -67,8 +67,8 @@ def extract(expression = None, outputfiledic = None, inputfiledic = None, **kwar
 
 def _slice(maingt, inputdata):
     totallen = len(inputdata)
-    from pydsl.Memory.Loader import load_grammar_tool
-    currenttype = load_grammar_tool(CURRENTGRAMMAR)
+    from pydsl.Memory.Loader import load
+    currenttype = load(CURRENTGRAMMAR)
     try:
         maxl = currenttype.maxsize
     except NotImplementedError:
