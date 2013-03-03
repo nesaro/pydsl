@@ -122,10 +122,7 @@ class AlphabetDictLexer(Lexer):
     @property
     def current(self):
         """Returns the element under the cursor until the end of the string"""
-        try:
-            return self.string[self.index:]
-        except IndexError:
-            return finalchar
+        return self.string[self.index:]
 
     def nextToken(self):
         while self.current:
