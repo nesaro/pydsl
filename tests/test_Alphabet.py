@@ -37,6 +37,7 @@ class TestAlphabet(unittest.TestCase):
     def testLexer(self):
         lexer = load_lexer(self.alphabet)
         self.assertListEqual(lexer("1234"), ((Token("integer", "1234"), Token("EOF_TYPE", ""))))
+        self.assertListEqual(lexer("11/11/20011234"), ((Token("date", "11/11/2011",Token("integer", "1234"), Token("EOF_TYPE", "")))))
 
     def testProperties(self):
         self.alphabet.symbols #list allowed symbols
