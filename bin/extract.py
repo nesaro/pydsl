@@ -25,37 +25,22 @@ __copyright__ = "Copyright 2008-2013, Néstor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
-from pydsl.Exceptions import BadFileFormat
-from pydsl.Interaction.Shell import parse_shell_dict, open_files_dict 
+from pydsl.Interaction.Shell import parse_shell_dict, open_files_dict
+from pydsl.Memory.Loader import load_checker, load
 
-def checkfun(inputdic, auxboarddic, inputgt, outputgt):
-    output = auxboarddic["checker"]({"string":inputdic["input"], "grammar":CURRENTGRAMMAR})
-    if not output:
-        return output
-    return {"output":str(output["output"])}
-
-def extract(expression = None, outputfiledic = None, inputfiledic = None, **kwargs):
+def extract(grammar, expression = None, inputfiledic = None, **kwargs):
     #Generating and connecting output
     #listen to user, open read file, or other
     #configure output, write file, or other
-    from pydsl.Function.Python import HostPythonTransformer
-    maingt = HostPythonTransformer({"input":"cstring"},{"output":"TrueFalse"},{"checker":"GrammarChecker"}, checkfun) 
-    if expression and outputfiledic: #input type: expression #output: file
-        myexpression = {"input":expression}
-        outputdic = parse_shell_dict(outputfiledic)
-        resultdic = maingt(myexpression, outputdic)
-        from pydsl.Interaction.Shell import save_result_to_output
-        save_result_to_output(resultdic, outputdic)
-        return resultdic
-    elif expression and not outputfiledic:
-        result = _slice(maingt,expression)
+
+    grammar = load(grammar)
+    if expression:
+        result = _slice(grammar,expression)
         print(result)
         return result #FIXME: Solo en el modo expresion se espera de resultado para test 
     elif inputfiledic:
         inputdic = parse_shell_dict(inputfiledic)
         outputdic = {"output":"stdout"}
-        if outputfiledic:
-            outputdic = parse_shell_dict(outputfiledic)
         stringdic = open_files_dict(inputdic)
         resultdic = maingt(stringdic)
         resultdic = bool_dict_values(resultdic)
@@ -65,24 +50,24 @@ def extract(expression = None, outputfiledic = None, inputfiledic = None, **kwar
         raise Exception
     return True
 
-def _slice(maingt, inputdata):
+def _slice(grammar, inputdata):
+    """Calls check for every possible slice of text"""
+    checker = load_checker(grammar)
     totallen = len(inputdata)
-    from pydsl.Memory.Loader import load
-    currenttype = load(CURRENTGRAMMAR)
     try:
-        maxl = currenttype.maxsize
+        maxl = grammar.maxsize or totallen
     except NotImplementedError:
         maxl = totallen
     try:
-        minl = currenttype.minsize
+        minl = grammar.minsize
     except NotImplementedError:
         minl = 1
     maxwsize = maxl - minl + 1
     result = []
     for i in range(totallen):
         for j in range(i+minl, min(i+maxwsize+1, totallen+1)):
-            check = maingt({"input":inputdata[i:j]})["output"]
-            if check == "True":
+            check = checker.check(inputdata[i:j])
+            if check:
                 result.append((i,j, inputdata[i:j]))
     return result
 
@@ -94,25 +79,12 @@ if __name__ == "__main__":
     PARSER = argparse.ArgumentParser(usage = TUSAGE)
     PARSER.add_argument("-d", "--debuglevel", action="store", type=int, dest="debuglevel", help="Sets debug level")
     PARSER.add_argument("-i", "--inputfile", action="store", dest="inputfiledic", help="input filename dict")
-    PARSER.add_argument("-o", "--outputfile", action="store", dest="outputfiledic", help="output filename dict")
     PARSER.add_argument("-e", "--expression", action="store", dest="expression", help="input expression")
-    PARSER.add_argument("tname", metavar="tname", help="Type name")
+    PARSER.add_argument("grammar", metavar="grammar", help="Grammar name")
     ARGS = PARSER.parse_args()
     import sys
-    if (ARGS.outputfiledic and not ARGS.expression) and (ARGS.outputfiledic and not ARGS.inputfiledic):
-        PARSER.error("options -o require -e or -i")
     DEBUGLEVEL = ARGS.debuglevel or logging.WARNING
-    
     logging.basicConfig(level = DEBUGLEVEL)
-    try: 
-        global CURRENTGRAMMAR
-        CURRENTGRAMMAR = ARGS.tname
-    except BadFileFormat:
-        print("Error reading input file")
-        sys.exit(1)
-    except KeyError as le:
-        print("Unable to load " + str(le))
-        sys.exit(1)
     try:
         result = extract(**vars(ARGS))
     except EOFError:
