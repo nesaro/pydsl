@@ -55,24 +55,6 @@ def load_checker(grammar):
     else:
         raise ValueError(grammar)
 
-def load_grammar_tool(grammar):
-    from pydsl.Grammar.BNF import BNFGrammar
-    from pydsl.Grammar.Definition import RegularExpressionDefinition
-    from pydsl.Grammar.Tool.Python import PythonGrammarTools
-    if isinstance(grammar, str):
-        grammar = load(grammar)
-    if isinstance(grammar, BNFGrammar):
-        from pydsl.Grammar.Tool.Symbol import SymbolGrammarTools
-        return SymbolGrammarTools(grammar)
-    elif isinstance(grammar, RegularExpressionDefinition):
-        from pydsl.Grammar.Tool.Regular import RegularExpressionGrammarTools
-        return RegularExpressionGrammarTools(grammar)
-    elif isinstance(grammar, dict) and "matchFun" in grammar:
-        from pydsl.Grammar.Tool.Python import PythonGrammarTools
-        return PythonGrammarTools(grammar)
-    else:
-        raise ValueError(grammar)
-
 def load_lexer(alphabet):
     from pydsl.Alphabet.Definition import AlphabetDictDefinition
     from pydsl.Grammar.BNF import BNFGrammar

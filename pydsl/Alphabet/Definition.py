@@ -27,7 +27,8 @@ class AlphabetDefinition(object):
         """Returns a list of allowed symbols"""
         raise NotImplementedError
 
-    def __getitem__(self, item):
+    def __contains__(self, token):
+        """Returns true if the alphabet contains the token"""
         raise NotImplementedError
 
 class AlphabetDictDefinition(AlphabetDefinition):
@@ -39,6 +40,7 @@ class AlphabetDictDefinition(AlphabetDefinition):
             self.grammardict[x] = load(grammardict[x])
 
     def __getitem__(self, item):
+        """Retrieves token by name"""
         from pydsl.Grammar.Definition import StringGrammarDefinition
         return StringGrammarDefinition(self.grammardict[item])
 

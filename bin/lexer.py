@@ -54,7 +54,7 @@ def lexer(alphabet, expression = None, inputfile = None):
 
 if __name__ == "__main__":
     import argparse
-    TUSAGE = "usage: %(prog)s [options] type"
+    TUSAGE = "usage: %(prog)s [options] alphabet"
     PARSER = argparse.ArgumentParser(usage = TUSAGE)
     PARSER.add_argument("-d", "--debuglevel", action="store", type=int, dest="debuglevel", help="Sets debug level")
     PARSER.add_argument("-i", "--inputfile", action="store", dest="inputfile", help="input filename")

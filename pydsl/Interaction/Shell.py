@@ -100,7 +100,6 @@ def getInput(tinstance):
             raise Exception("More than one channel required and no tty detected")
     else:
         print(promptstr)
-    var = "Anything"
     while True:
         inputdic = {}
         try:

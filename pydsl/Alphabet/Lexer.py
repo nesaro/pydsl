@@ -73,7 +73,7 @@ class Lexer(AlphabetTranslator):
         if self.current == char:
             self.consume()
         else:
-            raise Exception
+            raise Exception("%s doesn't match %s"%(self.current,char))
 
     def nextToken(self):
         raise NotImplementedError
@@ -102,7 +102,7 @@ class BNFLexer(Lexer):
             return finalchar
 
     def nextToken(self):
-        while self.current != finalchar:
+        while self.current and self.current != finalchar:
             validelements = [x for x in self.symbollist if self.current[0] in x.first]
             if not validelements:
                 if not self.generate_unknown:
@@ -112,10 +112,10 @@ class BNFLexer(Lexer):
                 yield Token(unknownchar, string)
             elif len(validelements) == 1:
                 element = validelements[0]
-                string = self.current[:len(element)]
-                for _ in range(len(element)):
+                string = self.current[:len(str(element))]
+                for _ in range(len(str(element))):
                     self.consume()
-                yield Token(validelements[0].name, string)
+                yield Token(validelements[0], string)
             else:
                 raise Exception("Multiple choices")
 

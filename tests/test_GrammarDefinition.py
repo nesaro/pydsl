@@ -71,8 +71,7 @@ class TestGrammarDefinitionBNF(unittest.TestCase):
         self.assertListEqual(self.grammardef.first_lookup(NonTerminalSymbol("exp")),[TerminalSymbol(StringGrammarDefinition("S"))])
 
     def testNextLookup(self):
-        from pydsl.Grammar.Symbol import NonTerminalSymbol, TerminalSymbol, EndSymbol
-        from pydsl.Grammar.Definition import StringGrammarDefinition
+        from pydsl.Grammar.Symbol import NonTerminalSymbol, EndSymbol
         print(self.grammardef.next_lookup(NonTerminalSymbol("exp"))[0])
         self.assertListEqual(self.grammardef.next_lookup(NonTerminalSymbol("exp")),[EndSymbol()])
 

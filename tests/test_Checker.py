@@ -28,7 +28,7 @@ class TestMongoChecker(unittest.TestCase):
         bad = {"a":1,"b":3}
         letter = {"a":1,"b":"asd"}
         from pydsl.Checker import MongoChecker
-        from mongogrammar import spec, fullspec
+        from pydsl.contrib.mongogrammar import spec, fullspec
         checker = MongoChecker(spec)
         self.assertTrue(checker.check(spec))
         self.assertFalse(checker.check(bad))
