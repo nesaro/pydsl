@@ -33,7 +33,7 @@ def _isRELFileName(path):
 class DirStorage(Memory):
     """A collection of elements stored inside a directory"""
 
-    def __init__(self, dirpath, allowedextensions=(".py", ".bnf", ".re", ".board")):
+    def __init__(self, dirpath, allowedextensions=(".py", ".bnf", ".re")):
         Memory.__init__(self)
         self.path = dirpath
         self._allowedextensions = allowedextensions

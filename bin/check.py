@@ -32,9 +32,9 @@ def checker(grammar, expression = None, inputfiledic = None, **kwargs ):
     #Generating and connecting output
     #listen to user, open read file, or other
     #configure output, write file, or other
+    from pydsl.Memory.Loader import load_checker
+    checker = load_checker(grammar)
     if expression:
-        from pydsl.Memory.Loader import load_checker
-        checker = load_checker(grammar)
         result = checker.check(expression)
         #result = bool_dict_values(str(result["output"]))
         print(result)
@@ -43,16 +43,12 @@ def checker(grammar, expression = None, inputfiledic = None, **kwargs ):
         inputdic = parse_shell_dict(inputfiledic)
         outputdic = {"output":"stdout"}
         stringdic = open_files_dict(inputdic)
-        resultdic = checkfun(stringdic)
+        resultdic = checker.check(stringdic)
         resultdic = bool_dict_values(resultdic)
         from pydsl.Interaction.Shell import save_result_to_output
         save_result_to_output(resultdic, outputdic)
-    elif not inputfiledic and not expression:
-        from pydsl.Interaction.Shell import command_line_to_transformer
-        command_line_to_transformer(checkfun)
     else:
         raise Exception
-    return True
 
 if __name__ == "__main__":
     import argparse
