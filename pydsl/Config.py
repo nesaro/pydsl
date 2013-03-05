@@ -39,7 +39,6 @@ def generate_memory_list(): #-> list:
         pass
     else:
         result.append(DirStorage(dirname + "/grammar/"))
-        result.append(DirStorage(dirname + "/board/"))
         result.append(DirStorage(dirname + "/transformer/"))
         result.append(RegexpDictStorage(dirname + "/dict/regexp.dict"))
         result.append(EncodingStorage(dirname + "/list/encoding.py"))
