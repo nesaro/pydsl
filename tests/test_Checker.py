@@ -38,14 +38,12 @@ class TestMongoChecker(unittest.TestCase):
         self.assertFalse(fullchecker.check(letter))
         #self.assertRaises(TypeError,fullchecker.check, "")
 
-@unittest.skip
 class TestBNFChecker(unittest.TestCase):
     """BNF Checker"""
     def testCheck(self):
         """Test checker instantiation and call"""
         raise NotImplementedError
 
-@unittest.skip
 class TestRegularExpressionChecker(unittest.TestCase):
     """BNF Checker"""
     def testCheck(self):
@@ -89,3 +87,18 @@ class TestJsonSchemaChecker(unittest.TestCase):
         checker = JsonSchemaChecker(grammardef)
         self.assertTrue(checker.check("a"))
         self.assertFalse(checker.check([1, {"foo" : 2, "bar" : {"baz" : [1]}}, "quux"]))
+
+
+class TestEncodingChecker(unittest.TestCase)
+        from pydsl.Checker import EncodingChecker
+        a = Encoding('ascii')
+        checker = EncodingChecker(a)
+        self.assertTrue(checker.check('asdf'))
+        self.assertFalse(checker.check('£'))
+
+class TestAlphabetDictDefinitionChecker(unittest.TestCase)
+        from pydsl.Checker import AlphabetDictChecker
+        a = AlphabetDictChecker({'int':'integer'})
+        checker = AlphabetDictChecker(a)
+        self.assertTrue(checker.check('1234'))
+        self.assertFalse(checker.check('abc'))

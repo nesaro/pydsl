@@ -48,19 +48,15 @@ class TestGrammarDefinitionBNF(unittest.TestCase):
         from pydsl.contrib.bnfgrammar import productionset0
         self.grammardef = productionset0
 
-    @unittest.skip
     def testEnumerate(self):
         self.grammardef.enum()
 
-    @unittest.skip
     def testFirst(self):
         self.grammardef.first()
 
-    @unittest.skip
     def testMin(self):
         self.grammardef.minsize()
 
-    @unittest.skip
     def testMax(self):
         self.grammardef.maxsize()
 
@@ -114,3 +110,18 @@ class TestGrammarDefinitionPLY(unittest.TestCase):
     def testMax(self):
         self.grammardef.maxsize()
 
+class TestGrammarDefinitionJson(unittest.TestCase):
+    def setUp(self):
+        self.grammardef = None
+
+    def testEnumerate(self):
+        self.grammardef.enum()
+
+    def testFirst(self):
+        self.grammardef.first()
+
+    def testMin(self):
+        self.grammardef.minsize()
+
+    def testMax(self):
+        self.grammardef.maxsize()

@@ -3,6 +3,9 @@ DESCRIPTION
 
 pydsl is a language library written in python
 
+GRAMMARS
+--------
+
 pydsl support several grammar specification formats:
  * regular expressions
  * pydsl BNF format
@@ -17,18 +20,18 @@ each grammar definition has the following properties:
 
 pydsl offer a set of functions that use _grammar definitions_
  * validate(gd, input): test the input string against the spec. In case of failure, it returns a list of errors
- * partition(gd, input, tag): returns the parts of the input according to a tag
+
+ALPHABETS
+---------
 
 alphabet abstraction is also available. Alphabets are a set of grammar definitions that are recognized using a regular grammar. Properties:
  * grammar_list(ad): return the list of allowed grammars for this alphabet
 
 functions that use _alphabets_:
  * lexer(ad, input): Generates a tokenlist from a string (it is a special case of translate)
- * mapper(ad, input): Converts a tokenlist from an alphabet into another alphabet
- 
+
 functions that use both _alphabets_ and _grammar definitions_:
- * guess(input, [gd]): returns a list of _grammar definitions_ that are compatible with the input
- * distance(gd, input1, input2): returns the distance between two inputs according to _grammar definition_
+ * guess(input, [gd]): returns a list of _grammar_ and _alphabets_ that are compatible with the input
  * check(d, input): test the input string against the spec
  * extract(gd, input): extract all the slices of the input that are accepted by the definition 
 

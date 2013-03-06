@@ -1,3 +1,4 @@
+
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 #This file is part of pydsl.
@@ -21,29 +22,16 @@ __email__ = "nesaro@gmail.com"
 
 import unittest
 
-class TestGuess(unittest.TestCase):
-    def setUp(self):
-        self.gd = None
-
-    def testGuess(self):
-        from pydsl.Memory.Loader import load_guesser
-        guesser = load_guesser(self.gd)
-        self.assertTrue(guesser("input"))
-
-class TestValidate(unittest.TestCase):
-    def setUp(self):
-        self.gd = None
-
-    def testValidate(self):
-        from pydsl.Memory.Loader import load_validator
-        validator = load_validator(self.gd)
-        self.assertTrue(validator("input"))
 
 class TestExtract(unittest.TestCase):
-    def setUp(self):
-        self.gd = None
+    def testGrammarDefinition(self):
+        from pydsl.Extract import Extract
+        guesser = Extract('integer')
+        self.assertListEqual(extract.extract('abc1234abc'), ['1234'])
+        self.assertRaises(extract.extract(None))
 
-    def testExtract(self):
-        from pydsl.Memory.Loader import load_extractor
-        extractor = load_extractor(self.gd)
-        self.assertTrue(extractor("input"))
+    def testAlphabet(self):
+        from pydsl.Extract import Extract
+        guesser = Extract('ascii')
+        self.assertListEqual(extract.extract('a£'), ['a'])
+        self.assertRaises(extract.extract(None))

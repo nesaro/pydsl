@@ -28,7 +28,7 @@ class Texto(object):
 
 
 class TestMemory(unittest.TestCase):
-    """Tests Transformers"""
+    """Tests Local MEmory"""
     def setUp(self):
         from pydsl.Memory.Memory import LocalMemory
         self.mem = LocalMemory()
@@ -47,13 +47,12 @@ class TestMemory(unittest.TestCase):
         return True
 
 class TestPersistentMemory(unittest.TestCase):
-    """Tests Transformers"""
+    """Tests ShelveMemory"""
     def setUp(self):
         from pydsl.Memory.Shelve import ShelveStorage
         from pydsl.Checker import Checker
         self.mem = ShelveStorage("tmp", Checker)
         
-    @unittest.skip
     def testSaveLoadAndDelete(self):
         from pydsl.Checker import DummyChecker
         dg = DummyChecker()
