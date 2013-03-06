@@ -46,6 +46,3 @@ class TestHTMLGrammars(unittest.TestCase):
         self.assertTrue(result)
         result = parser.get_trees("<trble><tr><td>1</td></tr></table>")
         self.assertFalse(result)
-
-    def testSTTToTransformer(self):
-        pass
