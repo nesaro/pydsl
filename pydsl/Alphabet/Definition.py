@@ -23,8 +23,8 @@ __email__ = "nesaro@gmail.com"
 class AlphabetDefinition(object):
     """Defines an alphabet"""
     @property
-    def symbols(self):
-        """Returns a list of allowed symbols"""
+    def grammar_list(self):
+        """Returns a list of allowed grammars"""
         raise NotImplementedError
 
     def __contains__(self, token):
@@ -45,7 +45,7 @@ class AlphabetDictDefinition(AlphabetDefinition):
         return StringGrammarDefinition(self.grammardict[item])
 
     @property
-    def symbols(self):
+    def grammar_list(self):
         return list(self.grammardict.keys())
 
 class Encoding(AlphabetDefinition):

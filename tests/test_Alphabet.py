@@ -40,7 +40,7 @@ class TestAlphabet(unittest.TestCase):
         self.assertListEqual(lexer("11/11/20011234"), ((Token("date", "11/11/2011",Token("integer", "1234"), Token("EOF_TYPE", "")))))
 
     def testProperties(self):
-        self.alphabet.symbols #list allowed symbols
+        self.alphabet.grammar_list
 
     def testGenerateSymbol(self):
         alphabet = Encoding('ascii')
