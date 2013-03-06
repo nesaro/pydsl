@@ -21,9 +21,8 @@ __email__ = "nesaro@gmail.com"
 
 import unittest
 
-from pydsl.Abstract import Indexable
 
-class Texto(Indexable):
+class Texto(object):
     def summary(self):
         return {"iclass":"Texto"}
 
