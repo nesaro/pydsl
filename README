@@ -17,7 +17,6 @@ each grammar definition has the following properties:
 
 pydsl offer a set of functions that use _grammar definitions_
  * validate(gd, input): test the input string against the spec. In case of failure, it returns a list of errors
- * partition(gd, input, tag): returns the parts of the input according to a tag
 
 alphabet abstraction is also available. Alphabets are a set of symbols that are recognized using a regular grammar. Properties:
  * symbols(ad): return the list of allowed symbols for this alphabet
