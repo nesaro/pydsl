@@ -86,6 +86,9 @@ class Lexer(AlphabetTranslator):
             if result[-1].symbol == "EOF_TYPE":
                 return result
 
+    def lexer_generator(self):
+        """generator version of the lexer, yields a new token as soon as possible"""
+        raise NotImplementedError
 
 class BNFLexer(Lexer):
     """Generates a Lexer from a BNFGrammar instance"""
