@@ -53,7 +53,6 @@ class TestPersistentMemory(unittest.TestCase):
         from pydsl.Checker import Checker
         self.mem = ShelveStorage("tmp", Checker)
         
-    @unittest.skip
     def testSaveLoadAndDelete(self):
         from pydsl.Checker import DummyChecker
         dg = DummyChecker()

@@ -21,29 +21,12 @@ __email__ = "nesaro@gmail.com"
 
 import unittest
 
+
 class TestGuess(unittest.TestCase):
-    def setUp(self):
-        self.gd = None
-
-    def testGuess(self):
-        from pydsl.Memory.Loader import load_guesser
-        guesser = load_guesser(self.gd)
-        self.assertTrue(guesser("input"))
-
-class TestValidate(unittest.TestCase):
-    def setUp(self):
-        self.gd = None
-
-    def testValidate(self):
-        from pydsl.Memory.Loader import load_validator
-        validator = load_validator(self.gd)
-        self.assertTrue(validator("input"))
-
-class TestExtract(unittest.TestCase):
-    def setUp(self):
-        self.gd = None
-
-    def testExtract(self):
-        from pydsl.Memory.Loader import load_extractor
-        extractor = load_extractor(self.gd)
-        self.assertTrue(extractor("input"))
+    def testBasic(self):
+        from pydsl.Guesser import Guess
+        guesser = Guess()
+        self.assertListEqual(guesser.guess('1234'), ['integer','cstring','ascii'])
+        self.assertListEqual(guesser.guess_alphabet('1234'), ['ascii'])
+        self.assertListEqual(guesser.guess_grammar('1234'), ['integer','cstring'])
+        self.assertRaises(guesser.guess(None))

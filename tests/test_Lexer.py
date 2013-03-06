@@ -21,29 +21,14 @@ __email__ = "nesaro@gmail.com"
 
 import unittest
 
-class TestGuess(unittest.TestCase):
-    def setUp(self):
-        self.gd = None
+class TestLexer(unittest.TestCase):
+    """Mongo checker"""
+    def testSimpleLexing(self):
+        """Test checker instantiation and call"""
+        from pydsl.Lexer import Lexer
+        from pydsl.Alphabet.Definition import AlphabetDictDefinition
+        mydef = AlphabetDictDefinition({'1':'integer','2':'Date'})
+        mylexer = Lexer(mydef)
+        self.assertTrue(lexer.lexer('123411/23/32'),['integer','date']) 
+        self.assertTrue([x for x in lexer.lexer_generator('123411/23/32')],['integer','date']) 
 
-    def testGuess(self):
-        from pydsl.Memory.Loader import load_guesser
-        guesser = load_guesser(self.gd)
-        self.assertTrue(guesser("input"))
-
-class TestValidate(unittest.TestCase):
-    def setUp(self):
-        self.gd = None
-
-    def testValidate(self):
-        from pydsl.Memory.Loader import load_validator
-        validator = load_validator(self.gd)
-        self.assertTrue(validator("input"))
-
-class TestExtract(unittest.TestCase):
-    def setUp(self):
-        self.gd = None
-
-    def testExtract(self):
-        from pydsl.Memory.Loader import load_extractor
-        extractor = load_extractor(self.gd)
-        self.assertTrue(extractor("input"))
