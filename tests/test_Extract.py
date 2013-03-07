@@ -35,3 +35,10 @@ class TestExtract(unittest.TestCase):
         guesser = Extract('ascii')
         self.assertListEqual(extract.extract('a£'), ['a'])
         self.assertRaises(extract.extract(None))
+
+
+    def testLoad(self):
+        gd = None
+        from pydsl.Memory.Loader import load_extractor
+        extractor = load_extractor(gd)
+        self.assertTrue(extractor("input"))

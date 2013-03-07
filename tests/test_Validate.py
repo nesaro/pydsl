@@ -34,3 +34,9 @@ class TestValidate(unittest.TestCase):
         import validate
         validate.call('input')
 
+    def testValidateLoad(self):
+        gd = None
+        from pydsl.Memory.Loader import load_validator
+        validator = load_validator(gd)
+        self.assertTrue(validator("input"))
+

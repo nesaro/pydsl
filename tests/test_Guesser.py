@@ -30,3 +30,10 @@ class TestGuess(unittest.TestCase):
         self.assertListEqual(guesser.guess_alphabet('1234'), ['ascii'])
         self.assertListEqual(guesser.guess_grammar('1234'), ['integer','cstring'])
         self.assertRaises(guesser.guess(None))
+
+    def testGuessLoad(self):
+        gd = None
+        from pydsl.Memory.Loader import load_guesser
+        guesser = load_guesser(gd)
+        self.assertTrue(guesser("input"))
+
