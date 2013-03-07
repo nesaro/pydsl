@@ -91,14 +91,12 @@ Grammars
 CONTRIB
 =======
 
-contrib directory contains several types of elements. Those elements are either imported by colony or used as a function argument for their binaries.
+contrib directory contains several types of elements. Those elements are either imported by pydsl or used as a function argument for binaries.
 
- * grammar: Grammar are Types; they can be used with the following programs:
-   * check: check -e expression grammarname
-   * extract: extract -e expression grammarname
-   * validate: extract -e expression grammarname
- * dict/filetype.dict: A list of filetypes, which are types
- * dict/regexp.dict: A list of Regular expressions, which are types
+ * grammars
+   * dict/filetype.dict: A list of filetypes, which are types
+   * dict/regexp.dict: A list of Regular expressions, which are types
+ * alphabets
 
 REQUIREMENTS
 ============
