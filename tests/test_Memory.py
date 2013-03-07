@@ -50,18 +50,17 @@ class TestPersistentMemory(unittest.TestCase):
     """Tests ShelveMemory"""
     def setUp(self):
         from pydsl.Memory.Shelve import ShelveStorage
-        from pydsl.Checker import Checker
-        self.mem = ShelveStorage("tmp", Checker)
+        self.mem = ShelveStorage("tmp")
         
     def testSaveLoadAndDelete(self):
-        from pydsl.Checker import DummyChecker
-        dg = DummyChecker()
-        if "DummyChecker" in self.mem:
-            del self.mem["DummyChecker"]
-        self.mem.save(dg, "DummyChecker")
-        newdg = self.mem["DummyChecker"]
+        from pydsl.Memory.Loader import load
+        dg = load("cstring")
+        if "cstring" in self.mem:
+            del self.mem["cstring"]
+        self.mem.save(dg, "cstring")
+        newdg = self.mem["cstring"]
         self.assertEqual(newdg,dg)
-        del self.mem["DummyChecker"]
+        del self.mem["cstring"]
 
 class TestLoader(unittest.TestCase):
     """Test loaders"""
