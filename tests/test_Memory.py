@@ -67,8 +67,6 @@ class TestLoader(unittest.TestCase):
     def setUp(self):
         from pydsl.Memory.Directory import DirStorage
         self.glibrary = DirStorage("/usr/share/pydsl/lib_contrib/grammar")
-        from pydsl.Config import GLOBALCONFIG
-        GLOBALCONFIG.strictgrammar = False
 
     def test_grammars(self):
         grammarlist = self.glibrary.all_names()
