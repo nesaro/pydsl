@@ -49,16 +49,16 @@ class TestGrammarDefinitionBNF(unittest.TestCase):
         self.grammardef = productionset0
 
     def testEnumerate(self):
-        self.grammardef.enum()
+        self.assertListEqual(self.grammardef.enum(), ["SR"])
 
     def testFirst(self):
-        self.grammardef.first()
+        self.assertListEqual(self.grammardef.first(), ["S"])
 
     def testMin(self):
-        self.grammardef.minsize()
+        self.assertEqual(self.grammardef.minsize(),2)
 
     def testMax(self):
-        self.grammardef.maxsize()
+        self.assertEqual(self.grammardef.maxsize(),2)
 
     def testFirstLookup(self):
         from pydsl.Grammar.Symbol import NonTerminalSymbol, TerminalSymbol
