@@ -62,3 +62,17 @@ class TestPersistentMemory(unittest.TestCase):
         newdg = self.mem["DummyChecker"]
         self.assertEqual(newdg,dg)
         del self.mem["DummyChecker"]
+
+class TestLoader(unittest.TestCase):
+    """Test loaders"""
+    def setUp(self):
+        from pydsl.Memory.Directory import DirStorage
+        self.glibrary = DirStorage("/usr/share/pydsl/lib_contrib/grammar")
+        from pydsl.Config import GLOBALCONFIG
+        GLOBALCONFIG.strictgrammar = False
+
+    def test_grammars(self):
+        grammarlist = self.glibrary.all_names()
+        from pydsl.Memory.Loader import load
+        for grammar in grammarlist:
+            load(grammar)

@@ -25,7 +25,6 @@ import logging
 LOG = logging.getLogger(__name__)
 from pydsl.Memory.Loader import load_checker
 from pydsl.Alphabet.Token import Token
-finalchar = "EOF"
 unknownchar = "UNKNOWN"
 
 class AlphabetTranslator(object):
@@ -44,7 +43,7 @@ class EncodingLexer(AlphabetTranslator):
 
     def __call__(self, string):
         for x in string:
-            yield Token("CHAR", x)
+            yield Token(x)
 
 class Lexer(AlphabetTranslator):
     """Lexer follows an alphabet definition.
@@ -60,7 +59,7 @@ class Lexer(AlphabetTranslator):
         try:
             return self.string[self.index]
         except IndexError:
-            return finalchar
+            return None
 
     def load(self, string):
         self.string = string
@@ -83,8 +82,7 @@ class Lexer(AlphabetTranslator):
         self.string = string
         while True:
             result = [x for x in self.nextToken()]
-            if result[-1].symbol == "EOF_TYPE":
-                return result
+            return result
 
 
 class BNFLexer(Lexer):
@@ -96,30 +94,25 @@ class BNFLexer(Lexer):
     @property
     def current(self):
         """Returns the element under the cursor until the end of the string"""
-        try:
-            return self.string[self.index:]
-        except IndexError:
-            return finalchar
+        return self.string[self.index:]
 
     def nextToken(self):
-        while self.current and self.current != finalchar:
+        while self.current:
             validelements = [x for x in self.symbollist if self.current[0] in x.first]
             if not validelements:
                 if not self.generate_unknown:
                     raise Exception("Not found")
                 string = self.current[0]
                 self.consume()
-                yield Token(unknownchar, string)
+                yield Token(string)
             elif len(validelements) == 1:
                 element = validelements[0]
                 string = self.current[:len(str(element))]
                 for _ in range(len(str(element))):
                     self.consume()
-                yield Token(validelements[0], string)
+                yield Token(string)
             else:
                 raise Exception("Multiple choices")
-
-        yield Token("EOF_TYPE", "")
 
 class AlphabetDictLexer(Lexer):
     def __init__(self, alphabet):
@@ -129,10 +122,7 @@ class AlphabetDictLexer(Lexer):
     @property
     def current(self):
         """Returns the element under the cursor until the end of the string"""
-        try:
-            return self.string[self.index:]
-        except IndexError:
-            return finalchar
+        return self.string[self.index:]
 
     def nextToken(self):
         while self.current:
@@ -157,6 +147,4 @@ class AlphabetDictLexer(Lexer):
                 yield Token(validelements[0][0], string)
             else:
                 raise Exception("Multiple choices")
-
-        yield Token("EOF_TYPE", "")
 
