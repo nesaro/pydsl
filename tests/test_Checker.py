@@ -89,7 +89,7 @@ class TestJsonSchemaChecker(unittest.TestCase):
         self.assertFalse(checker.check([1, {"foo" : 2, "bar" : {"baz" : [1]}}, "quux"]))
 
 
-class TestEncodingChecker(unittest.TestCase)
+class TestEncodingChecker(unittest.TestCase):
         from pydsl.Checker import EncodingChecker
         a = Encoding('ascii')
         checker = EncodingChecker(a)
