@@ -24,9 +24,9 @@ import unittest
 
 class TestGuess(unittest.TestCase):
     def testBasic(self):
-        from pydsl.Guesser import Guess
-        guesser = Guess()
-        self.assertListEqual(guesser.guess('1234'), ['integer','cstring','ascii'])
+        from pydsl.Guess import Guesser
+        guesser = Guesser()
+        self.assertListEqual(guesser('1234'), ['integer','cstring','ascii'])
         self.assertListEqual(guesser.guess_alphabet('1234'), ['ascii'])
         self.assertListEqual(guesser.guess_grammar('1234'), ['integer','cstring'])
-        self.assertRaises(guesser.guess(None))
+        self.assertRaises(guesser(None))
