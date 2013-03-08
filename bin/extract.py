@@ -25,7 +25,7 @@ __copyright__ = "Copyright 2008-2013, Néstor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
-from pydsl.Interaction.Shell import parse_shell_dict, open_files_dict
+from pydsl.Shell import parse_shell_dict, open_files_dict
 from pydsl.Memory.Loader import load_checker, load
 
 def extract(grammar, expression = None, inputfiledic = None, **kwargs):
@@ -44,7 +44,7 @@ def extract(grammar, expression = None, inputfiledic = None, **kwargs):
         stringdic = open_files_dict(inputdic)
         resultdic = maingt(stringdic)
         resultdic = bool_dict_values(resultdic)
-        from pydsl.Interaction.Shell import save_result_to_output
+        from pydsl.Shell import save_result_to_output
         save_result_to_output(resultdic, outputdic)
     else:
         raise Exception

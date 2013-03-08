@@ -26,7 +26,7 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 from pydsl.Exceptions import BadFileFormat
-from pydsl.Interaction.Shell import parse_shell_dict, open_files_dict 
+from pydsl.Shell import parse_shell_dict, open_files_dict 
 
 def checker(grammar, expression = None, inputfiledic = None, **kwargs ):
     #Generating and connecting output
@@ -45,7 +45,7 @@ def checker(grammar, expression = None, inputfiledic = None, **kwargs ):
         stringdic = open_files_dict(inputdic)
         resultdic = checker.check(stringdic)
         resultdic = bool_dict_values(resultdic)
-        from pydsl.Interaction.Shell import save_result_to_output
+        from pydsl.Shell import save_result_to_output
         save_result_to_output(resultdic, outputdic)
     else:
         raise Exception
