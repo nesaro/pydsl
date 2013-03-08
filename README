@@ -24,8 +24,8 @@ pydsl offer a set of functions that use _grammar definitions_
 ALPHABETS
 ---------
 
-alphabet abstraction is also available. Alphabets are a set of symbols that are recognized using a regular grammar. Properties:
- * symbols(ad): return the list of allowed symbols for this alphabet
+alphabet abstraction is also available. Alphabets are a set of grammar definitions that are recognized using a regular grammar. Properties:
+ * grammar_list(ad): return the list of allowed grammars for this alphabet
 
 functions that use _alphabets_:
  * lexer(ad, input): Generates a tokenlist from a string (it is a special case of translate)
