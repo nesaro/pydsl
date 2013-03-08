@@ -42,6 +42,9 @@ class TestGrammarDefinitionRegularExpression(unittest.TestCase):
     def testMax(self):
         self.grammardef.maxsize()
 
+    def testAlphabet(self):
+        self.assertListEqual(self.grammardef.alphabet(), AlphabetDefinition)
+
 
 class TestGrammarDefinitionBNF(unittest.TestCase):
     def setUp(self):
@@ -71,6 +74,9 @@ class TestGrammarDefinitionBNF(unittest.TestCase):
         print(self.grammardef.next_lookup(NonTerminalSymbol("exp"))[0])
         self.assertListEqual(self.grammardef.next_lookup(NonTerminalSymbol("exp")),[EndSymbol()])
 
+    def testAlphabet(self):
+        self.assertListEqual(self.grammardef.alphabet(), AlphabetDefinition)
+
 @unittest.skip
 class TestGrammarDefinitionMongoDb(unittest.TestCase):
     def setUp(self):
@@ -87,6 +93,9 @@ class TestGrammarDefinitionMongoDb(unittest.TestCase):
 
     def testMax(self):
         self.grammardef.maxsize()
+
+    def testAlphabet(self):
+        self.assertListEqual(self.grammardef.alphabet(), AlphabetDefinition)
 
 class TestGrammarDefinitionPLY(unittest.TestCase):
     def setUp(self):
@@ -110,6 +119,9 @@ class TestGrammarDefinitionPLY(unittest.TestCase):
     def testMax(self):
         self.grammardef.maxsize()
 
+    def testAlphabet(self):
+        self.assertListEqual(self.grammardef.alphabet(), AlphabetDefinition)
+
 class TestGrammarDefinitionJson(unittest.TestCase):
     def setUp(self):
         self.grammardef = None
@@ -125,3 +137,7 @@ class TestGrammarDefinitionJson(unittest.TestCase):
 
     def testMax(self):
         self.grammardef.maxsize()
+
+    def testAlphabet(self):
+        self.assertListEqual(self.grammardef.alphabet(), AlphabetDefinition)
+
