@@ -21,19 +21,12 @@ __email__ = "nesaro@gmail.com"
 
 import unittest
 
-
-class TestGuess(unittest.TestCase):
-    def testBasic(self):
+class TestGuesser(unittest.TestCase):
+    """Guesser"""
+    def testStuff(self):
         from pydsl.Guess import Guesser
         guesser = Guesser()
         self.assertListEqual(guesser('1234'), ['integer','cstring','ascii'])
         self.assertListEqual(guesser.guess_alphabet('1234'), ['ascii'])
         self.assertListEqual(guesser.guess_grammar('1234'), ['integer','cstring'])
-        self.assertRaises(guesser(None))
-
-    def testGuessLoad(self):
-        gd = None
-        from pydsl.Memory.Loader import load_guesser
-        guesser = load_guesser(gd)
-        self.assertTrue(guesser("input"))
-
+        self.assertRaises(Exception, guesser, None)
