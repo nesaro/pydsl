@@ -30,10 +30,6 @@ class TestValidate(unittest.TestCase):
         self.assertFalse(parser.get_trees("11/11/ab", True)[0].valid)
         self.assertTrue(parser.get_trees("11/11/2011", True)[0].valid)
 
-    def testValidate(self):
-        import validate
-        validate.call('input')
-
     def testValidateLoad(self):
         gd = None
         from pydsl.Memory.Loader import load_validator

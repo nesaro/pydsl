@@ -34,13 +34,13 @@ class TestGrammarDefinitionRegularExpression(unittest.TestCase):
         self.grammardef.enum()
 
     def testFirst(self):
-        self.grammardef.first()
+        self.grammardef.first
 
     def testMin(self):
-        self.grammardef.minsize()
+        self.grammardef.minsize
 
     def testMax(self):
-        self.grammardef.maxsize()
+        self.grammardef.maxsize
 
     def testAlphabet(self):
         self.assertListEqual(self.grammardef.alphabet(), AlphabetDefinition)
@@ -52,16 +52,16 @@ class TestGrammarDefinitionBNF(unittest.TestCase):
         self.grammardef = productionset0
 
     def testEnumerate(self):
-        self.assertListEqual(self.grammardef.enum(), ["SR"])
+        self.assertListEqual([x for x in self.grammardef.enum()], ["SR"])
 
     def testFirst(self):
-        self.assertListEqual(self.grammardef.first(), ["S"])
+        self.assertListEqual(self.grammardef.first, ["S"])
 
     def testMin(self):
-        self.assertEqual(self.grammardef.minsize(),2)
+        self.assertEqual(self.grammardef.minsize,2)
 
     def testMax(self):
-        self.assertEqual(self.grammardef.maxsize(),2)
+        self.assertEqual(self.grammardef.maxsize,2)
 
     def testFirstLookup(self):
         from pydsl.Grammar.Symbol import NonTerminalSymbol, TerminalSymbol
@@ -86,13 +86,13 @@ class TestGrammarDefinitionMongoDb(unittest.TestCase):
         self.grammardef.enum()
 
     def testFirst(self):
-        self.grammardef.first()
+        self.grammardef.first
 
     def testMin(self):
-        self.grammardef.minsize()
+        self.grammardef.minsize
 
     def testMax(self):
-        self.grammardef.maxsize()
+        self.grammardef.maxsize
 
     def testAlphabet(self):
         self.assertListEqual(self.grammardef.alphabet(), AlphabetDefinition)
@@ -109,34 +109,35 @@ class TestGrammarDefinitionPLY(unittest.TestCase):
 
     @unittest.skip
     def testFirst(self):
-        self.grammardef.first()
+        self.grammardef.first
 
     @unittest.skip
     def testMin(self):
-        self.grammardef.minsize()
+        self.grammardef.minsize
 
     @unittest.skip
     def testMax(self):
-        self.grammardef.maxsize()
+        self.grammardef.maxsize
 
     def testAlphabet(self):
         self.assertListEqual(self.grammardef.alphabet(), AlphabetDefinition)
 
 class TestGrammarDefinitionJson(unittest.TestCase):
     def setUp(self):
-        self.grammardef = None
+        from pydsl.Grammar.Definition import JsonSchema
+        self.grammardef = JsonSchema({})
 
     def testEnumerate(self):
         self.grammardef.enum()
 
     def testFirst(self):
-        self.grammardef.first()
+        self.grammardef.first
 
     def testMin(self):
-        self.grammardef.minsize()
+        self.grammardef.minsize
 
     def testMax(self):
-        self.grammardef.maxsize()
+        self.grammardef.maxsize
 
     def testAlphabet(self):
         self.assertListEqual(self.grammardef.alphabet(), AlphabetDefinition)

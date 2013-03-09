@@ -25,20 +25,15 @@ import unittest
 
 class TestExtract(unittest.TestCase):
     def testGrammarDefinition(self):
-        from pydsl.Extract import Extract
-        guesser = Extract('integer')
-        self.assertListEqual(extract.extract('abc1234abc'), ['1234'])
-        self.assertRaises(extract.extract(None))
+        from pydsl.Extract import extract
+        from pydsl.Memory.Loader import load
+        gd = load('integer')
+        self.assertListEqual(extract(gd,'abc1234abc'), ['1234'])
+        self.assertRaises(Exception, extract, None)
 
     def testAlphabet(self):
-        from pydsl.Extract import Extract
-        guesser = Extract('ascii')
-        self.assertListEqual(extract.extract('a£'), ['a'])
+        from pydsl.Extract import extract
+        from pydsl.Memory.Loader import load
+        ad = load('ascii')
+        self.assertListEqual(extract(ad,'a£'), ['a'])
         self.assertRaises(extract.extract(None))
-
-
-    def testLoad(self):
-        gd = None
-        from pydsl.Memory.Loader import load_extractor
-        extractor = load_extractor(gd)
-        self.assertTrue(extractor("input"))

@@ -42,13 +42,21 @@ class TestBNFChecker(unittest.TestCase):
     """BNF Checker"""
     def testCheck(self):
         """Test checker instantiation and call"""
-        raise NotImplementedError
+        from pydsl.Checker import BNFChecker
+        from pydsl.contrib.bnfgrammar import productionset0
+        grammardef = productionset0
+        checker = BNFChecker(grammardef)
+        self.assertTrue(checker.check("SR"))
+        self.assertFalse(checker.check("SL"))
 
 class TestRegularExpressionChecker(unittest.TestCase):
     """BNF Checker"""
     def testCheck(self):
         """Test checker instantiation and call"""
-        raise NotImplementedError
+        from pydsl.Checker import RegularExpressionChecker
+        checker = RegularExpressionChecker("abc")
+        self.assertTrue(checker.check("abc"))
+        self.assertTrue(checker.check("abd"))
 
 class TestPLYChecker(unittest.TestCase):
     def testCheck(self):
@@ -90,15 +98,19 @@ class TestJsonSchemaChecker(unittest.TestCase):
 
 
 class TestEncodingChecker(unittest.TestCase):
+    def testCheck(self):
         from pydsl.Checker import EncodingChecker
+        from pydsl.Alphabet.Definition import Encoding
         a = Encoding('ascii')
         checker = EncodingChecker(a)
         self.assertTrue(checker.check('asdf'))
         self.assertFalse(checker.check('£'))
 
 class TestAlphabetDictDefinitionChecker(unittest.TestCase):
+    def testCheck(self):
         from pydsl.Checker import AlphabetDictChecker
-        a = AlphabetDictChecker({'int':'integer'})
+        from pydsl.Alphabet.Definition import AlphabetDictDefinition
+        a = AlphabetDictChecker(AlphabetDictDefinition({'int':'integer'}))
         checker = AlphabetDictChecker(a)
         self.assertTrue(checker.check('1234'))
         self.assertFalse(checker.check('abc'))

@@ -25,7 +25,7 @@ class TestLexer(unittest.TestCase):
     """Mongo checker"""
     def testSimpleLexing(self):
         """Test checker instantiation and call"""
-        from pydsl.Lexer import Lexer
+        from pydsl.Alphabet.Lexer import Lexer
         from pydsl.Alphabet.Definition import AlphabetDictDefinition
         mydef = AlphabetDictDefinition({'1':'integer','2':'Date'})
         mylexer = Lexer(mydef)
