@@ -85,35 +85,6 @@ class Lexer(AlphabetTranslator):
             return result
 
 
-class BNFLexer(Lexer):
-    """Generates a Lexer from a BNFGrammar instance"""
-    def __init__(self, bnfgrammar):
-        Lexer.__init__(self)
-        self.symbollist = bnfgrammar.terminalsymbollist
-
-    @property
-    def current(self):
-        """Returns the element under the cursor until the end of the string"""
-        return self.string[self.index:]
-
-    def nextToken(self):
-        while self.current:
-            validelements = [x for x in self.symbollist if self.current[0] in x.first]
-            if not validelements:
-                if not self.generate_unknown:
-                    raise Exception("Not found")
-                string = self.current[0]
-                self.consume()
-                yield Token(string)
-            elif len(validelements) == 1:
-                element = validelements[0]
-                string = self.current[:len(str(element))]
-                for _ in range(len(str(element))):
-                    self.consume()
-                yield Token(string)
-            else:
-                raise Exception("Multiple choices")
-
 class AlphabetDictLexer(Lexer):
     def __init__(self, alphabet):
         Lexer.__init__(self)
