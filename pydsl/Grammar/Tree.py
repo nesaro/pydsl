@@ -73,10 +73,9 @@ class Tree(object):
 class PositionTree(Tree):
     """Stores the position of the original tree"""
     def __init__(self, leftpos, rightpos, content, production=None, valid=True, childlist=None):
+        Tree.__init__(self,childlist)
         self.leftpos = leftpos
         self.rightpos = rightpos
-        if not childlist: childlist = []
-        self.childlist = childlist
         self.content = content
         self.valid = valid
         self.production = production
@@ -163,7 +162,7 @@ class PositionTree(Tree):
 
 class ParseTree(PositionTree):
     """ Stores a descent parser iteration result """
-    def __init__(self, leftpos, rightpos, symbollist, content, production, childlist = [], valid = True):
+    def __init__(self, leftpos, rightpos, symbollist, content, production, childlist=None, valid=True):
         if not isinstance(leftpos, int) and leftpos is not None:
             raise TypeError
         if not isinstance(rightpos, int) and rightpos is not None:
@@ -171,8 +170,7 @@ class ParseTree(PositionTree):
         if not isinstance(symbollist, list):
             raise TypeError
         from .BNF import Production
-        if production is not None and not (isinstance(production, Production) or
-                isinstance(production, TerminalSymbol)):
+        if production is not None and not (isinstance(production, (Production, TerminalSymbol))):
             raise TypeError(production)
         PositionTree.__init__(self, leftpos, rightpos, content, production, valid, childlist)
         self.symbollist = symbollist
