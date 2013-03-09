@@ -27,15 +27,16 @@ __email__ = "nesaro@gmail.com"
 import logging
 from pydsl.Shell import parse_shell_dict, open_files_dict
 from pydsl.Memory.Loader import load_checker, load
+from pydsl.Extractor import extract
 
-def extract(grammar, expression = None, inputfiledic = None, **kwargs):
+def extractaux(grammar, expression = None, inputfiledic = None, **kwargs):
     #Generating and connecting output
     #listen to user, open read file, or other
     #configure output, write file, or other
 
     grammar = load(grammar)
     if expression:
-        result = _slice(grammar,expression)
+        result = extract(grammar,expression)
         print(result)
         return result #FIXME: Solo en el modo expresion se espera de resultado para test 
     elif inputfiledic:
@@ -50,29 +51,6 @@ def extract(grammar, expression = None, inputfiledic = None, **kwargs):
         raise Exception
     return True
 
-def _slice(grammar, inputdata):
-    """Calls check for every possible slice of text"""
-    checker = load_checker(grammar)
-    totallen = len(inputdata)
-    try:
-        maxl = grammar.maxsize or totallen
-    except NotImplementedError:
-        maxl = totallen
-    try:
-        minl = grammar.minsize
-    except NotImplementedError:
-        minl = 1
-    maxwsize = maxl - minl + 1
-    result = []
-    for i in range(totallen):
-        for j in range(i+minl, min(i+maxwsize+1, totallen+1)):
-            check = checker.check(inputdata[i:j])
-            if check:
-                result.append((i,j, inputdata[i:j]))
-    return result
-
-            #TODO check alphabet
-
 if __name__ == "__main__":
     import argparse
     TUSAGE = "usage: %(prog)s [options] type"
@@ -86,7 +64,7 @@ if __name__ == "__main__":
     DEBUGLEVEL = ARGS.debuglevel or logging.WARNING
     logging.basicConfig(level = DEBUGLEVEL)
     try:
-        result = extract(**vars(ARGS))
+        result = extractaux(**vars(ARGS))
     except EOFError:
         sys.exit(0)
     if not result:
