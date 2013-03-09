@@ -93,6 +93,8 @@ def load_parser(grammar, parser = "auto"):
         raise ValueError(grammar)
 
 def load_validator(grammar):
+    if isinstance(grammar, str):
+        grammar = load(grammar)
     from pydsl.Grammar.BNF import BNFGrammar
     if isinstance(grammar, BNFGrammar):
         from pydsl.Validate import BNFValidator
