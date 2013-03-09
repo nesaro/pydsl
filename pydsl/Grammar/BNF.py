@@ -73,6 +73,10 @@ class BNFGrammar(GrammarDefinition): #Only stores a ruleset, and methods to ask 
         if not options: options = {}
         self.options = options
 
+    def alphabet(self):
+        from pydsl.Alphabet.Definition import AlphabetListDefinition
+        return AlphabetListDefinition(self.terminalsymbollist)
+
     @property
     def productionlist(self):
         return [x for x in self.fulllist if isinstance(x, Production)]

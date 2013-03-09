@@ -148,3 +148,36 @@ class AlphabetDictLexer(Lexer):
             else:
                 raise Exception("Multiple choices")
 
+class AlphabetListLexer(Lexer):
+    def __init__(self, alphabet):
+        Lexer.__init__(self)
+        self.alphabet = alphabet
+
+    @property
+    def current(self):
+        """Returns the element under the cursor until the end of the string"""
+        return self.string[self.index:]
+
+    def nextToken(self):
+        while self.current:
+            validelements = [x for x in self.alphabet.grammar_list if self.current[0] in x.first]
+            if not validelements:
+                if not self.generate_unknown:
+                    raise Exception("Not found")
+                string = self.current[0]
+                self.consume()
+                yield Token(unknownchar, string)
+            elif len(validelements) == 1:
+                element = validelements[0]
+                checker = load_checker(element)
+                for size in range(element.maxsize or len(self.current), element.minsize, -1):
+                    if checker.check(self.current[:size]):
+                        break
+                else:
+                    raise Exception("Nothing consumed")
+                string = self.current[:size]
+                for _ in range(size):
+                    self.consume()
+                yield Token(validelements[0], string)
+            else:
+                raise Exception("Multiple choices")

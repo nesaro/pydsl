@@ -31,6 +31,22 @@ class AlphabetDefinition(object):
         """Returns true if the alphabet contains the token"""
         raise NotImplementedError
 
+class AlphabetListDefinition(AlphabetDefinition):
+    """Uses a list of grammardefinitions"""
+    def __init__(self, grammarlist):
+        if not grammarlist:
+            raise ValueError
+        self.grammarlist = grammarlist
+
+    def __getitem__(self, index):
+        """Retrieves token by index"""
+        return self.grammarlist[index]
+
+    @property
+    def grammar_list(self):
+        return self.grammarlist
+
+
 class AlphabetDictDefinition(AlphabetDefinition):
     """Uses a dict of grammardefinitions"""
     def __init__(self, grammardict):

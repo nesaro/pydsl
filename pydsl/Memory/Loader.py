@@ -56,13 +56,16 @@ def load_checker(grammar):
         raise ValueError(grammar)
 
 def load_lexer(alphabet):
-    from pydsl.Alphabet.Definition import AlphabetDictDefinition
+    from pydsl.Alphabet.Definition import AlphabetDictDefinition, AlphabetListDefinition
     from pydsl.Grammar.BNF import BNFGrammar
     if isinstance(alphabet, str):
         alphabet = load(alphabet)
     if isinstance(alphabet, AlphabetDictDefinition):
         from pydsl.Alphabet.Lexer import AlphabetDictLexer
         return AlphabetDictLexer(alphabet)
+    if isinstance(alphabet, AlphabetListDefinition):
+        from pydsl.Alphabet.Lexer import AlphabetListLexer
+        return AlphabetListLexer(alphabet)
     elif isinstance(alphabet, BNFGrammar):
         from pydsl.Alphabet.Lexer import BNFLexer
         return BNFLexer(alphabet)
