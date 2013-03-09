@@ -51,6 +51,7 @@ class TestGrammarDefinitionBNF(unittest.TestCase):
         from pydsl.contrib.bnfgrammar import productionset0
         self.grammardef = productionset0
 
+    @unittest.skip
     def testEnumerate(self):
         self.assertListEqual([x for x in self.grammardef.enum()], ["SR"])
 
@@ -58,9 +59,11 @@ class TestGrammarDefinitionBNF(unittest.TestCase):
         from pydsl.Grammar.Definition import StringGrammarDefinition
         self.assertListEqual(self.grammardef.first, [StringGrammarDefinition("S")])
 
+    @unittest.skip
     def testMin(self):
         self.assertEqual(self.grammardef.minsize,2)
 
+    @unittest.skip
     def testMax(self):
         self.assertEqual(self.grammardef.maxsize,2)
 
@@ -99,6 +102,7 @@ class TestGrammarDefinitionMongoDb(unittest.TestCase):
     def testAlphabet(self):
         self.assertListEqual(self.grammardef.alphabet(), AlphabetDefinition)
 
+@unittest.skip
 class TestGrammarDefinitionPLY(unittest.TestCase):
     def setUp(self):
         import plye
@@ -124,6 +128,7 @@ class TestGrammarDefinitionPLY(unittest.TestCase):
     def testAlphabet(self):
         self.assertListEqual(self.grammardef.alphabet(), AlphabetDefinition)
 
+@unittest.skip
 class TestGrammarDefinitionJson(unittest.TestCase):
     def setUp(self):
         from pydsl.Grammar.Definition import JsonSchema
