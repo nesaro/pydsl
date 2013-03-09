@@ -17,7 +17,7 @@ symbol1 = TerminalSymbol(StringGrammarDefinition("S"))
 symbol2 = TerminalSymbol(StringGrammarDefinition("R"))
 final1 = NonTerminalSymbol("exp")
 rule1 = Production([final1], [symbol1, symbol2])
-productionset0 = BNFGrammar(final1, [rule1])
+productionset0 = BNFGrammar(final1, [rule1,symbol1,symbol2])
 p0good = "SR"
 p0bad = "SRL"
 
