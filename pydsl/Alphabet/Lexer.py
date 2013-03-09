@@ -160,7 +160,10 @@ class AlphabetListLexer(Lexer):
 
     def nextToken(self):
         while self.current:
-            validelements = [x for x in self.alphabet.grammar_list if self.current[0] in x.first]
+            from pydsl.Grammar.Definition import  StringGrammarDefinition
+            currentgd = StringGrammarDefinition(self.current[0])
+            print(currentgd)
+            validelements = [x for x in self.alphabet.grammar_list if currentgd in x.first]
             if not validelements:
                 if not self.generate_unknown:
                     raise Exception("Not found")
@@ -170,7 +173,7 @@ class AlphabetListLexer(Lexer):
             elif len(validelements) == 1:
                 element = validelements[0]
                 checker = load_checker(element)
-                for size in range(element.maxsize or len(self.current), element.minsize, -1):
+                for size in range(element.maxsize or len(self.current), max(element.minsize-1,0), -1):
                     if checker.check(self.current[:size]):
                         break
                 else:
@@ -178,6 +181,6 @@ class AlphabetListLexer(Lexer):
                 string = self.current[:size]
                 for _ in range(size):
                     self.consume()
-                yield Token(validelements[0], string)
+                yield Token(string, validelements[0])
             else:
-                raise Exception("Multiple choices")
+                raise Exception("Multiple choices" + str([str(x) for x in validelements]))

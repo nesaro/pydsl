@@ -31,7 +31,7 @@ class GrammarDefinition(object):
     @property
     def first(self):# -> set:
         """List of possible first elements"""
-        return [x for x in self.alphabet()]
+        return [x for x in self.alphabet().grammar_list]
 
     @property
     def minsize(self):# -> int:
@@ -80,10 +80,14 @@ class RegularExpressionDefinition(GrammarDefinition):
                 continue
             if self.regexpstr[i] == "[":
                 return [x for x in self.regexpstr[i+1:self.regexpstr.find("]")]]
-            return self.regexpstr[i] 
+            return [self.regexpstr[i]]
 
     def __getattr__(self, attr):
         return getattr(self.regexp, attr)
+
+    def alphabet(self):
+        from pydsl.Alphabet.Definition import Encoding
+        return Encoding("ascii")
 
 class StringGrammarDefinition(GrammarDefinition):
     def __init__(self, string):
@@ -100,7 +104,7 @@ class StringGrammarDefinition(GrammarDefinition):
 
     @property
     def first(self):
-        return self.string[0]
+        return [StringGrammarDefinition(self.string[0])]
 
     def enum(self):
         yield self.string
@@ -116,11 +120,17 @@ class StringGrammarDefinition(GrammarDefinition):
     def __str__(self):
         return str(self.string)
 
+    def alphabet(self):
+        return [StringGrammarDefinition(x) for x in self.string]
+
 class JsonSchema(GrammarDefinition, dict):
     def __init__(self, *args, **kwargs):
         GrammarDefinition.__init__(self)
         dict.__init__(self, *args, **kwargs)
 
+    def alphabet(self):
+        from pydsl.Alphabet.Definition import Encoding
+        return Encoding("ascii")
 class MongoGrammar(GrammarDefinition, dict):
     def __init__(self, *args, **kwargs):
         GrammarDefinition.__init__(self)
@@ -128,9 +138,17 @@ class MongoGrammar(GrammarDefinition, dict):
 
     @property
     def first(self):
-        return "{"
+        return [StringGrammarDefinition("{")]
+
+    def alphabet(self):
+        from pydsl.Alphabet.Definition import Encoding
+        return Encoding("ascii")
 
 class PythonGrammar(GrammarDefinition, dict):
     def __init__(self, *args, **kwargs):
         GrammarDefinition.__init__(self)
         dict.__init__(self, *args, **kwargs)
+
+    def alphabet(self):
+        from pydsl.Alphabet.Definition import AlphabetListDefinition
+        return AlphabetListDefinition([])

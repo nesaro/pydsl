@@ -64,7 +64,7 @@ class AlphabetDictDefinition(AlphabetDefinition):
 
     @property
     def grammar_list(self):
-        return list(self.grammardict.keys())
+        return list(self.grammardict.values())
 
 class Encoding(AlphabetDefinition):
     """Defines an alphabet using an encoding string"""
@@ -77,3 +77,9 @@ class Encoding(AlphabetDefinition):
             from pydsl.Grammar.Definition import StringGrammarDefinition
             return StringGrammarDefinition(item)
         raise KeyError
+
+    @property
+    def grammar_list(self):
+        #FIXME: Only ascii
+        from pydsl.Grammar.Definition import StringGrammarDefinition
+        return [StringGrammarDefinition(chr(x)) for x in range(128)]

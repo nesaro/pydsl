@@ -75,7 +75,7 @@ class BNFGrammar(GrammarDefinition): #Only stores a ruleset, and methods to ask 
 
     def alphabet(self):
         from pydsl.Alphabet.Definition import AlphabetListDefinition
-        return AlphabetListDefinition(self.terminalsymbollist)
+        return AlphabetListDefinition([x.gd for x in self.terminalsymbollist])
 
     @property
     def productionlist(self):

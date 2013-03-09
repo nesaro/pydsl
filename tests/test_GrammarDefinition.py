@@ -75,7 +75,7 @@ class TestGrammarDefinitionBNF(unittest.TestCase):
         self.assertListEqual(self.grammardef.next_lookup(NonTerminalSymbol("exp")),[EndSymbol()])
 
     def testAlphabet(self):
-        self.assertListEqual(self.grammardef.alphabet(), AlphabetDefinition)
+        self.assertListEqual(self.grammardef.alphabet().grammar_list, AlphabetDefinition)
 
 @unittest.skip
 class TestGrammarDefinitionMongoDb(unittest.TestCase):
