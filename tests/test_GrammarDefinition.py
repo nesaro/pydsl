@@ -55,7 +55,8 @@ class TestGrammarDefinitionBNF(unittest.TestCase):
         self.assertListEqual([x for x in self.grammardef.enum()], ["SR"])
 
     def testFirst(self):
-        self.assertListEqual(self.grammardef.first, ["S"])
+        from pydsl.Grammar.Definition import StringGrammarDefinition
+        self.assertListEqual(self.grammardef.first, [StringGrammarDefinition("S")])
 
     def testMin(self):
         self.assertEqual(self.grammardef.minsize,2)
@@ -75,7 +76,8 @@ class TestGrammarDefinitionBNF(unittest.TestCase):
         self.assertListEqual(self.grammardef.next_lookup(NonTerminalSymbol("exp")),[EndSymbol()])
 
     def testAlphabet(self):
-        self.assertListEqual(self.grammardef.alphabet().grammar_list, AlphabetDefinition)
+        from pydsl.Grammar.Definition import StringGrammarDefinition
+        self.assertListEqual(self.grammardef.alphabet().grammar_list, [StringGrammarDefinition(x) for x in ["S","R"]])
 
 @unittest.skip
 class TestGrammarDefinitionMongoDb(unittest.TestCase):
