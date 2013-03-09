@@ -144,7 +144,7 @@ class AlphabetDictLexer(Lexer):
                 string = self.current[:size]
                 for _ in range(size):
                     self.consume()
-                yield Token(validelements[0][0], string)
+                yield Token(string, validelements[0][1])
             else:
                 raise Exception("Multiple choices")
 
