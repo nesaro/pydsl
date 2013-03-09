@@ -15,24 +15,26 @@
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Test wrapper"""
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
-import unittest
+import logging
+LOG = logging.getLogger(__name__)
 
-class TestValidate(unittest.TestCase):
-    def testBasic(self):
+
+class Validator(object):
+    def __init__(self, grammar):
+        self.gd = grammar
+
+    def __call__(self, inputstring): #-> set
+        raise NotImplementedError
+
+
+class BNFValidator(Validator):
+    def __call__(self, inputstring):
         from pydsl.Memory.Loader import load_parser
-        parser = load_parser('Date', 'descent')
-        self.assertFalse(parser.get_trees("11/11/ab", True)[0].valid)
-        self.assertTrue(parser.get_trees("11/11/2011", True)[0].valid)
-
-    def testValidateLoad(self):
-        from pydsl.contrib.bnfgrammar import productionset0
-        from pydsl.Memory.Loader import load_validator
-        validator = load_validator(productionset0)
-        self.assertTrue(validator("input"))
-
+        parser = load_parser(self.gd, "descent")
+        resulttrees = parser.get_trees(inputstring, True)
+        return resulttrees

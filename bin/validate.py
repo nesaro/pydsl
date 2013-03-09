@@ -46,13 +46,13 @@ def errors_to_list(postnode):
 def validate(sgrammar, expression = None, inputfile = None, outputformat = None, **kwargs):
     """Read input file contents, creates grammar and transform objects, create connections, 
     and afterwards reads required input/launch main loop"""
-    from pydsl.Memory.Loader import load_parser
-    parser = load_parser(sgrammar, "descent")
+    from pydsl.Memory.Loader import load_validator
+    validator = load_validator(sgrammar)
     if expression:
-        resulttrees = parser.get_trees(expression, True)
+        resulttrees = validator(expression)
     elif inputfile:
         with open(inputfile, "rb") as f:
-            resulttrees = parser.get_trees(f.read(), True)
+            resulttrees = validator(f.read())
     else:
         raise Exception("No input method")
     jsonlist = []
