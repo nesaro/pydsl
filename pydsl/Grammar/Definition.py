@@ -154,5 +154,7 @@ class PythonGrammar(GrammarDefinition, dict):
         dict.__init__(self, *args, **kwargs)
 
     def alphabet(self):
-        from pydsl.Alphabet.Definition import AlphabetListDefinition
-        return AlphabetListDefinition([])
+        if "alphabet" in self:
+            return self['alphabet']
+        from pydsl.Alphabet.Definition import Encoding
+        return Encoding("ascii")
