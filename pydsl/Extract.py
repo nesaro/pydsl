@@ -30,19 +30,27 @@ __email__ = "nesaro@gmail.com"
 import logging
 LOG = logging.getLogger(__name__)
 from pydsl.Memory.Loader import load_checker
+from pydsl.Alphabet.Definition import AlphabetDefinition
+from pydsl.Grammar.Definition import GrammarDefinition
 
 def extract(grammar, inputdata):
     """Calls check for every possible slice of text"""
     checker = load_checker(grammar)
     totallen = len(inputdata)
-    try:
-        maxl = grammar.maxsize or totallen
-    except NotImplementedError:
+    if isinstance(grammar, GrammarDefinition):
+        try:
+            maxl = grammar.maxsize or totallen
+        except NotImplementedError:
+            maxl = totallen
+        try:
+            minl = grammar.minsize
+        except NotImplementedError:
+            minl = 1
+    elif isinstance(grammar, AlphabetDefinition):
         maxl = totallen
-    try:
-        minl = grammar.minsize
-    except NotImplementedError:
         minl = 1
+    else:
+        raise TypeError
     maxwsize = maxl - minl + 1
     result = []
     for i in range(totallen):
