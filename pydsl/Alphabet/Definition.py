@@ -49,11 +49,13 @@ class AlphabetListDefinition(AlphabetDefinition):
 
 class AlphabetDictDefinition(AlphabetDefinition):
     """Uses a dict of grammardefinitions"""
-    def __init__(self, grammardict):
+    def __init__(self, grammarlist):
+        if not grammarlist:
+            raise ValueError
         from pydsl.Memory.Loader import load
         self.grammardict = {}
-        for x in grammardict:
-            self.grammardict[x] = load(grammardict[x])
+        for x in grammarlist:
+            self.grammardict[x] = load(grammarlist[x])
 
     def __getitem__(self, item):
         """Retrieves token by name"""
