@@ -22,13 +22,12 @@ __email__ = "nesaro@gmail.com"
 import unittest
 
 class TestLexer(unittest.TestCase):
-    """Mongo checker"""
     def testSimpleLexing(self):
         """Test checker instantiation and call"""
-        from pydsl.Alphabet.Lexer import Lexer
+        from pydsl.Memory.Loader import load_lexer
         from pydsl.Alphabet.Definition import AlphabetDictDefinition
         mydef = AlphabetDictDefinition({'1':'integer','2':'Date'})
-        mylexer = Lexer(mydef)
-        self.assertTrue(lexer.lexer('123411/23/32'),['integer','date']) 
-        self.assertTrue([x for x in lexer.lexer_generator('123411/23/32')],['integer','date']) 
+        mylexer = load_lexer(mydef)
+        self.assertTrue(mylexer('123411/23/32'),['integer','date'])
+        self.assertTrue([x for x in mylexer.lexer_generator('123411/23/32')],['integer','date'])
 

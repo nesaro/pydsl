@@ -158,8 +158,8 @@ class TestWeightedParser(unittest.TestCase):
 class TestLexer(unittest.TestCase):
     def testLexer(self):
         """Lexer call"""
-        from pydsl.Alphabet.Lexer import BNFLexer
-        lexer = BNFLexer(productionset1)
+        from pydsl.Memory.Loader import load_lexer
+        lexer = load_lexer(productionset1.alphabet())
         result = list(lexer(string1))
         self.assertTrue(result)
 

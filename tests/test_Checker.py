@@ -56,7 +56,7 @@ class TestRegularExpressionChecker(unittest.TestCase):
         from pydsl.Checker import RegularExpressionChecker
         checker = RegularExpressionChecker("abc")
         self.assertTrue(checker.check("abc"))
-        self.assertTrue(checker.check("abd"))
+        self.assertFalse(checker.check("abd"))
 
 class TestPLYChecker(unittest.TestCase):
     def testCheck(self):
@@ -110,7 +110,7 @@ class TestAlphabetDictDefinitionChecker(unittest.TestCase):
     def testCheck(self):
         from pydsl.Checker import AlphabetDictChecker
         from pydsl.Alphabet.Definition import AlphabetDictDefinition
-        a = AlphabetDictChecker(AlphabetDictDefinition({'int':'integer'}))
+        a = AlphabetDictDefinition({'int':'integer'})
         checker = AlphabetDictChecker(a)
         self.assertTrue(checker.check('1234'))
         self.assertFalse(checker.check('abc'))
