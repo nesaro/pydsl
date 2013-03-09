@@ -71,6 +71,10 @@ class RegularExpressionDefinition(GrammarDefinition):
         import re
         self.regexp = re.compile(regexp, flags)
 
+    def __eq__(self, other):
+        if not isinstance(other, RegularExpressionDefinition):
+            return False
+        return self.regexpstr == other.regexpstr and self.flags == other.flags
     @property
     def first(self):# -> set:
         i = 0
