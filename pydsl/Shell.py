@@ -21,14 +21,8 @@ __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
-import sys
 import logging
 LOG = logging.getLogger(__name__)
-
-promptstr = "Insert data (Control-d to exit)"
-try: input = raw_input #Python2 workaround http://stackoverflow.com/questions/954834/how-do-i-use-raw-input-in-python-3-1
-except: pass
-
 
 def escapedsplitby(inputstring, separator):
     """Splits inputstring with separator and using "\" as a escape character"""
@@ -93,45 +87,4 @@ def save_result_to_output(resultdic, outputdic):
         else:
             with open(outputdic[key], 'w') as currentfile:  # print to file
                 currentfile.write(str(resultdic[key]))
-
-def getInput(tinstance):
-    if not sys.stdin.isatty():
-        if len(tinstance.inputchanneldic) != 1:
-            raise Exception("More than one channel required and no tty detected")
-    else:
-        print(promptstr)
-    while True:
-        inputdic = {}
-        try:
-            for channel in tinstance.inputchanneldic.keys():
-                inputstr = ""
-                if sys.stdin.isatty():
-                    inputstr = channel + ":\n"
-                var = input(inputstr)
-                inputdic[channel] = var
-        except (SyntaxError, NameError, TypeError):
-            pass
-        return inputdic
-
-def command_line_to_transformer(tinstance, inputfunc = getInput):
-    """Shell interaction for functions"""
-    if sys.stdin.isatty():
-        print("Input: " + ",".join(tinstance.inputchanneldic.keys()))
-    value = inputfunc(tinstance)
-    while value is not None:
-        resultdic = tinstance(value)
-        if not resultdic:
-            print(str(resultdic) + "\n")
-        else:
-            for key in resultdic.keys():
-                try:
-                    resultdic[key] = str(resultdic[key])
-                except UnicodeDecodeError:
-                    resultdic[key] = "Unprintable"
-            if len(resultdic) == 1:
-                print(str(list(resultdic.values())[0]) + "\n")
-            else:
-                print(str(resultdic) + "\n")
-        value = inputfunc(tinstance)
-    print("Bye Bye")
 
