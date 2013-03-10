@@ -6,19 +6,20 @@ pydsl is a language library written in python
 GRAMMARS
 --------
 
-pydsl support several grammar specification formats:
+supported formats:
  * regular expressions
  * pydsl BNF format
  * mongo database query dictionaries
  * python ply module (only check support)
 
-each grammar definition has the following properties:
+grammar properties:
  * enum(gd): yields a list of accepted words
  * first(gd): yields a list of the first accepted subword/char
  * minsize(gd): length of the smaller accepted word
  * maxsize(gd): length of the biggest accepted word
+ * alphabet(gd): returns the alphabet used by this gd
 
-pydsl offer a set of functions that use _grammar definitions_
+grammar functions:
  * validate(gd, input): test the input string against the spec. In case of failure, it returns a list of errors
 
 ALPHABETS
@@ -35,9 +36,20 @@ functions that use both _alphabets_ and _grammar definitions_:
  * check(d, input): test the input string against the spec
  * extract(gd, input): extract all the slices of the input that are accepted by the definition 
 
-pydsl also offers library related functions:
+LIBRARY
+-------
+
+pydsl also offers functions to store grammars and alphabets into directories and files. Here are the related functions:
  * manager s query: search for an element within a memory
  * manager i identifier: returns information about the element
+
+included elements:
+ * grammars
+   * grammars folder
+   * dict/filetype.dict: A list of filetypes
+   * dict/regexp.dict: A list of regular expressions
+ * alphabets
+   * list/encoding.py: A list of supported encoding
 
 INSTALLATION
 ============
@@ -86,17 +98,8 @@ Grammars
  * guess:py: Returns a list of the types that match the input element
  * validate.py: Perform a validation routine for user data according to a grammar
  * lexer.py: Generates a token list from an input according to an alphaber
+ * extract.py: extract all the slices of the input that are accepted by a definition 
 
-
-CONTRIB
-=======
-
-contrib directory contains several types of elements. Those elements are either imported by pydsl or used as a function argument for binaries.
-
- * grammars
-   * dict/filetype.dict: A list of filetypes, which are types
-   * dict/regexp.dict: A list of Regular expressions, which are types
- * alphabets
 
 REQUIREMENTS
 ============
