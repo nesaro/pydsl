@@ -43,7 +43,7 @@ def errors_to_list(postnode):
             result += errors_to_list(child)
     return result
 
-def validate(sgrammar, expression = None, inputfile = None, outputformat = None, **kwargs):
+def validate(sgrammar, expression = None, inputfile = None, outputformat = None):
     """Read input file contents, creates grammar and transform objects, create connections, 
     and afterwards reads required input/launch main loop"""
     from pydsl.Memory.Loader import load_validator
@@ -81,13 +81,13 @@ if __name__ == "__main__":
     PARSER.add_argument("-e", "--expression", action="store", dest="expression", help="input expression")
     PARSER.add_argument('-o', dest='outputformat',nargs='?', choices=["str","json"], default="str", help="output formats")
     PARSER.add_argument("sgrammar", metavar="sgrammar" , help="Grammar")
-    ARGS = PARSER.parse_args()
+    ARGS = vars(PARSER.parse_args())
     import sys
-    DEBUGLEVEL = ARGS.debuglevel or logging.WARNING
+    DEBUGLEVEL = ARGS.pop('debuglevel') or logging.WARNING
     
     logging.basicConfig(level = DEBUGLEVEL)
     try:
-        result = validate(**vars(ARGS))
+        result = validate(**ARGS)
     except EOFError:
         sys.exit(0)
     if not result:

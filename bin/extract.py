@@ -21,15 +21,14 @@ extracts input slices that are a Type
 """
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2013, Néstor Arocha"
+__copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
-from pydsl.Shell import parse_shell_dict, open_files_dict
-from pydsl.Memory.Loader import load_checker, load
-from pydsl.Extractor import extract
+from pydsl.Memory.Loader import load
+from pydsl.Extract import extract
 
-def extractaux(grammar, expression = None, inputfiledic = None, **kwargs):
+def extractaux(grammar, expression = None, input_file = None):
     #Generating and connecting output
     #listen to user, open read file, or other
     #configure output, write file, or other
@@ -38,15 +37,13 @@ def extractaux(grammar, expression = None, inputfiledic = None, **kwargs):
     if expression:
         result = extract(grammar,expression)
         print(result)
-        return result #FIXME: Solo en el modo expresion se espera de resultado para test 
-    elif inputfiledic:
-        inputdic = parse_shell_dict(inputfiledic)
-        outputdic = {"output":"stdout"}
-        stringdic = open_files_dict(inputdic)
-        resultdic = maingt(stringdic)
-        resultdic = bool_dict_values(resultdic)
-        from pydsl.Shell import save_result_to_output
-        save_result_to_output(resultdic, outputdic)
+        return result
+    elif input_file:
+        with open(input_file) as f:
+            content = f.read()
+        result = extract(grammar,content)
+        print(result)
+        return result
     else:
         raise Exception
     return True
@@ -56,15 +53,15 @@ if __name__ == "__main__":
     TUSAGE = "usage: %(prog)s [options] type"
     PARSER = argparse.ArgumentParser(usage = TUSAGE)
     PARSER.add_argument("-d", "--debuglevel", action="store", type=int, dest="debuglevel", help="Sets debug level")
-    PARSER.add_argument("-i", "--inputfile", action="store", dest="inputfiledic", help="input filename dict")
+    PARSER.add_argument("-i", "--inputfile", action="store", dest="input_file", help="input filename dict")
     PARSER.add_argument("-e", "--expression", action="store", dest="expression", help="input expression")
     PARSER.add_argument("grammar", metavar="grammar", help="Grammar name")
-    ARGS = PARSER.parse_args()
+    ARGS = vars(PARSER.parse_args())
     import sys
-    DEBUGLEVEL = ARGS.debuglevel or logging.WARNING
+    DEBUGLEVEL = ARGS.pop('debuglevel') or logging.WARNING
     logging.basicConfig(level = DEBUGLEVEL)
     try:
-        result = extractaux(**vars(ARGS))
+        result = extractaux(**ARGS)
     except EOFError:
         sys.exit(0)
     if not result:
