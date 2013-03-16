@@ -8,6 +8,7 @@ __email__ = "nesaro@gmail.com"
 import unittest
 from pydsl.Grammar.Parser.RecursiveDescent import RecursiveDescentParser
 from pydsl.Memory.File.BNF import load_bnf_file
+from pydsl.Memory.Loader import load,load_checker
 
 class TestLogicGrammars(unittest.TestCase):
     def setUp(self):
@@ -46,3 +47,11 @@ class TestHTMLGrammars(unittest.TestCase):
         self.assertTrue(result)
         result = parser.get_trees("<trble><tr><td>1</td></tr></table>")
         self.assertFalse(result)
+
+
+class TestLogGrammar(unittest.TestCase):
+    def testLogLine(self):
+        grammar = load("logline")
+        checker = load_checker(grammar)
+        self.assertTrue(checker.check("1.2.3.4 - - [1/1/2003:11:11:11 +2] \"GET\" 1 1 \"referer\" \"useragent\""))
+        self.assertFalse(checker.check("1.2.3.4 - - [1/1/2003:11:11:11 +2] \"GOT\" 1 1 \"referer\" \"useragent\""))
