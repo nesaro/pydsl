@@ -74,7 +74,6 @@ class TestParsers(unittest.TestCase):
     def testLR0ParseTable(self):
         """Tests the lr0 table generation"""
         from pydsl.Grammar.Parser.LR0 import _slr_build_parser_table, build_states_sets
-        from pprint import pprint
         state_sets = build_states_sets(productionset0)
         self.assertEqual(len(state_sets), 5)
         #1 . EI: : . exp $ , 
