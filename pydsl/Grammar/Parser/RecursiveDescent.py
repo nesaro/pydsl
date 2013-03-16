@@ -84,7 +84,7 @@ class RecursiveDescentResultTree(Tree):
     def right_limit_list(self):
         """Returns a list with every right limit (inorder)"""
         result = []
-        if self.content:
+        if self.content and self.content.rightpos:
             result.append(self.content.rightpos)
         for x in self.childlist:
             result += x.right_limit_list()
