@@ -90,7 +90,7 @@ class RecursiveDescentResultTree(Tree):
             result += x.right_limit_list()
         if not result:
             result = [0]
-        return result
+        return list(set(result))
 
 
 class RecursiveDescentParser(TopDownParser):
