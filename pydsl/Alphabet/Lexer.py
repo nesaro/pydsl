@@ -156,3 +156,17 @@ class AlphabetListLexer(Lexer):
                 yield Token(string, validelements[0])
             else:
                 raise Exception("Multiple choices" + str([str(x) for x in validelements]))
+
+    def lexer_generator(self, target):
+        next(target)
+        buffer = ""
+        while True:
+            element = (yield)
+            buffer += element #Asumes string
+            for x in range(1,len(buffer)):
+                currentstr = buffer[:x]
+                for gd in self.alphabet.grammar_list:
+                    checker = load_checker(gd)
+                    if checker.check(currentstr):
+                        buffer = buffer[x:]
+                        target.send(Token(currentstr, gd))
