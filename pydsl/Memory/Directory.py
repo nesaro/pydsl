@@ -15,12 +15,12 @@
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
-
 """ Directory storage """
 
 from .Memory import Memory
 from pydsl.Memory.File.Python import getFileTuple
 from pydsl.Abstract import InmutableDict
+from pydsl.Memory.File.Regexp import load_re_from_file
 import logging
 LOG = logging.getLogger(__name__)
 
@@ -29,6 +29,16 @@ def _isGDLFileName(path):
 
 def _isRELFileName(path):
     return path.endswith(".re")
+
+#def re_file_to_summary(path)
+#    (_, _, fileBaseName, _) = getFileTuple(filepath)
+#    return {"iclass":"re","identifier":fileBaseName, "filepath":filepath}
+#
+#iclasseslist = [
+#    {"iclass","extension":["py"],  "summary_from_file":, "load_from_file": },
+#    {"extension":["re"], "summary_from_file": re_file_to_summary,"load_from_file":load_re_from_file},
+#    {"extension":["bnf"], },
+#]
 
 class DirStorage(Memory):
     """A collection of elements stored inside a directory"""
