@@ -36,7 +36,7 @@ class AlphabetTranslator(object):
     def output_alphabet(self):
         raise NotImplementedError
 
-class EncodingLexer(AlphabetTranslator):
+class EncodingLexer(AlphabetTranslator): #FIXME should be named EncodingAlphabetTranslator
     """Special Lexer that encodes from a string a reads a string"""
     def __init__(self, encoding):
         self.encoding = encoding
@@ -134,7 +134,6 @@ class AlphabetListLexer(Lexer):
         while self.current:
             from pydsl.Grammar.Definition import  StringGrammarDefinition
             currentgd = StringGrammarDefinition(self.current[0])
-            print(currentgd)
             validelements = [x for x in self.alphabet.grammar_list if currentgd in x.first]
             if not validelements:
                 if not self.generate_unknown:
