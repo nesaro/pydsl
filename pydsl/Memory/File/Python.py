@@ -28,14 +28,14 @@ def load_module(filepath, identifier = None):
     import imp
     return imp.load_source(identifier, filepath)
 
-def load_python_file(moduleobject, **kwargs):
+def load_python_file(moduleobject):
     """ Try to create an indexable instance from a module"""
     if isinstance(moduleobject, str):
         moduleobject = load_module(moduleobject)
     if not hasattr(moduleobject, "iclass"):
         raise KeyError("Element" + str(moduleobject))
     iclass = getattr(moduleobject, "iclass")
-    resultdic = kwargs
+    resultdic = {}
     mylist = list(filter(lambda x:x[:1] != "_" and x != "iclass", (dir(moduleobject))))
     for x in mylist:
         resultdic[x] = getattr(moduleobject, x)

@@ -81,7 +81,7 @@ class DirStorage(Memory):
                 continue
             yield fileBaseName.split(".")[0]
 
-    def load(self, name, **kwargs):
+    def load(self, name):
         resultlist = self._searcher.search(name)
         if len(resultlist) > 1:
             LOG.error("Found two or more matches, FIXME: processing the first, should raise exception")

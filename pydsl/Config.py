@@ -26,8 +26,7 @@ import logging
 LOG = logging.getLogger(__name__)
 from pkg_resources import resource_filename
 
-
-def load_default_memory(): #-> list:
+def load_default_memory():
     from pydsl.Memory.Directory import DirStorage
     from pydsl.Memory.Dict import RegexpDictStorage
     from pydsl.Memory.List import EncodingStorage
@@ -46,7 +45,6 @@ def default_formats():
         {"extension":".bnf","summary_from_file":summary_bnf_file, "load_from_file":load_bnf_file},
         ]
 
-
 class GlobalConfig(object):
     """Execution time global configuration"""
     def __init__(self, persistent_dir=None, debuglevel=40):
@@ -54,7 +52,6 @@ class GlobalConfig(object):
         self.memorylist = []
         self.formatlist = default_formats()
         self.__debuglevel = debuglevel
-        self.lang = "es"
         if self.persistent_dir is None:
             try:
                 import os
