@@ -36,12 +36,23 @@ def load_default_memory(): #-> list:
     GLOBALCONFIG.memorylist.append(RegexpDictStorage(dirname + "/dict/regexp.dict"))
     GLOBALCONFIG.memorylist.append(EncodingStorage(dirname + "/list/encoding.py"))
 
+def default_formats():
+    from pydsl.Memory.File.Regexp import load_re_from_file, summary_re_from_file
+    from pydsl.Memory.File.BNF import load_bnf_file, summary_bnf_file
+    from pydsl.Memory.File.Python import summary_python_file, load_python_file
+    return [
+        {"extension":".py",  "summary_from_file":summary_python_file, "load_from_file":load_python_file},
+        {"extension":".re", "summary_from_file":summary_re_from_file,"load_from_file":load_re_from_file},
+        {"extension":".bnf","summary_from_file":summary_bnf_file, "load_from_file":load_bnf_file},
+        ]
+
 
 class GlobalConfig(object):
     """Execution time global configuration"""
     def __init__(self, persistent_dir=None, debuglevel=40):
         self.persistent_dir = persistent_dir
         self.memorylist = []
+        self.formatlist = default_formats()
         self.__debuglevel = debuglevel
         self.lang = "es"
         if self.persistent_dir is None:

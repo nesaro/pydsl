@@ -20,23 +20,9 @@
 from .Memory import Memory
 from pydsl.Memory.File.Python import getFileTuple
 from pydsl.Abstract import InmutableDict
-from pydsl.Memory.File.Regexp import load_re_from_file, summary_re_from_file
-from pydsl.Memory.File.BNF import load_bnf_file, summary_bnf_file
-from pydsl.Memory.File.Python import summary_python_file, load_python_file
+from pydsl.Config import GLOBALCONFIG
 import logging
 LOG = logging.getLogger(__name__)
-
-def _isGDLFileName(path):
-    return path.endswith(".bnf")
-
-def _isRELFileName(path):
-    return path.endswith(".re")
-
-iclasseslist = [
-    {"extension":".py",  "summary_from_file":summary_python_file, "load_from_file":load_python_file},
-    {"extension":".re", "summary_from_file":summary_re_from_file,"load_from_file":load_re_from_file},
-    {"extension":".bnf","summary_from_file":summary_bnf_file, "load_from_file":load_bnf_file},
-]
 
 
 class DirStorage(Memory):
@@ -59,7 +45,7 @@ class DirStorage(Memory):
 
     @property
     def allowed_extensions(self):
-        return [x["extension"] for x in iclasseslist]
+        return [x["extension"] for x in GLOBALCONFIG.formatlist]
 
     def next(self):
         try:
@@ -72,7 +58,7 @@ class DirStorage(Memory):
 
     @staticmethod
     def summary_from_filename(filepath):
-        entry = [x for x in iclasseslist if filepath.endswith(x["extension"])][0]
+        entry = [x for x in GLOBALCONFIG.formatlist if filepath.endswith(x["extension"])][0]
         return InmutableDict(entry["summary_from_file"](filepath))
 
     def all_files(self):
@@ -102,7 +88,7 @@ class DirStorage(Memory):
         if not resultlist:
             raise KeyError(self.__class__.__name__ + name)
         filepath = list(resultlist)[0]["filepath"]
-        entry = [x for x in iclasseslist if filepath.endswith(x["extension"])][0]
+        entry = [x for x in GLOBALCONFIG.formatlist if filepath.endswith(x["extension"])][0]
         return entry["load_from_file"](filepath)
 
     def __contains__(self, key):
