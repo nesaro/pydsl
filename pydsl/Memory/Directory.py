@@ -60,31 +60,27 @@ class DirStorage(Memory):
         return result
         
 
-    def summary_from_filename(self, modulepath):
-        (_, _, fileBaseName, ext) = getFileTuple(modulepath)
-        if _isRELFileName(modulepath):
-            result =  {"iclass":"re","identifier":fileBaseName, "filepath":modulepath}
-        elif _isGDLFileName(modulepath):
-            result = {"iclass":"BNFGrammar","identifier":fileBaseName, "filepath":modulepath}
+    def summary_from_filename(self, filepath):
+        (_, _, fileBaseName, _) = getFileTuple(filepath)
+        if _isRELFileName(filepath):
+            result =  {"iclass":"re","identifier":fileBaseName, "filepath":filepath}
+        elif _isGDLFileName(filepath):
+            result = {"iclass":"BNFGrammar","identifier":fileBaseName, "filepath":filepath}
         else:
             from pydsl.Memory.File.Python import summary_python_file
-            result = summary_python_file(modulepath)
+            result = summary_python_file(filepath)
         return InmutableDict(result)
 
     def all_files(self):
         import glob
-        if self._allowedextensions:
-            for extension in self._allowedextensions:
-                searchstring = self.path + "*" + extension
-                tmpresult = glob.glob(searchstring)
-                for result in tmpresult:
-                    if result.endswith("__init__.py"):
-                        continue
-                    yield result 
-        else:
-            searchstring = self.path + "*" 
-            for result in glob.glob(searchstring):
-                yield result 
+        extensions = self._allowedextensions or [""]
+        for extension in extensions:
+            searchstring = self.path + "*" + extension
+            tmpresult = glob.glob(searchstring)
+            for result in tmpresult:
+                if result.endswith("__init__.py"):
+                    continue
+                yield result
 
 
     def all_names(self):
@@ -99,7 +95,7 @@ class DirStorage(Memory):
         resultlist = self._searcher.search(name)
         if len(resultlist) > 1:
             LOG.error("Found two or more matches, FIXME: processing the first, should raise exception")
-        if len(resultlist) == 0:
+        if not resultlist:
             raise KeyError(self.__class__.__name__ + name)
         filepath = list(resultlist)[0]["filepath"]
         if _isRELFileName(filepath):
