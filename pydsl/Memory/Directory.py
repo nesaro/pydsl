@@ -95,16 +95,6 @@ class DirStorage(Memory):
                 continue
             yield fileBaseName.split(".")[0]
 
-    def _load_module_from_library(self, identifier):
-        try:
-            import imp
-            moduleobject = imp.load_source(identifier, self.path + "/" + identifier + ".py")
-        except (ImportError, IOError):
-            pass
-        else:
-            return moduleobject
-        raise ImportError
-
     def load(self, name, **kwargs):
         resultlist = self._searcher.search(name)
         if len(resultlist) > 1:
