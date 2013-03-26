@@ -15,22 +15,19 @@
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Test wrapper"""
-
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
 
-class TestWrapper(unittest.TestCase):
-    def testBasic(self):
-        from pydsl.Wrapper import Content, FunctionPool
-        a = Content("abcde")
-        #a.available_alphabet()
-        #a.select_alphabet("unicode") #Autodetected as encoding
-        a.available_grammars()
-        a.select_grammar("cstring")
-        transformlist = FunctionPool.available_transforms(a)
-        result = FunctionPool.lowerCase(a.content) #Result should be a content with the right alphabet/grammar
+class TestLexer(unittest.TestCase):
+    def testSimpleLexing(self):
+        """Test checker instantiation and call"""
+        from pydsl.Memory.Loader import load_lexer
+        from pydsl.Alphabet.Definition import AlphabetDictDefinition
+        mydef = AlphabetDictDefinition({'1':'integer','2':'Date'})
+        mylexer = load_lexer(mydef)
+        self.assertTrue(mylexer('123411/23/32'),['integer','date'])
+        self.assertTrue([x for x in mylexer.lexer_generator('123411/23/32')],['integer','date'])
 

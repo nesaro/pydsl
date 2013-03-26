@@ -24,7 +24,8 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
-from pydsl.Alphabet.Lexer import Lexer, finalchar
+from pydsl.Alphabet.Lexer import Lexer
+from pydsl.Alphabet.Token import Token
 import re
 
 #manual lexer
@@ -68,7 +69,7 @@ class ANLTRGrammarLexer(Lexer):
             raise Exception
         current = self.current
         self.match(char)
-        return chardict[char], current
+        return Token(current, alias = chardict[char])
 
     def comment(self):
         self.match("/")
@@ -84,38 +85,38 @@ class ANLTRGrammarLexer(Lexer):
     def name(self):
         import re
         string = ""
-        while self.current != finalchar and re.match("[a-zA-Z]", self.current):
+        while re.match("[a-zA-Z]", self.current):
             string += self.current
             self.consume()
         if string in protectedwords:
-            return string, protectedwords[string]
+            return Token(string, alias = protectedwords[string])
         if string == string.lower():
-            return string, "PARSERID"
+            return Token(string, alias = "PARSERID")
         else:
-            return string, "LEXERID"
+            return Token(string, alias = "LEXERID")
 
     def rawstring(self):
         self.match("'")
         string = ""
-        while self.current not in [finalchar, "'"]:
+        while self.current not in [None,"'"]:
             string += self.current
             self.consume()
             if string[-1] == "\\":
                 string += self.current
                 self.consume()
         self.match("'")
-        return string, "STRING"
+        return Token(string, alias="STRING")
 
     def number(self):
         import re
         string = ""
-        while self.current != finalchar and re.match("[0-9]", self.current):
+        while self.current and re.match("[0-9]", self.current):
             string += self.current
             self.consume()
-        return "NUMBER", string
+        return Token(string, alias="NUMBER")
 
     def nextToken(self):
-        while self.current != finalchar:
+        while self.current:
             if self.current == "/":
                 self.comment()
                 continue
@@ -123,16 +124,15 @@ class ANLTRGrammarLexer(Lexer):
                 self.consume()
                 continue
             elif self.current in chardict.keys():
-                return self.matchchar(self.current)
+                yield self.matchchar(self.current)
             elif re.match("[0-9]", self.current):
-                return self.number()
+                yield self.number()
             elif self.current == "'":
-                return self.rawstring()
+                yield self.rawstring()
             elif re.match("[a-zA-Z]", self.current):
-                return self.name()
+                yield self.name()
             else:
                 raise Exception("Unknown char '%s'" % self.current)
-        return "EOF_TYPE", ""
 
 
 def load_anltr_from_text(text):

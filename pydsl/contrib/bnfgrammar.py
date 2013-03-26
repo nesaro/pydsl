@@ -1,21 +1,33 @@
 """BNF grammars for testing"""
 
-from pydsl.Grammar.Symbol import StringTerminalSymbol, WordTerminalSymbol, NonTerminalSymbol, NullSymbol
+from pydsl.Grammar.Symbol import TerminalSymbol, NonTerminalSymbol, NullSymbol
 from pydsl.Grammar.BNF import Production, BNFGrammar
 from pydsl.Memory.File.BNF import strlist_to_production_set
+from pydsl.Memory.Loader import load
+from pydsl.Grammar.Definition import StringGrammarDefinition
 
 br = "max"
 leftrecursive=["S ::= E","E ::= E dot | dot","dot := String,."]
 rightrecursive=["S ::= E","E ::= dot E | dot","dot := String,."]
 centerrecursive=["S ::= E","E ::= dot E dot | dot","dot := String,."]
 
+#productionset0 definition
+
+symbol1 = TerminalSymbol(StringGrammarDefinition("S"))
+symbol2 = TerminalSymbol(StringGrammarDefinition("R"))
+final1 = NonTerminalSymbol("exp")
+rule1 = Production([final1], [symbol1, symbol2])
+productionset0 = BNFGrammar(final1, [rule1,symbol1,symbol2])
+p0good = "SR"
+p0bad = "SRL"
+
 
 #productionset1 definition
-symbol1 = StringTerminalSymbol("S")
-symbol2 = StringTerminalSymbol("R")
-symbol3 = StringTerminalSymbol(":")
-symbol4 = WordTerminalSymbol("Integer", {"grammarname":"integer"}, br)
-symbol5 = WordTerminalSymbol("Generic", {"grammarname":"cstring"}, br)
+symbol1 = TerminalSymbol(StringGrammarDefinition("S"))
+symbol2 = TerminalSymbol(StringGrammarDefinition("R"))
+symbol3 = TerminalSymbol(StringGrammarDefinition(":"))
+symbol4 = TerminalSymbol(load("integer"), None, br)
+symbol5 = TerminalSymbol(load("cstring"), None, br)
 final1 = NonTerminalSymbol("storeexp") 
 final2 = NonTerminalSymbol("retrieveexp") 
 final3 = NonTerminalSymbol("exp")
@@ -27,8 +39,8 @@ rulelist = [rule1, rule2, rule3, rule4, symbol1, symbol2, symbol3, symbol4, symb
 productionset1 = BNFGrammar(final3, rulelist)
 
 #productionset2 definition
-symbola = StringTerminalSymbol("A")
-symbolb = StringTerminalSymbol("B")
+symbola = TerminalSymbol(StringGrammarDefinition("A"))
+symbolb = TerminalSymbol(StringGrammarDefinition("B"))
 nonterminal = NonTerminalSymbol("res")
 rulea = Production ([nonterminal], [symbola, NullSymbol(), symbolb])
 productionset2 = BNFGrammar(nonterminal, [rulea, symbola, symbolb])

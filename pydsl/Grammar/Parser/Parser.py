@@ -55,9 +55,9 @@ def terminal_symbol_reducer(symbol, word, production):
             for end in range(begin, len(word)+1):
                 if symbol.check(word[begin:end]):
                     validresults.append(ParseTree(begin, end, [symbol], word[begin:end], production))
-    elif symbol.boundariesrules == "fixed":
+    elif isinstance(symbol.boundariesrules , int):
         LOG.debug("terminal_symbol_reducer: policy: fixed")
-        size = len(symbol)
+        size = symbol.boundariesrules
         for begin in range(0, len(word)):
             if symbol.check(word[begin:begin + size]):
                 LOG.debug("__auxReducer: parsed:"+ str(word[begin:begin + size]))
@@ -90,8 +90,8 @@ def terminal_symbol_consume(symbol, word):
             if symbol.check(word[begin:end]):
                 validresults.append(ParseTree(begin, end, [symbol], word[begin:end], symbol))
         return validresults
-    elif symbol.boundariesrules == "fixed":
-        size = len(symbol)
+    elif isinstance(symbol.boundariesrules,int):
+        size = symbol.boundariesrules
         LOG.debug("terminal_symbol_consume: policy: fixed " + str(size))
         if len(word) >= size and symbol.check(word[:size]):
             return [ParseTree(0, size, [symbol], word[:size], symbol)]
@@ -120,17 +120,12 @@ class TopDownParser(Parser):
     """Top down parser like descent parser"""
     def __init__(self, bnfgrammar):
         Parser.__init__(self, bnfgrammar)
-        
+
 class BottomUpParser(Parser):
     """ leaf to root parser"""
-    def __init__(self, bnfgrammar, packagedependencies = None):
-        from pydsl.Alphabet.Lexer import BNFLexer
-        self._lexer = BNFLexer(bnfgrammar)
-        terminalsymbollist = bnfgrammar.getTerminalSymbols()
-        for ts in terminalsymbollist:
-            from pydsl.Grammar.Symbol import WordTerminalSymbol
-            if isinstance(ts, WordTerminalSymbol):
-                LOG.critical("BottomUp parsers can't handle WordTerminalSymbol yet")
-                raise Exception
+    def __init__(self, bnfgrammar):
+        from pydsl.Memory.Loader import load_lexer
+        self._lexer = load_lexer(bnfgrammar.alphabet())
+        terminalsymbollist = bnfgrammar.terminalsymbollist
         Parser.__init__(self, bnfgrammar)
         

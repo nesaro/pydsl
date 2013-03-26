@@ -84,13 +84,13 @@ class RecursiveDescentResultTree(Tree):
     def right_limit_list(self):
         """Returns a list with every right limit (inorder)"""
         result = []
-        if self.content:
+        if self.content and self.content.rightpos:
             result.append(self.content.rightpos)
         for x in self.childlist:
             result += x.right_limit_list()
         if not result:
             result = [0]
-        return result
+        return list(set(result))
 
 
 class RecursiveDescentParser(TopDownParser):
@@ -186,7 +186,7 @@ class RecursiveDescentParser(TopDownParser):
             if showerrors and not result:
                 erroresult = ParseTree(0,len(data), [onlysymbol] , data, production, valid = False)
                 for invalid in invalidstack:
-                    current_symbol = invalid.production if isinstance(invalid.production, TerminalSymbol) else invalid.production.leftside[0]
+                    current_symbol = invalid.production if isinstance(invalid.production, (TerminalSymbol, NullSymbol)) else invalid.production.leftside[0]
                     if current_symbol in production.rightside:
                         erroresult.append_child(invalid)
                 return [erroresult]

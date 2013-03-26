@@ -153,6 +153,13 @@ class PLYChecker(Checker):
         else:
             return True
 
+class StringChecker(Checker):
+    def __init__(self, gd):
+        Checker.__init__(self)
+        self.gd = gd
+
+    def check(self, data):
+        return self.gd.string == str(data)
 
 class JsonSchemaChecker(Checker):
     def __init__(self, gd):
@@ -170,9 +177,12 @@ class JsonSchemaChecker(Checker):
 class AlphabetDictChecker(Checker):
     def __init__(self, gd):
         Checker.__init__(self)
+        from pydsl.Alphabet.Definition import AlphabetDictDefinition
+        if not isinstance(gd, AlphabetDictDefinition):
+            raise TypeError
         self.gd = gd
         from pydsl.Memory.Loader import load_checker
-        self.checkerinstances = [load_checker(x) for x in self.gd.grammardict]
+        self.checkerinstances = [load_checker(x) for x in self.gd.grammardict.values()]
 
     def check(self, data):
         for element in data:

@@ -48,28 +48,9 @@ if __name__ == "__main__":
     from pydsl.Guess import Guesser
     guess = Guesser()
     if ARGS.inputfile:
-        from pydsl.Interaction.Protocol import protocol_split
-        pdict = protocol_split(ARGS.inputfile)
-        if pdict["protocol"] == "file":
-            try:
-                with open(pdict["path"], "rb") as f:
-                    inputstr = f.read() 
-            except IOError:
-                inputstr = ""
-            result = guess(inputstr)
-        elif pdict["protocol"] == "http":
-            import urllib.request
-            f = urllib.request.urlopen(ARGS.inputfile)
-            inputstr = f.read()
-            f.close()
-            result = guess(inputstr)
-        else:
-            try:
-                with open(ARGS.inputfile, "rb") as f:
-                    inputstr = f.read() 
-            except IOError:
-                inputstr = ""
-            result = guess(inputstr)
+        with open(ARGS.inputfile, "rb") as f:
+            inputstr = f.read() 
+        result = guess(inputstr)
     elif ARGS.expression:
         result = guess(ARGS.expression)
     else:

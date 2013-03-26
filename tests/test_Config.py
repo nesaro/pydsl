@@ -27,3 +27,14 @@ class TestConfig(unittest.TestCase):
     def testInstance(self):
         from pydsl.Config import GLOBALCONFIG
 
+
+class TestInmutableDict(unittest.TestCase):
+    def testEqual(self):
+        from pydsl.Abstract import InmutableDict
+        a = InmutableDict({"a":1,"b":2})
+        b = InmutableDict({"a":1,"b":2})
+        c = InmutableDict({"a":1,"b":3})
+        self.assertEqual(a,b)
+        self.assertEqual(hash(a),hash(b))
+        self.assertNotEqual(a,c)
+        self.assertNotEqual(hash(a),hash(c))

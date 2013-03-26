@@ -15,7 +15,7 @@
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
-"""LR0 unfinished implementation"""
+"""SLR0 unfinished implementation"""
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
@@ -24,18 +24,16 @@ __email__ = "nesaro@gmail.com"
 import logging
 LOG = logging.getLogger(__name__)
 from pydsl.Grammar.Parser.Parser import BottomUpParser
-from pydsl.Grammar.Symbol import NonTerminalSymbol, TerminalSymbol, EndSymbol, Symbol
-from pydsl.Grammar.BNF import NonTerminalProduction
+from pydsl.Grammar.Symbol import NonTerminalSymbol, TerminalSymbol, EndSymbol
+from pydsl.Grammar.BNF import Production
 
-def __check_action(action):
-    """Valid actions string"""
-    return action in ["Accept", "Shift", "Reduce", "Fail"]
+Extended_S = NonTerminalSymbol("EI")
 
-def __build_item_closure(itemset, productionruleset):
+def _build_item_closure(itemset, productionset):
     """Build input itemset closure """
     #For every item inside current itemset, if we have the following rule:
     #  xxx <cursor><nonterminalSymbol> xxx  append every rule from self._productionruleset that begins with that NonTerminalSymbol
-    LOG.debug("__build_item_closure: Begin")
+    LOG.debug("_build_item_closure: Begin")
     if not isinstance(itemset, LR0ItemSet):
         raise TypeError
     import copy
@@ -47,20 +45,14 @@ def __build_item_closure(itemset, productionruleset):
             nextsymbol = currentitem.next_symbol()
             if nextsymbol is None:
                 break
-            for rule in productionruleset.productionrulelist:
-                if rule.leftside[0] == nextsymbol:
-                    newitem = LR0Item(rule, 0)
-                    if newitem not in resultset.itemlist:
-                        resultset.append_item(newitem)
-                        changed = True
-                if rule.rightside[0] == nextsymbol:
-                    newitem = LR0Item(rule, 0)
-                    if newitem not in resultset.itemlist:
-                        resultset.append_item(newitem)
-                        changed = True
+            for rule in productionset.productionlist:
+                newitem = LR0Item(rule)
+                if rule.leftside[0] == nextsymbol and newitem not in resultset.itemlist:
+                    resultset.append_item(newitem)
+                    changed = True
     return resultset
 
-def item_set_goto(itemset, inputsymbol, productionruleset):
+def item_set_goto(itemset, inputsymbol, productionset):
     """returns an itemset
     locate inside itemset every element with inputsymbol following cursor
     for every located item, append its itemclosure"""
@@ -69,73 +61,66 @@ def item_set_goto(itemset, inputsymbol, productionruleset):
         if item.next_symbol() == inputsymbol:
             newitem = LR0Item(item.rule, item.position + 1)
             resultset.append_item(newitem)
-    return __build_item_closure(resultset, productionruleset)
+    return _build_item_closure(resultset, productionset)
 
-def build_states_sets(productionruleset):
-    """Build states sets"""
-    LOG.debug("buildStatesSets: Begin")
-    result = []
-    symbollist = productionruleset.getSymbols()
-    #mainproductionrule = productionruleset.getMainRule()
-    mainproductionrule = NonTerminalProduction("Extended initial", [NonTerminalSymbol("EI")] , [productionruleset.getInitialSymbol()])
-    mainproductionruleitem = LR0Item(mainproductionrule, 0)
+def build_states_sets(productionset):
+    symbollist = productionset.getSymbols() + [EndSymbol()]
+    mainproductionrule =  Production([Extended_S] , [productionset.initialsymbol, EndSymbol()])
+    mainproductionruleitem = LR0Item(mainproductionrule)
     mainproductionruleitemset = LR0ItemSet()
     mainproductionruleitemset.append_item(mainproductionruleitem)
-    index0 = __build_item_closure(mainproductionruleitemset, productionruleset)
+    index0 = _build_item_closure(mainproductionruleitemset, productionset)
     LOG.debug("buildStatesSets: mainsymbol closure: " + str(index0))
-    result.append(index0)
+    result = [index0]
     changed = True
     #returns a set of itemsets
     while changed:
         changed = False
-        for itemset in result:
+        for itemset in result[:]:
             for symbol in symbollist:
-                if symbol in itemset:
-                    break
-                newitemset = item_set_goto(itemset, symbol, productionruleset)
-                found = False
-                for curreintitemset in result:
-                    if curreintitemset == newitemset:
-                        found = True
-                        changed = True
-                        itemset.append_transition(symbol, curreintitemset)
-                        break
-                if not found and (newitemset not in result):
+                if itemset.has_transition(symbol): #FIXME a symbol in a LR0item list?
+                    continue
+                newitemset = item_set_goto(itemset, symbol, productionset)
+                if newitemset in result and itemset.get_transition(symbol) != newitemset: # TODO Check if the transition is already there
+                    changed = True
+                    itemset.append_transition(symbol, newitemset)
+                elif newitemset and newitemset not in result: #avoid adding a duplicated entry
                     changed = True
                     result.append(newitemset)
                     itemset.append_transition(symbol, newitemset)
     return result
 
-def __slr_build_parser_table(productionruleset):
+def _slr_build_parser_table(productionset):
     """SLR method to build parser table"""
-    LOG.debug("__slr_build_parser_table: Begin")
     result = ParserTable()
-    #when buildStatesSets finishes its job
-    statesset = build_states_sets(productionruleset)
-    for itemindex in range(len(statesset)):
-        itemset = statesset[itemindex]
-        LOG.debug("__slr_build_parser_table: Evaluating itemset:" + str(itemset))
-        for symbol in productionruleset.getTerminalSymbols() + [EndSymbol]:
+    statesset = build_states_sets(productionset)
+    for itemindex, itemset in enumerate(statesset):
+        LOG.debug("_slr_build_parser_table: Evaluating itemset:" + str(itemset))
+        for symbol in productionset.getSymbols() + [EndSymbol()]:
             numberoptions = 0
             for lritem in itemset.itemlist:
                 #if cursor is before a terminal, and there is a transition to another itemset with the following terminal, append shift rule
-                if isinstance(symbol, TerminalSymbol) and lritem.next_symbol() == symbol and symbol in itemset:
+                if isinstance(symbol, TerminalSymbol) and lritem.next_symbol() == symbol and itemset.has_transition(symbol):
                     destinationstate = statesset.index(itemset.get_transition(symbol))
-                    result.append_rule(itemindex, symbol, "Shift", destinationstate)
+                    result.append(itemindex, symbol, "Shift", destinationstate)
                     numberoptions += 1
+                if isinstance(symbol, NonTerminalSymbol) and lritem.next_symbol() == symbol and itemset.has_transition(symbol):
+                    destinationstate = statesset.index(itemset.get_transition(symbol))
+                    result.append_goto(itemindex, symbol, destinationstate)
                 #if cursor is at the end of the rule, then append reduce rule and go transition
-                if lritem.previous_symbol() == symbol and lritem.is_last_position() and symbol != productionruleset.getInitialSymbol():
-                    result.append_reduction(itemindex, symbol, itemindex, lritem)
+                if lritem.previous_symbol() == symbol and lritem.is_last_position() and symbol != Extended_S:
+                    for x in productionset.next_lookup(symbol):
+                        result.append(itemindex, x, "Reduce", None, lritem.rule)
                     numberoptions += 1
                 #if cursor is at the end of main rule, and current symbol is end, then append accept rule
-                if isinstance(symbol, EndSymbol) and lritem.is_last_position() and symbol == productionruleset.getInitialSymbol():
-                    result.append_rule(itemindex, symbol, "Accept", itemindex)
+                if isinstance(symbol, EndSymbol) and lritem.previous_symbol() == productionset.initialsymbol:
+                    result.append(itemindex, symbol, "Accept", None)
                     numberoptions += 1
-            if numberoptions == 0:
-                LOG.debug("No rule found to generate a new parsertable entry ")
+            if not numberoptions:
+                LOG.info("No rule found to generate a new parsertable entry ")
                 LOG.debug("symbol: " + str(symbol))
                 LOG.debug("itemset: " + str(itemset))
-            if numberoptions > 1:
+            elif numberoptions > 1: #FIXME can it count duplicated entries?
                 from pydsl.Exceptions import LRConflictException
                 raise LRConflictException
     return result
@@ -143,72 +128,75 @@ def __slr_build_parser_table(productionruleset):
 class ParserTable(object):
     """ Stores a state/symbol/action/new state relation """
     def __init__(self):
-        self.__internalstate = None
-        self.set_initial_state()
-        #Default for every state: Fail state
+        #Default for every state: Fail state #FIXME use default_dict
         self.__table = {}
 
+    def __len__(self):
+        return len(self.__table)
+
+    #def __str__(self):
+    #    return "<ParserTable - State:" + str(self.state) + " Table: " + str([str(key) + "," + str([str(x) for x in value]) for (key,value) in self.__table.items()]) + ">"
+
     def __str__(self):
-        return "<ParserTable - State:" + str(self.__internalstate) + " Table: " + str(self.__table) + ">"
+        return str([str(key) + str([str(x) for x in value]) for (key,value) in self.__table.items()])
 
-    def append_rule(self, state, symbol, action, destinationstate):
+    def append(self, state, symbol, action, destinationstate, production = None):
         """Appends a new rule"""
-        if not __check_action(action) or action == "Reduce":
+        if action not in (None, "Accept", "Shift", "Reduce"):
             raise TypeError
         if not state in self.__table:
             self.__table[state] = {}
-        self.__table[state][symbol.name] = {"action":action, "dest":destinationstate}
+        rule = {"action":action, "dest":destinationstate}
+        if action == "Reduce":
+            if rule is None:
+                raise TypeError("Expected production parameter")
+            rule["rule"] = production
+        self.__table[state][symbol] = rule
 
-    def append_reduction(self, state, symbol, destinationstate, rule):
-        """Appends a reduce action. It also stores which ProductionRule must follow on reduction"""
+    def append_goto(self, state, symbol, destinationstate):
         if not state in self.__table:
             self.__table[state] = {}
-        self.__table[state][symbol.name] = {"action":"Reduce", "dest":destinationstate, "rule":rule}
+        self.__table[state][symbol] = destinationstate
 
-    def current_state(self):
-        """returns current state"""
-        return self.__internalstate
+    def goto(self, state, symbol):
+        return self.__table[state][symbol]
 
-    def insert_symbol(self, symbol):
+    def insert(self, state, token):
         """change internal state, return action"""
-        if not isinstance(symbol, Symbol):
-            LOG.error("Bad arg for insert_symbol function")
-            raise TypeError
-        if self.__internalstate not in self.__table:
-            raise IndexError
-        if symbol not in self.__table[self.__internalstate]:
-            self.set_initial_state()
+        for symbol in self.__table[state]:
+            if symbol == EndSymbol() or symbol.check(token):
+                break
+        else:
+            if token != EndSymbol():
+                return {"action":"Fail"}
+            else:
+                symbol = EndSymbol()
+        try:
+            return self.__table[state][symbol]
+        except KeyError:
             return {"action":"Fail"}
-        result = self.__table[self.__internalstate, symbol]
-        newstate = result["dest"]
-        self.__internalstate = newstate
-        return result
-        
-    def set_initial_state(self):
-        """sets initial state to 0"""
-        self.__internalstate = 0
+
 
 
 class LR0Item(object):
     """LR0 table item"""
-    def __init__(self, rule, cursorposition):
-        if not isinstance(rule, NonTerminalProduction):
+    def __init__(self, rule, position = 0):
+        if not isinstance(rule, Production):
             raise TypeError
+        if position > len(rule.rightside):
+            raise ValueError("Position is outside the rule")
         self.rule = rule
-        self.position = cursorposition
-        #TODO: Verificar que la posicion es menor o igual que la longitud de la parte derecha de la regla
+        self.position = position
 
     def __str__(self):
-        return "<LR0Item - Rule: " + str(self.rule) + " Position: " + str(self.position) + ">"
+        rscopy = [str(x) for x in self.rule.rightside]
+        rscopy.insert(self.position, ".")
+        return str([str(x) for x in self.rule.leftside]) + ": " + str(rscopy) 
 
     def __eq__(self, other):
         if not isinstance(other, LR0Item):
-            raise TypeError
-        if self.position != other.position:
             return False
-        if self.rule != other.rule:
-            return False
-        return True
+        return self.position == other.position and self.rule == other.rule
 
     def previous_symbol(self):
         """returns cursor's previous symbol"""
@@ -225,21 +213,25 @@ class LR0Item(object):
 
     def is_last_position(self):
         """Returns true if cursor if after last element"""
-        return self.position > len(self.rule.rightside)
+        return self.position >= len(self.rule.rightside)
 
 class LR0ItemSet(object):
     """Stores LR0Items, and a dic with symbols and destination states"""
     def __init__(self):
         self.itemlist = []
-        self.__transitiondic = {}
+        self.transitions = {}
 
     def __str__(self):
         result = "<LR0ItemSet: \n"
         for item in self.itemlist:
             result += str(item) + ","
-        result += "transitions:" + str(self.__transitiondic)
+        if self.transitions:
+            result += "transitions:" + str([str(x) + str(y) for (x,y) in self.transitions.items()])
         result += ">"
         return result
+
+    def __bool__(self):
+        return bool(self.itemlist)
 
     def __eq__(self, anotherset):
         """Tests on itemlist equality"""
@@ -253,65 +245,65 @@ class LR0ItemSet(object):
         return True
 
     def append_item(self, item):
-        """Apend new item to set"""
+        """Append new item to set"""
         if not isinstance(item, LR0Item):
             raise TypeError
         self.itemlist.append(item)
 
     def append_transition(self, symbol, targetset):
         """Appends a transition"""
-        if symbol.name in self.__transitiondic:
+        if symbol in self.transitions:
             return
-        self.__transitiondic[symbol.name] = targetset
+        self.transitions[symbol] = targetset
 
-    def __contains__(self, symbol):
-        return symbol.name in self.__transitiondic
+    def has_transition(self, symbol):
+        return symbol in self.transitions
 
     def get_transition(self, symbol):
         """gets a transition"""
-        return self.__transitiondic[symbol.name]
+        return self.transitions[symbol]
 
 class LR0Parser(BottomUpParser):
     """LR0 bottomup parser. Not finished"""
-    def __init__(self, productionruleset):
-        #TODO: Build extended productionruleset before calling parent constructor
-        BottomUpParser.__init__(self, productionruleset)
-        self.__stack = [] 
+    def __init__(self, productionset):
+        #TODO: Build extended productionset before calling parent constructor
+        BottomUpParser.__init__(self, productionset)
         #Add main item to itemsclosure with cursor at 0 position
-        self.__parsertable = __slr_build_parser_table(productionruleset)
+        self.__parsertable = _slr_build_parser_table(productionset)
         #build GoTo and Action Table from ProductionRuleSet
 
-    def check_word(self, tokenlist):
+    def check(self, tokenlist):
         """see parent docstring"""
         LOG.debug("check_word: Begin")
-        self.__parsertable.set_initial_state()
         #empty stack
-
-        #convert tokens to terminalsymbols
         #iterate over symbollist
         LOG.debug("check_word: checking list: " + str(tokenlist))
-        for token in tokenlist:
-            newdic = self.__parsertable.insert_symbol(token)
-            currentstate = self.__parsertable.current_state()
+        if not isinstance(tokenlist, list):
+            raise TypeError
+        stack = [(0, Extended_S)]
+        while True:
+            state = stack[-1][0]
+            if len(tokenlist):#FIXME: tokenlist with one element is reported as false
+                token = tokenlist[0]
+            else:
+                token = EndSymbol()
+            newdic = self.__parsertable.insert(state, token)
             action = newdic["action"]
+            if action == "Fail":
+                return False
+            elif action == "Accept":
+                return True
             if action == "Reduce":
                 reductionrule = newdic["rule"]
                 #TODO extract len(right side) of the rule and insert left side
-                for unused in range(len(reductionrule.rightside)):
-                    self.__stack.pop()
-                self.__stack.append((currentstate, reductionrule.leftside))
-            if action == "Shift":
-                self.__stack.append((currentstate, token))
-            if action == "Fail":
-                return False
-            if action == "Accept":
-                return True
+                for rsymbol in reversed(reductionrule.rightside):
+                    state, symbol = stack.pop() # TODO: check
+                state = stack[-1][0]
+                state = self.__parsertable.goto(state,reductionrule.leftside[0])
+                stack.append((state, reductionrule.leftside[0]))
+            elif action == "Shift":
+                stack.append((newdic['dest'], tokenlist.pop(0)))
+            else:
+                raise ValueError("Unknown action")
         return False
-
-
-    def get_symbol_token_map(self, tokenlist):
-        """ returns a SymbolTokenMap with best guesses """
-        #Symbol to token map can be retrieved from parsertable. It must store left side of rule on reduction 
-        #TODO : think about this
-        pass
 

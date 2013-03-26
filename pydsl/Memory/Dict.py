@@ -66,7 +66,7 @@ class RegexpDictStorage(DictStorage):
         result = []
         from pydsl.Abstract import InmutableDict
         for key in self._content:
-            result.append(InmutableDict({"identifier":key, "regexp":self._content[key]["regexp"], "iclass":"RegularExpressionGrammarTools"}))
+            result.append(InmutableDict({"identifier":key, "regexp":self._content[key]["regexp"], "iclass":"RegularExpression"}))
         return result
 
     def load(self, index, **kwargs):

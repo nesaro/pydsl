@@ -15,27 +15,26 @@
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
+
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
-import unittest
-import sys
-
-def fun1(parent, obj):
-    print("FUN !")
-    parent.emit_message('output',obj['message'])
+import logging
+LOG = logging.getLogger(__name__)
 
 
-class TestAgentNetwork(unittest.TestCase):
-    def setUp(self):
-        pass
+class Validator(object):
+    def __init__(self, grammar):
+        self.gd = grammar
 
-    @unittest.skipIf(sys.version_info >= (3, 0, 0), "requires python2")
-    def testNetwork(self):
-        from pydsl.Agent import AgentNetwork
-        initlist = [("agent1", {'input':fun1})]
-        #initlist = [("agent1", {'input':lambda parent,obj:'OK'})]
-        mynetwork = AgentNetwork("ExampleExchange", initlist)
-        result = mynetwork.call("1234")
-        print(result)
+    def __call__(self, inputstring): #-> set
+        raise NotImplementedError
+
+
+class BNFValidator(Validator):
+    def __call__(self, inputstring):
+        from pydsl.Memory.Loader import load_parser
+        parser = load_parser(self.gd, "descent")
+        resulttrees = parser.get_trees(inputstring, True)
+        return resulttrees
