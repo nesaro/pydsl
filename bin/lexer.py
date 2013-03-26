@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python
 
 # -*- coding: utf-8 -*-
 #This file is part of pydsl.
@@ -17,7 +17,7 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-extracts input slices that are a Type 
+check if input data belongs to a Type
 """
 
 __author__ = "Nestor Arocha"
@@ -25,43 +25,50 @@ __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
-from pydsl.Memory.Loader import load
-from pydsl.Extract import extract
+from pydsl.Memory.Loader import load_lexer
 
-def extractaux(grammar, expression = None, input_file = None):
+def bool_dict_values(dic):
+    for key in dic:
+        if str(dic[key]) == "False":
+            dic[key] = False
+        else:
+            dic[key] = bool(dic[key])
+    return dic
+
+def lexer(alphabet, expression = None, inputfile = None):
     #Generating and connecting output
     #listen to user, open read file, or other
     #configure output, write file, or other
-
-    grammar = load(grammar)
+    lexer = load_lexer(alphabet)
     if expression:
-        result = extract(grammar,expression)
+        result = [str(x) for x in lexer(expression)]
         print(result)
-        return result
-    elif input_file:
-        with open(input_file) as f:
-            content = f.read()
-        result = extract(grammar,content)
+    elif inputfile:
+        with open(filename, 'rb') as f:
+            expression = f.read()
+        result = [str(x) for x in lexer(expression)]
         print(result)
-        return result
     else:
         raise Exception
     return True
 
 if __name__ == "__main__":
     import argparse
-    TUSAGE = "usage: %(prog)s [options] type"
+    TUSAGE = "usage: %(prog)s [options] alphabet"
     PARSER = argparse.ArgumentParser(usage = TUSAGE)
     PARSER.add_argument("-d", "--debuglevel", action="store", type=int, dest="debuglevel", help="Sets debug level")
-    PARSER.add_argument("-i", "--inputfile", action="store", dest="input_file", help="input filename dict")
+    PARSER.add_argument("-i", "--inputfile", action="store", dest="inputfile", help="input filename")
     PARSER.add_argument("-e", "--expression", action="store", dest="expression", help="input expression")
-    PARSER.add_argument("grammar", metavar="grammar", help="Grammar name")
-    ARGS = vars(PARSER.parse_args())
+    PARSER.add_argument("alphabet", metavar="alphabet", help="Alphabet name")
+    ARGS = PARSER.parse_args()
+    if not ARGS.expression and not ARGS.inputfile:
+        PARSER.error("expression or inputfile required")
+    ARGS = vars(ARGS)
     import sys
-    DEBUGLEVEL = ARGS.pop('debuglevel') or logging.WARNING
+    DEBUGLEVEL = ARGS.pop("debuglevel") or logging.WARNING
     logging.basicConfig(level = DEBUGLEVEL)
     try:
-        result = extractaux(**ARGS)
+        result = lexer(**ARGS)
     except EOFError:
         sys.exit(0)
     if not result:

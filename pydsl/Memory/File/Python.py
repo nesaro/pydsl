@@ -39,16 +39,7 @@ def load_python_file(moduleobject, **kwargs):
     mylist = list(filter(lambda x:x[:1] != "_" and x != "iclass", (dir(moduleobject))))
     for x in mylist:
         resultdic[x] = getattr(moduleobject, x)
-    if iclass == "PythonTransformer":
-        from pydsl.Function.Python import PythonTransformer
-        return PythonTransformer(**resultdic)
-    elif iclass == "HostPythonTransformer":
-        from pydsl.Function.Python import HostPythonTransformer
-        return HostPythonTransformer(**resultdic)
-    elif iclass == "ExternalProgramTransformer":
-        from pydsl.Function.ExternalProgram import ExternalProgramFunction
-        return ExternalProgramFunction(**resultdic)
-    elif iclass == "SymbolGrammar":
+    if iclass == "SymbolGrammar":
         from pydsl.Grammar.BNF import BNFGrammar
         return BNFGrammar(**resultdic)
     elif iclass == "PLY":
@@ -58,7 +49,8 @@ def load_python_file(moduleobject, **kwargs):
         from pydsl.Grammar.Definition import MongoGrammar
         return MongoGrammar(resultdic)
     elif iclass in ["PythonGrammar"]:
-        return resultdic
+        from pydsl.Grammar.Definition import PythonGrammar
+        return PythonGrammar(resultdic)
     else:
         raise ValueError(str(moduleobject))
 

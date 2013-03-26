@@ -20,18 +20,20 @@ __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
+from pydsl.Memory.Loader import load, load_lexer
 
+@unittest.skip
 class TestUnknown(unittest.TestCase):
     """Tests elements that generates unknown symbols"""
     def setUp(self):
         pass
 
     def testListAlphabet(self):
-        listalphabet = Alphabet(alphabetdefinition)
-        lexer = load_lexer(listalphabet)
-        result, probability = lexer("[x,y,z]")
+        listgrammar = load("list")
+        lexer = load_lexer(listgrammar)
+        result = lexer("[x,y,z]")
         #THINK An special flag for trying to guess the content
-        self.assertEqual(result,TokenList(["OPEN_LIST","UNK","SEPARATOR","UNK","SEPARATOR"]))
+        self.assertListEqual(result,["OPEN_LIST","UNK","SEPARATOR","UNK","SEPARATOR"])
 
     def testListLen(self):
         gd = GrammarDefinition(grammardefinition)

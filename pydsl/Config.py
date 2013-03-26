@@ -39,7 +39,6 @@ def generate_memory_list(): #-> list:
         pass
     else:
         result.append(DirStorage(dirname + "/grammar/"))
-        result.append(DirStorage(dirname + "/board/"))
         result.append(DirStorage(dirname + "/transformer/"))
         result.append(RegexpDictStorage(dirname + "/dict/regexp.dict"))
         result.append(EncodingStorage(dirname + "/list/encoding.py"))
@@ -108,8 +107,7 @@ def all_indexable_classes(module):# -> set:
     import inspect
     result = set()
     for name, obj in inspect.getmembers(module):
-        from pydsl.Abstract import Indexable
-        if inspect.isclass(obj) and issubclass(obj, Indexable):
+        if inspect.isclass(obj) and hasattr(obj, "summary"):
             result.add(obj)
         elif inspect.ismodule(obj):
             if obj.__name__[:6] == "pydsl":

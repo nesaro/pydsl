@@ -1,3 +1,4 @@
+
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 #This file is part of pydsl.
@@ -15,27 +16,26 @@
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Protocols"""
-
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
-import logging
-LOG = logging.getLogger(__name__)
+import unittest
 
-def protocol_split(content):
-    """Splits a protocol string"""
-    try:
-        protocol, path = content.split("://")
-    except ValueError:
-        return {"protocol":""}
-    result =  {"protocol":protocol}
-    if "?" in path:
-        npath, identifier = path.split("?")
-        result["path"] = npath
-        result["identifier"] = identifier
-    else:
-        result["path"] = path
-    return result
 
+class TestExtract(unittest.TestCase):
+
+    def testGrammarDefinition(self):
+        from pydsl.Extract import extract
+        from pydsl.Memory.Loader import load
+        gd = load('integer')
+        expected_result = [(3, 4, '1'), (3, 5, '12'), (3, 6, '123'), (3, 7, '1234'), (4, 5, '2'), (4, 6, '23'), (4, 7, '234'), (5, 6, '3'), (5, 7, '34'), (6, 7, '4')]
+        self.assertListEqual(extract(gd,'abc1234abc'), expected_result)
+        self.assertRaises(Exception, extract, None)
+
+    def testAlphabet(self):
+        from pydsl.Extract import extract
+        from pydsl.Memory.Loader import load
+        ad = load('ascii')
+        self.assertListEqual(extract(ad,'a£'), [(0,1,'a')])
+        self.assertRaises(Exception, extract, None)

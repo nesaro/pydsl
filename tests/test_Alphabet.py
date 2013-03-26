@@ -21,7 +21,8 @@ __email__ = "nesaro@gmail.com"
 
 import unittest
 from pydsl.Memory.Loader import load, load_checker, load_lexer
-from pydsl.Alphabet.Token import TokenList
+from pydsl.Alphabet.Token import  Token
+from pydsl.Alphabet.Definition import Encoding
 
 class TestAlphabet(unittest.TestCase):
     def setUp(self):
@@ -35,29 +36,16 @@ class TestAlphabet(unittest.TestCase):
 
     def testLexer(self):
         lexer = load_lexer(self.alphabet)
-        self.assertListEqual(lexer("1234"), TokenList((("integer", "1234"), ("EOF_TYPE", ""))))
-
-    def testTranslator(self):
-        translator = load("upperCase")
-        y = translator(TokenList((("cstring", "abcde"), ("EOF_TYPE", ""))))
-        self.assertEqual(y["output"], "ABCDE")
+        self.assertListEqual(lexer("1234"), [(Token("1234",load("integer")))])
+        self.assertListEqual(lexer("11/11/20011234"), ((Token("date", "11/11/2011",Token("integer", "1234"), Token("EOF_TYPE", "")))))
 
     def testProperties(self):
-        self.alphabet.symbols #list allowed symbols
+        self.alphabet.grammar_list
 
-
-@unittest.skip
-class TestTokenList(unittest.TestCase):
-    def setUp(self):
-        pass
-
-    def testInstance(self):
-        from pydsl.Alphabet.Token import Token
-        a = Token()
-        b = Token()
-        c = Token()
-        tl = TokenList(a,b,c)
-
+    def testGenerateSymbol(self):
+        alphabet = Encoding('ascii')
+        print(alphabet['a'])
+        print(self.alphabet['integer'])
 
 class TestLexerExamples:
     pass

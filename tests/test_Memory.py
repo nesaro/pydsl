@@ -21,15 +21,14 @@ __email__ = "nesaro@gmail.com"
 
 import unittest
 
-from pydsl.Abstract import Indexable
 
-class Texto(Indexable):
+class Texto(object):
     def summary(self):
         return {"iclass":"Texto"}
 
 
 class TestMemory(unittest.TestCase):
-    """Tests Transformers"""
+    """Tests Local MEmory"""
     def setUp(self):
         from pydsl.Memory.Memory import LocalMemory
         self.mem = LocalMemory()
@@ -48,19 +47,29 @@ class TestMemory(unittest.TestCase):
         return True
 
 class TestPersistentMemory(unittest.TestCase):
-    """Tests Transformers"""
+    """Tests ShelveMemory"""
     def setUp(self):
         from pydsl.Memory.Shelve import ShelveStorage
-        from pydsl.Checker import Checker
-        self.mem = ShelveStorage("tmp", Checker)
+        self.mem = ShelveStorage("tmp")
         
-    @unittest.skip
     def testSaveLoadAndDelete(self):
-        from pydsl.Checker import DummyChecker
-        dg = DummyChecker()
-        if "DummyChecker" in self.mem:
-            del self.mem["DummyChecker"]
-        self.mem.save(dg, "DummyChecker")
-        newdg = self.mem["DummyChecker"]
+        from pydsl.Memory.Loader import load
+        dg = load("cstring")
+        if "cstring" in self.mem:
+            del self.mem["cstring"]
+        self.mem.save(dg, "cstring")
+        newdg = self.mem["cstring"]
         self.assertEqual(newdg,dg)
-        del self.mem["DummyChecker"]
+        del self.mem["cstring"]
+
+class TestLoader(unittest.TestCase):
+    """Test loaders"""
+    def setUp(self):
+        from pydsl.Memory.Directory import DirStorage
+        self.glibrary = DirStorage("/usr/share/pydsl/lib_contrib/grammar")
+
+    def test_grammars(self):
+        grammarlist = self.glibrary.all_names()
+        from pydsl.Memory.Loader import load
+        for grammar in grammarlist:
+            load(grammar)
