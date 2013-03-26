@@ -35,13 +35,13 @@ class ListStorage(Memory):
         Memory.__init__(self)
         self._content = {}
         from pydsl.Memory.Search.Searcher import MemorySearcher
-        self._searcher = MemorySearcher(self)
         from pydsl.Memory.File.Python import getFileTuple
         (_, _, fileBaseName, _) = getFileTuple(fullpath)
         import imp
         myobj = imp.load_source(fileBaseName, fullpath)
         for element in myobj.mylist:
             self._content[self._generatekey(element)] = element
+        self._searcher = MemorySearcher(self)
 
     def __iter__(self):
         self.index = 0
@@ -77,7 +77,4 @@ class EncodingStorage(ListStorage):
         return Encoding(index)
 
     def generate_all_summaries(self):
-        result = []
-        for x in self._content:
-            result.append(InmutableDict({"identifier":x, "value":x, "iclass":"Encoding"}))
-        return result
+        return tuple([InmutableDict({"identifier":x, "value":x, "iclass":"Encoding"}) for x in self._content])
