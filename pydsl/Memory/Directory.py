@@ -20,7 +20,9 @@
 from .Memory import Memory
 from pydsl.Memory.File.Python import getFileTuple
 from pydsl.Abstract import InmutableDict
-from pydsl.Memory.File.Regexp import load_re_from_file
+from pydsl.Memory.File.Regexp import load_re_from_file, summary_re_from_file
+from pydsl.Memory.File.BNF import load_bnf_file, summary_bnf_file
+from pydsl.Memory.File.Python import summary_python_file
 import logging
 LOG = logging.getLogger(__name__)
 
@@ -70,14 +72,13 @@ class DirStorage(Memory):
         return result
         
 
-    def summary_from_filename(self, filepath):
-        (_, _, fileBaseName, _) = getFileTuple(filepath)
+    @staticmethod
+    def summary_from_filename(filepath):
         if _isRELFileName(filepath):
-            result =  {"iclass":"re","identifier":fileBaseName, "filepath":filepath}
+            result =  summary_re_from_file(filepath)
         elif _isGDLFileName(filepath):
-            result = {"iclass":"BNFGrammar","identifier":fileBaseName, "filepath":filepath}
+            result = summary_bnf_file(filepath)
         else:
-            from pydsl.Memory.File.Python import summary_python_file
             result = summary_python_file(filepath)
         return InmutableDict(result)
 
@@ -109,10 +110,8 @@ class DirStorage(Memory):
             raise KeyError(self.__class__.__name__ + name)
         filepath = list(resultlist)[0]["filepath"]
         if _isRELFileName(filepath):
-            from pydsl.Memory.File.Regexp import load_re_from_file
             return load_re_from_file(filepath)
         if _isGDLFileName(filepath):
-            from pydsl.Memory.File.BNF import load_bnf_file
             return load_bnf_file(filepath)
         from pydsl.Memory.File.Python import load_python_file
         return load_python_file(filepath, **kwargs)

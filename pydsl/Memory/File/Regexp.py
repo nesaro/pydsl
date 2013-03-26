@@ -49,3 +49,9 @@ def load_re_from_file(filepath):
     from pydsl.Grammar.Definition import RegularExpressionDefinition
     return RegularExpressionDefinition(regexp, flags)
 
+def summary_re_from_file(filepath):
+    from pydsl.Memory.File.Python import getFileTuple
+    from pydsl.Abstract import InmutableDict
+    (_, _, fileBaseName, _) = getFileTuple(filepath)
+    return InmutableDict({"iclass":"re","identifier":fileBaseName, "filepath":filepath})
+
