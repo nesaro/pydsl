@@ -21,7 +21,6 @@ __email__ = "nesaro@gmail.com"
 
 import unittest
 from pydsl.Memory.Loader import load, load_lexer
-from pydsl.Alphabet.Token import Token
 
 @unittest.skip
 class TestUnknown(unittest.TestCase):
