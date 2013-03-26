@@ -40,6 +40,8 @@ if __name__ == "__main__":
         PARSER.error("options -i, -u or -e are required")
     if ARGS.inputfile and ARGS.expression:
         PARSER.error("options -i and -e can't be together")
+    from pydsl.Config import load_default_memory
+    load_default_memory()
     DEBUGLEVEL = 39
     if ARGS.debuglevel:
         DEBUGLEVEL = ARGS.debuglevel

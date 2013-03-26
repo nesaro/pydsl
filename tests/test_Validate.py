@@ -24,6 +24,10 @@ __email__ = "nesaro@gmail.com"
 import unittest
 
 class TestValidate(unittest.TestCase):
+    def setUp(self):
+        from pydsl.Config import load_default_memory
+        load_default_memory()
+
     def testBasic(self):
         from pydsl.Memory.Loader import load_parser
         parser = load_parser('Date', 'descent')

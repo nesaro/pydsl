@@ -16,7 +16,6 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 """Global (per execution) elements"""
-from pydsl.Memory.List import EncodingStorage
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
@@ -25,31 +24,24 @@ __email__ = "nesaro@gmail.com"
 from pydsl.Abstract import Singleton
 import logging
 LOG = logging.getLogger(__name__)
-from pkg_resources import resource_filename, DistributionNotFound
+from pkg_resources import resource_filename
 
 
-def generate_memory_list(): #-> list:
-    """loads default memories"""
-    result = []
+def load_default_memory(): #-> list:
     from pydsl.Memory.Directory import DirStorage
     from pydsl.Memory.Dict import RegexpDictStorage
-    try:
-        dirname = resource_filename("pydsl.contrib", "")
-    except DistributionNotFound:
-        pass
-    else:
-        result.append(DirStorage(dirname + "/grammar/"))
-        result.append(DirStorage(dirname + "/transformer/"))
-        result.append(RegexpDictStorage(dirname + "/dict/regexp.dict"))
-        result.append(EncodingStorage(dirname + "/list/encoding.py"))
-    return result
+    from pydsl.Memory.List import EncodingStorage
+    dirname = resource_filename("pydsl.contrib", "")
+    GLOBALCONFIG.memorylist.append(DirStorage(dirname + "/grammar/"))
+    GLOBALCONFIG.memorylist.append(RegexpDictStorage(dirname + "/dict/regexp.dict"))
+    GLOBALCONFIG.memorylist.append(EncodingStorage(dirname + "/list/encoding.py"))
 
 
 class GlobalConfig(object):
     """Execution time global configuration"""
     def __init__(self, persistent_dir=None, debuglevel=40):
         self.persistent_dir = persistent_dir
-        self.__memorylist = None  # default memories, sorted by preference
+        self.memorylist = []
         self.__debuglevel = debuglevel
         self.lang = "es"
         if self.persistent_dir is None:
@@ -70,12 +62,6 @@ class GlobalConfig(object):
     def save(self):
         """Save config to file"""
         raise NotImplementedError
-
-    @property
-    def memorylist(self):
-        if self.__memorylist is None:
-            self.__memorylist = generate_memory_list()
-        return self.__memorylist
 
     @property
     def debuglevel(self):

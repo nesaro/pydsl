@@ -85,6 +85,8 @@ if __name__ == "__main__":
     PARSER.add_argument('--filter', dest='myfilter',nargs='?', default=None, help="comma separated field list")
     PARSER.add_argument("verb", metavar="verb" , help="verb")
     PARSER.add_argument("identifier", metavar="identifier" , nargs='?', help="command")
+    from pydsl.Config import load_default_memory
+    load_default_memory()
     ARGS = PARSER.parse_args()
     import sys
     DEBUGLEVEL = ARGS.debuglevel or logging.WARNING
