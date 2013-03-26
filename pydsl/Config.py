@@ -87,29 +87,3 @@ class GlobalConfig(object):
 
 GlobalConfig2 = Singleton('GlobalConfig2', (GlobalConfig, ), {})
 GLOBALCONFIG = GlobalConfig2()  # The only instance available
-
-
-def all_classes(module):# -> set:
-    """Returns all classes (introspection)"""
-    import inspect
-    result = set()
-    for name, obj in inspect.getmembers(module):
-        if inspect.isclass(obj):
-            result.add(obj)
-        elif inspect.ismodule(obj):
-            if obj.__name__[:6] == "pydsl":
-                result = result.union(all_classes(obj))
-    return result
-
-
-def all_indexable_classes(module):# -> set:
-    """Returns all indexable classes (introspection)"""
-    import inspect
-    result = set()
-    for name, obj in inspect.getmembers(module):
-        if inspect.isclass(obj) and hasattr(obj, "summary"):
-            result.add(obj)
-        elif inspect.ismodule(obj):
-            if obj.__name__[:6] == "pydsl":
-                result = result.union(all_indexable_classes(obj))
-    return result
