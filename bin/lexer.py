@@ -67,6 +67,8 @@ if __name__ == "__main__":
     import sys
     DEBUGLEVEL = ARGS.pop("debuglevel") or logging.WARNING
     logging.basicConfig(level = DEBUGLEVEL)
+    from pydsl.Config import load_default_memory
+    load_default_memory()
     try:
         result = lexer(**ARGS)
     except EOFError:
