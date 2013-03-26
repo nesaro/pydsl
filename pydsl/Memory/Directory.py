@@ -88,8 +88,14 @@ class DirStorage(Memory):
         if not resultlist:
             raise KeyError(self.__class__.__name__ + name)
         filepath = list(resultlist)[0]["filepath"]
-        entry = [x for x in GLOBALCONFIG.formatlist if filepath.endswith(x["extension"])][0]
-        return entry["load_from_file"](filepath)
+        entries = [x for x in GLOBALCONFIG.formatlist if filepath.endswith(x["extension"])]
+        for entry in entries:
+            try:
+                return entry["load_from_file"](filepath)
+            except ValueError:
+                continue
+        raise KeyError("Not found")
+
 
     def __contains__(self, key):
         return key in self.all_names()
