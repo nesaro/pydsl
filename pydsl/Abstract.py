@@ -55,18 +55,3 @@ class InmutableDict(dict):
             if other[key] != self.__getitem__(key):
                 return False
         return True
-
-
-class Indexable(object):
-    """ This class is searchable """
-    def summary(self): #-> InmutableDict:
-        raise NotImplementedError
-
-    @classmethod
-    def ancestors(cls):
-        result = [cls.__name__]
-        for x in cls.__bases__:
-            if issubclass(x, Indexable):
-                if not x in result:
-                    result += x.ancestors()
-        return tuple(result)

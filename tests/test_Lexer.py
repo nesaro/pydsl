@@ -15,24 +15,19 @@
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Test wrapper"""
-
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
 
-class TestValidate(unittest.TestCase):
-    def testBasic(self):
-        from pydsl.Memory.Loader import load_parser
-        parser = load_parser('Date', 'descent')
-        self.assertFalse(parser.get_trees("11/11/ab", True)[0].valid)
-        self.assertTrue(parser.get_trees("11/11/2011", True)[0].valid)
-
-    def testValidateLoad(self):
-        from pydsl.contrib.bnfgrammar import productionset0
-        from pydsl.Memory.Loader import load_validator
-        validator = load_validator(productionset0)
-        self.assertTrue(validator("input"))
+class TestLexer(unittest.TestCase):
+    def testSimpleLexing(self):
+        """Test checker instantiation and call"""
+        from pydsl.Memory.Loader import load_lexer
+        from pydsl.Alphabet.Definition import AlphabetDictDefinition
+        mydef = AlphabetDictDefinition({'1':'integer','2':'Date'})
+        mylexer = load_lexer(mydef)
+        self.assertTrue(mylexer('123411/23/32'),['integer','date'])
+        self.assertTrue([x for x in mylexer.lexer_generator('123411/23/32')],['integer','date'])
 

@@ -107,8 +107,7 @@ def all_indexable_classes(module):# -> set:
     import inspect
     result = set()
     for name, obj in inspect.getmembers(module):
-        from pydsl.Abstract import Indexable
-        if inspect.isclass(obj) and issubclass(obj, Indexable):
+        if inspect.isclass(obj) and hasattr(obj, "summary"):
             result.add(obj)
         elif inspect.ismodule(obj):
             if obj.__name__[:6] == "pydsl":

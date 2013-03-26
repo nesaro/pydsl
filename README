@@ -3,38 +3,53 @@ DESCRIPTION
 
 pydsl is a language library written in python
 
-pydsl support several grammar specification formats:
+GRAMMARS
+--------
+
+supported formats:
  * regular expressions
  * pydsl BNF format
  * mongo database query dictionaries
  * python ply module (only check support)
 
-each grammar definition has the following properties:
+grammar properties:
  * enum(gd): yields a list of accepted words
  * first(gd): yields a list of the first accepted subword/char
  * minsize(gd): length of the smaller accepted word
  * maxsize(gd): length of the biggest accepted word
+ * alphabet(gd): returns the alphabet used by this gd
 
-pydsl offer a set of functions that use _grammar definitions_
+grammar functions:
  * validate(gd, input): test the input string against the spec. In case of failure, it returns a list of errors
- * partition(gd, input, tag): returns the parts of the input according to a tag
 
-alphabet abstraction is also available. Alphabets are a set of symbols that are recognized using a regular grammar. Properties:
- * symbols(ad): return the list of allowed symbols for this alphabet
+ALPHABETS
+---------
+
+alphabet abstraction is also available. Alphabets are a set of grammar definitions that are recognized using a regular grammar. Properties:
+ * grammar_list(ad): return the list of allowed grammars for this alphabet
 
 functions that use _alphabets_:
  * lexer(ad, input): Generates a tokenlist from a string (it is a special case of translate)
- * mapper(ad, input): Converts a tokenlist from an alphabet into another alphabet
- 
+
 functions that use both _alphabets_ and _grammar definitions_:
- * guess(input, [gd]): returns a list of _grammar definitions_ that are compatible with the input
- * distance(gd, input1, input2): returns the distance between two inputs according to _grammar definition_
+ * guess(input, [gd]): returns a list of _grammar_ and _alphabets_ that are compatible with the input
  * check(d, input): test the input string against the spec
  * extract(gd, input): extract all the slices of the input that are accepted by the definition 
 
-pydsl also offers library related functions:
+LIBRARY
+-------
+
+pydsl also offers functions to store grammars and alphabets into directories and files. Here are the related functions:
  * manager s query: search for an element within a memory
  * manager i identifier: returns information about the element
+
+included elements:
+ * grammars
+   * grammars folder
+   * dict/filetype.dict: A list of filetypes
+   * dict/regexp.dict: A list of regular expressions
+ * alphabets
+   * list/encoding.py: A list of supported encoding
 
 INSTALLATION
 ============
@@ -83,19 +98,8 @@ Grammars
  * guess:py: Returns a list of the types that match the input element
  * validate.py: Perform a validation routine for user data according to a grammar
  * lexer.py: Generates a token list from an input according to an alphaber
+ * extract.py: extract all the slices of the input that are accepted by a definition 
 
-
-CONTRIB
-=======
-
-contrib directory contains several types of elements. Those elements are either imported by colony or used as a function argument for their binaries.
-
- * grammar: Grammar are Types; they can be used with the following programs:
-   * check: check -e expression grammarname
-   * extract: extract -e expression grammarname
-   * validate: extract -e expression grammarname
- * dict/filetype.dict: A list of filetypes, which are types
- * dict/regexp.dict: A list of Regular expressions, which are types
 
 REQUIREMENTS
 ============

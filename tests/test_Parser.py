@@ -74,7 +74,6 @@ class TestParsers(unittest.TestCase):
     def testLR0ParseTable(self):
         """Tests the lr0 table generation"""
         from pydsl.Grammar.Parser.LR0 import _slr_build_parser_table, build_states_sets
-        from pprint import pprint
         state_sets = build_states_sets(productionset0)
         self.assertEqual(len(state_sets), 5)
         #1 . EI: : . exp $ , 
@@ -93,9 +92,8 @@ class TestParsers(unittest.TestCase):
 
 
     def testLR0ParserStore(self):
-        from pydsl.Alphabet.Token import TokenList
         parser = LR0Parser(productionset0)
-        tokelist = TokenList([x for x in EncodingLexer('utf8')(p0good)])
+        tokelist = [x for x in EncodingLexer('utf8')(p0good)]
         result = parser.check(tokelist)
         self.assertTrue(result)
 
@@ -159,8 +157,8 @@ class TestWeightedParser(unittest.TestCase):
 class TestLexer(unittest.TestCase):
     def testLexer(self):
         """Lexer call"""
-        from pydsl.Alphabet.Lexer import BNFLexer
-        lexer = BNFLexer(productionset1)
+        from pydsl.Memory.Loader import load_lexer
+        lexer = load_lexer(productionset1.alphabet())
         result = list(lexer(string1))
         self.assertTrue(result)
 

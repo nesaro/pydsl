@@ -25,7 +25,6 @@ import logging
 LOG = logging.getLogger(__name__)
 from pydsl.Memory.Loader import load_checker
 from pydsl.Alphabet.Token import Token
-finalchar = "EOF"
 unknownchar = "UNKNOWN"
 
 class AlphabetTranslator(object):
@@ -44,7 +43,7 @@ class EncodingLexer(AlphabetTranslator):
 
     def __call__(self, string):
         for x in string:
-            yield Token("CHAR", x)
+            yield Token(x)
 
 class Lexer(AlphabetTranslator):
     """Lexer follows an alphabet definition.
@@ -60,7 +59,7 @@ class Lexer(AlphabetTranslator):
         try:
             return self.string[self.index]
         except IndexError:
-            return finalchar
+            return None
 
     def load(self, string):
         self.string = string
@@ -83,46 +82,11 @@ class Lexer(AlphabetTranslator):
         self.string = string
         while True:
             result = [x for x in self.nextToken()]
-            if result[-1].symbol == "EOF_TYPE":
-                return result
+            return result
 
     def lexer_generator(self):
         """generator version of the lexer, yields a new token as soon as possible"""
         raise NotImplementedError
-
-class BNFLexer(Lexer):
-    """Generates a Lexer from a BNFGrammar instance"""
-    def __init__(self, bnfgrammar):
-        Lexer.__init__(self)
-        self.symbollist = bnfgrammar.terminalsymbollist
-
-    @property
-    def current(self):
-        """Returns the element under the cursor until the end of the string"""
-        try:
-            return self.string[self.index:]
-        except IndexError:
-            return finalchar
-
-    def nextToken(self):
-        while self.current and self.current != finalchar:
-            validelements = [x for x in self.symbollist if self.current[0] in x.first]
-            if not validelements:
-                if not self.generate_unknown:
-                    raise Exception("Not found")
-                string = self.current[0]
-                self.consume()
-                yield Token(unknownchar, string)
-            elif len(validelements) == 1:
-                element = validelements[0]
-                string = self.current[:len(str(element))]
-                for _ in range(len(str(element))):
-                    self.consume()
-                yield Token(validelements[0], string)
-            else:
-                raise Exception("Multiple choices")
-
-        yield Token("EOF_TYPE", "")
 
 class AlphabetDictLexer(Lexer):
     def __init__(self, alphabet):
@@ -132,10 +96,7 @@ class AlphabetDictLexer(Lexer):
     @property
     def current(self):
         """Returns the element under the cursor until the end of the string"""
-        try:
-            return self.string[self.index:]
-        except IndexError:
-            return finalchar
+        return self.string[self.index:]
 
     def nextToken(self):
         while self.current:
@@ -157,9 +118,43 @@ class AlphabetDictLexer(Lexer):
                 string = self.current[:size]
                 for _ in range(size):
                     self.consume()
-                yield Token(validelements[0][0], string)
+                yield Token(string, validelements[0][1])
             else:
                 raise Exception("Multiple choices")
 
-        yield Token("EOF_TYPE", "")
+class AlphabetListLexer(Lexer):
+    def __init__(self, alphabet):
+        Lexer.__init__(self)
+        self.alphabet = alphabet
 
+    @property
+    def current(self):
+        """Returns the element under the cursor until the end of the string"""
+        return self.string[self.index:]
+
+    def nextToken(self):
+        while self.current:
+            from pydsl.Grammar.Definition import  StringGrammarDefinition
+            currentgd = StringGrammarDefinition(self.current[0])
+            print(currentgd)
+            validelements = [x for x in self.alphabet.grammar_list if currentgd in x.first]
+            if not validelements:
+                if not self.generate_unknown:
+                    raise Exception("Not found")
+                string = self.current[0]
+                self.consume()
+                yield Token(unknownchar, string)
+            elif len(validelements) == 1:
+                element = validelements[0]
+                checker = load_checker(element)
+                for size in range(element.maxsize or len(self.current), max(element.minsize-1,0), -1):
+                    if checker.check(self.current[:size]):
+                        break
+                else:
+                    raise Exception("Nothing consumed")
+                string = self.current[:size]
+                for _ in range(size):
+                    self.consume()
+                yield Token(string, validelements[0])
+            else:
+                raise Exception("Multiple choices" + str([str(x) for x in validelements]))

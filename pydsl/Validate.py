@@ -15,7 +15,6 @@
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Protocols"""
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
@@ -24,18 +23,18 @@ __email__ = "nesaro@gmail.com"
 import logging
 LOG = logging.getLogger(__name__)
 
-def protocol_split(content):
-    """Splits a protocol string"""
-    try:
-        protocol, path = content.split("://")
-    except ValueError:
-        return {"protocol":""}
-    result =  {"protocol":protocol}
-    if "?" in path:
-        npath, identifier = path.split("?")
-        result["path"] = npath
-        result["identifier"] = identifier
-    else:
-        result["path"] = path
-    return result
 
+class Validator(object):
+    def __init__(self, grammar):
+        self.gd = grammar
+
+    def __call__(self, inputstring): #-> set
+        raise NotImplementedError
+
+
+class BNFValidator(Validator):
+    def __call__(self, inputstring):
+        from pydsl.Memory.Loader import load_parser
+        parser = load_parser(self.gd, "descent")
+        resulttrees = parser.get_trees(inputstring, True)
+        return resulttrees

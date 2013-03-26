@@ -24,7 +24,7 @@ __email__ = "nesaro@gmail.com"
 
 def load_checker(grammar):
     from pydsl.Grammar.BNF import BNFGrammar
-    from pydsl.Grammar.Definition import PLYGrammar, RegularExpressionDefinition, MongoGrammar, StringGrammarDefinition
+    from pydsl.Grammar.Definition import PLYGrammar, RegularExpressionDefinition, MongoGrammar, StringGrammarDefinition, PythonGrammar
     from pydsl.Alphabet.Definition import AlphabetDictDefinition
     if isinstance(grammar, str):
         grammar = load(grammar)
@@ -34,7 +34,7 @@ def load_checker(grammar):
     elif isinstance(grammar, RegularExpressionDefinition):
         from pydsl.Checker import RegularExpressionChecker
         return RegularExpressionChecker(grammar)
-    elif isinstance(grammar, dict) and "matchFun" in grammar:
+    elif isinstance(grammar, PythonGrammar) or isinstance(grammar, dict) and "matchFun" in grammar:
         from pydsl.Checker import PythonChecker
         return PythonChecker(grammar)
     elif isinstance(grammar, MongoGrammar):
@@ -56,16 +56,15 @@ def load_checker(grammar):
         raise ValueError(grammar)
 
 def load_lexer(alphabet):
-    from pydsl.Alphabet.Definition import AlphabetDictDefinition
-    from pydsl.Grammar.BNF import BNFGrammar
+    from pydsl.Alphabet.Definition import AlphabetDictDefinition, AlphabetListDefinition
     if isinstance(alphabet, str):
         alphabet = load(alphabet)
     if isinstance(alphabet, AlphabetDictDefinition):
         from pydsl.Alphabet.Lexer import AlphabetDictLexer
         return AlphabetDictLexer(alphabet)
-    elif isinstance(alphabet, BNFGrammar):
-        from pydsl.Alphabet.Lexer import BNFLexer
-        return BNFLexer(alphabet)
+    if isinstance(alphabet, AlphabetListDefinition):
+        from pydsl.Alphabet.Lexer import AlphabetListLexer
+        return AlphabetListLexer(alphabet)
     elif isinstance(alphabet, Encoding):
         from pydsl.Alphabet.Lexer import EncodingLexer
         return EncodingLexer(alphabet)
@@ -89,7 +88,15 @@ def load_parser(grammar, parser = "auto"):
     else:
         raise ValueError(grammar)
 
-
+def load_validator(grammar):
+    if isinstance(grammar, str):
+        grammar = load(grammar)
+    from pydsl.Grammar.BNF import BNFGrammar
+    if isinstance(grammar, BNFGrammar):
+        from pydsl.Validate import BNFValidator
+        return BNFValidator(grammar)
+    else:
+        raise ValueError(grammar)
 
 def load(identifier, memorylist = None):
     if not memorylist:

@@ -25,22 +25,26 @@ class GrammarDefinition(object):
         pass
 
     def enum(self):
+        """Generates every possible accepted string"""
         raise NotImplementedError
 
     @property
     def first(self):# -> set:
-        raise NotImplementedError
+        """List of possible first elements"""
+        return [x for x in self.alphabet().grammar_list]
 
     @property
     def minsize(self):# -> int:
+        """Returns the minimum size in alphabet tokens"""
         return 0
 
     @property
     def maxsize(self):
+        """Returns the max size in alphabet tokens"""
         return None
 
     def alphabet(self):
-        """Returns the alphabet required by this grammar"""
+        """Returns the alphabet used by this grammar"""
         raise NotImplementedError
 
 class PLYGrammar(GrammarDefinition):
@@ -67,6 +71,10 @@ class RegularExpressionDefinition(GrammarDefinition):
         import re
         self.regexp = re.compile(regexp, flags)
 
+    def __eq__(self, other):
+        if not isinstance(other, RegularExpressionDefinition):
+            return False
+        return self.regexpstr == other.regexpstr and self.flags == other.flags
     @property
     def first(self):# -> set:
         i = 0
@@ -76,10 +84,14 @@ class RegularExpressionDefinition(GrammarDefinition):
                 continue
             if self.regexpstr[i] == "[":
                 return [x for x in self.regexpstr[i+1:self.regexpstr.find("]")]]
-            return self.regexpstr[i] 
+            return [self.regexpstr[i]]
 
     def __getattr__(self, attr):
         return getattr(self.regexp, attr)
+
+    def alphabet(self):
+        from pydsl.Alphabet.Definition import Encoding
+        return Encoding("ascii")
 
 class StringGrammarDefinition(GrammarDefinition):
     def __init__(self, string):
@@ -96,7 +108,7 @@ class StringGrammarDefinition(GrammarDefinition):
 
     @property
     def first(self):
-        return self.string[0]
+        return [StringGrammarDefinition(self.string[0])]
 
     def enum(self):
         yield self.string
@@ -112,11 +124,17 @@ class StringGrammarDefinition(GrammarDefinition):
     def __str__(self):
         return str(self.string)
 
+    def alphabet(self):
+        return [StringGrammarDefinition(x) for x in self.string]
+
 class JsonSchema(GrammarDefinition, dict):
     def __init__(self, *args, **kwargs):
         GrammarDefinition.__init__(self)
         dict.__init__(self, *args, **kwargs)
 
+    def alphabet(self):
+        from pydsl.Alphabet.Definition import Encoding
+        return Encoding("ascii")
 class MongoGrammar(GrammarDefinition, dict):
     def __init__(self, *args, **kwargs):
         GrammarDefinition.__init__(self)
@@ -124,9 +142,19 @@ class MongoGrammar(GrammarDefinition, dict):
 
     @property
     def first(self):
-        return "{"
+        return [StringGrammarDefinition("{")]
+
+    def alphabet(self):
+        from pydsl.Alphabet.Definition import Encoding
+        return Encoding("ascii")
 
 class PythonGrammar(GrammarDefinition, dict):
     def __init__(self, *args, **kwargs):
         GrammarDefinition.__init__(self)
         dict.__init__(self, *args, **kwargs)
+
+    def alphabet(self):
+        if "alphabet" in self:
+            return self['alphabet']
+        from pydsl.Alphabet.Definition import Encoding
+        return Encoding("ascii")

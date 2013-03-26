@@ -26,7 +26,6 @@ LOG = logging.getLogger(__name__)
 from pydsl.Grammar.Parser.Parser import BottomUpParser
 from pydsl.Grammar.Symbol import NonTerminalSymbol, TerminalSymbol, EndSymbol
 from pydsl.Grammar.BNF import Production
-from pydsl.Alphabet.Token import TokenList
 
 Extended_S = NonTerminalSymbol("EI")
 
@@ -279,7 +278,7 @@ class LR0Parser(BottomUpParser):
         #empty stack
         #iterate over symbollist
         LOG.debug("check_word: checking list: " + str(tokenlist))
-        if not isinstance(tokenlist, TokenList):
+        if not isinstance(tokenlist, list):
             raise TypeError
         stack = [(0, Extended_S)]
         while True:
