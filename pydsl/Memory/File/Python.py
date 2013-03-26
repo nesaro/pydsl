@@ -21,11 +21,11 @@
 import logging
 LOG = logging.getLogger(__name__)
 from pydsl.Abstract import InmutableDict
+import imp
 
 def load_module(filepath, identifier = None):
     if identifier is None:
         (_, _, identifier, _) = getFileTuple(filepath)
-    import imp
     return imp.load_source(identifier, filepath)
 
 def load_python_file(moduleobject):
@@ -62,7 +62,6 @@ def getFileTuple(fullname):
     return dirName, fileName, fileBaseName, fileExtension
 
 def summary_python_file(modulepath):
-    import imp
     (_, _, fileBaseName, ext) = getFileTuple(modulepath)
     moduleobject = imp.load_source(fileBaseName, modulepath)
     result = {"identifier":fileBaseName, "iclass":moduleobject.iclass, "filepath":modulepath}
