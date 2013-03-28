@@ -88,12 +88,7 @@ Using contrib
 
 BINARIES
 ========
-Memory Management
------------------
  * manager.py : Searchs and displays information about grammar/alphabets
-
-Grammars
---------
  * check.py: Checks if input data belongs to a grammar
  * guess:py: Returns a list of the types that match the input element
  * validate.py: Perform a validation routine for user data according to a grammar
@@ -118,5 +113,5 @@ GPLv3, see LICENSE file
 
 ABOUT
 =====
-pydsl is a formal language framework.
+pydsl is a language library written in python
 Copyright (C) 2008-2013 Nestor Arocha (nesaro@gmail.com)
