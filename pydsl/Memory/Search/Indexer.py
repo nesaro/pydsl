@@ -18,9 +18,12 @@
 
 from pydsl.Query import QueryEquality, QueryInclusion, QueryGreaterThan, QueryPartial
 import collections
+from pydsl.Abstract import InmutableDict
+import re
 
 class Indexer(object):
-    """Indexes memory content. Current implementation just copy Memory iterator (Inmutabledicts) into a cache dict. This is possible because Memory iterator format is suitable for search, but it might change in the future"""
+    """Indexes memory content. Current implementation just copy Memory iterator (Inmutabledicts) into a cache dict.
+    This is possible because Memory iterator format is suitable for search, but it might change in the future"""
     def __init__(self, memory):
         self.memory = memory #One memory per indexer
         self.index = []
@@ -45,7 +48,7 @@ class Indexer(object):
 
     def search_index(self, queryterm): #-> set:
         result = set()
-        qpart = queryterm.right
+        right = queryterm.right
         if isinstance(queryterm, QueryEquality):
             for element in self.index:
                 if not element:
@@ -63,60 +66,45 @@ class Indexer(object):
                     continue
                 if not elementright:
                     elementright = element[queryterm.left]
-                ismatch = True
-                try:
-                    if len(qpart)>2 and qpart[-1] == "/" and qpart[0] == "/":
-                        #Expresion regular
-                        import re
-                        rexp = re.compile(qpart[1:-1])
-                        if rexp.match(elementright) is None:
-                            ismatch = False
-                    else:
-                        #Cadena normal
-                        if qpart != elementright:
-                            ismatch = False
-                except KeyError:
-                    continue
-                if ismatch:
-                    if isinstance(element, dict):
-                        from pydsl.Abstract import InmutableDict
-                        result.add(InmutableDict(element))
-                    else:
-                        result.add(element)
+                if len(right)>2 and right[-1] == "/" and right[0] == "/":
+                    #Regular Expression
+                    rexp = re.compile(right[1:-1])
+                    if rexp.match(elementright) is None:
+                        continue
+                else:
+                    if right != elementright:
+                        continue
+                if isinstance(element, dict):
+                    result.add(InmutableDict(element))
+                else:
+                    result.add(element)
         elif isinstance(queryterm, QueryInclusion):
-            qpart = queryterm.right
             for element in self.index:
-                ismatch = True
                 try:
-                    if qpart[-1] == "/" and qpart[0] == "/":
+                    if right[-1] == "/" and right[0] == "/":
                         #RegExp
-                        import re
-                        rexp = re.compile(qpart[1:-1])
-                        ismatch = False
+                        rexp = re.compile(right[1:-1])
                         for item in element[queryterm.left]:
                             if rexp.match(item) is not None:
-                                ismatch = True
                                 break
+                        else:
+                            continue
                     else:
                         #string
-                        if qpart not in element[queryterm.left]:
-                            ismatch = False
+                        if right not in element[queryterm.left]:
                             continue
                 except KeyError:
                     continue
-                if ismatch:
-                    if isinstance(element, dict):
-                        from pydsl.Abstract import InmutableDict
-                        result.add(InmutableDict(element))
-                    else:
-                        result.add(element)
+                if isinstance(element, dict):
+                    result.add(InmutableDict(element))
+                else:
+                    result.add(element)
         elif isinstance(queryterm, QueryPartial):
-            rdict = queryterm.right
             for element in self.index:
                 ismatch = True
                 if queryterm.left not in element:
                     continue
-                for key, value in rdict.items():
+                for key, value in right.items():
                     try:
                         if key not in element[queryterm.left]:
                             ismatch = False
@@ -125,35 +113,28 @@ class Indexer(object):
                             ismatch = False
                     except KeyError:
                         continue
-                if ismatch:
-                    if isinstance(element, dict):
-                        from pydsl.Abstract import InmutableDict
-                        result.add(InmutableDict(element))
-                    else:
-                        result.add(element)
+                if not ismatch:
+                    continue
+                if isinstance(element, dict):
+                    result.add(InmutableDict(element))
+                else:
+                    result.add(element)
         elif isinstance(queryterm, QueryGreaterThan):
             try:
-                qpart = int(queryterm.right)
+                right = int(queryterm.right)
             except ValueError:
                 return set()
             for element in self.index:
                 #TODO: "." operator for dict member access
-                ismatch = False
                 try:
-                    #Cadena normal
-                    if qpart == int(element[queryterm.left]):
-                        ismatch = True
-                        break
-                except KeyError:
+                    if right != int(element[queryterm.left]):
+                        continue
+                except (KeyError, ValueError):
                     continue
-                except ValueError:
-                    continue
-                if ismatch:
-                    if isinstance(element, dict):
-                        from pydsl.Abstract import InmutableDict
-                        result.add(InmutableDict(element))
-                    else:
-                        result.add(element)
+                if isinstance(element, dict):
+                    result.add(InmutableDict(element))
+                else:
+                    result.add(element)
         return result
 
 
