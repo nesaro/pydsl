@@ -49,13 +49,8 @@ class QueryPartial(QueryTerm):
     def __str__(self):
         return "<" + str(self.left) + "=~" + str(self.right) + ">"
 
-
 class QueryInclusion(QueryTerm):
     """ looks for an element within a list """
-    pass
-
-class QueryGreaterThan(QueryTerm):
-    """associated with > symbol """
     pass
 
 class BinaryOperator(QueryElement):

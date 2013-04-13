@@ -16,7 +16,7 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from pydsl.Query import QueryEquality, QueryInclusion, QueryGreaterThan, QueryPartial
+from pydsl.Query import QueryEquality, QueryInclusion, QueryPartial
 import collections
 from pydsl.Abstract import ImmutableDict
 import re
@@ -109,12 +109,6 @@ class Indexer(object):
                     except KeyError:
                         continue
                 if not ismatch:
-                    continue
-            elif isinstance(queryterm, QueryGreaterThan):
-                try:
-                    if int(queryterm.right) != int(element[left]):
-                        continue
-                except (KeyError, ValueError):
                     continue
             result.add(self.__to_immutable(element))
         return result
