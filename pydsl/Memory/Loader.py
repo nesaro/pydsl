@@ -106,3 +106,12 @@ def load(identifier, memorylist = None):
         if identifier in memory:
             return memory.load(identifier)
     raise KeyError(identifier)
+
+def search(query, memorylist = None):
+    if not memorylist:
+        from pydsl.Config import GLOBALCONFIG
+        memorylist = GLOBALCONFIG.memorylist
+    from pydsl.Memory.Search.Searcher import MemorySearcher
+    from pydsl.Memory.Search.Indexer import Indexer
+    searcher = MemorySearcher([Indexer(x) for x in memorylist])
+    return searcher.search(query)

@@ -94,17 +94,15 @@ if __name__ == "__main__":
     if ARGS.verb == "i":
         info(ARGS.identifier, ARGS. outputformat)
     elif ARGS.verb in ("s","l"):
-        from pydsl.Memory.Search.Searcher import MemorySearcher
-        from pydsl.Memory.Search.Indexer import Indexer
-        searcher = MemorySearcher([Indexer(x) for x in GLOBALCONFIG.memorylist])
+        from pydsl.Memory.Loader import search
         myfilter = None
         if ARGS.myfilter:
             myfilter = ARGS.myfilter.split(',')
         if ARGS.outputformat == "str":
-            print(search_pp(searcher.search(ARGS.identifier), myfilter))
+            print(search_pp(search(ARGS.identifier), myfilter))
         elif ARGS.outputformat == "json":
             import json
-            print(json.dumps(list(filterset(searcher.search(ARGS.identifier), myfilter))))
+            print(json.dumps(list(filterset(search(ARGS.identifier), myfilter))))
     else:
         print("Unknown verb")
         print(TUSAGE)
