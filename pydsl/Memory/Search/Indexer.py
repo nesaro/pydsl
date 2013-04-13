@@ -66,23 +66,20 @@ class Indexer(object):
         result = set()
         right = queryterm.right
         left = queryterm.left
-        if isinstance(queryterm, QueryEquality):
-            for element in self.index:
-                if not element:
-                    continue
+        for element in self.index:
+            if not element:
+                continue
+            if isinstance(queryterm, QueryEquality):
                 leftvalue = self.__get_left_value(left, element)
                 if len(right)>2 and right[-1] == "/" and right[0] == "/":
                     #Regular Expression
                     rexp = re.compile(right[1:-1])
                     if rexp.match(leftvalue) is None:
                         continue
-                else:
-                    if right != leftvalue:
-                        continue
-                result.add(self.__to_immutable(element))
-        elif isinstance(queryterm, QueryInclusion):
-            #a in b
-            for element in self.index:
+                elif right != leftvalue:
+                    continue
+            elif isinstance(queryterm, QueryInclusion):
+                #a in b
                 try:
                     if right[-1] == "/" and right[0] == "/":
                         #RegExp
@@ -98,12 +95,10 @@ class Indexer(object):
                             continue
                 except KeyError:
                     continue
-                result.add(self.__to_immutable(element))
-        elif isinstance(queryterm, QueryPartial):
-            for element in self.index:
-                ismatch = True
+            elif isinstance(queryterm, QueryPartial):
                 if left not in element:
                     continue
+                ismatch = True
                 for key, value in right.items():
                     try:
                         if key not in element[left]:
@@ -115,20 +110,13 @@ class Indexer(object):
                         continue
                 if not ismatch:
                     continue
-                result.add(self.__to_immutable(element))
-        elif isinstance(queryterm, QueryGreaterThan):
-            try:
-                right = int(queryterm.right)
-            except ValueError:
-                return set()
-            for element in self.index:
-                #TODO: "." operator for dict member access
+            elif isinstance(queryterm, QueryGreaterThan):
                 try:
-                    if right != int(element[left]):
+                    if int(queryterm.right) != int(element[left]):
                         continue
                 except (KeyError, ValueError):
                     continue
-                result.add(self.__to_immutable(element))
+            result.add(self.__to_immutable(element))
         return result
 
 
