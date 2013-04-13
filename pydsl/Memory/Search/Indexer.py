@@ -81,17 +81,22 @@ class Indexer(object):
             elif isinstance(queryterm, QueryInclusion):
                 #a in b
                 try:
+                    list_to_search = element[left]
+                    if isinstance(list_to_search, dict) and queryterm.dict_member == "values":
+                        list_to_search = list(list_to_search.values())
+                    elif isinstance(list_to_search, dict) and queryterm.dict_member == "keys":
+                        list_to_search = list(list_to_search.keys())
                     if right[-1] == "/" and right[0] == "/":
                         #RegExp
                         rexp = re.compile(right[1:-1])
-                        for item in element[left]:
+                        for item in list_to_search:
                             if rexp.match(item) is not None:
                                 break
                         else:
                             continue
                     else:
                         #string
-                        if right not in element[left]:
+                        if right not in list_to_search:
                             continue
                 except KeyError:
                     continue

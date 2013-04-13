@@ -51,7 +51,10 @@ class QueryPartial(QueryTerm):
 
 class QueryInclusion(QueryTerm):
     """ looks for an element within a list """
-    pass
+    def __init__(self, left, right, dict_member = "values"):
+        """dict_member could be keys or values"""
+        QueryTerm.__init__(self, left, right)
+        self.dict_member = dict_member
 
 class BinaryOperator(QueryElement):
     def __init__(self, element1, element2):
