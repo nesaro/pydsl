@@ -22,7 +22,7 @@ from pydsl.Abstract import InmutableDict
 import re
 
 class Indexer(object):
-    """Indexes memory content. Current implementation just copy Memory iterator (Inmutabledicts) into a cache dict.
+    """Indexes memory content. Current implementation just copy Memory iterator (Immutabledicts) into a cache dict.
     This is possible because Memory iterator format is suitable for search, but it might change in the future"""
     def __init__(self, memory):
         self.memory = memory #One memory per indexer
@@ -46,79 +46,76 @@ class Indexer(object):
             if element not in self.index:
                 self.index.append(element)
 
+    @staticmethod
+    def __get_left_value(left, element):
+        if not '.' in left:
+            return element[left]
+        getlist = left.split('.')
+        leftvalue = element[getlist[0]]
+        for getindex in getlist[1:]:
+            leftvalue = leftvalue.__getitem__(getindex)
+        return leftvalue
+
+    @staticmethod
+    def __to_immutable(element):
+        if isinstance(element, dict):
+            return InmutableDict(element)
+        return element
+
     def search_index(self, queryterm): #-> set:
         result = set()
         right = queryterm.right
+        left = queryterm.left
         if isinstance(queryterm, QueryEquality):
             for element in self.index:
                 if not element:
                     continue
-                elementright = None
-                if queryterm.left.count('.') > 0:
-                    getlist = queryterm.left.split('.')
-                    try:
-                        elementright = element[getlist[0]]
-                        for getindex in getlist[1:]:
-                            elementright = elementright.__getitem__(getindex)
-                    except KeyError:
-                        continue
-                if not elementright and not queryterm.left in element:
-                    continue
-                if not elementright:
-                    elementright = element[queryterm.left]
+                leftvalue = self.__get_left_value(left, element)
                 if len(right)>2 and right[-1] == "/" and right[0] == "/":
                     #Regular Expression
                     rexp = re.compile(right[1:-1])
-                    if rexp.match(elementright) is None:
+                    if rexp.match(leftvalue) is None:
                         continue
                 else:
-                    if right != elementright:
+                    if right != leftvalue:
                         continue
-                if isinstance(element, dict):
-                    result.add(InmutableDict(element))
-                else:
-                    result.add(element)
+                result.add(self.__to_immutable(element))
         elif isinstance(queryterm, QueryInclusion):
+            #a in b
             for element in self.index:
                 try:
                     if right[-1] == "/" and right[0] == "/":
                         #RegExp
                         rexp = re.compile(right[1:-1])
-                        for item in element[queryterm.left]:
+                        for item in element[left]:
                             if rexp.match(item) is not None:
                                 break
                         else:
                             continue
                     else:
                         #string
-                        if right not in element[queryterm.left]:
+                        if right not in element[left]:
                             continue
                 except KeyError:
                     continue
-                if isinstance(element, dict):
-                    result.add(InmutableDict(element))
-                else:
-                    result.add(element)
+                result.add(self.__to_immutable(element))
         elif isinstance(queryterm, QueryPartial):
             for element in self.index:
                 ismatch = True
-                if queryterm.left not in element:
+                if left not in element:
                     continue
                 for key, value in right.items():
                     try:
-                        if key not in element[queryterm.left]:
+                        if key not in element[left]:
                             ismatch = False
                             break
-                        if element[queryterm.left][key] != value:
+                        if element[left][key] != value:
                             ismatch = False
                     except KeyError:
                         continue
                 if not ismatch:
                     continue
-                if isinstance(element, dict):
-                    result.add(InmutableDict(element))
-                else:
-                    result.add(element)
+                result.add(self.__to_immutable(element))
         elif isinstance(queryterm, QueryGreaterThan):
             try:
                 right = int(queryterm.right)
@@ -127,14 +124,11 @@ class Indexer(object):
             for element in self.index:
                 #TODO: "." operator for dict member access
                 try:
-                    if right != int(element[queryterm.left]):
+                    if right != int(element[left]):
                         continue
                 except (KeyError, ValueError):
                     continue
-                if isinstance(element, dict):
-                    result.add(InmutableDict(element))
-                else:
-                    result.add(element)
+                result.add(self.__to_immutable(element))
         return result
 
 
