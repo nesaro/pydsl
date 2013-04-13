@@ -153,8 +153,8 @@ def load_bnf_file(filepath):
 def summary_bnf_file(filepath):
     from pydsl.Memory.File.Python import getFileTuple
     (_, _, fileBaseName, _) = getFileTuple(filepath)
-    from pydsl.Abstract import InmutableDict
-    return InmutableDict({"iclass":"BNFGrammar","identifier":fileBaseName, "filepath":filepath})
+    from pydsl.Abstract import ImmutableDict
+    return ImmutableDict({"iclass":"BNFGrammar","identifier":fileBaseName, "filepath":filepath})
 
 def str_to_productionset(string):
     """Converts a str into a ProductionRuleSet"""

@@ -18,7 +18,7 @@
 
 from pydsl.Query import QueryEquality, QueryInclusion, QueryGreaterThan, QueryPartial
 import collections
-from pydsl.Abstract import InmutableDict
+from pydsl.Abstract import ImmutableDict
 import re
 
 class Indexer(object):
@@ -59,7 +59,7 @@ class Indexer(object):
     @staticmethod
     def __to_immutable(element):
         if isinstance(element, dict):
-            return InmutableDict(element)
+            return ImmutableDict(element)
         return element
 
     def search_index(self, queryterm): #-> set:

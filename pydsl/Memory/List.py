@@ -16,7 +16,7 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 """ListLibrary"""
-from pydsl.Abstract import InmutableDict
+from pydsl.Abstract import ImmutableDict
 import logging
 LOG = logging.getLogger("Storage.List")
 from pydsl.Memory.Memory import Memory
@@ -77,4 +77,4 @@ class EncodingStorage(ListStorage):
         return Encoding(index)
 
     def generate_all_summaries(self):
-        return tuple([InmutableDict({"identifier":x, "value":x, "iclass":"Encoding"}) for x in self._content])
+        return tuple([ImmutableDict({"identifier":x, "value":x, "iclass":"Encoding"}) for x in self._content])

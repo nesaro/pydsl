@@ -30,14 +30,14 @@ def search_pp(inputset: set, filterlist = None) -> str:
 def filterset(inputset: set, filterlist = None) -> set:
     if filterlist is None:
         return inputset #Don't filter at all
-    from pydsl.Abstract import InmutableDict
+    from pydsl.Abstract import ImmutableDict
     result = set()
     for element in inputset:
         telement = {}
         for key in element:
             if key in filterlist:
                 telement[key] = element[key]
-        result.add(InmutableDict(telement))
+        result.add(ImmutableDict(telement))
     return result
 
 

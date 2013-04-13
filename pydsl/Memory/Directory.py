@@ -19,7 +19,7 @@
 
 from .Memory import Memory
 from pydsl.Memory.File.Python import getFileTuple
-from pydsl.Abstract import InmutableDict
+from pydsl.Abstract import ImmutableDict
 from pydsl.Config import GLOBALCONFIG
 import logging
 LOG = logging.getLogger(__name__)
@@ -59,7 +59,7 @@ class DirStorage(Memory):
     @staticmethod
     def summary_from_filename(filepath):
         entry = [x for x in GLOBALCONFIG.formatlist if filepath.endswith(x["extension"])][0]
-        return InmutableDict(entry["summary_from_file"](filepath))
+        return ImmutableDict(entry["summary_from_file"](filepath))
 
     def all_files(self):
         import glob

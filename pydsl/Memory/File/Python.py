@@ -20,7 +20,7 @@
 
 import logging
 LOG = logging.getLogger(__name__)
-from pydsl.Abstract import InmutableDict
+from pydsl.Abstract import ImmutableDict
 import imp
 
 def load_module(filepath, identifier = None):
@@ -66,18 +66,18 @@ def summary_python_file(modulepath):
     moduleobject = imp.load_source(fileBaseName, modulepath)
     result = {"identifier":fileBaseName, "iclass":moduleobject.iclass, "filepath":modulepath}
     if hasattr(moduleobject, "title"):
-        result["title"] =  InmutableDict(moduleobject.title)
+        result["title"] =  ImmutableDict(moduleobject.title)
     if hasattr(moduleobject, "description"):
-        result["description"] =  InmutableDict(moduleobject.description)
+        result["description"] =  ImmutableDict(moduleobject.description)
     if hasattr(moduleobject, "inputdic"):
-        result["input"] = InmutableDict(moduleobject.inputdic)
+        result["input"] = ImmutableDict(moduleobject.inputdic)
         result["inputlist"] = tuple(moduleobject.inputdic.values())
     if hasattr(moduleobject, "outputdic"):
-        result["output"] = InmutableDict(moduleobject.outputdic)
+        result["output"] = ImmutableDict(moduleobject.outputdic)
         result["outputlist"] = tuple(moduleobject.outputdic.values())
     if hasattr(moduleobject, "inputformat"):
         result["input"] = moduleobject.inputformat
     if hasattr(moduleobject, "outputformat"):
         result["output"] = moduleobject.outputformat
-    return InmutableDict(result)
+    return ImmutableDict(result)
 

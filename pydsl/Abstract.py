@@ -37,7 +37,7 @@ class Singleton(type):
         return cls.__instance
 
 
-class InmutableDict(dict):
+class ImmutableDict(dict):
     """A dict with a hash method for dictionary use"""
     def __hash__(self):
         if not self:

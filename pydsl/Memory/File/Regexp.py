@@ -51,7 +51,7 @@ def load_re_from_file(filepath):
 
 def summary_re_from_file(filepath):
     from pydsl.Memory.File.Python import getFileTuple
-    from pydsl.Abstract import InmutableDict
+    from pydsl.Abstract import ImmutableDict
     (_, _, fileBaseName, _) = getFileTuple(filepath)
-    return InmutableDict({"iclass":"re","identifier":fileBaseName, "filepath":filepath})
+    return ImmutableDict({"iclass":"re","identifier":fileBaseName, "filepath":filepath})
 

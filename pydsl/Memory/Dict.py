@@ -64,9 +64,9 @@ class DictStorage(Memory):
 class RegexpDictStorage(DictStorage):
     def generate_all_summaries(self):# -> list:
         result = []
-        from pydsl.Abstract import InmutableDict
+        from pydsl.Abstract import ImmutableDict
         for key in self._content:
-            result.append(InmutableDict({"identifier":key, "regexp":self._content[key]["regexp"], "iclass":"RegularExpression"}))
+            result.append(ImmutableDict({"identifier":key, "regexp":self._content[key]["regexp"], "iclass":"RegularExpression"}))
         return result
 
     def load(self, index, **kwargs):
