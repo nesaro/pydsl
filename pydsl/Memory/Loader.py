@@ -102,6 +102,12 @@ def load(identifier, memorylist = None):
     if not memorylist:
         from pydsl.Config import GLOBALCONFIG
         memorylist = GLOBALCONFIG.memorylist
+    results = search(identifier, memorylist)
+    if not results:
+        raise KeyError(identifier)
+    if len(results) > 1:
+        raise ValueError("Multiple results")
+    identifier = list(results)[0]["identifier"]
     for memory in memorylist:
         if identifier in memory:
             return memory.load(identifier)
