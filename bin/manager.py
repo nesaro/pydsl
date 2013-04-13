@@ -94,10 +94,6 @@ if __name__ == "__main__":
     if ARGS.verb == "i":
         info(ARGS.identifier, ARGS. outputformat)
     elif ARGS.verb in ("s","l"):
-        if ARGS.verb == "s":
-            query = ARGS.identifier
-        else:
-            query = ""
         from pydsl.Memory.Search.Searcher import MemorySearcher
         from pydsl.Memory.Search.Indexer import Indexer
         searcher = MemorySearcher([Indexer(x) for x in GLOBALCONFIG.memorylist])
