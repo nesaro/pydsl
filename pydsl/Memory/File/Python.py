@@ -79,5 +79,7 @@ def summary_python_file(modulepath):
         result["input"] = moduleobject.inputformat
     if hasattr(moduleobject, "outputformat"):
         result["output"] = moduleobject.outputformat
+    if hasattr(moduleobject, "name"):
+        result["name"] = moduleobject.name
     return ImmutableDict(result)
 
