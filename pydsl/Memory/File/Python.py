@@ -51,6 +51,9 @@ def load_python_file(moduleobject):
     elif iclass in ["PythonGrammar"]:
         from pydsl.Grammar.Definition import PythonGrammar
         return PythonGrammar(resultdic)
+    elif iclass == "PythonTransformer":
+        from pydsl.Translator import PythonTranslator
+        return PythonTranslator(**resultdic)
     else:
         raise ValueError(str(moduleobject))
 

@@ -34,6 +34,7 @@ def load_default_memory():
     GLOBALCONFIG.memorylist.append(DirStorage(dirname + "/grammar/"))
     GLOBALCONFIG.memorylist.append(RegexpDictStorage(dirname + "/dict/regexp.dict"))
     GLOBALCONFIG.memorylist.append(EncodingStorage(dirname + "/list/encoding.py"))
+    GLOBALCONFIG.memorylist.append(DirStorage(dirname + "/transformer/"))
 
 def default_formats():
     from pydsl.Memory.File.Regexp import load_re_from_file, summary_re_from_file
