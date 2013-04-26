@@ -23,11 +23,6 @@ __email__ = "nesaro@gmail.com"
 
 import unittest
 
-class TestConfig(unittest.TestCase):
-    def testInstance(self):
-        from pydsl.Config import GLOBALCONFIG
-
-
 class TestInmutableDict(unittest.TestCase):
     def testEqual(self):
         from pydsl.Abstract import ImmutableDict
