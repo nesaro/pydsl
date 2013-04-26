@@ -78,4 +78,4 @@ class PythonTranslator(HostChannel):
         outputdic = tuple(self.outputdefinition.values())
         result = {"iclass": "PythonTransformer", "input": inputdic, "output": outputdic}
         from pydsl.Abstract import ImmutableDict
-        return InmutableDict(result)
+        return ImmutableDict(result)

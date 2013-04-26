@@ -44,7 +44,7 @@ def lexer(alphabet, expression = None, inputfile = None):
         result = [str(x) for x in lexer(expression)]
         print(result)
     elif inputfile:
-        with open(filename, 'rb') as f:
+        with open(inputfile, 'rb') as f:
             expression = f.read()
         result = [str(x) for x in lexer(expression)]
         print(result)
