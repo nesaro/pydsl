@@ -17,7 +17,7 @@
 
 
 """
-Calls a translator
+Calls a transformer
 """
 
 __author__ = "Nestor Arocha"
