@@ -84,9 +84,7 @@ def translate(transformer = None, expression = None, inputfiledic = None, output
                 result[key] = str(result[key])
         print(result)
         return result #FIXME: this is the only condition that returns a result. Because of tests
-    else:
-        raise Exception
-    return True
+    raise Exception("Invalid arguments")
 
 if __name__ == "__main__":
     import argparse

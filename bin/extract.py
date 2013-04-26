@@ -44,9 +44,7 @@ def extractaux(grammar, expression = None, input_file = None):
         result = extract(grammar,content)
         print(result)
         return result
-    else:
-        raise Exception
-    return True
+    raise Exception("No input file nor expression")
 
 if __name__ == "__main__":
     import argparse
