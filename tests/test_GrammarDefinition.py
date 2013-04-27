@@ -18,7 +18,7 @@
 
 """Tests the Grammar definition instances"""
 
-from Alphabet.Definition import AlphabetDefinition
+from pydsl.Alphabet.Definition import AlphabetDefinition
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"

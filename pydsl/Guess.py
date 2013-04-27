@@ -55,7 +55,7 @@ class Guesser(object):
                         try:
                             typ = mem.load(name)
                         except:
-                            LOG.exception("Error while loading memory %s" % name)
+                            LOG.warning("Error while loading memory %s" % name)
                             continue
                         break
                 else:

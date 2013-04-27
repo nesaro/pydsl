@@ -94,7 +94,7 @@ class DirStorage(Memory):
                 return entry["load_from_file"](filepath)
             except ValueError:
                 continue
-        raise KeyError("Not found")
+        raise ValueError("Unable to open: %s" % name)
 
 
     def __contains__(self, key):
