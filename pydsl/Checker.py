@@ -88,17 +88,10 @@ class PythonChecker(Checker):
     def __init__(self, module):
         Checker.__init__(self)
         self._matchFun = module["matchFun"]
-        auxdic = module.get('auxdic', {})
-        self.auxgrammar = {}
-        for key, value in auxdic.items():
-            self.auxgrammar[key] = load_checker(value)
 
     def check(self, data):
         try:
-            if self.auxgrammar:
-                return self._matchFun(data, self.auxgrammar)
-            else:
-                return self._matchFun(data)
+            return self._matchFun(data)
         except UnicodeDecodeError:
             return False
 
