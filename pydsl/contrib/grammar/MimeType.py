@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-#copyright (c) 2008-2011 Nestor Arocha
+#copyright (c) 2008-2013 Nestor Arocha
 
 """Mime Type recognizer"""
 

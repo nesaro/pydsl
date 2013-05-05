@@ -34,7 +34,7 @@ def _load_checker(originaldic):
 
 class HostChannel(object):
     """A class that contains input and output string-named channels. Each channel must contain a Type object
-    Any class which inherites from this must also inherit from HostChannel
+    Any class which inherits from this must also inherit from HostChannel
     """
     def __init__(self, inputtypedict, outputtypedict):
         for key in inputtypedict:

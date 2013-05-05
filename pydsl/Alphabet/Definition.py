@@ -32,7 +32,7 @@ class AlphabetDefinition(object):
         raise NotImplementedError
 
 class AlphabetListDefinition(AlphabetDefinition):
-    """Uses a list of grammardefinitions"""
+    """Uses a list of grammar definitions"""
     def __init__(self, grammarlist):
         if not grammarlist:
             raise ValueError
@@ -48,7 +48,7 @@ class AlphabetListDefinition(AlphabetDefinition):
 
 
 class AlphabetDictDefinition(AlphabetDefinition):
-    """Uses a dict of grammardefinitions"""
+    """Uses a dict of grammar definitions"""
     def __init__(self, grammarlist):
         if not grammarlist:
             raise ValueError
