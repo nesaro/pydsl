@@ -45,7 +45,7 @@ def _build_item_closure(itemset, productionset):
             nextsymbol = currentitem.next_symbol()
             if nextsymbol is None:
                 break
-            for rule in productionset.productionlist:
+            for rule in productionset.productions:
                 newitem = LR0Item(rule)
                 if rule.leftside[0] == nextsymbol and newitem not in resultset.itemlist:
                     resultset.append_item(newitem)

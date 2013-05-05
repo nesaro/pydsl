@@ -78,7 +78,7 @@ class BNFGrammar(GrammarDefinition): #Only stores a ruleset, and methods to ask 
         return AlphabetListDefinition([x.gd for x in self.terminalsymbollist])
 
     @property
-    def productionlist(self):
+    def productions(self):
         return [x for x in self.fulllist if isinstance(x, Production)]
 
     @property
@@ -88,7 +88,7 @@ class BNFGrammar(GrammarDefinition): #Only stores a ruleset, and methods to ask 
     @property
     def symbollist(self):
         result = []
-        for x in self.productionlist:
+        for x in self.productions:
             for y in x.leftside + x.rightside:
                 if y not in result:
                     result.append(y)
@@ -104,7 +104,7 @@ class BNFGrammar(GrammarDefinition): #Only stores a ruleset, and methods to ask 
         if isinstance(symbol, (TerminalSymbol, NullSymbol)):
             return [symbol]
         result = []
-        for x in self.productionlist:
+        for x in self.productions:
             if x.leftside[0] != symbol:
                 continue
             for y in x.rightside:
@@ -121,7 +121,7 @@ class BNFGrammar(GrammarDefinition): #Only stores a ruleset, and methods to ask 
         result = []
         if symbol == self.initialsymbol:
             result.append(EndSymbol())
-        for production in self.productionlist:
+        for production in self.productions:
             if symbol in production.rightside:
                 nextindex = production.rightside.index(symbol)+1
                 while nextindex < len(production.rightside):
@@ -159,8 +159,8 @@ class BNFGrammar(GrammarDefinition): #Only stores a ruleset, and methods to ask 
             return False
         if self._initialsymbol != other.initialsymbol:
             return False
-        for index in range(len(self.productionlist)):
-            if self.productionlist[index] != other.productionlist[index]:
+        for index in range(len(self.productions)):
+            if self.productions[index] != other.productions[index]:
                 return False
         return True
 
@@ -177,15 +177,14 @@ class BNFGrammar(GrammarDefinition): #Only stores a ruleset, and methods to ask 
     @property
     def main_production(self):
         """Returns main rule"""
-        for rule in self.productionlist:
+        for rule in self.productions:
             if rule.leftside[0] == self._initialsymbol:
                 return rule
         raise IndexError
 
     def getProductionsBySide(self, symbollist, side = "left"):
         result = []
-        for rule in self.productionlist: #FIXME Is iterating over production only
-            part = None
+        for rule in self.productions: #FIXME Is iterating over production only
             if side == "left":
                 part = rule.leftside
             elif side == "right":
@@ -207,11 +206,8 @@ class BNFGrammar(GrammarDefinition): #Only stores a ruleset, and methods to ask 
         return result
 
     def getProductionByBothSides(self, leftsymbollist, rightsymbollist):
-        for rule in self.productionlist:
-            valid = True
-            if len(rule.leftside) != len(leftsymbollist):
-                continue
-            if len(rule.rightside) != len(rightsymbollist):
+        for rule in self.productions:
+            if len(rule.leftside) != len(leftsymbollist) or  len(rule.rightside) != len(rightsymbollist):
                 continue
             for ruleindex in range(len(rule.leftside)):
                 if leftsymbollist[ruleindex] != rule.leftside[ruleindex]:
@@ -232,18 +228,15 @@ class BNFGrammar(GrammarDefinition): #Only stores a ruleset, and methods to ask 
     def getSymbols(self):
         """Returns every symbol"""
         symbollist = []
-        for rule in self.productionlist:
+        for rule in self.productions:
             for symbol in rule.leftside + rule.rightside:
                 if symbol not in symbollist:
                     symbollist.append(symbol)
         symbollist += self.terminalsymbollist
         return symbollist
 
-    def getProductions(self):
-        return self.productionlist
-
     def getProductionIndex(self, rule):
-        return self.productionlist.index(rule)
+        return self.productions.index(rule)
 
     def __str__(self):
-        return str(list(map(str,self.productionlist)))
+        return str(list(map(str,self.productions)))
