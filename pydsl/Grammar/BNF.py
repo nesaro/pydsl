@@ -96,8 +96,8 @@ class BNFGrammar(GrammarDefinition): #Only stores a ruleset, and methods to ask 
 
     @property
     def first(self):
-        """Returns the list of terminalsymbols that can be the first element of this grammar"""
-        return [x.first for x in self.terminalsymbollist]
+        """Returns the list of terminal symbols that can be the first element of this grammar"""
+        return self.initialsymbol.first()
 
     def first_lookup(self, symbol):
         """Returns the first TerminalSymbols produced by the input symbol within this grammar definition"""
