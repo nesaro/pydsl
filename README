@@ -15,14 +15,12 @@ supported formats:
  * pydsl BNF format
  * mongo database query dictionaries
  * python ply module (only check support)
-
 properties:
  * enum(gd): yields a list of accepted words
  * first(gd): yields a list of the first accepted subword/char
  * minsize(gd): length of the smaller accepted word
  * maxsize(gd): length of the biggest accepted word
  * alphabet(gd): returns the alphabet used by this gd
-
 functions:
  * validate(gd, input): test the input string against the spec. In case of failure, it returns a list of errors
 
@@ -30,10 +28,8 @@ ALPHABETS
 ---------
 
 Alphabets are a set of grammar definitions that are recognized using a regular grammar. 
-
 properties:
  * grammar_list(ad): return the list of allowed grammars for this alphabet
-
 functions:
  * lexer(ad, input): Generates a tokenlist from a string (it is a special case of translate)
 
