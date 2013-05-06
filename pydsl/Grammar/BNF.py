@@ -191,18 +191,15 @@ class BNFGrammar(GrammarDefinition): #Only stores a ruleset, and methods to ask 
                 part = rule.rightside
             else:
                 raise KeyError
-            valid = True
             if len(part) != len(symbollist):
-                valid = False
+                continue
             for ruleindex in range(len(part)):
                 if part[ruleindex] != symbollist[ruleindex]:
-                    valid = False
                     break
-            if valid:
+            else:
                 result.append(rule)
         if not result:
             raise IndexError("Symbol: %s" % str([str(x) for x in symbollist]))
-
         return result
 
     def getSymbols(self):
