@@ -205,26 +205,6 @@ class BNFGrammar(GrammarDefinition): #Only stores a ruleset, and methods to ask 
 
         return result
 
-    def getProductionByBothSides(self, leftsymbollist, rightsymbollist):
-        for rule in self.productions:
-            if len(rule.leftside) != len(leftsymbollist) or  len(rule.rightside) != len(rightsymbollist):
-                continue
-            for ruleindex in range(len(rule.leftside)):
-                if leftsymbollist[ruleindex] != rule.leftside[ruleindex]:
-                    valid = False
-                    break
-            if not valid:
-                continue
-            for ruleindex in range(len(rule.rightside)):
-                if rightsymbollist[ruleindex] != rule.rightside[ruleindex]:
-                    valid = False
-                    break
-            if not valid:
-                continue
-            if valid:
-                return rule
-        raise IndexError
-
     def getSymbols(self):
         """Returns every symbol"""
         symbollist = []
