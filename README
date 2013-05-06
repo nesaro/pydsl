@@ -1,7 +1,11 @@
 DESCRIPTION
 ===========
 
-pydsl is a language library written in python
+pydsl is a language library written in python. It provides high level functions for Grammars/Alphabets, 
+hiding the complexity of parsers and similar tools:
+ * guess(input, [gd]): returns a list of _grammar_ and _alphabets_ that are compatible with the input
+ * check(d, input): test the input string against the spec
+ * extract(gd, input): extract all the slices of the input that are accepted by the definition 
 
 GRAMMARS
 --------
@@ -12,29 +16,27 @@ supported formats:
  * mongo database query dictionaries
  * python ply module (only check support)
 
-grammar properties:
+properties:
  * enum(gd): yields a list of accepted words
  * first(gd): yields a list of the first accepted subword/char
  * minsize(gd): length of the smaller accepted word
  * maxsize(gd): length of the biggest accepted word
  * alphabet(gd): returns the alphabet used by this gd
 
-grammar functions:
+functions:
  * validate(gd, input): test the input string against the spec. In case of failure, it returns a list of errors
 
 ALPHABETS
 ---------
 
-alphabet abstraction is also available. Alphabets are a set of grammar definitions that are recognized using a regular grammar. Properties:
+Alphabets are a set of grammar definitions that are recognized using a regular grammar. 
+
+properties:
  * grammar_list(ad): return the list of allowed grammars for this alphabet
 
-functions that use _alphabets_:
+functions:
  * lexer(ad, input): Generates a tokenlist from a string (it is a special case of translate)
 
-functions that use both _alphabets_ and _grammar definitions_:
- * guess(input, [gd]): returns a list of _grammar_ and _alphabets_ that are compatible with the input
- * check(d, input): test the input string against the spec
- * extract(gd, input): extract all the slices of the input that are accepted by the definition 
 
 LIBRARY
 -------
@@ -42,14 +44,6 @@ LIBRARY
 pydsl also offers functions to store grammars and alphabets into directories and files. Here are the related functions:
  * manager s query: search for an element within a memory
  * manager i identifier: returns information about the element
-
-included elements:
- * grammars
-   * grammars folder
-   * dict/filetype.dict: A list of filetypes
-   * dict/regexp.dict: A list of regular expressions
- * alphabets
-   * list/encoding.py: A list of supported encoding
 
 INSTALLATION
 ============
@@ -64,7 +58,7 @@ To use pydsl as a library for your code, you can:
 
 Loading content from files
 --------------------------
-    from pydsl.Memory.Storage.File.BNF import load_bnf_file
+    from pydsl.Memory.File.BNF import load_bnf_file
     grammardefinition = loand_bnf_file('myfile.bnf')
     from pydsl.Memory.Loader import *
     mychecker = load_checker(grammardefinition)
@@ -88,6 +82,8 @@ Using contrib
 
 BINARIES
 ========
+pydsl also provides a command line interface for the main functions:
+
  * manager.py : Searchs and displays information about grammar/alphabets
  * check.py: Checks if input data belongs to a grammar
  * guess:py: Returns a list of the types that match the input element
