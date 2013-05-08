@@ -82,12 +82,12 @@ class DirStorage(Memory):
             yield fileBaseName.split(".")[0]
 
     def load(self, name):
-        resultlist = self._searcher.search(name)
-        if len(resultlist) > 1:
+        result = self._searcher.search(name)
+        if len(result) > 1:
             LOG.error("Found two or more matches, FIXME: processing the first, should raise exception")
-        if not resultlist:
+        if not result:
             raise KeyError(self.__class__.__name__ + name)
-        filepath = list(resultlist)[0]["filepath"]
+        filepath = list(result)[0]["filepath"]
         entries = [x for x in GLOBALCONFIG.formatlist if filepath.endswith(x["extension"])]
         for entry in entries:
             try:
