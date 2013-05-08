@@ -97,7 +97,17 @@ class AlphabetDictLexer(Lexer):
 
     def nextToken(self):
         while self.current:
-            validelements = [(x,y) for x,y in self.alphabet.grammardict.items() if self.current[0] in y.first]
+            validelements = []
+            for x,y in self.alphabet.grammardict.items():
+                for first_element in y.first:
+                    from pydsl.Grammar.Definition import GrammarDefinition
+                    if not isinstance(first_element, GrammarDefinition):
+                        print(first_element.__class__.__name__, first_element, x)
+                        raise Exception
+                    checker = load_checker(first_element)
+                    if checker.check(self.current[0]):
+                        validelements.append((x,y))
+                        break
             if not validelements:
                 if not self.generate_unknown:
                     raise Exception("Not found")
@@ -133,7 +143,6 @@ class AlphabetListLexer(Lexer):
         while self.current:
             from pydsl.Grammar.Definition import  StringGrammarDefinition
             currentgd = StringGrammarDefinition(self.current[0])
-            print(currentgd)
             validelements = [x for x in self.alphabet.grammar_list if currentgd in x.first]
             if not validelements:
                 if not self.generate_unknown:

@@ -83,8 +83,8 @@ class RegularExpressionDefinition(GrammarDefinition):
                 i+=1
                 continue
             if self.regexpstr[i] == "[":
-                return [x for x in self.regexpstr[i+1:self.regexpstr.find("]")]]
-            return [self.regexpstr[i]]
+                return [StringGrammarDefinition(x) for x in self.regexpstr[i+1:self.regexpstr.find("]")]]
+            return [StringGrammarDefinition(self.regexpstr[i])]
 
     def __getattr__(self, attr):
         return getattr(self.regexp, attr)
