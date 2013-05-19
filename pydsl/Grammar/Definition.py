@@ -16,28 +16,36 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha"
+__copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 
-class GrammarDefinition: 
+class GrammarDefinition(object):
     def __init__(self):
         pass
 
     def enum(self):
+        """Generates every possible accepted string"""
         raise NotImplementedError
 
     @property
     def first(self):# -> set:
-        raise NotImplementedError
+        """List of possible first elements"""
+        return [x for x in self.alphabet().grammar_list]
 
     @property
     def minsize(self):# -> int:
+        """Returns the minimum size in alphabet tokens"""
         return 0
 
     @property
     def maxsize(self):
+        """Returns the max size in alphabet tokens"""
         return None
+
+    def alphabet(self):
+        """Returns the alphabet used by this grammar"""
+        raise NotImplementedError
 
 class PLYGrammar(GrammarDefinition):
     """PLY based grammar"""
@@ -47,11 +55,11 @@ class PLYGrammar(GrammarDefinition):
 
     @property
     def maxsize(self):
-        pass
+        raise NotImplementedError
 
     @property
     def minsize(self):
-        pass
+        raise NotImplementedError
 
 class RegularExpressionDefinition(GrammarDefinition):
     def __init__(self, regexp, flags = 0):
@@ -63,6 +71,10 @@ class RegularExpressionDefinition(GrammarDefinition):
         import re
         self.regexp = re.compile(regexp, flags)
 
+    def __eq__(self, other):
+        if not isinstance(other, RegularExpressionDefinition):
+            return False
+        return self.regexpstr == other.regexpstr and self.flags == other.flags
     @property
     def first(self):# -> set:
         i = 0
@@ -71,16 +83,78 @@ class RegularExpressionDefinition(GrammarDefinition):
                 i+=1
                 continue
             if self.regexpstr[i] == "[":
-                return [x for x in self.regexpstr[i+1:self.regexpstr.find("]")]]
-            return self.regexpstr[i] 
+                return [StringGrammarDefinition(x) for x in self.regexpstr[i+1:self.regexpstr.find("]")]]
+            return [StringGrammarDefinition(self.regexpstr[i])]
 
     def __getattr__(self, attr):
         return getattr(self.regexp, attr)
 
-class JsonSchema(GrammarDefinition, dict):
-    pass
+    def alphabet(self):
+        from pydsl.Alphabet.Definition import Encoding
+        return Encoding("ascii")
 
-class MongoGrammar(GrammarDefinition, dict):
+class StringGrammarDefinition(GrammarDefinition):
+    def __init__(self, string):
+        self.string = string
+
+    def __hash__(self):
+        return hash(self.string)
+
+    def __eq__(self, other):
+        try:
+            return self.string == other.string
+        except AttributeError:
+            return False
+
     @property
     def first(self):
-        return "{"
+        return [StringGrammarDefinition(self.string[0])]
+
+    def enum(self):
+        yield self.string
+
+    @property
+    def maxsize(self):
+        return len(self.string)
+
+    @property
+    def minsize(self):
+        return len(self.string)
+
+    def __str__(self):
+        return str(self.string)
+
+    def alphabet(self):
+        return [StringGrammarDefinition(x) for x in self.string]
+
+class JsonSchema(GrammarDefinition, dict):
+    def __init__(self, *args, **kwargs):
+        GrammarDefinition.__init__(self)
+        dict.__init__(self, *args, **kwargs)
+
+    def alphabet(self):
+        from pydsl.Alphabet.Definition import Encoding
+        return Encoding("ascii")
+class MongoGrammar(GrammarDefinition, dict):
+    def __init__(self, *args, **kwargs):
+        GrammarDefinition.__init__(self)
+        dict.__init__(self, *args, **kwargs)
+
+    @property
+    def first(self):
+        return [StringGrammarDefinition("{")]
+
+    def alphabet(self):
+        from pydsl.Alphabet.Definition import Encoding
+        return Encoding("ascii")
+
+class PythonGrammar(GrammarDefinition, dict):
+    def __init__(self, *args, **kwargs):
+        GrammarDefinition.__init__(self)
+        dict.__init__(self, *args, **kwargs)
+
+    def alphabet(self):
+        if "alphabet" in self:
+            return self['alphabet']
+        from pydsl.Alphabet.Definition import Encoding
+        return Encoding("ascii")

@@ -1,5 +1,5 @@
-def function(inputdic, inputgt, outputgt):
-    return {"output":inputdic['input']}
+def function(input):
+    return {"output":input}
 
 
 iclass = "PythonTransformer"

@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-#Copyright (C) 2008-2012 Nestor Arocha
+#Copyright (C) 2008-2013 Nestor Arocha
 #pydsl is free software: you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
 #the Free Software Foundation, either version 3 of the License, or
@@ -19,71 +19,149 @@
 
 import logging
 LOG = logging.getLogger(__name__)
-from .Parser import TopDownParser, mix_results, locate_result_borders, terminal_symbol_reducer
-from ..Tree import ParseTree
+from .Parser import TopDownParser, terminal_symbol_reducer
+from pydsl.Grammar.Tree import ParseTree
 
-def locate_heavier_symbol(symbollist):
-    """ Locates the heavier symbol inside inputlist"""
-    currentsymbol = None
-    for symbol in symbollist:
-        if currentsymbol is None or symbol.weight > currentsymbol.weight:
-            currentsymbol = symbol
-    return currentsymbol
+
+def _create_combined_list(input_list):
+    """
+    Creates a list of lists, each sublist contains a permutation of inputs. E.g:
+    [a, b, c] -> [[a1,b1,c1],[a2,b1,c1]] ....
+    """
+
+    midlist = [] #All blocks combinations are stored here. Each element is a list of viable sequences
+    input_list = [x for x in input_list if x]
+    if not input_list:
+        return []
+    validsets = 1
+
+    #Processing head set
+
+    for result in input_list[0]:
+        if not(isinstance(result, ParseTree)):
+            raise TypeError
+        if result.leftpos == 0 or result.leftpos is None:
+            midlist.append([result])
+
+    #Processing Tail sets
+    for resultl in input_list[1:]:
+        #For each result list
+        if not resultl:
+            continue
+        for result in resultl:
+            #for each result
+            for middleresult in midlist[:]:
+                #Here we mix every result with intermediate results list
+                prevright = [x.rightpos for x in middleresult if x.rightpos is not None][-1]
+                if result.leftpos is None or prevright == result.leftpos:
+                    midlist.append(middleresult + [result])
+        validsets += 1
+
+        #Removes all results that have less elements than the number of valid sets
+        for element in midlist[:]:
+            if len(element) != validsets:
+                midlist.remove(element)
+
+    return midlist
+
+def mix_results(resultll, productionset):
+    """ Mix n sets of results """
+    #We mix all results into final result
+    midlist = _create_combined_list(resultll)
+    finallist = []
+    for combination in midlist:
+        if len(combination) == 1:
+            finallist.append(combination[0])
+        else:
+            left_pos = [x.leftpos for x in combination if x.leftpos is not None][0]
+            right_pos = [x.rightpos for x in combination if x.rightpos is not None][-1]
+            #Creates a node with all elements, and originals nodes are the childs of the new node
+            symbollist = []
+            compoundword = ""
+            for element in combination:
+                compoundword += element.content
+                symbollist += element.symbollist
+            finalresult = ParseTree(left_pos, right_pos, symbollist, compoundword, combination[0].production, valid = all([x for x in combination]))
+            #Add childs to result. FIXME Adding already created elements as children of the new one
+            rightside = []
+            for child in combination:
+                assert(child != finalresult) #Avoid recursion
+                finalresult.append_child(child)
+                rightside += child.symbollist #Creating the rightside of the production to guess the full production #FIXME doesn't work with terminals
+            try:
+                finalresult.production = productionset.getProductionsBySide(rightside, "right")
+            except IndexError:
+                finalresult.production = None
+            finally:
+                finallist.append(finalresult) #rule found; we add bound together version
+    return finallist
+
+def locate_heavier_symbol(symbols):
+    """ Locates the heavier symbol inside input list"""
+    current_symbol = None
+    for symbol in symbols:
+        if current_symbol is None or symbol.weight > current_symbol.weight:
+            current_symbol = symbol
+    return current_symbol
 
 class WeightedParser(TopDownParser):
     """Weighted Parser class"""
     def get_trees(self, data, showerrors = False):
-        """See parent definition"""
-        result = self.__recursive_parser([self._productionset.initialsymbol], data, self._productionset.main_production, showerrors)
+        result = self.__recursive_parser(self._productionset.initialsymbol, data, self._productionset.main_production, showerrors)
         finalresult = []
         for eresult in result:
             if eresult.leftpos == 0 and eresult.rightpos == len(data):
                 finalresult.append(eresult)
         return finalresult
 
-    def __recursive_parser(self, symbols, data, production, showerrors = False):
-        """ Main function. It is recursive """
-        if not symbols:
+    def __handle_alternative(self,symbols, data, production, showerrors):
+        """Multiple symbols
+        returns a list of possible reductions"""
+        if len(symbols) == 1:
+            return self.__recursive_parser(symbols[0], data, production, showerrors)
+        heavy_symbol = locate_heavier_symbol(symbols)
+        index = symbols.index(heavy_symbol)
+        LOG.debug("Iteration: Call recursive heavy" + str(heavy_symbol) + str(index))
+        heavyresult = self.__recursive_parser(heavy_symbol, data, production, showerrors)
+        if not heavyresult:
             return []
-        if len(symbols) > 1:
-            currentsymbol = locate_heavier_symbol(symbols)
-            index = symbols.index(currentsymbol)
-            LOG.debug("Iteration: Call recursive heavy")
-            heavyresult = self.__recursive_parser([currentsymbol], data, production, showerrors)
-            if not heavyresult:
-                return []
-            leftpos, rightpos = locate_result_borders(heavyresult)
-            leftside = []
-            rightside = []
-            if index > 0:
-                LOG.debug("Iteration: Call recursive left")
-                leftside = self.__recursive_parser(symbols[:index], data[:leftpos], production, showerrors)
-                if not leftside:
-                    return []
+        leftpos = max([x.leftpos for x in heavyresult])
+        rightpos = min([x.rightpos for x in heavyresult]) or 0
+        leftside = []
+        rightside = []
+        if symbols[:index]:
+            LOG.debug("Iteration: Call recursive left")
+            leftside = self.__handle_alternative(symbols[:index], data[:leftpos], production, showerrors)
+        if symbols[(index+1):]:
             LOG.debug("Iteration: Call recursive right")
-            if (index + 1) < len(symbols):
-                rightside = self.__recursive_parser(symbols[(index+1):], data[rightpos:], production, showerrors)
-                if not rightside:
-                    return []
+            rightside = self.__handle_alternative(symbols[(index+1):], data[rightpos:], production, showerrors)
             #shift right results
-            for rsresult in rightside:
-                rsresult.shift(rightpos)
-            result = mix_results([leftside, heavyresult, rightside], self._productionset) 
-            return result
-        onlysymbol = symbols[0]
+        for x in rightside:
+            x.shift(rightpos)
+        if not leftside and not rightside:
+            return heavyresult
+        result = mix_results([leftside, heavyresult, rightside], self._productionset)
+        return result
+
+    def __recursive_parser(self, onlysymbol, data, production, showerrors = False):
+        """ Main function. It is recursive """
         from ..Symbol import TerminalSymbol, NonTerminalSymbol, NullSymbol
         if isinstance(onlysymbol, TerminalSymbol):
-            #Locate every ocurrence of word and return a set of results. Follow boundariesrules
+            #Locate every occurrence of word and return a set of results. Follow boundariesrules
             LOG.debug("Iteration: terminalsymbol")
-            sproduction = self._productionset.getProductionsBySide([onlysymbol])[0]
-            result =  terminal_symbol_reducer(onlysymbol, data, sproduction)
+            result =  terminal_symbol_reducer(onlysymbol, data, onlysymbol) #FIXME add information about production
             if showerrors and not result:
-                return [ParseTree(0,len(data), [onlysymbol] , data, sproduction, valid = False)]
+                return [ParseTree(0,len(data), [onlysymbol] , data, onlysymbol, valid = False)] #FIXME add information about production
             return result
         elif isinstance(onlysymbol, NonTerminalSymbol):
             result = []
             for alternative in self._productionset.getProductionsBySide([onlysymbol]):
-                result += self.__recursive_parser(alternative.rightside, data, alternative, showerrors)
+                #result += self.__recursive_parser(alternative.rightside, data, alternative, showerrors)
+                alternative_result = self.__handle_alternative(alternative.rightside, data, alternative, showerrors)
+                for x in alternative_result:
+                    if x.symbollist == alternative.rightside: #Filters incomplete attempts
+                        result.append(ParseTree(x.leftpos, x.rightpos, [onlysymbol], data[x.leftpos:x.rightpos], production, valid = True))
+                    #TODO: Add child
             if showerrors and not result:
                 return [ParseTree(0, len(data), [onlysymbol], data, production, valid = False)]
             return result

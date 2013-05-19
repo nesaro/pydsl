@@ -10,3 +10,5 @@ htmlcov
 comp
 dist
 *.egg-info
+*.out
+*.dictc

@@ -16,17 +16,18 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha"
+__copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
-from bnfgrammar import *
 
 class TestLexer(unittest.TestCase):
-    def testLexer(self):
-        """Lexer call"""
-        from pydsl.Alphabet.Lexer import BNFLexer
-        lexer = BNFLexer(productionset1)
-        result = list(lexer(string1))
-        self.assertTrue(result)
+    def testSimpleLexing(self):
+        """Test checker instantiation and call"""
+        from pydsl.Memory.Loader import load_lexer
+        from pydsl.Alphabet.Definition import AlphabetDictDefinition
+        mydef = AlphabetDictDefinition({'1':'integer','2':'Date'})
+        mylexer = load_lexer(mydef)
+        self.assertTrue(mylexer('123411/23/32'),['integer','date'])
+        self.assertTrue([x for x in mylexer.lexer_generator('123411/23/32')],['integer','date'])
 

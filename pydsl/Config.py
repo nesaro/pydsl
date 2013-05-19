@@ -18,39 +18,41 @@
 """Global (per execution) elements"""
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha"
+__copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 from pydsl.Abstract import Singleton
 import logging
 LOG = logging.getLogger(__name__)
-from pkg_resources import Requirement, resource_filename, DistributionNotFound
+from pkg_resources import resource_filename
 
+def load_default_memory():
+    from pydsl.Memory.Directory import DirStorage
+    from pydsl.Memory.Dict import RegexpDictStorage
+    from pydsl.Memory.List import EncodingStorage
+    dirname = resource_filename("pydsl.contrib", "")
+    GLOBALCONFIG.memorylist.append(DirStorage(dirname + "/grammar/"))
+    GLOBALCONFIG.memorylist.append(RegexpDictStorage(dirname + "/dict/regexp.dict"))
+    GLOBALCONFIG.memorylist.append(EncodingStorage(dirname + "/list/encoding.py"))
+    GLOBALCONFIG.memorylist.append(DirStorage(dirname + "/transformer/"))
 
-def generate_memory_list(): #-> list:
-    """loads default memories"""
-    result = []
-    from pydsl.Memory.Storage.Directory import DirStorage
-    from pydsl.Memory.Storage.Dict import RegexpDictStorage
-    try:
-        dirname = resource_filename("pydsl.contrib", "")
-    except DistributionNotFound:
-        pass
-    else:
-        result.append(DirStorage(dirname + "/grammar/"))
-        result.append(DirStorage(dirname + "/board/"))
-        result.append(DirStorage(dirname + "/transformer/"))
-        result.append(RegexpDictStorage(dirname + "/dict/regexp.dict"))
-    return result
-
+def default_formats():
+    from pydsl.Memory.File.Regexp import load_re_from_file, summary_re_from_file
+    from pydsl.Memory.File.BNF import load_bnf_file, summary_bnf_file
+    from pydsl.Memory.File.Python import summary_python_file, load_python_file
+    return [
+        {"extension":".py",  "summary_from_file":summary_python_file, "load_from_file":load_python_file},
+        {"extension":".re", "summary_from_file":summary_re_from_file,"load_from_file":load_re_from_file},
+        {"extension":".bnf","summary_from_file":summary_bnf_file, "load_from_file":load_bnf_file},
+        ]
 
 class GlobalConfig(object):
     """Execution time global configuration"""
     def __init__(self, persistent_dir=None, debuglevel=40):
         self.persistent_dir = persistent_dir
-        self.__memorylist = None  # default memories, sorted by preference
+        self.memorylist = []
+        self.formatlist = default_formats()
         self.__debuglevel = debuglevel
-        self.lang = "es"
         if self.persistent_dir is None:
             try:
                 import os
@@ -71,12 +73,6 @@ class GlobalConfig(object):
         raise NotImplementedError
 
     @property
-    def memorylist(self):
-        if self.__memorylist is None:
-            self.__memorylist = generate_memory_list()
-        return self.__memorylist
-
-    @property
     def debuglevel(self):
         return self.__debuglevel
 
@@ -85,33 +81,4 @@ class GlobalConfig(object):
         self.__debuglevel = level
 
 GlobalConfig2 = Singleton('GlobalConfig2', (GlobalConfig, ), {})
-VERSION = "pydsl pre-version\n Copyright (C) 2008-2012 Nestor Arocha"
 GLOBALCONFIG = GlobalConfig2()  # The only instance available
-ERRORLIST = ["Grammar", "Timeout", "Transformer"]
-
-
-def all_classes(module):# -> set:
-    """Returns all classes (introspection)"""
-    import inspect
-    result = set()
-    for name, obj in inspect.getmembers(module):
-        if inspect.isclass(obj):
-            result.add(obj)
-        elif inspect.ismodule(obj):
-            if obj.__name__[:6] == "pydsl":
-                result = result.union(all_classes(obj))
-    return result
-
-
-def all_indexable_classes(module):# -> set:
-    """Returns all indexable classes (introspection)"""
-    import inspect
-    result = set()
-    for name, obj in inspect.getmembers(module):
-        from pydsl.Abstract import Indexable
-        if inspect.isclass(obj) and issubclass(obj, Indexable):
-            result.add(obj)
-        elif inspect.ismodule(obj):
-            if obj.__name__[:6] == "pydsl":
-                result = result.union(all_indexable_classes(obj))
-    return result

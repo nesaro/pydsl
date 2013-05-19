@@ -18,7 +18,7 @@
 """Abstract Classes"""
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha"
+__copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
@@ -27,17 +27,17 @@ LOG = logging.getLogger(__name__)
 class Singleton(type):
     """singleton pattern metaclass"""
     #Only problem here is that classes can't have two metaclasses
-    def __init__(self, name, bases, dct):
-        self.__instance = None
-        type.__init__(self, name, bases, dct)
+    def __init__(cls, name, bases, dct):
+        cls.__instance = None
+        type.__init__(cls, name, bases, dct)
 
-    def __call__(self, *args, **kw):
-        if self.__instance is None:
-            self.__instance = type.__call__(self, *args, **kw)
-        return self.__instance
+    def __call__(cls, *args, **kw):
+        if cls.__instance is None:
+            cls.__instance = type.__call__(cls, *args, **kw)
+        return cls.__instance
 
 
-class InmutableDict(dict):
+class ImmutableDict(dict):
     """A dict with a hash method for dictionary use"""
     def __hash__(self):
         if not self:
@@ -55,18 +55,3 @@ class InmutableDict(dict):
             if other[key] != self.__getitem__(key):
                 return False
         return True
-
-
-class Indexable:
-    """ This class is searchable """
-    def summary(self): #-> InmutableDict:
-        raise NotImplementedError
-
-    @classmethod
-    def ancestors(cls):
-        result = [cls.__name__]
-        for x in cls.__bases__:
-            if issubclass(x, Indexable):
-                if not x in result:
-                    result += x.ancestors()
-        return tuple(result)

@@ -16,25 +16,70 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha"
+__copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 
-class AlphabetDefinition:
+class AlphabetDefinition(object):
     """Defines an alphabet"""
     @property
-    def symbols(self):
-        """Returns a list of allowed symbols"""
-        return []
+    def grammar_list(self):
+        """Returns a list of allowed grammars"""
+        raise NotImplementedError
 
-class AlphabetDictDefinition(AlphabetDefinition):
-    """Uses a dict of grammardefinitions"""
-    def __init__(self, grammardict):
-        from pydsl.Memory.Loader import load
-        self.grammardict = {}
-        for x in grammardict:
-            self.grammardict[x] = load(grammardict[x])
+    def __contains__(self, token):
+        """Returns true if the alphabet contains the token"""
+        raise NotImplementedError
+
+class AlphabetListDefinition(AlphabetDefinition):
+    """Uses a list of grammar definitions"""
+    def __init__(self, grammarlist):
+        if not grammarlist:
+            raise ValueError
+        self.grammarlist = grammarlist
+
+    def __getitem__(self, index):
+        """Retrieves token by index"""
+        return self.grammarlist[index]
 
     @property
-    def symbols(self):
-        return list(self.grammardict.keys())
+    def grammar_list(self):
+        return self.grammarlist
+
+
+class AlphabetDictDefinition(AlphabetDefinition):
+    """Uses a dict of grammar definitions"""
+    def __init__(self, grammarlist):
+        if not grammarlist:
+            raise ValueError
+        from pydsl.Memory.Loader import load
+        self.grammardict = {}
+        for x in grammarlist:
+            self.grammardict[x] = load(grammarlist[x])
+
+    def __getitem__(self, item):
+        """Retrieves token by name"""
+        from pydsl.Grammar.Definition import StringGrammarDefinition
+        return StringGrammarDefinition(self.grammardict[item])
+
+    @property
+    def grammar_list(self):
+        return list(self.grammardict.values())
+
+class Encoding(AlphabetDefinition):
+    """Defines an alphabet using an encoding string"""
+    def __init__(self, encoding):
+        self.encoding = encoding
+
+    def __getitem__(self, item):
+        from pydsl.Checker import EncodingChecker
+        if EncodingChecker(self).check(item):
+            from pydsl.Grammar.Definition import StringGrammarDefinition
+            return StringGrammarDefinition(item)
+        raise KeyError
+
+    @property
+    def grammar_list(self):
+        #FIXME: Only ascii
+        from pydsl.Grammar.Definition import StringGrammarDefinition
+        return [StringGrammarDefinition(chr(x)) for x in range(128)]

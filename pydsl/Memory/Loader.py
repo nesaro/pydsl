@@ -16,15 +16,15 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 """loader class"""
+from pydsl.Alphabet.Definition import Encoding
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha"
+__copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
-from pkg_resources import Requirement, resource_filename
 
 def load_checker(grammar):
     from pydsl.Grammar.BNF import BNFGrammar
-    from pydsl.Grammar.Definition import PLYGrammar, RegularExpressionDefinition, MongoGrammar
+    from pydsl.Grammar.Definition import PLYGrammar, RegularExpressionDefinition, MongoGrammar, StringGrammarDefinition, PythonGrammar
     from pydsl.Alphabet.Definition import AlphabetDictDefinition
     if isinstance(grammar, str):
         grammar = load(grammar)
@@ -34,7 +34,7 @@ def load_checker(grammar):
     elif isinstance(grammar, RegularExpressionDefinition):
         from pydsl.Checker import RegularExpressionChecker
         return RegularExpressionChecker(grammar)
-    elif isinstance(grammar, dict) and "matchFun" in grammar:
+    elif isinstance(grammar, PythonGrammar) or isinstance(grammar, dict) and "matchFun" in grammar:
         from pydsl.Checker import PythonChecker
         return PythonChecker(grammar)
     elif isinstance(grammar, MongoGrammar):
@@ -46,47 +46,78 @@ def load_checker(grammar):
     elif isinstance(grammar, AlphabetDictDefinition):
         from pydsl.Checker import AlphabetDictChecker
         return AlphabetDictChecker(grammar)
-
-    else:
-        raise ValueError(grammar)
-
-def load_grammar_tool(grammar):
-    from pydsl.Grammar.BNF import BNFGrammar
-    from pydsl.Grammar.Definition import RegularExpressionDefinition
-    from pydsl.Grammar.Tool.Python import PythonGrammarTools
-    if isinstance(grammar, str):
-        grammar = load(grammar)
-    if isinstance(grammar, BNFGrammar):
-        from pydsl.Grammar.Tool.Symbol import SymbolGrammarTools
-        return SymbolGrammarTools(grammar)
-    elif isinstance(grammar, RegularExpressionDefinition):
-        from pydsl.Grammar.Tool.Regular import RegularExpressionGrammarTools
-        return RegularExpressionGrammarTools(grammar)
-    elif isinstance(grammar, dict) and "matchFun" in grammar:
-        from pydsl.Grammar.Tool.Python import PythonGrammarTools
-        return PythonGrammarTools(grammar)
+    elif isinstance(grammar, StringGrammarDefinition):
+        from pydsl.Checker import StringChecker
+        return StringChecker(grammar)
+    elif isinstance(grammar, Encoding):
+        from pydsl.Checker import EncodingChecker
+        return EncodingChecker(grammar)
     else:
         raise ValueError(grammar)
 
 def load_lexer(alphabet):
-    from pydsl.Alphabet.Definition import AlphabetDictDefinition
-    from pydsl.Grammar.BNF import BNFGrammar
+    from pydsl.Alphabet.Definition import AlphabetDictDefinition, AlphabetListDefinition
     if isinstance(alphabet, str):
         alphabet = load(alphabet)
     if isinstance(alphabet, AlphabetDictDefinition):
         from pydsl.Alphabet.Lexer import AlphabetDictLexer
         return AlphabetDictLexer(alphabet)
-    elif isinstance(alphabet, BNFGrammar):
-        from pydsl.Alphabet.Lexer import BNFLexer
-        return BNFLexer(alphabet)
+    if isinstance(alphabet, AlphabetListDefinition):
+        from pydsl.Alphabet.Lexer import AlphabetListLexer
+        return AlphabetListLexer(alphabet)
+    elif isinstance(alphabet, Encoding):
+        from pydsl.Alphabet.Lexer import EncodingLexer
+        return EncodingLexer(alphabet)
+    else:
+        raise ValueError(alphabet)
+
+def load_parser(grammar, parser = "auto"):
+    if isinstance(grammar, str):
+        grammar = load(grammar)
+    from pydsl.Grammar.BNF import BNFGrammar
+    if isinstance(grammar, BNFGrammar):
+        if parser == "descent":
+            from pydsl.Grammar.Parser.RecursiveDescent import RecursiveDescentParser
+            return RecursiveDescentParser(grammar)
+        elif parser in ("auto" , "default" , "weighted"):
+            #TODO Guess best parser
+            from pydsl.Grammar.Parser.Weighted import WeightedParser
+            return WeightedParser(grammar)
+        else:
+            raise Exception("Wrong parser name: " + parser)
     else:
         raise ValueError(grammar)
 
-def load(identifier, memorylist = []):
+def load_validator(grammar):
+    if isinstance(grammar, str):
+        grammar = load(grammar)
+    from pydsl.Grammar.BNF import BNFGrammar
+    if isinstance(grammar, BNFGrammar):
+        from pydsl.Validate import BNFValidator
+        return BNFValidator(grammar)
+    else:
+        raise ValueError(grammar)
+
+def load(identifier, memorylist = None):
     if not memorylist:
         from pydsl.Config import GLOBALCONFIG
         memorylist = GLOBALCONFIG.memorylist
+    results = search(identifier, memorylist)
+    if not results:
+        raise KeyError(identifier)
+    if len(results) > 1:
+        raise ValueError("Multiple results")
+    identifier = list(results)[0]["identifier"]
     for memory in memorylist:
         if identifier in memory:
             return memory.load(identifier)
     raise KeyError(identifier)
+
+def search(query, memorylist = None):
+    if not memorylist:
+        from pydsl.Config import GLOBALCONFIG
+        memorylist = GLOBALCONFIG.memorylist
+    from pydsl.Memory.Search.Searcher import MemorySearcher
+    from pydsl.Memory.Search.Indexer import Indexer
+    searcher = MemorySearcher([Indexer(x) for x in memorylist])
+    return searcher.search(query)

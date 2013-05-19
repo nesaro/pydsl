@@ -16,20 +16,19 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha"
+__copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
 
-from pydsl.Abstract import Indexable
 
-class Texto(Indexable):
+class Texto(object):
     def summary(self):
         return {"iclass":"Texto"}
 
 
 class TestMemory(unittest.TestCase):
-    """Tests Transformers"""
+    """Tests Local MEmory"""
     def setUp(self):
         from pydsl.Memory.Memory import LocalMemory
         self.mem = LocalMemory()
@@ -47,20 +46,14 @@ class TestMemory(unittest.TestCase):
     def testSimpleSearch(self):
         return True
 
-class TestPersistentMemory(unittest.TestCase):
-    """Tests Transformers"""
+class TestLoader(unittest.TestCase):
+    """Test loaders"""
     def setUp(self):
-        from pydsl.Memory.Storage.Storage import PersistentStorage
-        from pydsl.Checker import Checker
-        self.mem = PersistentStorage("tmp", Checker)
-        
-    @unittest.skip
-    def testSaveLoadAndDelete(self):
-        from pydsl.Checker import DummyChecker
-        dg = DummyChecker()
-        if "DummyChecker" in self.mem:
-            del self.mem["DummyChecker"]
-        self.mem.save(dg, "DummyChecker")
-        newdg = self.mem["DummyChecker"]
-        self.assertEqual(newdg,dg)
-        del self.mem["DummyChecker"]
+        from pydsl.Memory.Directory import DirStorage
+        self.glibrary = DirStorage("/usr/share/pydsl/lib_contrib/grammar")
+
+    def test_grammars(self):
+        grammarlist = self.glibrary.all_names()
+        from pydsl.Memory.Loader import load
+        for grammar in grammarlist:
+            load(grammar)

@@ -20,7 +20,7 @@ guess to which type can belong an input. It works like the unix file command
 """
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha"
+__copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 
@@ -40,6 +40,8 @@ if __name__ == "__main__":
         PARSER.error("options -i, -u or -e are required")
     if ARGS.inputfile and ARGS.expression:
         PARSER.error("options -i and -e can't be together")
+    from pydsl.Config import load_default_memory
+    load_default_memory()
     DEBUGLEVEL = 39
     if ARGS.debuglevel:
         DEBUGLEVEL = ARGS.debuglevel
@@ -47,30 +49,11 @@ if __name__ == "__main__":
     inputstr = ""
     from pydsl.Guess import Guesser
     guess = Guesser()
-    if (ARGS.inputfile):
-        from pydsl.Interaction.Protocol import protocol_split
-        pdict = protocol_split(ARGS.inputfile)
-        if pdict["protocol"] == "file":
-            try:
-                with open(pdict["path"], "rb") as f:
-                    inputstr = f.read() 
-            except IOError:
-                inputstr = ""
-            result = guess(inputstr)
-        elif pdict["protocol"] == "http":
-            import urllib.request
-            f = urllib.request.urlopen(ARGS.inputfile);
-            inputstr = f.read()
-            f.close()
-            result = guess(inputstr)
-        else:
-            try:
-                with open(ARGS.inputfile, "rb") as f:
-                    inputstr = f.read() 
-            except IOError:
-                inputstr = ""
-            result = guess(inputstr)
-    elif (ARGS.expression):
+    if ARGS.inputfile:
+        with open(ARGS.inputfile, "rb") as f:
+            inputstr = f.read() 
+        result = guess(inputstr)
+    elif ARGS.expression:
         result = guess(ARGS.expression)
     else:
         print(TUSAGE)

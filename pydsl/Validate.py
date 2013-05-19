@@ -16,23 +16,25 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 
-"""
-"""
-
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha"
+__copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
-
 
 import logging
 LOG = logging.getLogger(__name__)
 
-def validate(sgrammar, expression): # -> "[AST]":
-    """Returns a list of postTreeNodes"""
-    resulttrees = sgrammar.get_trees(expression, True)
-    treelist = []
-    for tree in resulttrees:
-        from pydsl.Grammar.Tree import parser_to_post_tree
-        treelist.append(parser_to_post_tree(tree))
-    return treelist
 
+class Validator(object):
+    def __init__(self, grammar):
+        self.gd = grammar
+
+    def __call__(self, inputstring): #-> set
+        raise NotImplementedError
+
+
+class BNFValidator(Validator):
+    def __call__(self, inputstring):
+        from pydsl.Memory.Loader import load_parser
+        parser = load_parser(self.gd, "descent")
+        resulttrees = parser.get_trees(inputstring, True)
+        return resulttrees

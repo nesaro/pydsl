@@ -16,7 +16,7 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha"
+__copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
@@ -28,7 +28,7 @@ class TestMongoChecker(unittest.TestCase):
         bad = {"a":1,"b":3}
         letter = {"a":1,"b":"asd"}
         from pydsl.Checker import MongoChecker
-        from mongogrammar import spec, fullspec
+        from pydsl.contrib.mongogrammar import spec, fullspec
         checker = MongoChecker(spec)
         self.assertTrue(checker.check(spec))
         self.assertFalse(checker.check(bad))
@@ -38,21 +38,25 @@ class TestMongoChecker(unittest.TestCase):
         self.assertFalse(fullchecker.check(letter))
         #self.assertRaises(TypeError,fullchecker.check, "")
 
-@unittest.skip
 class TestBNFChecker(unittest.TestCase):
     """BNF Checker"""
     def testCheck(self):
         """Test checker instantiation and call"""
         from pydsl.Checker import BNFChecker
-        raise NotImplementedError
+        from pydsl.contrib.bnfgrammar import productionset0
+        grammardef = productionset0
+        checker = BNFChecker(grammardef)
+        self.assertTrue(checker.check("SR"))
+        self.assertFalse(checker.check("SL"))
 
-@unittest.skip
 class TestRegularExpressionChecker(unittest.TestCase):
     """BNF Checker"""
     def testCheck(self):
         """Test checker instantiation and call"""
         from pydsl.Checker import RegularExpressionChecker
-        raise NotImplementedError
+        checker = RegularExpressionChecker("abc")
+        self.assertTrue(checker.check("abc"))
+        self.assertFalse(checker.check("abd"))
 
 class TestPLYChecker(unittest.TestCase):
     def testCheck(self):
@@ -91,3 +95,22 @@ class TestJsonSchemaChecker(unittest.TestCase):
         checker = JsonSchemaChecker(grammardef)
         self.assertTrue(checker.check("a"))
         self.assertFalse(checker.check([1, {"foo" : 2, "bar" : {"baz" : [1]}}, "quux"]))
+
+
+class TestEncodingChecker(unittest.TestCase):
+    def testCheck(self):
+        from pydsl.Checker import EncodingChecker
+        from pydsl.Alphabet.Definition import Encoding
+        a = Encoding('ascii')
+        checker = EncodingChecker(a)
+        self.assertTrue(checker.check('asdf'))
+        self.assertFalse(checker.check('£'))
+
+class TestAlphabetDictDefinitionChecker(unittest.TestCase):
+    def testCheck(self):
+        from pydsl.Checker import AlphabetDictChecker
+        from pydsl.Alphabet.Definition import AlphabetDictDefinition
+        a = AlphabetDictDefinition({'int':'integer'})
+        checker = AlphabetDictChecker(a)
+        self.assertTrue(checker.check('1234'))
+        self.assertFalse(checker.check('abc'))

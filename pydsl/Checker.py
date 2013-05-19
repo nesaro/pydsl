@@ -17,14 +17,14 @@
 
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha"
+__copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
 from pydsl.Memory.Loader import load_checker
 
-class Checker:
+class Checker(object):
     """ Ensures information follows a rule, protocol or has a shape.
     Provides only check function, for complex operations, use Grammar"""
     def __init__(self):
@@ -59,7 +59,7 @@ class RegularExpressionChecker(Checker):
 
 
 class BNFChecker(Checker):
-    """Calls another program to perform checking. Args are always filenames"""
+    """Calls another program to perform checking. Args are always file names"""
     def __init__(self, bnf, parser = "auto"):
         Checker.__init__(self)
         parser = bnf.options.get("parser",parser)
@@ -67,8 +67,8 @@ class BNFChecker(Checker):
             from .Grammar.Parser.RecursiveDescent import RecursiveDescentParser
             self.__parser = RecursiveDescentParser(bnf)
         elif parser == "weighted":
+            from .Grammar.Parser.Weighted import WeightedParser
             self.__parser = WeightedParser(bnf)
-            raise Exception
         else:
             LOG.error("Wrong parser name: " + parser)
             raise Exception
@@ -78,28 +78,20 @@ class BNFChecker(Checker):
             return len(self.__parser.get_trees(data)) > 0
         except IndexError:
             return False 
-        return False
         
     @property
     def summary(self):
-        return {"iclass":"BNFChecker", "identifier":self.identifier, "description":self.description}
+        return {"iclass":"BNFChecker"}
 
 
 class PythonChecker(Checker):
     def __init__(self, module):
         Checker.__init__(self)
         self._matchFun = module["matchFun"]
-        auxdic = module.get('auxdic', {})
-        self.auxgrammar = {}
-        for key, value in auxdic.items():
-            self.auxgrammar[key] = load_checker(value)
 
     def check(self, data):
         try:
-            if self.auxgrammar:
-                return self._matchFun(data, self.auxgrammar)
-            else:
-                return self._matchFun(data)
+            return self._matchFun(data)
         except UnicodeDecodeError:
             return False
 
@@ -113,6 +105,7 @@ class MongoChecker(Checker):
         return self.__auxcheck(self.mongodic, data)
 
     def __auxcheck(self, specdict, data):
+        """Recursive checker implementation"""
         for key, spec in specdict.items():
             value = data.get(key)
             if key == "$or" and len(specdict) == 1:
@@ -153,6 +146,13 @@ class PLYChecker(Checker):
         else:
             return True
 
+class StringChecker(Checker):
+    def __init__(self, gd):
+        Checker.__init__(self)
+        self.gd = gd
+
+    def check(self, data):
+        return self.gd.string == str(data)
 
 class JsonSchemaChecker(Checker):
     def __init__(self, gd):
@@ -170,9 +170,12 @@ class JsonSchemaChecker(Checker):
 class AlphabetDictChecker(Checker):
     def __init__(self, gd):
         Checker.__init__(self)
+        from pydsl.Alphabet.Definition import AlphabetDictDefinition
+        if not isinstance(gd, AlphabetDictDefinition):
+            raise TypeError
         self.gd = gd
         from pydsl.Memory.Loader import load_checker
-        self.checkerinstances = [load_checker(x) for x in self.gd.grammardict]
+        self.checkerinstances = [load_checker(x) for x in self.gd.grammardict.values()]
 
     def check(self, data):
         for element in data:
@@ -180,3 +183,25 @@ class AlphabetDictChecker(Checker):
                 return False
         return True
 
+class EncodingChecker(Checker):
+    def __init__(self, gd):
+        Checker.__init__(self)
+        self.gd = gd
+
+    def check(self,data):
+        encoding = self.gd.encoding
+        if isinstance(data, str):
+            try:
+                data.encode(encoding)
+            except UnicodeEncodeError:
+                return False
+            else:
+                return True
+        elif isinstance(data, bytes):
+            try:
+                data.decode(encoding)
+            except UnicodeDecodeError:
+                return False
+            else:
+                return True
+        return False

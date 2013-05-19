@@ -18,20 +18,40 @@
 """Base Lexer classes"""
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha"
+__copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
 from pydsl.Memory.Loader import load_checker
-finalchar = "EOF"
+from pydsl.Alphabet.Token import Token
+unknownchar = "UNKNOWN"
 
+class AlphabetTranslator(object):
+    @property
+    def input_alphabet(self):
+        raise NotImplementedError
 
-class Lexer:
-    """Lexer follows an alphabet definition, which is like a grammar definition but generates a list of tokens and it is always Readable using a regular grammar"""
-    def __init__(self):
-        self.string = None
-        self.index = 0
+    @property
+    def output_alphabet(self):
+        raise NotImplementedError
+
+class EncodingLexer(AlphabetTranslator):
+    """Special Lexer that encodes from a string a reads a string"""
+    def __init__(self, encoding):
+        self.encoding = encoding
+
+    def __call__(self, string):
+        for x in string:
+            yield Token(x)
+
+class Lexer(AlphabetTranslator):
+    """Lexer follows an alphabet definition.
+    generates a list of tokens and it
+    is always described with a regular grammar"""
+    def __init__(self, generate_unknown=False):
+        self.load(None)
+        self.generate_unknown = generate_unknown
 
     @property
     def current(self):
@@ -39,7 +59,7 @@ class Lexer:
         try:
             return self.string[self.index]
         except IndexError:
-            return finalchar
+            return None
 
     def load(self, string):
         self.string = string
@@ -52,7 +72,7 @@ class Lexer:
         if self.current == char:
             self.consume()
         else:
-            raise Exception
+            raise Exception("%s doesn't match %s"%(self.current,char))
 
     def nextToken(self):
         raise NotImplementedError
@@ -60,44 +80,10 @@ class Lexer:
     def __call__(self, string):# -> "TokenList":
         """Tokenizes input, generating a list of tokens"""
         self.string = string
-        result = []
         while True:
-            nt = self.nextToken()
-            result.append(nt)
-            if nt[0] == "EOF_TYPE":
-                return result
+            result = [x for x in self.nextToken()]
+            return result
 
-
-class BNFLexer(Lexer):
-    """Generates a Lexer from a BNFGrammar instance"""
-    def __init__(self, bnfgrammar):
-        Lexer.__init__(self)
-        self.symbollist = bnfgrammar.getTerminalSymbols()
-
-    @property
-    def current(self):
-        """Returns the element under the cursor until the end of the string"""
-        try:
-            return self.string[self.index:]
-        except IndexError:
-            return finalchar
-
-    def nextToken(self):
-        import re
-        while self.current != finalchar:
-            validelements = [x for x in self.symbollist if self.current[0] in x.first()]
-            if not validelements:
-                raise Exception("Not found")
-            if len(validelements) == 1:
-                element = validelements[0]
-                string = self.current[:len(element)]
-                for _ in range(len(element)):
-                    self.consume()
-                return (validelements[0].name, string)
-            else:
-                raise Exception("Multiple choices")
-
-        return ("EOF_TYPE", "")
 
 class AlphabetDictLexer(Lexer):
     def __init__(self, alphabet):
@@ -107,19 +93,29 @@ class AlphabetDictLexer(Lexer):
     @property
     def current(self):
         """Returns the element under the cursor until the end of the string"""
-        try:
-            return self.string[self.index:]
-        except IndexError:
-            return finalchar
+        return self.string[self.index:]
 
     def nextToken(self):
         while self.current:
-            validelements = [(x,y) for x,y in self.alphabet.grammardict.items() if self.current[0] in y.first]
+            validelements = []
+            for x,y in self.alphabet.grammardict.items():
+                for first_element in y.first:
+                    from pydsl.Grammar.Definition import GrammarDefinition
+                    if not isinstance(first_element, GrammarDefinition):
+                        print(first_element.__class__.__name__, first_element, x)
+                        raise Exception
+                    checker = load_checker(first_element)
+                    if checker.check(self.current[0]):
+                        validelements.append((x,y))
+                        break
             if not validelements:
-                raise Exception("Not found")
-            if len(validelements) == 1:
+                if not self.generate_unknown:
+                    raise Exception("Not found")
+                string = self.current[0]
+                self.consume()
+                yield Token(unknownchar, string)
+            elif len(validelements) == 1:
                 element = validelements[0][1]
-                size = 0
                 checker = load_checker(element)
                 for size in range(element.maxsize or len(self.current), element.minsize, -1):
                     if checker.check(self.current[:size]):
@@ -129,9 +125,42 @@ class AlphabetDictLexer(Lexer):
                 string = self.current[:size]
                 for _ in range(size):
                     self.consume()
-                return (validelements[0][0], string)
+                yield Token(string, validelements[0][1])
             else:
                 raise Exception("Multiple choices")
 
-        return ("EOF_TYPE", "")
+class AlphabetListLexer(Lexer):
+    def __init__(self, alphabet):
+        Lexer.__init__(self)
+        self.alphabet = alphabet
 
+    @property
+    def current(self):
+        """Returns the element under the cursor until the end of the string"""
+        return self.string[self.index:]
+
+    def nextToken(self):
+        while self.current:
+            from pydsl.Grammar.Definition import  StringGrammarDefinition
+            currentgd = StringGrammarDefinition(self.current[0])
+            validelements = [x for x in self.alphabet.grammar_list if currentgd in x.first]
+            if not validelements:
+                if not self.generate_unknown:
+                    raise Exception("Not found")
+                string = self.current[0]
+                self.consume()
+                yield Token(unknownchar, string)
+            elif len(validelements) == 1:
+                element = validelements[0]
+                checker = load_checker(element)
+                for size in range(element.maxsize or len(self.current), max(element.minsize-1,0), -1):
+                    if checker.check(self.current[:size]):
+                        break
+                else:
+                    raise Exception("Nothing consumed")
+                string = self.current[:size]
+                for _ in range(size):
+                    self.consume()
+                yield Token(string, validelements[0])
+            else:
+                raise Exception("Multiple choices" + str([str(x) for x in validelements]))

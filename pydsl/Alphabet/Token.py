@@ -16,23 +16,28 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha"
+__copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
+from pydsl.Grammar.Definition import GrammarDefinition, StringGrammarDefinition
 
-class Token:
-    """ Stores a symbol and its associated input """
-    def __init__(self, terminalsymbol, string):
-        self.symbol = terminalsymbol
+class Token(object):
+    """ Stores a token and the associated grammar definition.
+    Alias is an alternative name for this token"""
+    def __init__(self, string, gd=None, alias = None):
+        if gd is None:
+            gd = StringGrammarDefinition(string)
+        if not isinstance(gd, GrammarDefinition):
+            raise TypeError
+        self.gd = gd
         self.string = string
+        self.alias = alias
 
     def __str__(self):
         return self.string
 
-class TokenList(list):
-    def __bool__(self):
-        return len(self) > 1
-
-    def __str__(self):
-        return "".join([str(x[1]) for x in self[:-1]])
-
+    def __eq__(self, other):
+        try:
+            return self.gd == other.gd and self.string == other.string and self.alias == other.alias
+        except AttributeError:
+            return False

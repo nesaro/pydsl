@@ -19,23 +19,12 @@
 """Exceptions definitions"""
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha"
+__copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 
 import logging
 LOG = logging.getLogger(__name__)
-
-class ProcessingError(Exception):
-    def __init__(self, errortype, source = []):
-        Exception.__init__(self)
-        self.source = source
-        from .Config import ERRORLIST
-        assert(errortype in ERRORLIST)
-        self.errortype = errortype
-
-    def append(self, element):
-        self.source.append(element)
 
 class LRConflictException(Exception):
     pass

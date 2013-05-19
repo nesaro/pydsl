@@ -17,16 +17,15 @@
 
 
 """
-validates input against the Grammar
+Generic validator for BNF Grammars. 
+Displays the part of the tree that doesn't conform the grammar definition
 """
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha"
+__copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
-from pydsl.Interaction.Program import UnixProgram
-
 
 def print_errors(postnode):
     result = ""
@@ -44,40 +43,34 @@ def errors_to_list(postnode):
             result += errors_to_list(child)
     return result
 
-class Validate(UnixProgram):
+def validate(sgrammar, expression = None, inputfile = None, outputformat = None):
     """Read input file contents, creates grammar and transform objects, create connections, 
     and afterwards reads required input/launch main loop"""
-    def __init__(self, optionsdict):
-        from pydsl.Memory.External.Loader import load
-        UnixProgram.__init__(self, optionsdict)
-        self.__sgrammar = load(optionsdict.sgrammar) 
-    
-    def execute(self):
-        resulttrees = None
-        from pydsl.Validate import validate
-        if self._opt["expression"]: 
-            resulttrees = validate(self.__sgrammar, self._opt["expression"])
-        elif self._opt["inputfile"]:
-            with open(self._opt["inputfile"], "rb") as f:
-                resulttrees = validate(self.__sgrammar, f.read())
-        else:
-            raise Exception #No input method
-        jsonlist = []
-        for index, posttree in enumerate(resulttrees):
-            if self._opt["outputformat"] == "str":
-                print("Tree: " + str(index) + "\n")
-            if self._opt["outputformat"] == "str":
-                if posttree.valid:
-                    print("Result OK")
-                else:
-                    print("Errors:")
-                    print(print_errors(posttree))
-            elif self._opt["outputformat"] == "json":
-                jsonlist.append(errors_to_list(posttree))
-        if self._opt["outputformat"] == "json":
-            import json
-            print(json.dumps(jsonlist))
-        return True
+    from pydsl.Memory.Loader import load_validator
+    validator = load_validator(sgrammar)
+    if expression:
+        resulttrees = validator(expression)
+    elif inputfile:
+        with open(inputfile, "rb") as f:
+            resulttrees = validator(f.read())
+    else:
+        raise Exception("No input method")
+    jsonlist = []
+    for index, posttree in enumerate(resulttrees):
+        if outputformat == "str":
+            print("Tree: " + str(index) + "\n")
+        if outputformat == "str":
+            if posttree.valid:
+                print("Result OK")
+            else:
+                print("Errors:")
+                print(print_errors(posttree))
+        elif outputformat == "json":
+            jsonlist.append(errors_to_list(posttree))
+    if outputformat == "json":
+        import json
+        print(json.dumps(jsonlist))
+    return True
 
 if __name__ == "__main__":
     import argparse
@@ -88,14 +81,14 @@ if __name__ == "__main__":
     PARSER.add_argument("-e", "--expression", action="store", dest="expression", help="input expression")
     PARSER.add_argument('-o', dest='outputformat',nargs='?', choices=["str","json"], default="str", help="output formats")
     PARSER.add_argument("sgrammar", metavar="sgrammar" , help="Grammar")
-    ARGS = PARSER.parse_args()
+    ARGS = vars(PARSER.parse_args())
     import sys
-    DEBUGLEVEL = ARGS.debuglevel or logging.WARNING
-    
+    DEBUGLEVEL = ARGS.pop('debuglevel') or logging.WARNING
+    from pydsl.Config import load_default_memory
+    load_default_memory()
     logging.basicConfig(level = DEBUGLEVEL)
-    manager = Validate(ARGS)
     try:
-        result = manager.execute()
+        result = validate(**ARGS)
     except EOFError:
         sys.exit(0)
     if not result:

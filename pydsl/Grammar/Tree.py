@@ -18,7 +18,7 @@
 "Tree class for tree based parsers"""
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha"
+__copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
@@ -26,16 +26,13 @@ LOG = logging.getLogger(__name__)
 from pydsl.Grammar.Symbol import TerminalSymbol
 
 def traversePreOrder(item):
-    result = []
-    result.append(item)
+    result = [item]
     for child in item.childlist:
         result += traversePreOrder(child)
     return result
 
 def traverseInOrder(item):
-    result = []
-    result.append(traverseInOrder(item.childlist[0]))
-    result.append(item)
+    result = [traverseInOrder(item.childlist[0]), item]
     for child in item.childlist[1:]:
         result += traverseInOrder(child)
     return result
@@ -47,9 +44,10 @@ def traversePostOrder(item):
     result.append(item)
     return result
 
-class Tree:
-    def __init__(self, childlist = []):
-        self.childlist = []
+class Tree(object):
+    def __init__(self, childlist=None):
+        if not childlist: childlist = []
+        self.childlist = childlist
 
     def append_child(self, dpr):
         """appends dpr to childlist"""
@@ -74,10 +72,10 @@ class Tree:
 
 class PositionTree(Tree):
     """Stores the position of the original tree"""
-    def __init__(self, leftpos, rightpos, content, production = None, valid = True, childlist = []):
+    def __init__(self, leftpos, rightpos, content, production=None, valid=True, childlist=None):
+        Tree.__init__(self,childlist)
         self.leftpos = leftpos
         self.rightpos = rightpos
-        self.childlist = list(childlist) #creates a copy
         self.content = content
         self.valid = valid
         self.production = production
@@ -105,7 +103,6 @@ class PositionTree(Tree):
     def __str__(self):
         result = "<PositionTree: "
         result += "(" + str(self.leftpos) + "," + str(self.rightpos)
-        result += ") SymbolList: "
         if self.childlist:
             result += ", children: " + str(self.childlist)
         result += " >"
@@ -113,19 +110,23 @@ class PositionTree(Tree):
 
     def shift(self, amount):
         """ shifts position """
-        self.leftpos += amount
-        self.rightpos += amount
+        if self.leftpos is not None:
+            self.leftpos += amount
+        if self.leftpos is not None:
+            self.rightpos += amount
 
     def __len__(self):
+        if self.rightpos is None and self.leftpos is None:
+            return 0
         return self.rightpos - self.leftpos
 
     def coverage(self):
-        if not(self):
+        if not self:
             return 0, len(self)
-        if childlist:
+        if self.childlist:
             childtotal = 0
             childcoverage = 0
-            for child in childlist:
+            for child in self.childlist:
                 newcoverage, newtotal = child.coverage()
                 childcoverage += newcoverage
                 childtotal += newtotal
@@ -161,14 +162,15 @@ class PositionTree(Tree):
 
 class ParseTree(PositionTree):
     """ Stores a descent parser iteration result """
-    def __init__(self, leftpos, rightpos, symbollist, content, production, childlist = [], valid = True):
+    def __init__(self, leftpos, rightpos, symbollist, content, production, childlist=None, valid=True):
         if not isinstance(leftpos, int) and leftpos is not None:
             raise TypeError
         if not isinstance(rightpos, int) and rightpos is not None:
             raise TypeError
+        if not isinstance(symbollist, list):
+            raise TypeError
         from .BNF import Production
-        if production is not None and not (isinstance(production, Production) or
-                isinstance(production, TerminalSymbol)):
+        if production is not None and not (isinstance(production, (Production, TerminalSymbol))):
             raise TypeError(production)
         PositionTree.__init__(self, leftpos, rightpos, content, production, valid, childlist)
         self.symbollist = symbollist
@@ -192,6 +194,15 @@ class ParseTree(PositionTree):
             LOG.warning("Unable to add parser results")
             raise Exception
 
+    def __str__(self):
+        result = "<ParseTree: "
+        result += "(" + str(self.leftpos) + "," + str(self.rightpos)
+        result += ") SymbolList: "
+        result += str(self.symbollist)
+        if self.childlist:
+            result += ", children: " + str(self.childlist)
+        result += " >"
+        return result
 #Original implementation: https://github.com/irskep/zhang-shasha and https://github.com/timtadh/zhang-shasha
 
 def zss_distance(tree1, tree2):
@@ -234,7 +245,7 @@ def zss_distance(tree1, tree2):
 
         for x in range(l1[i], i+1):
             for y in range(l2[j], j+1):
-                if (l1[i] == l1[x] and l2[j] == l2[y]):
+                if l1[i] == l1[x] and l2[j] == l2[y]:
                     #Inside the same keyroot
                     forestdists[((l1[i],x),(l2[j],y))] = min(
                             (gfd((l1[i],x-1),(l2[j],y)) + 1),
