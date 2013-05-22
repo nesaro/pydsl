@@ -1,6 +1,0 @@
-#!/bin/bash
-
-#export PYTHONPATH=/home/nesaro/repo/pydsl/
-#python2 -3 -m unittest discover -s tests/
-#python3 -m unittest discover -s tests/
-nosetests --logging-level=WARNING
