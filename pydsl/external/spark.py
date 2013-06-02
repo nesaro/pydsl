@@ -60,7 +60,7 @@ class GenericScanner:
 		return string.join(rv, '|')
 
 	def error(self, s, pos):
-		print "Lexical error at position %s" % pos
+		print("Lexical error at position %s" % pos)
 		raise SystemExit
 
 	def position(self, newpos=None):
