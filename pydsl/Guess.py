@@ -46,8 +46,6 @@ class Guesser(object):
     def __call__(self, inputstring): #-> set:
         result = set()
         for summary in self.searcher.search():
-            typ = None
-            name = None
             try:
                 for mem in self.memorylist:
                     if summary["identifier"] in mem:
