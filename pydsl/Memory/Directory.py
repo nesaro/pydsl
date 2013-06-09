@@ -39,8 +39,8 @@ class DirStorage(Memory):
         for filename in self.all_files():
             try:
                 self.cache.append(self.summary_from_filename(filename))
-            except (AttributeError,ImportError, TypeError):
-                LOG.debug("Error while loading %s file summary" % filename )
+            except (AttributeError,ImportError, TypeError) as e:
+                LOG.debug("Error while loading %s file summary %s" % (filename, e) )
         return self
 
     @property
