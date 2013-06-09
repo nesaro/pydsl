@@ -29,7 +29,7 @@ import logging
 
 if __name__ == "__main__":
     import argparse
-    USAGE = 'usage: %(prog)s [options]"
+    USAGE = "usage: %(prog)s [options]"
     PARSER = argparse.ArgumentParser(usage = USAGE)
     PARSER.add_argument("-d", "--debuglevel", action="store", type=int, dest="debuglevel", help="Sets debug level")
     PARSER.add_argument("-i", "--inputfile", action="store", dest="inputfile", help="input filename dict")

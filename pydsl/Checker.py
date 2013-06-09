@@ -53,7 +53,7 @@ class RegularExpressionChecker(Checker):
             return False
         if not data:
             return False
-        return bool(self.__regexp.match(data)):
+        return bool(self.__regexp.match(data))
 
 
 class BNFChecker(Checker):
