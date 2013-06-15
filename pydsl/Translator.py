@@ -79,3 +79,13 @@ class PythonTranslator(HostChannel):
         result = {"iclass": "PythonTransformer", "input": inputdic, "output": outputdic}
         from pydsl.Abstract import ImmutableDict
         return ImmutableDict(result)
+
+class PLYTranslator(object):
+    def __init__(self, grammardefinition):
+        self.module = grammardefinition.module
+
+    def __call__(self, input):
+        from ply import yacc, lex
+        lexer = lex.lex(self.module)
+        parser = yacc.yacc(debug=0, module = self.module)
+        return {"output":parser.parse(input, lexer = lexer)}

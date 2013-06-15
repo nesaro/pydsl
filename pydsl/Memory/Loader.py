@@ -98,6 +98,18 @@ def load_validator(grammar):
     else:
         raise ValueError(grammar)
 
+def load_translator(function):
+    if isinstance(function, str):
+        function = load(function)
+    from pydsl.Grammar.Definition import PLYGrammar
+    if isinstance(function, PLYGrammar):
+        from pydsl.Translator import PLYTranslator
+        return PLYTranslator(function)
+    if isinstance(function, dict):
+        from pydsl.Translator import PythonTranslator
+        return PythonTranslator(**function)
+    raise ValueError(function)
+
 def load(identifier, memorylist = None):
     if not memorylist:
         from pydsl.Config import GLOBALCONFIG
