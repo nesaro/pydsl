@@ -62,9 +62,9 @@ class TestPLYChecker(unittest.TestCase):
     def testCheck(self):
         """Test checker instantiation and call"""
         from pydsl.Checker import PLYChecker
-        import plye
+        from pydsl.contrib.grammar import example_ply
         from pydsl.Grammar.Definition import PLYGrammar
-        grammardef = PLYGrammar(plye)
+        grammardef = PLYGrammar(example_ply)
         checker = PLYChecker(grammardef)
         self.assertTrue(checker.check("O"))
         self.assertFalse(checker.check("FALSE"))

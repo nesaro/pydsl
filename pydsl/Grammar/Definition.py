@@ -95,6 +95,7 @@ class RegularExpressionDefinition(GrammarDefinition):
 
 class StringGrammarDefinition(GrammarDefinition):
     def __init__(self, string):
+        GrammarDefinition.__init__(self)
         self.string = string
 
     def __hash__(self):
@@ -135,6 +136,7 @@ class JsonSchema(GrammarDefinition, dict):
     def alphabet(self):
         from pydsl.Alphabet.Definition import Encoding
         return Encoding("ascii")
+
 class MongoGrammar(GrammarDefinition, dict):
     def __init__(self, *args, **kwargs):
         GrammarDefinition.__init__(self)
