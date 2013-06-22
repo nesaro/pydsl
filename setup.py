@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 setup(name='pydsl',
-      version='0.1.0',
+      version='0.2.0',
       description='Python Domain Specific Language Tools',
       author='Nestor Arocha',
       author_email='nesaro@gmail.com',
