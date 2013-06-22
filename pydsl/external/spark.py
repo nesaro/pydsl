@@ -80,8 +80,7 @@ class GenericScanner:
             groups = m.groups()
             self.pos = m.end()
             for i in range(len(groups)):
-                if groups[i] is not None and \
-                   self.index2func.has_key(i):
+                if groups[i] is not None and self.index2func.has_key(i):
                     self.index2func[i](groups[i])
 
     def t_default(self, s):
@@ -175,7 +174,8 @@ class GenericParser:
     #  thee not with this; nor shall thee toucheth the _preprocess
     #  argument to addRule.
     #
-    def preprocess(self, rule, func):    return rule, func
+    def preprocess(self, rule, func):
+        return rule, func
 
     def addRule(self, doc, func, _preprocess=1):
         fn = func
@@ -276,8 +276,7 @@ class GenericParser:
             n = len(rhs)
             while i < n:
                 sym = rhs[i]
-                if not self.rules.has_key(sym) or \
-                   not self.nullable[sym]:
+                if not self.rules.has_key(sym) or not self.nullable[sym]:
                     candidate = 0
                     i = i + 1
                     continue
@@ -320,7 +319,7 @@ class GenericParser:
             self.states = { 0: self.makeState0() }
             self.makeState(0, self._BOF)
 
-        for i in xrange(len(tokens)):
+        for i in range(len(tokens)):
             sets.append([])
 
             if sets[i] == []:
@@ -669,7 +668,7 @@ class GenericParser:
             sortlist.append((len(rhs), name))
             name2index[name] = i
         sortlist.sort()
-        list = map(lambda (a,b): b, sortlist)
+        list = map(lambda a,b: b, sortlist)
         return rules[name2index[self.resolve(list)]]
 
     def resolve(self, list):
