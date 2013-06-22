@@ -56,7 +56,7 @@ class GenericScanner:
                 rv.append(self.makeRE(name))
 
         rv.append(self.makeRE('t_default'))
-        return string.join(rv, '|')
+        return '|'.join(rv)
 
     def error(self, s, pos):
         print("Lexical error at position %s" % pos)
@@ -838,9 +838,9 @@ def _dump(tokens, sets, states):
             print('\t', item)
             for (lhs, rhs), pos in states[item[0]].items:
                 print('\t\t', lhs, '::=')
-                print(string.join(rhs[:pos]),)
+                print("".join(rhs[:pos]))
                 print('.',)
-                print(string.join(rhs[pos:]))
+                print("".join(rhs[pos:]))
         if i < len(tokens):
             print()
             print('token', str(tokens[i]))
