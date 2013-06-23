@@ -708,7 +708,8 @@ class GenericASTBuilder(GenericParser):
                 children.append(self.terminal(arg))
         return self.nonterminal(lhs, children)
 
-    def terminal(self, token):    return token
+    def terminal(self, token):
+        return token
 
     def nonterminal(self, type, args):
         rv = self.AST(type)
