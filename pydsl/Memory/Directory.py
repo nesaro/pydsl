@@ -15,30 +15,22 @@
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
-
 """ Directory storage """
 
 from .Memory import Memory
 from pydsl.Memory.File.Python import getFileTuple
-from pydsl.Abstract import InmutableDict
+from pydsl.Abstract import ImmutableDict
+from pydsl.Config import GLOBALCONFIG
 import logging
 LOG = logging.getLogger(__name__)
 
-def _isGDLFileName(path):
-    return path.endswith(".bnf")
-
-def _isRELFileName(path):
-    return path.endswith(".re")
 
 class DirStorage(Memory):
     """A collection of elements stored inside a directory"""
-
-    def __init__(self, dirpath, allowedextensions=(".py", ".bnf", ".re")):
+    def __init__(self, dirpath):
         Memory.__init__(self)
         self.path = dirpath
-        self._allowedextensions = allowedextensions
         from pydsl.Memory.Search.Searcher import MemorySearcher
-
         self._searcher = MemorySearcher(self)
 
     def __iter__(self):
@@ -48,8 +40,12 @@ class DirStorage(Memory):
             try:
                 self.cache.append(self.summary_from_filename(filename))
             except (AttributeError,ImportError, TypeError) as e:
-                LOG.debug("Error while loading %s file summary" % filename )
+                LOG.debug("Error while loading %s file summary %s" % (filename, e) )
         return self
+
+    @property
+    def allowed_extensions(self):
+        return [x["extension"] for x in GLOBALCONFIG.formatlist]
 
     def next(self):
         try:
@@ -60,66 +56,46 @@ class DirStorage(Memory):
         return result
         
 
-    def summary_from_filename(self, modulepath):
-        (_, _, fileBaseName, ext) = getFileTuple(modulepath)
-        if _isRELFileName(modulepath):
-            result =  {"iclass":"re","identifier":fileBaseName, "filepath":modulepath}
-        elif _isGDLFileName(modulepath):
-            result = {"iclass":"BNFGrammar","identifier":fileBaseName, "filepath":modulepath}
-        else:
-            from pydsl.Memory.File.Python import summary_python_file
-            result = summary_python_file(modulepath)
-        return InmutableDict(result)
+    @staticmethod
+    def summary_from_filename(filepath):
+        entry = [x for x in GLOBALCONFIG.formatlist if filepath.endswith(x["extension"])][0]
+        return ImmutableDict(entry["summary_from_file"](filepath))
 
     def all_files(self):
         import glob
-        if self._allowedextensions:
-            for extension in self._allowedextensions:
-                searchstring = self.path + "*" + extension
-                tmpresult = glob.glob(searchstring)
-                for result in tmpresult:
-                    if result.endswith("__init__.py"):
-                        continue
-                    yield result 
-        else:
-            searchstring = self.path + "*" 
-            for result in glob.glob(searchstring):
-                yield result 
+        extensions = self.allowed_extensions or [""]
+        for extension in extensions:
+            searchstring = self.path + "*" + extension
+            tmpresult = glob.glob(searchstring)
+            for result in tmpresult:
+                if result.endswith("__init__.py"):
+                    continue
+                yield result
 
 
     def all_names(self):
         """Generates all Static Ids"""
         for fullname in self.all_files():
             (_, _, fileBaseName, fileExtension) = getFileTuple(fullname)
-            if self._allowedextensions and fileExtension not in self._allowedextensions:
+            if self.allowed_extensions and fileExtension not in self.allowed_extensions:
                 continue
             yield fileBaseName.split(".")[0]
 
-    def _load_module_from_library(self, identifier):
-        try:
-            import imp
-            moduleobject = imp.load_source(identifier, self.path + "/" + identifier + ".py")
-        except (ImportError, IOError):
-            pass
-        else:
-            return moduleobject
-        raise ImportError
-
-    def load(self, name, **kwargs):
-        resultlist = self._searcher.search(name)
-        if len(resultlist) > 1:
+    def load(self, name):
+        result = self._searcher.search(name)
+        if len(result) > 1:
             LOG.error("Found two or more matches, FIXME: processing the first, should raise exception")
-        if len(resultlist) == 0:
+        if not result:
             raise KeyError(self.__class__.__name__ + name)
-        filepath = list(resultlist)[0]["filepath"]
-        if _isRELFileName(filepath):
-            from pydsl.Memory.File.Regexp import load_re_from_file
-            return load_re_from_file(filepath)
-        if _isGDLFileName(filepath):
-            from pydsl.Memory.File.BNF import load_bnf_file
-            return load_bnf_file(filepath)
-        from pydsl.Memory.File.Python import load_python_file
-        return load_python_file(filepath, **kwargs)
+        filepath = list(result)[0]["filepath"]
+        entries = [x for x in GLOBALCONFIG.formatlist if filepath.endswith(x["extension"])]
+        for entry in entries:
+            try:
+                return entry["load_from_file"](filepath)
+            except ValueError:
+                continue
+        raise ValueError("Unable to open: %s" % name)
+
 
     def __contains__(self, key):
         return key in self.all_names()

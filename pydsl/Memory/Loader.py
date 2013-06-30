@@ -98,11 +98,38 @@ def load_validator(grammar):
     else:
         raise ValueError(grammar)
 
+def load_translator(function):
+    if isinstance(function, str):
+        function = load(function)
+    from pydsl.Grammar.Definition import PLYGrammar
+    if isinstance(function, PLYGrammar):
+        from pydsl.Translator import PLYTranslator
+        return PLYTranslator(function)
+    if isinstance(function, dict):
+        from pydsl.Translator import PythonTranslator
+        return PythonTranslator(**function)
+    raise ValueError(function)
+
 def load(identifier, memorylist = None):
     if not memorylist:
         from pydsl.Config import GLOBALCONFIG
         memorylist = GLOBALCONFIG.memorylist
+    results = search(identifier, memorylist)
+    if not results:
+        raise KeyError(identifier)
+    if len(results) > 1:
+        raise ValueError("Multiple results")
+    identifier = list(results)[0]["identifier"]
     for memory in memorylist:
         if identifier in memory:
             return memory.load(identifier)
     raise KeyError(identifier)
+
+def search(query, memorylist = None):
+    if not memorylist:
+        from pydsl.Config import GLOBALCONFIG
+        memorylist = GLOBALCONFIG.memorylist
+    from pydsl.Memory.Search.Searcher import MemorySearcher
+    from pydsl.Memory.Search.Indexer import Indexer
+    searcher = MemorySearcher([Indexer(x) for x in memorylist])
+    return searcher.search(query)

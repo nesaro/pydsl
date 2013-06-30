@@ -30,14 +30,14 @@ def search_pp(inputset: set, filterlist = None) -> str:
 def filterset(inputset: set, filterlist = None) -> set:
     if filterlist is None:
         return inputset #Don't filter at all
-    from pydsl.Abstract import InmutableDict
+    from pydsl.Abstract import ImmutableDict
     result = set()
     for element in inputset:
         telement = {}
         for key in element:
             if key in filterlist:
                 telement[key] = element[key]
-        result.add(InmutableDict(telement))
+        result.add(ImmutableDict(telement))
     return result
 
 
@@ -85,6 +85,8 @@ if __name__ == "__main__":
     PARSER.add_argument('--filter', dest='myfilter',nargs='?', default=None, help="comma separated field list")
     PARSER.add_argument("verb", metavar="verb" , help="verb")
     PARSER.add_argument("identifier", metavar="identifier" , nargs='?', help="command")
+    from pydsl.Config import load_default_memory
+    load_default_memory()
     ARGS = PARSER.parse_args()
     import sys
     DEBUGLEVEL = ARGS.debuglevel or logging.WARNING
@@ -92,21 +94,15 @@ if __name__ == "__main__":
     if ARGS.verb == "i":
         info(ARGS.identifier, ARGS. outputformat)
     elif ARGS.verb in ("s","l"):
-        if ARGS.verb == "s":
-            query = ARGS.identifier
-        else:
-            query = ""
-        from pydsl.Memory.Search.Searcher import MemorySearcher
-        from pydsl.Memory.Search.Indexer import Indexer
-        searcher = MemorySearcher([Indexer(x) for x in GLOBALCONFIG.memorylist])
+        from pydsl.Memory.Loader import search
         myfilter = None
         if ARGS.myfilter:
             myfilter = ARGS.myfilter.split(',')
         if ARGS.outputformat == "str":
-            print(search_pp(searcher.search(ARGS.identifier), myfilter))
+            print(search_pp(search(ARGS.identifier), myfilter))
         elif ARGS.outputformat == "json":
             import json
-            print(json.dumps(list(filterset(searcher.search(ARGS.identifier), myfilter))))
+            print(json.dumps(list(filterset(search(ARGS.identifier), myfilter))))
     else:
         print("Unknown verb")
         print(TUSAGE)

@@ -56,7 +56,8 @@ if __name__ == "__main__":
     ARGS = vars(PARSER.parse_args())
     import sys
     DEBUGLEVEL = ARGS.pop("debuglevel") or logging.WARNING
-    
+    from pydsl.Config import load_default_memory
+    load_default_memory()
     logging.basicConfig(level = DEBUGLEVEL)
     try:
         result = checker(**ARGS)

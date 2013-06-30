@@ -82,7 +82,7 @@ def mix_results(resultll, productionset):
                 compoundword += element.content
                 symbollist += element.symbollist
             finalresult = ParseTree(left_pos, right_pos, symbollist, compoundword, combination[0].production, valid = all([x for x in combination]))
-            #Add childs to result. FIXME El problema es que estamos añadiendo como hijos del nuevo los elementos ya creados
+            #Add childs to result. FIXME Adding already created elements as children of the new one
             rightside = []
             for child in combination:
                 assert(child != finalresult) #Avoid recursion
@@ -93,7 +93,7 @@ def mix_results(resultll, productionset):
             except IndexError:
                 finalresult.production = None
             finally:
-                finallist.append(finalresult) #rule found; we add binded together version
+                finallist.append(finalresult) #rule found; we add bound together version
     return finallist
 
 def locate_heavier_symbol(symbols):
@@ -149,7 +149,7 @@ class WeightedParser(TopDownParser):
         if isinstance(onlysymbol, TerminalSymbol):
             #Locate every occurrence of word and return a set of results. Follow boundariesrules
             LOG.debug("Iteration: terminalsymbol")
-            result =  terminal_symbol_reducer(onlysymbol, data, onlysymbol) #FIXME add information about production
+            result = terminal_symbol_reducer(onlysymbol, data, onlysymbol) #FIXME add information about production
             if showerrors and not result:
                 return [ParseTree(0,len(data), [onlysymbol] , data, onlysymbol, valid = False)] #FIXME add information about production
             return result

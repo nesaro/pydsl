@@ -29,8 +29,8 @@ import logging
 
 if __name__ == "__main__":
     import argparse
-    TUSAGE = "usage: %(prog)s [options]"
-    PARSER = argparse.ArgumentParser(usage = TUSAGE)
+    USAGE = "usage: %(prog)s [options]"
+    PARSER = argparse.ArgumentParser(usage = USAGE)
     PARSER.add_argument("-d", "--debuglevel", action="store", type=int, dest="debuglevel", help="Sets debug level")
     PARSER.add_argument("-i", "--inputfile", action="store", dest="inputfile", help="input filename dict")
     PARSER.add_argument("-e", "--expression", action="store", dest="expression", help="input expression")
@@ -40,11 +40,12 @@ if __name__ == "__main__":
         PARSER.error("options -i, -u or -e are required")
     if ARGS.inputfile and ARGS.expression:
         PARSER.error("options -i and -e can't be together")
+    from pydsl.Config import load_default_memory
+    load_default_memory()
     DEBUGLEVEL = 39
     if ARGS.debuglevel:
         DEBUGLEVEL = ARGS.debuglevel
     logging.basicConfig(level = DEBUGLEVEL)    
-    inputstr = ""
     from pydsl.Guess import Guesser
     guess = Guesser()
     if ARGS.inputfile:
@@ -54,7 +55,7 @@ if __name__ == "__main__":
     elif ARGS.expression:
         result = guess(ARGS.expression)
     else:
-        print(TUSAGE)
+        print(USAGE)
         sys.exit(0)
     print(result)
     sys.exit(0)

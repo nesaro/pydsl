@@ -44,7 +44,7 @@ def lexer(alphabet, expression = None, inputfile = None):
         result = [str(x) for x in lexer(expression)]
         print(result)
     elif inputfile:
-        with open(filename, 'rb') as f:
+        with open(inputfile, 'rb') as f:
             expression = f.read()
         result = [str(x) for x in lexer(expression)]
         print(result)
@@ -67,6 +67,8 @@ if __name__ == "__main__":
     import sys
     DEBUGLEVEL = ARGS.pop("debuglevel") or logging.WARNING
     logging.basicConfig(level = DEBUGLEVEL)
+    from pydsl.Config import load_default_memory
+    load_default_memory()
     try:
         result = lexer(**ARGS)
     except EOFError:
