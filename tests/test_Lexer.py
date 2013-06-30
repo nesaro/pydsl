@@ -22,6 +22,10 @@ __email__ = "nesaro@gmail.com"
 import unittest
 
 class TestLexer(unittest.TestCase):
+    def setUp(self):
+        from pydsl.Config import load_default_memory
+        load_default_memory()
+
     def testSimpleLexing(self):
         """Test checker instantiation and call"""
         from pydsl.Memory.Loader import load_lexer
