@@ -27,14 +27,6 @@ __email__ = "nesaro@gmail.com"
 import logging
 from pydsl.Memory.Loader import load_lexer
 
-def bool_dict_values(dic):
-    for key in dic:
-        if str(dic[key]) == "False":
-            dic[key] = False
-        else:
-            dic[key] = bool(dic[key])
-    return dic
-
 def lexer(alphabet, expression = None, inputfile = None):
     #Generating and connecting output
     #listen to user, open read file, or other
