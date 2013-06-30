@@ -45,6 +45,16 @@ class EncodingLexer(AlphabetTranslator): #FIXME should be named EncodingAlphabet
         for x in string:
             yield Token(x)
 
+    def lexer_generator(self, target):
+        next(target)
+        buffer = ""
+        while True:
+            element = (yield)
+            buffer += element #Asumes string
+            for x in buffer:
+                target.send(Token(x))
+
+
 class Lexer(AlphabetTranslator):
     """Lexer follows an alphabet definition.
     generates a list of tokens and it
