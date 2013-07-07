@@ -142,13 +142,11 @@ class BNFGrammar(GrammarDefinition): #Only stores a ruleset, and methods to ask 
     @property
     def left_recursive(self):# -> bool:
         """Tests if exists left recursion"""
-        #TODO
         raise NotImplementedError
 
     @property
     def right_recursive(self):# -> bool:
         """Tests if exists right recursion"""
-        #TODO
         raise NotImplementedError
 
     @property
