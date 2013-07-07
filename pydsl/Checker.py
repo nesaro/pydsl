@@ -35,6 +35,7 @@ class Checker(object):
 
 class RegularExpressionChecker(Checker):
     def __init__(self, regexp, flags = ""):
+        Checker.__init__(self)
         import re
         self.__regexpstr = regexp
         myflags = 0

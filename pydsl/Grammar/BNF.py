@@ -65,6 +65,7 @@ class Production(object):
 
 class BNFGrammar(GrammarDefinition): #Only stores a ruleset, and methods to ask properties or validity check 
     def __init__(self, initialsymbol, fulllist, options=None):
+        GrammarDefinition.__init__(self)
         self._initialsymbol = initialsymbol
         for rule in fulllist:
             if fulllist.count(rule) >1:
