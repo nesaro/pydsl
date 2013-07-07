@@ -28,7 +28,7 @@ def t_NUMBER(t):
     try:
         t.value = int(t.value)
     except ValueError:
-        print("Integer value too large", t.value)
+        print("Integer value too large %d", t.value)
         t.value = 0
     return t
 

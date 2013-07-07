@@ -22,7 +22,6 @@
 __version__ = 'SPARK-0.7 (pre-alpha-7)'
 
 import re
-import string
 
 def _namelist(instance):
     namelist, namedict, classlist = [], {}, [instance.__class__]
@@ -179,7 +178,7 @@ class GenericParser:
 
     def addRule(self, doc, func, _preprocess=1):
         fn = func
-        rules = string.split(doc)
+        rules = doc.split()
 
         index = []
         for i in range(len(rules)):
