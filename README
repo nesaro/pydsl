@@ -1,56 +1,7 @@
 DESCRIPTION
 ===========
 
-pydsl is a language library written in python
-
-GRAMMARS
---------
-
-supported formats:
- * regular expressions
- * pydsl BNF format
- * mongo database query dictionaries
- * python ply module (only check support)
-
-grammar properties:
- * enum(gd): yields a list of accepted words
- * first(gd): yields a list of the first accepted subword/char
- * minsize(gd): length of the smaller accepted word
- * maxsize(gd): length of the biggest accepted word
- * alphabet(gd): returns the alphabet used by this gd
-
-grammar functions:
- * validate(gd, input): test the input string against the spec. In case of failure, it returns a list of errors
-
-ALPHABETS
----------
-
-alphabet abstraction is also available. Alphabets are a set of grammar definitions that are recognized using a regular grammar. Properties:
- * grammar_list(ad): return the list of allowed grammars for this alphabet
-
-functions that use _alphabets_:
- * lexer(ad, input): Generates a tokenlist from a string (it is a special case of translate)
-
-functions that use both _alphabets_ and _grammar definitions_:
- * guess(input, [gd]): returns a list of _grammar_ and _alphabets_ that are compatible with the input
- * diff(gd, input1, input2): returns the differences according to _grammar definition_/_alphabet_
- * check(d, input): test the input string against the spec
- * extract(gd, input): extract all the slices of the input that are accepted by the definition 
-
-LIBRARY
--------
-
-pydsl also offers functions to store grammars and alphabets into directories and files. Here are the related functions:
- * manager s query: search for an element within a memory
- * manager i identifier: returns information about the element
-
-included elements:
- * grammars
-   * grammars folder
-   * dict/filetype.dict: A list of filetypes
-   * dict/regexp.dict: A list of regular expressions
- * alphabets
-   * list/encoding.py: A list of supported encoding
+pydsl is a language library written in python. It provides high level functions for Grammars/Alphabets, hiding the complexity of parsers and similar tools
 
 INSTALLATION
 ============
@@ -65,7 +16,7 @@ To use pydsl as a library for your code, you can:
 
 Loading content from files
 --------------------------
-    from pydsl.Memory.Storage.File.BNF import load_bnf_file
+    from pydsl.Memory.File.BNF import load_bnf_file
     grammardefinition = loand_bnf_file('myfile.bnf')
     from pydsl.Memory.Loader import *
     mychecker = load_checker(grammardefinition)
@@ -87,14 +38,11 @@ Using contrib
     mychecker = load_checker(integer)
     mychecker.check("1234")
 
-BINARIES
-========
-Memory Management
------------------
- * manager.py : Searchs and displays information about grammar/alphabets
+Using Binaries
+--------------
+pydsl also provides a command line interface for the main functions:
 
-Grammars
---------
+ * manager.py : Searchs and displays information about grammar/alphabets
  * check.py: Checks if input data belongs to a grammar
  * guess:py: Returns a list of the types that match the input element
  * validate.py: Perform a validation routine for user data according to a grammar
@@ -119,5 +67,5 @@ GPLv3, see LICENSE file
 
 ABOUT
 =====
-pydsl is a formal language framework.
+pydsl is a language library written in python
 Copyright (C) 2008-2013 Nestor Arocha (nesaro@gmail.com)

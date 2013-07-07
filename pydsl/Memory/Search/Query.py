@@ -24,7 +24,7 @@ __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 
-from pydsl.Query import Query, QueryEquality, QueryInclusion, QueryGreaterThan
+from pydsl.Query import Query, QueryEquality, QueryInclusion
 
 def str_to_memoryquery(string, escape = '\\'):# -> Query:
     """String a query"""
@@ -105,32 +105,27 @@ def recursive_str_to_query(query_list): # -> QueryElement:
     elif query_list.count("@") == 1:
         pair = query_list.split("@")
         return QueryInclusion(pair[0],pair[1])
-    elif query_list.count(">") == 1:
-        pair = query_list.split(">")
-        return QueryGreaterThan(pair[0],pair[1])
     else:
         raise Exception
 
 def dict_to_query(querydict): # -> Query:
     return Query(recursive_dict_to_query(querydict))
 
-def recursive_dict_to_query(querydict, parentkey = None): # -> QueryElement:
+def recursive_dict_to_query(querydict): # -> QueryElement:
     if isinstance(querydict, str):
         return querydict
-    from pydsl.Query import QueryEquality, QueryInclusion, QueryGreaterThan, AndQueryOperator, NotQueryOperator, QueryPartial
+    from pydsl.Query import QueryEquality, QueryInclusion, AndQueryOperator, NotQueryOperator, QueryPartial
     resultlist = []
     for key, value in querydict.items():
         if isinstance(value, dict):
             if len(value) == 1 and "$in" in value:
                 resultlist.append(QueryInclusion(key, recursive_dict_to_query(value["$in"])))
-            elif len(value) == 1 and "$gt" in value:
-                resultlist.append(QueryGreaterThan(parentkey,recursive_dict_to_query(value["$gt"])))
             elif len(value) == 1 and "$not" in value:
                 resultlist.append(QueryEquality(key,NotQueryOperator(recursive_dict_to_query(value["$not"]))))
             elif len(value) == 1 and "$part" in value:
                 resultlist.append(QueryPartial(key, value["$part"]))
             else:
-                resultlist.append(recursive_dict_to_query(value, key))
+                resultlist.append(recursive_dict_to_query(value))
         elif isinstance(value, str):
             resultlist.append(QueryEquality(key,value))
     myfun = lambda x,y: AndQueryOperator(x,y)

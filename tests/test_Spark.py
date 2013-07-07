@@ -15,28 +15,26 @@
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Test wrapper"""
+"""Tests spark integration"""
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2013, Nestor Arocha"
+__copyright__ = "Copyright 2008-2012, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
 
-class TestValidate(unittest.TestCase):
-    def setUp(self):
-        from pydsl.Config import load_default_memory
-        load_default_memory()
+class TestSpark(unittest.TestCase):
+    def testLoadFile(self):
+        pass
 
-    def testBasic(self):
-        from pydsl.Memory.Loader import load_parser
-        parser = load_parser('Date', 'descent')
-        self.assertFalse(parser.get_trees("11/11/ab", True)[0].valid)
-        self.assertTrue(parser.get_trees("11/11/2011", True)[0].valid)
+    def testChecker(self):
+        pass
 
-    def testValidateLoad(self):
-        from pydsl.contrib.bnfgrammar import productionset0
-        from pydsl.Memory.Loader import load_validator
-        validator = load_validator(productionset0)
-        self.assertTrue(validator("input"))
+    def testLexer(self):
+        pass
 
+    def testParser(self):
+        pass
+
+    def testTranslator(self):
+        pass

@@ -20,22 +20,22 @@
 
 import logging
 LOG = logging.getLogger(__name__)
-from pydsl.Abstract import InmutableDict
+from pydsl.Abstract import ImmutableDict
+import imp
 
 def load_module(filepath, identifier = None):
     if identifier is None:
         (_, _, identifier, _) = getFileTuple(filepath)
-    import imp
     return imp.load_source(identifier, filepath)
 
-def load_python_file(moduleobject, **kwargs):
+def load_python_file(moduleobject):
     """ Try to create an indexable instance from a module"""
     if isinstance(moduleobject, str):
         moduleobject = load_module(moduleobject)
     if not hasattr(moduleobject, "iclass"):
         raise KeyError("Element" + str(moduleobject))
     iclass = getattr(moduleobject, "iclass")
-    resultdic = kwargs
+    resultdic = {}
     mylist = list(filter(lambda x:x[:1] != "_" and x != "iclass", (dir(moduleobject))))
     for x in mylist:
         resultdic[x] = getattr(moduleobject, x)
@@ -51,6 +51,8 @@ def load_python_file(moduleobject, **kwargs):
     elif iclass in ["PythonGrammar"]:
         from pydsl.Grammar.Definition import PythonGrammar
         return PythonGrammar(resultdic)
+    elif iclass == "PythonTransformer":
+        return resultdic
     else:
         raise ValueError(str(moduleobject))
 
@@ -62,23 +64,24 @@ def getFileTuple(fullname):
     return dirName, fileName, fileBaseName, fileExtension
 
 def summary_python_file(modulepath):
-    import imp
     (_, _, fileBaseName, ext) = getFileTuple(modulepath)
     moduleobject = imp.load_source(fileBaseName, modulepath)
     result = {"identifier":fileBaseName, "iclass":moduleobject.iclass, "filepath":modulepath}
     if hasattr(moduleobject, "title"):
-        result["title"] =  InmutableDict(moduleobject.title)
+        result["title"] =  ImmutableDict(moduleobject.title)
     if hasattr(moduleobject, "description"):
-        result["description"] =  InmutableDict(moduleobject.description)
+        result["description"] =  ImmutableDict(moduleobject.description)
     if hasattr(moduleobject, "inputdic"):
-        result["input"] = InmutableDict(moduleobject.inputdic)
+        result["input"] = ImmutableDict(moduleobject.inputdic)
         result["inputlist"] = tuple(moduleobject.inputdic.values())
     if hasattr(moduleobject, "outputdic"):
-        result["output"] = InmutableDict(moduleobject.outputdic)
+        result["output"] = ImmutableDict(moduleobject.outputdic)
         result["outputlist"] = tuple(moduleobject.outputdic.values())
     if hasattr(moduleobject, "inputformat"):
         result["input"] = moduleobject.inputformat
     if hasattr(moduleobject, "outputformat"):
         result["output"] = moduleobject.outputformat
-    return InmutableDict(result)
+    if hasattr(moduleobject, "name"):
+        result["name"] = moduleobject.name
+    return ImmutableDict(result)
 

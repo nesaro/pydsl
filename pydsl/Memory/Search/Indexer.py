@@ -16,11 +16,14 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from pydsl.Query import QueryEquality, QueryInclusion, QueryGreaterThan, QueryPartial
+from pydsl.Query import QueryEquality, QueryInclusion, QueryPartial
 import collections
+from pydsl.Abstract import ImmutableDict
+import re
 
 class Indexer(object):
-    """Indexes memory content. Current implementation just copy Memory iterator (Inmutabledicts) into a cache dict. This is possible because Memory iterator format is suitable for search, but it might change in the future"""
+    """Indexes memory content. Current implementation just copy Memory iterator (Immutabledicts) into a cache dict.
+    This is possible because Memory iterator format is suitable for search, but it might change in the future"""
     def __init__(self, memory):
         self.memory = memory #One memory per indexer
         self.index = []
@@ -43,117 +46,76 @@ class Indexer(object):
             if element not in self.index:
                 self.index.append(element)
 
+    @staticmethod
+    def __get_left_value(left, element):
+        if not '.' in left:
+            return element[left]
+        getlist = left.split('.')
+        leftvalue = element[getlist[0]]
+        for getindex in getlist[1:]:
+            leftvalue = leftvalue.__getitem__(getindex)
+        return leftvalue
+
+    @staticmethod
+    def __to_immutable(element):
+        if isinstance(element, dict):
+            return ImmutableDict(element)
+        return element
+
     def search_index(self, queryterm): #-> set:
         result = set()
-        qpart = queryterm.right
-        if isinstance(queryterm, QueryEquality):
-            for element in self.index:
-                if not element:
-                    continue
-                elementright = None
-                if queryterm.left.count('.') > 0:
-                    getlist = queryterm.left.split('.')
-                    try:
-                        elementright = element[getlist[0]]
-                        for getindex in getlist[1:]:
-                            elementright = elementright.__getitem__(getindex)
-                    except KeyError:
+        right = queryterm.right
+        left = queryterm.left
+        for element in self.index:
+            if not element:
+                continue
+            if isinstance(queryterm, QueryEquality):
+                leftvalue = self.__get_left_value(left, element)
+                if len(right)>2 and right[-1] == "/" and right[0] == "/":
+                    #Regular Expression
+                    rexp = re.compile(right[1:-1])
+                    if rexp.match(leftvalue) is None:
                         continue
-                if not elementright and not queryterm.left in element:
+                elif right != leftvalue:
                     continue
-                if not elementright:
-                    elementright = element[queryterm.left]
-                ismatch = True
+            elif isinstance(queryterm, QueryInclusion):
+                #a in b
                 try:
-                    if len(qpart)>2 and qpart[-1] == "/" and qpart[0] == "/":
-                        #Expresion regular
-                        import re
-                        rexp = re.compile(qpart[1:-1])
-                        if rexp.match(elementright) is None:
-                            ismatch = False
-                    else:
-                        #Cadena normal
-                        if qpart != elementright:
-                            ismatch = False
-                except KeyError:
-                    continue
-                if ismatch:
-                    if isinstance(element, dict):
-                        from pydsl.Abstract import InmutableDict
-                        result.add(InmutableDict(element))
-                    else:
-                        result.add(element)
-        elif isinstance(queryterm, QueryInclusion):
-            qpart = queryterm.right
-            for element in self.index:
-                ismatch = True
-                try:
-                    if qpart[-1] == "/" and qpart[0] == "/":
+                    list_to_search = element[left]
+                    if isinstance(list_to_search, dict) and queryterm.dict_member == "values":
+                        list_to_search = list(list_to_search.values())
+                    elif isinstance(list_to_search, dict) and queryterm.dict_member == "keys":
+                        list_to_search = list(list_to_search.keys())
+                    if right[-1] == "/" and right[0] == "/":
                         #RegExp
-                        import re
-                        rexp = re.compile(qpart[1:-1])
-                        ismatch = False
-                        for item in element[queryterm.left]:
+                        rexp = re.compile(right[1:-1])
+                        for item in list_to_search:
                             if rexp.match(item) is not None:
-                                ismatch = True
                                 break
+                        else:
+                            continue
                     else:
                         #string
-                        if qpart not in element[queryterm.left]:
-                            ismatch = False
+                        if right not in list_to_search:
                             continue
                 except KeyError:
                     continue
-                if ismatch:
-                    if isinstance(element, dict):
-                        from pydsl.Abstract import InmutableDict
-                        result.add(InmutableDict(element))
-                    else:
-                        result.add(element)
-        elif isinstance(queryterm, QueryPartial):
-            rdict = queryterm.right
-            for element in self.index:
-                ismatch = True
-                if queryterm.left not in element:
+            elif isinstance(queryterm, QueryPartial):
+                if left not in element:
                     continue
-                for key, value in rdict.items():
+                ismatch = True
+                for key, value in right.items():
                     try:
-                        if key not in element[queryterm.left]:
+                        if key not in element[left]:
                             ismatch = False
                             break
-                        if element[queryterm.left][key] != value:
+                        if element[left][key] != value:
                             ismatch = False
                     except KeyError:
                         continue
-                if ismatch:
-                    if isinstance(element, dict):
-                        from pydsl.Abstract import InmutableDict
-                        result.add(InmutableDict(element))
-                    else:
-                        result.add(element)
-        elif isinstance(queryterm, QueryGreaterThan):
-            try:
-                qpart = int(queryterm.right)
-            except ValueError:
-                return set()
-            for element in self.index:
-                #TODO: "." operator for dict member access
-                ismatch = False
-                try:
-                    #Cadena normal
-                    if qpart == int(element[queryterm.left]):
-                        ismatch = True
-                        break
-                except KeyError:
+                if not ismatch:
                     continue
-                except ValueError:
-                    continue
-                if ismatch:
-                    if isinstance(element, dict):
-                        from pydsl.Abstract import InmutableDict
-                        result.add(InmutableDict(element))
-                    else:
-                        result.add(element)
+            result.add(self.__to_immutable(element))
         return result
 
 

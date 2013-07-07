@@ -33,10 +33,6 @@ class Symbol(object):
     def weight(self):
         return self._weight
 
-    def first(self, length = 1):
-        """Returns the list of possible first elements"""
-        raise NotImplementedError
-
 class NonTerminalSymbol(Symbol):
     def __init__(self, name,  weight = 50):
         Symbol.__init__(self, weight)

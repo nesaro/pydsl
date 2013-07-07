@@ -6,6 +6,9 @@ from pydsl.Memory.File.BNF import strlist_to_production_set
 from pydsl.Memory.Loader import load
 from pydsl.Grammar.Definition import StringGrammarDefinition
 
+from pydsl.Config import load_default_memory
+load_default_memory()
+
 br = "max"
 leftrecursive=["S ::= E","E ::= E dot | dot","dot := String,."]
 rightrecursive=["S ::= E","E ::= dot E | dot","dot := String,."]

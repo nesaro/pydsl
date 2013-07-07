@@ -35,6 +35,7 @@ class Checker(object):
 
 class RegularExpressionChecker(Checker):
     def __init__(self, regexp, flags = ""):
+        Checker.__init__(self)
         import re
         self.__regexpstr = regexp
         myflags = 0
@@ -51,11 +52,9 @@ class RegularExpressionChecker(Checker):
             data = str(word)
         except UnicodeDecodeError:
             return False
-        if data == "":
+        if not data:
             return False
-        if self.__regexp.match(data):
-            return True
-        return False
+        return bool(self.__regexp.match(data))
 
 
 class BNFChecker(Checker):
@@ -78,27 +77,15 @@ class BNFChecker(Checker):
             return len(self.__parser.get_trees(data)) > 0
         except IndexError:
             return False 
-        
-    @property
-    def summary(self):
-        return {"iclass":"BNFChecker"}
-
 
 class PythonChecker(Checker):
     def __init__(self, module):
         Checker.__init__(self)
         self._matchFun = module["matchFun"]
-        auxdic = module.get('auxdic', {})
-        self.auxgrammar = {}
-        for key, value in auxdic.items():
-            self.auxgrammar[key] = load_checker(value)
 
     def check(self, data):
         try:
-            if self.auxgrammar:
-                return self._matchFun(data, self.auxgrammar)
-            else:
-                return self._matchFun(data)
+            return self._matchFun(data)
         except UnicodeDecodeError:
             return False
 
@@ -150,8 +137,7 @@ class PLYChecker(Checker):
             parser.parse(data, lexer = lexer)
         except ParseError:
             return False
-        else:
-            return True
+        return True
 
 class StringChecker(Checker):
     def __init__(self, gd):
@@ -202,13 +188,11 @@ class EncodingChecker(Checker):
                 data.encode(encoding)
             except UnicodeEncodeError:
                 return False
-            else:
-                return True
-        elif isinstance(data, bytes):
+            return True
+        if isinstance(data, bytes):
             try:
                 data.decode(encoding)
             except UnicodeDecodeError:
                 return False
-            else:
-                return True
+            return True
         return False

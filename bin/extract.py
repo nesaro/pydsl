@@ -44,9 +44,7 @@ def extractaux(grammar, expression = None, input_file = None):
         result = extract(grammar,content)
         print(result)
         return result
-    else:
-        raise Exception
-    return True
+    raise Exception("No input file nor expression")
 
 if __name__ == "__main__":
     import argparse
@@ -59,6 +57,8 @@ if __name__ == "__main__":
     ARGS = vars(PARSER.parse_args())
     import sys
     DEBUGLEVEL = ARGS.pop('debuglevel') or logging.WARNING
+    from pydsl.Config import load_default_memory
+    load_default_memory()
     logging.basicConfig(level = DEBUGLEVEL)
     try:
         result = extractaux(**ARGS)
