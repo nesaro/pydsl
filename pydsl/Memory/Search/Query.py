@@ -88,7 +88,7 @@ def recursive_str_to_query(query_list): # -> QueryElement:
     if "||" in query_list:
         index = query_list.index("||")
         term1 = recursive_str_to_query(query_list[:index])
-        term2 = recursive_str_to_query(query_list[index+1:])
+        term2 = recursive_str_to_query(query_list[index+2:])
         return OrQueryOperator(term1, term2)
     if "&&" in query_list:
         index = query_list.index("&&")
