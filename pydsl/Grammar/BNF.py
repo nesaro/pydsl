@@ -65,6 +65,7 @@ class Production(object):
 
 class BNFGrammar(GrammarDefinition): #Only stores a ruleset, and methods to ask properties or validity check 
     def __init__(self, initialsymbol, fulllist, options=None):
+        GrammarDefinition.__init__(self)
         self._initialsymbol = initialsymbol
         for rule in fulllist:
             if fulllist.count(rule) >1:
@@ -142,13 +143,11 @@ class BNFGrammar(GrammarDefinition): #Only stores a ruleset, and methods to ask 
     @property
     def left_recursive(self):# -> bool:
         """Tests if exists left recursion"""
-        #TODO
         raise NotImplementedError
 
     @property
     def right_recursive(self):# -> bool:
         """Tests if exists right recursion"""
-        #TODO
         raise NotImplementedError
 
     @property

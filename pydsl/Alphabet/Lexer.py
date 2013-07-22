@@ -36,7 +36,7 @@ class AlphabetTranslator(object):
     def output_alphabet(self):
         raise NotImplementedError
 
-class EncodingLexer(AlphabetTranslator):
+class EncodingLexer(AlphabetTranslator): #FIXME should be named EncodingAlphabetTranslator
     """Special Lexer that encodes from a string a reads a string"""
     def __init__(self, encoding):
         self.encoding = encoding
@@ -44,6 +44,16 @@ class EncodingLexer(AlphabetTranslator):
     def __call__(self, string):
         for x in string:
             yield Token(x)
+
+    def lexer_generator(self, target):
+        next(target)
+        buffer = ""
+        while True:
+            element = (yield)
+            buffer += element #Asumes string
+            for x in buffer:
+                target.send(Token(x))
+
 
 class Lexer(AlphabetTranslator):
     """Lexer follows an alphabet definition.
@@ -69,10 +79,9 @@ class Lexer(AlphabetTranslator):
         self.index += 1
 
     def match(self, char):
-        if self.current == char:
-            self.consume()
-        else:
+        if self.current != char:
             raise Exception("%s doesn't match %s"%(self.current,char))
+        self.consume()
 
     def nextToken(self):
         raise NotImplementedError
@@ -80,10 +89,12 @@ class Lexer(AlphabetTranslator):
     def __call__(self, string):# -> "TokenList":
         """Tokenizes input, generating a list of tokens"""
         self.string = string
-        while True:
-            result = [x for x in self.nextToken()]
-            return result
+        result = [x for x in self.nextToken()]
+        return result
 
+    def lexer_generator(self):
+        """generator version of the lexer, yields a new token as soon as possible"""
+        raise NotImplementedError
 
 class AlphabetDictLexer(Lexer):
     def __init__(self, alphabet):
@@ -164,3 +175,17 @@ class AlphabetListLexer(Lexer):
                 yield Token(string, validelements[0])
             else:
                 raise Exception("Multiple choices" + str([str(x) for x in validelements]))
+
+    def lexer_generator(self, target):
+        next(target)
+        buffer = ""
+        while True:
+            element = (yield)
+            buffer += element #Asumes string
+            for x in range(1,len(buffer)):
+                currentstr = buffer[:x]
+                for gd in self.alphabet.grammar_list:
+                    checker = load_checker(gd)
+                    if checker.check(currentstr):
+                        buffer = buffer[x:]
+                        target.send(Token(currentstr, gd))

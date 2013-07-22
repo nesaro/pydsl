@@ -22,6 +22,10 @@ __email__ = "nesaro@gmail.com"
 import unittest
 
 class TestLexer(unittest.TestCase):
+    def setUp(self):
+        from pydsl.Config import load_default_memory
+        load_default_memory()
+
     def testSimpleLexing(self):
         """Test checker instantiation and call"""
         from pydsl.Memory.Loader import load_lexer
@@ -31,3 +35,30 @@ class TestLexer(unittest.TestCase):
         self.assertTrue(mylexer('123411/23/32'),['integer','date'])
         self.assertTrue([x for x in mylexer.lexer_generator('123411/23/32')],['integer','date'])
 
+    def testLexerGenerator(self):
+        from pydsl.Memory.Loader import load_lexer
+        from pydsl.Grammar.Definition import StringGrammarDefinition
+        from pydsl.Alphabet.Definition import AlphabetListDefinition
+        abc = StringGrammarDefinition("abc")
+        numbers = StringGrammarDefinition("123")
+        mydef = AlphabetListDefinition([abc, numbers])
+        mylexer = load_lexer(mydef)
+        def text_generator(receiver):
+            next(receiver)
+            receiver.send("123")
+            receiver.send("abc")
+            receiver.send("abc")
+            receiver.send("123")
+            receiver.close()
+
+        result = []
+        def collector():
+            try:
+                while True:
+                    result.append((yield))
+            except GeneratorExit:
+                pass
+
+        text_generator(mylexer.lexer_generator(collector()))
+        from pydsl.Alphabet.Token import Token
+        self.assertListEqual(result, [Token("123", numbers), Token("abc",abc),Token("abc",abc), Token("123", numbers)])

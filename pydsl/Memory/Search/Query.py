@@ -88,7 +88,7 @@ def recursive_str_to_query(query_list): # -> QueryElement:
     if "||" in query_list:
         index = query_list.index("||")
         term1 = recursive_str_to_query(query_list[:index])
-        term2 = recursive_str_to_query(query_list[index+1:])
+        term2 = recursive_str_to_query(query_list[index+2:])
         return OrQueryOperator(term1, term2)
     if "&&" in query_list:
         index = query_list.index("&&")
@@ -111,7 +111,7 @@ def recursive_str_to_query(query_list): # -> QueryElement:
 def dict_to_query(querydict): # -> Query:
     return Query(recursive_dict_to_query(querydict))
 
-def recursive_dict_to_query(querydict, parentkey = None): # -> QueryElement:
+def recursive_dict_to_query(querydict): # -> QueryElement:
     if isinstance(querydict, str):
         return querydict
     from pydsl.Query import QueryEquality, QueryInclusion, AndQueryOperator, NotQueryOperator, QueryPartial
@@ -125,7 +125,7 @@ def recursive_dict_to_query(querydict, parentkey = None): # -> QueryElement:
             elif len(value) == 1 and "$part" in value:
                 resultlist.append(QueryPartial(key, value["$part"]))
             else:
-                resultlist.append(recursive_dict_to_query(value, key))
+                resultlist.append(recursive_dict_to_query(value))
         elif isinstance(value, str):
             resultlist.append(QueryEquality(key,value))
     myfun = lambda x,y: AndQueryOperator(x,y)

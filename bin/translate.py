@@ -26,7 +26,7 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 from pydsl.Exceptions import BadFileFormat
-from pydsl.Memory.Loader import load
+from pydsl.Memory.Loader import load_translator
 LOG = logging.getLogger(__name__)
 
 def escapedsplitby(inputstring, separator):

@@ -1,5 +1,4 @@
-S ::¡ Query
-
+S :: Query
 Query : { identifier : subexpression } | { $or : querylist }
 querylist: [ Query *(,Query) ]
 valuelist: [ value *(,value) ]
