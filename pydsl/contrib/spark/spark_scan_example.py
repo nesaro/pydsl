@@ -87,12 +87,12 @@ def scan(f):
         if value in (tokenize.COMMENT, tokenize.NL):
             return
         elif value in _map:
-            if value != tokenize.NAME or not _rw.has_key(lexeme):
+            if value != tokenize.NAME or not lexeme in _rw:
                 attr = lexeme
                 type = _map[value]
 
         t = Token(type, attr=attr, lineno=lineno)
         list.append(t)
 
-    tokenize.tokenize(f.readline, callback)
+    [callback(*token) for token in tokenize.generate_tokens(f.readline)]
     return tokens
