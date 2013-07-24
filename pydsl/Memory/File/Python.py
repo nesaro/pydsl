@@ -53,6 +53,12 @@ def load_python_file(moduleobject):
         return PythonGrammar(resultdic)
     elif iclass == "PythonTransformer":
         return resultdic
+    elif iclass == "AlphabetDict":
+        from pydsl.Alphabet.Definition import AlphabetDictDefinition
+        return AlphabetDictDefinition(**resultdic)
+    elif iclass == "AlphabetList":
+        from pydsl.Alphabet.Definition import AlphabetListDefinition
+        return AlphabetListDefinition(**resultdic)
     else:
         raise ValueError(str(moduleobject))
 

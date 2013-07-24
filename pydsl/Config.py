@@ -32,6 +32,7 @@ def load_default_memory():
     from pydsl.Memory.List import EncodingStorage
     dirname = resource_filename("pydsl.contrib", "")
     GLOBALCONFIG.memorylist.append(DirStorage(dirname + "/grammar/"))
+    GLOBALCONFIG.memorylist.append(DirStorage(dirname + "/alphabet/"))
     GLOBALCONFIG.memorylist.append(RegexpDictStorage(dirname + "/dict/regexp.dict"))
     GLOBALCONFIG.memorylist.append(EncodingStorage(dirname + "/list/encoding.py"))
     GLOBALCONFIG.memorylist.append(DirStorage(dirname + "/transformer/"))
