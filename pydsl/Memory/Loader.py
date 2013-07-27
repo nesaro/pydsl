@@ -108,6 +108,10 @@ def load_translator(function):
     if isinstance(function, dict):
         from pydsl.Translator import PythonTranslator
         return PythonTranslator(**function)
+    from pyparsing import OneOrMore
+    if isinstance(function, OneOrMore):
+        from pydsl.Translator import PyParsingTranslator
+        return PyParsingTranslator(function)
     raise ValueError(function)
 
 def load(identifier, memorylist = None):

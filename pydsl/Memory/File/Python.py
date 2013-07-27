@@ -59,6 +59,8 @@ def load_python_file(moduleobject):
     elif iclass == "AlphabetList":
         from pydsl.Alphabet.Definition import AlphabetListDefinition
         return AlphabetListDefinition(**resultdic)
+    elif iclass == "pyparsing":
+        return resultdic['root_symbol']
     else:
         raise ValueError(str(moduleobject))
 
