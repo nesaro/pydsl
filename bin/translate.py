@@ -75,7 +75,7 @@ def translate(transformer = None, expression = None, inputfiledic = None, output
     #listen to user, open read file, or other
     #configure output, write file, or other
     #print self._opt
-    mainfunc = load(transformer)
+    mainfunc = load_translator(transformer)
     if expression and not outputfiledic:
         myexpression = parse_shell_dict(expression)
         result = mainfunc(**myexpression)
