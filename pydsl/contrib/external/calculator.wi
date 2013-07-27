@@ -1,0 +1,15 @@
+expr: _additive ;
+
+_additive: sum | difference | _multiplicative ;
+sum: _additive '+' _multiplicative ;
+difference: _additive '-' _multiplicative ;
+
+_multiplicative: product | quotient | _primary ;
+product: _multiplicative '*' _primary ;
+quotient: _multiplicative '/' _primary ;
+
+_primary: NUMBER
+       | brackets
+       | function ;
+brackets: '(' _additive ')' ;
+function: SYMBOL '(' _additive ')' ;
