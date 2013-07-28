@@ -21,6 +21,6 @@ class TestBinaries(unittest.TestCase):
     def testSearch(self):
         #self.assertEqual(os.system("python3 bin/search.py"),0)
         from subprocess import Popen,PIPE
-        p = Popen(['python3', 'bin/manager.py', "l"], stdout=PIPE)
+        p = Popen(['python3', 'bin/manager.py', "list"], stdout=PIPE)
         p.communicate()
         self.assertEqual(p.returncode, 0)
