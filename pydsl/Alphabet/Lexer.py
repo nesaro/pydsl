@@ -109,15 +109,14 @@ class AlphabetDictLexer(Lexer):
     def nextToken(self):
         while self.current:
             validelements = []
-            for x,y in self.alphabet.grammardict.items():
-                for first_element in y.first:
+            for name,gd in self.alphabet.grammardict.items():
+                for first_element in gd.first:
                     from pydsl.Grammar.Definition import GrammarDefinition
                     if not isinstance(first_element, GrammarDefinition):
-                        print(first_element.__class__.__name__, first_element, x)
-                        raise Exception
+                        raise TypeError(first_element.__class__.__name__, first_element, name)
                     checker = load_checker(first_element)
                     if checker.check(self.current[0]):
-                        validelements.append((x,y))
+                        validelements.append((name,gd))
                         break
             if not validelements:
                 if not self.generate_unknown:
@@ -125,18 +124,21 @@ class AlphabetDictLexer(Lexer):
                 string = self.current[0]
                 self.consume()
                 yield Token(unknownchar, string)
-            elif len(validelements) == 1:
-                element = validelements[0][1]
-                checker = load_checker(element)
-                for size in range(element.maxsize or len(self.current), element.minsize, -1):
+            valid_alternatives = []
+            for valid_element in validelements:
+                gd = valid_element[1]
+                checker = load_checker(gd)
+                for size in range(gd.maxsize or len(self.current), gd.minsize, -1):
                     if checker.check(self.current[:size]):
-                        break
-                else:
-                    raise Exception("Nothing consumed")
+                        valid_alternatives.append((size,gd))
+            if not valid_alternatives:
+                raise Exception("Nothing consumed", self.current)
+            if len(valid_alternatives) == 1:
+                size, gd = valid_alternatives[0]
                 string = self.current[:size]
                 for _ in range(size):
                     self.consume()
-                yield Token(string, validelements[0][1])
+                yield Token(string, gd)
             else:
                 raise Exception("Multiple choices" + str([str(x) for x in validelements]))
 
