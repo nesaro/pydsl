@@ -138,7 +138,7 @@ class AlphabetDictLexer(Lexer):
                     self.consume()
                 yield Token(string, validelements[0][1])
             else:
-                raise Exception("Multiple choices")
+                raise Exception("Multiple choices" + str([str(x) for x in validelements]))
 
 class AlphabetListLexer(Lexer):
     def __init__(self, alphabet):
