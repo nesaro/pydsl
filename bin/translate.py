@@ -79,9 +79,6 @@ def translate(transformer = None, expression = None, inputfiledic = None, output
     if expression and not outputfiledic:
         myexpression = parse_shell_dict(expression)
         result = mainfunc(**myexpression)
-        if result:
-            for key in result.keys():
-                result[key] = str(result[key])
         print(result)
         return result #FIXME: this is the only condition that returns a result. Because of tests
     raise Exception("Invalid arguments")

@@ -88,12 +88,12 @@ class PLYTranslator(object):
         from ply import yacc, lex
         lexer = lex.lex(self.module)
         parser = yacc.yacc(debug=0, module = self.module)
-        return {"output":parser.parse(input, lexer = lexer)}
+        return parser.parse(input, lexer = lexer)
 
 class PyParsingTranslator(object):
     def __init__(self, root_symbol):
         self.root_symbol = root_symbol
 
     def __call__(self, input):
-        return {"output":self.root_symbol.parseString(input)}
+        return self.root_symbol.parseString(input)
 
