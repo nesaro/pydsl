@@ -99,7 +99,7 @@ if __name__ == "__main__":
         if ARGS.verb == "grammars":
             identifier = "iclass=SymbolGrammar||iclass=PythonGrammar||iclass=PLY"
         elif ARGS.verb == "alphabets":
-            identifier = "iclass=Encoding||iclass=AlphabetListDefinition||iclass=AlphabetDictDefinition"
+            identifier = "iclass=Encoding||iclass=AlphabetListDefinition"
         elif ARGS.verb == "functions":
             identifier = "iclass=PythonTransformer"
         else:

@@ -26,8 +26,8 @@ from pydsl.Alphabet.Definition import Encoding
 
 class TestAlphabet(unittest.TestCase):
     def setUp(self):
-        from pydsl.Alphabet.Definition import AlphabetDictDefinition
-        self.alphabet = AlphabetDictDefinition({"integer":"integer","Date":"Date"})
+        from pydsl.Alphabet.Definition import AlphabetListDefinition
+        self.alphabet = AlphabetListDefinition(["integer","Date"])
 
     def testChecker(self):
         checker = load_checker(self.alphabet)
@@ -40,12 +40,12 @@ class TestAlphabet(unittest.TestCase):
         self.assertListEqual(lexer("11/11/20011234"), ((Token("date", "11/11/2011",Token("integer", "1234"), Token("EOF_TYPE", "")))))
 
     def testProperties(self):
-        self.alphabet.grammar_list
+        self.alphabet.grammarlist
 
     def testGenerateSymbol(self):
         alphabet = Encoding('ascii')
         print(alphabet['a'])
-        print(self.alphabet['integer'])
+        print(self.alphabet[0])
 
 class TestLexerExamples:
     pass

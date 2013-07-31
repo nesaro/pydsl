@@ -1,2 +1,2 @@
-grammarlist = {"integer":"integer","Date":"Date"}
-iclass = "AlphabetDict"
+grammarlist = {"integer","Date"}
+iclass = "AlphabetList"

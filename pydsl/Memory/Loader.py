@@ -25,7 +25,7 @@ __email__ = "nesaro@gmail.com"
 def load_checker(grammar):
     from pydsl.Grammar.BNF import BNFGrammar
     from pydsl.Grammar.Definition import PLYGrammar, RegularExpressionDefinition, MongoGrammar, StringGrammarDefinition, PythonGrammar
-    from pydsl.Alphabet.Definition import AlphabetDictDefinition
+    from pydsl.Alphabet.Definition import AlphabetListDefinition
     if isinstance(grammar, str):
         grammar = load(grammar)
     if isinstance(grammar, BNFGrammar):
@@ -43,9 +43,9 @@ def load_checker(grammar):
     elif isinstance(grammar, PLYGrammar):
         from pydsl.Checker import PLYChecker
         return PLYChecker(grammar)
-    elif isinstance(grammar, AlphabetDictDefinition):
-        from pydsl.Checker import AlphabetDictChecker
-        return AlphabetDictChecker(grammar)
+    elif isinstance(grammar, AlphabetListDefinition):
+        from pydsl.Checker import AlphabetListChecker
+        return AlphabetListChecker(grammar)
     elif isinstance(grammar, StringGrammarDefinition):
         from pydsl.Checker import StringChecker
         return StringChecker(grammar)
@@ -56,12 +56,9 @@ def load_checker(grammar):
         raise ValueError(grammar)
 
 def load_lexer(alphabet):
-    from pydsl.Alphabet.Definition import AlphabetDictDefinition, AlphabetListDefinition
+    from pydsl.Alphabet.Definition import AlphabetListDefinition
     if isinstance(alphabet, str):
         alphabet = load(alphabet)
-    if isinstance(alphabet, AlphabetDictDefinition):
-        from pydsl.Alphabet.Lexer import AlphabetDictLexer
-        return AlphabetDictLexer(alphabet)
     if isinstance(alphabet, AlphabetListDefinition):
         from pydsl.Alphabet.Lexer import AlphabetListLexer
         return AlphabetListLexer(alphabet)

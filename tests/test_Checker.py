@@ -106,11 +106,11 @@ class TestEncodingChecker(unittest.TestCase):
         self.assertTrue(checker.check('asdf'))
         self.assertFalse(checker.check('£'))
 
-class TestAlphabetDictDefinitionChecker(unittest.TestCase):
+class TestAlphabetListDefinitionChecker(unittest.TestCase):
     def testCheck(self):
-        from pydsl.Checker import AlphabetDictChecker
-        from pydsl.Alphabet.Definition import AlphabetDictDefinition
-        a = AlphabetDictDefinition({'int':'integer'})
-        checker = AlphabetDictChecker(a)
+        from pydsl.Checker import AlphabetListChecker
+        from pydsl.Alphabet.Definition import AlphabetListDefinition
+        a = AlphabetListDefinition(['integer'])
+        checker = AlphabetListChecker(a)
         self.assertTrue(checker.check('1234'))
         self.assertFalse(checker.check('abc'))

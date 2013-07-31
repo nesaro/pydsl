@@ -96,7 +96,7 @@ class Lexer(AlphabetTranslator):
         """generator version of the lexer, yields a new token as soon as possible"""
         raise NotImplementedError
 
-class AlphabetDictLexer(Lexer):
+class AlphabetListLexer(Lexer):
     def __init__(self, alphabet):
         Lexer.__init__(self)
         self.alphabet = alphabet
@@ -109,14 +109,11 @@ class AlphabetDictLexer(Lexer):
     def nextToken(self):
         while self.current:
             validelements = []
-            for name,gd in self.alphabet.grammardict.items():
+            for gd in self.alphabet.grammarlist:
                 for first_element in gd.first:
-                    from pydsl.Grammar.Definition import GrammarDefinition
-                    if not isinstance(first_element, GrammarDefinition):
-                        raise TypeError(first_element.__class__.__name__, first_element, name)
                     checker = load_checker(first_element)
                     if checker.check(self.current[0]):
-                        validelements.append((name,gd))
+                        validelements.append(gd)
                         break
             if not validelements:
                 if not self.generate_unknown:
@@ -125,10 +122,9 @@ class AlphabetDictLexer(Lexer):
                 self.consume()
                 yield Token(unknownchar, string)
             valid_alternatives = []
-            for valid_element in validelements:
-                gd = valid_element[1]
+            for gd in validelements:
                 checker = load_checker(gd)
-                for size in range(gd.maxsize or len(self.current), gd.minsize, -1):
+                for size in range(gd.maxsize or len(self.current), max(gd.minsize-1,0), -1):
                     if checker.check(self.current[:size]):
                         valid_alternatives.append((size,gd))
             if not valid_alternatives:
@@ -142,42 +138,6 @@ class AlphabetDictLexer(Lexer):
             else:
                 raise Exception("Multiple choices" + str([str(x) for x in validelements]))
 
-class AlphabetListLexer(Lexer):
-    def __init__(self, alphabet):
-        Lexer.__init__(self)
-        self.alphabet = alphabet
-
-    @property
-    def current(self):
-        """Returns the element under the cursor until the end of the string"""
-        return self.string[self.index:]
-
-    def nextToken(self):
-        while self.current:
-            from pydsl.Grammar.Definition import  StringGrammarDefinition
-            currentgd = StringGrammarDefinition(self.current[0])
-            validelements = [x for x in self.alphabet.grammar_list if currentgd in x.first]
-            if not validelements:
-                if not self.generate_unknown:
-                    raise Exception("Not found")
-                string = self.current[0]
-                self.consume()
-                yield Token(unknownchar, string)
-            elif len(validelements) == 1:
-                element = validelements[0]
-                checker = load_checker(element)
-                for size in range(element.maxsize or len(self.current), max(element.minsize-1,0), -1):
-                    if checker.check(self.current[:size]):
-                        break
-                else:
-                    raise Exception("Nothing consumed")
-                string = self.current[:size]
-                for _ in range(size):
-                    self.consume()
-                yield Token(string, validelements[0])
-            else:
-                raise Exception("Multiple choices" + str([str(x) for x in validelements]))
-
     def lexer_generator(self, target):
         next(target)
         buffer = ""
@@ -186,7 +146,7 @@ class AlphabetListLexer(Lexer):
             buffer += element #Asumes string
             for x in range(1,len(buffer)):
                 currentstr = buffer[:x]
-                for gd in self.alphabet.grammar_list:
+                for gd in self.alphabet.grammarlist:
                     checker = load_checker(gd)
                     if checker.check(currentstr):
                         buffer = buffer[x:]

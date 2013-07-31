@@ -36,7 +36,13 @@ class AlphabetListDefinition(AlphabetDefinition):
     def __init__(self, grammarlist):
         if not grammarlist:
             raise ValueError
-        self.grammarlist = grammarlist
+        from pydsl.Memory.Loader import load
+        self.grammarlist = []
+        for x in grammarlist:
+            if isinstance(x, str):
+                self.grammarlist.append(load(x))
+            else:
+                self.grammarlist.append(x)
 
     def __getitem__(self, index):
         """Retrieves token by index"""
@@ -46,25 +52,6 @@ class AlphabetListDefinition(AlphabetDefinition):
     def grammar_list(self):
         return self.grammarlist
 
-
-class AlphabetDictDefinition(AlphabetDefinition):
-    """Uses a dict of grammar definitions"""
-    def __init__(self, grammarlist):
-        if not grammarlist:
-            raise ValueError
-        from pydsl.Memory.Loader import load
-        self.grammardict = {}
-        for x in grammarlist:
-            self.grammardict[x] = load(grammarlist[x])
-
-    def __getitem__(self, item):
-        """Retrieves token by name"""
-        from pydsl.Grammar.Definition import StringGrammarDefinition
-        return StringGrammarDefinition(self.grammardict[item])
-
-    @property
-    def grammar_list(self):
-        return list(self.grammardict.values())
 
 class Encoding(AlphabetDefinition):
     """Defines an alphabet using an encoding string"""
