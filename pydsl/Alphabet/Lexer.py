@@ -25,7 +25,6 @@ import logging
 LOG = logging.getLogger(__name__)
 from pydsl.Memory.Loader import load_checker
 from pydsl.Alphabet.Token import Token
-unknownchar = "UNKNOWN"
 
 class AlphabetTranslator(object):
     @property
@@ -59,9 +58,8 @@ class Lexer(AlphabetTranslator):
     """Lexer follows an alphabet definition.
     generates a list of tokens and it
     is always described with a regular grammar"""
-    def __init__(self, generate_unknown=False):
+    def __init__(self):
         self.load(None)
-        self.generate_unknown = generate_unknown
 
     @property
     def current(self):
@@ -116,11 +114,7 @@ class AlphabetListLexer(Lexer):
                         validelements.append(gd)
                         break
             if not validelements:
-                if not self.generate_unknown:
-                    raise Exception("Not found")
-                string = self.current[0]
-                self.consume()
-                yield Token(unknownchar, string)
+                raise Exception("Not found")
             valid_alternatives = []
             for gd in validelements:
                 checker = load_checker(gd)
