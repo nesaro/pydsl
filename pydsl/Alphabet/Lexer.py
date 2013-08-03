@@ -94,6 +94,26 @@ class Lexer(AlphabetTranslator):
         """generator version of the lexer, yields a new token as soon as possible"""
         raise NotImplementedError
 
+class Tree:
+    def __init__(self, content=None, index=0, parent=None):
+        self.content = content
+        self.parent = parent
+        self.index = index
+        self.children = []
+        self.new = True
+
+    def append(self, content, index):
+        new = Tree(content, index, self)
+        self.children.append(new)
+        self.new = False
+        return new
+
+    def remove(self, element):
+        self.children.remove(element)
+
+    def __bool__(self):
+        return bool(self.content)
+
 class AlphabetListLexer(Lexer):
     def __init__(self, alphabet):
         Lexer.__init__(self)
@@ -105,23 +125,41 @@ class AlphabetListLexer(Lexer):
         return self.string[self.index:]
 
     def nextToken(self):
-        while self.current:
+        tree = Tree()
+        while tree.index < len(self.string):
             valid_alternatives = []
+            index = tree.index
             for gd in self.alphabet.grammarlist:
                 checker = load_checker(gd)
-                for size in range(gd.maxsize or len(self.current), max(gd.minsize-1,0), -1):
-                    if checker.check(self.current[:size]):
+                for size in range((gd.maxsize or len(self.string)) - index,
+                                  max(gd.minsize-1,0),
+                                  -1):
+                    if checker.check(self.string[index:index+size]):
                         valid_alternatives.append((size,gd))
             if not valid_alternatives:
-                raise Exception("Nothing consumed", self.current)
-            if len(valid_alternatives) == 1:
-                size, gd = valid_alternatives[0]
-                string = self.current[:size]
-                for _ in range(size):
-                    self.consume()
-                yield Token(string, gd)
-            else:
-                raise Exception("Multiple choices")
+                if not tree: #root
+                    raise Exception("Nothing consumed")
+                tree.parent.remove(tree)
+                tree = tree.parent
+                continue
+            if not tree.children and not tree.new:
+                tree.parent.remove(tree)
+                tree = tree.parent
+                continue
+            if tree.new:
+                for size, gd in valid_alternatives:
+                    string = self.string[index:index+size]
+                    last_element = tree.append(Token(string, gd), index + size)
+                    if index+size == len(self.string):
+                        break
+                tree = last_element
+        result = []
+        while tree:
+            result.append(tree.content)
+            tree = tree.parent
+        result.reverse()
+        for x in result:
+            yield x
 
     def lexer_generator(self, target):
         next(target)
