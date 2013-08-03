@@ -28,12 +28,15 @@ class TestLexer(unittest.TestCase):
 
     def testSimpleLexing(self):
         """Test checker instantiation and call"""
-        from pydsl.Memory.Loader import load_lexer
+        from pydsl.Memory.Loader import load_lexer, load
         from pydsl.Alphabet.Definition import AlphabetListDefinition
-        mydef = AlphabetListDefinition(['integer','Date'])
-        mylexer = load_lexer(mydef)
-        self.assertEqual(mylexer('123411/23/32'),['integer','date'])
-        self.assertEqual([x for x in mylexer.lexer_generator('123411/23/32')],['integer','date'])
+        from pydsl.Alphabet.Token import Token
+        integer = load('integer')
+        date = load('Date')
+        mydef = AlphabetListDefinition([integer,date])
+        lexer = load_lexer(mydef)
+        self.assertListEqual(lexer("1234"), [(Token("1234",integer))])
+        self.assertListEqual(lexer("123411/11/2001"), [Token("1", load("integer")),Token("2", load("integer")),Token("3", load("integer")),Token("4", load("integer")), Token("11/11/2001",date)])
 
     def testLexerGenerator(self):
         from pydsl.Memory.Loader import load_lexer

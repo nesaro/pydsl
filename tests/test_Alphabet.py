@@ -23,11 +23,15 @@ import unittest
 from pydsl.Memory.Loader import load, load_checker, load_lexer
 from pydsl.Alphabet.Token import Token
 from pydsl.Alphabet.Definition import Encoding
+from pydsl.Config import load_default_memory
 
 class TestAlphabet(unittest.TestCase):
     def setUp(self):
+        load_default_memory()
         from pydsl.Alphabet.Definition import AlphabetListDefinition
-        self.alphabet = AlphabetListDefinition(["integer","Date"])
+        self.integer = load("integer")
+        self.date = load("Date")
+        self.alphabet = AlphabetListDefinition([self.integer,self.date])
 
     def testChecker(self):
         checker = load_checker(self.alphabet)
@@ -36,8 +40,8 @@ class TestAlphabet(unittest.TestCase):
 
     def testLexer(self):
         lexer = load_lexer(self.alphabet)
-        self.assertListEqual(lexer("1234"), [(Token("1234",load("integer")))])
-        self.assertListEqual(lexer("11/11/20011234"), ((Token("date", "11/11/2011",Token("integer", "1234"), Token("EOF_TYPE", "")))))
+        self.assertListEqual(lexer("1234"), [(Token("1234",self.integer))])
+        self.assertListEqual(lexer("123411/11/2001"), [Token("1", load("integer")),Token("2", load("integer")),Token("3", load("integer")),Token("4", load("integer")), Token("11/11/2001",self.date)])
 
     def testProperties(self):
         self.alphabet.grammarlist
