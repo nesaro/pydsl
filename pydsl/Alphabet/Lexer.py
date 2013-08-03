@@ -106,17 +106,8 @@ class AlphabetListLexer(Lexer):
 
     def nextToken(self):
         while self.current:
-            validelements = []
-            for gd in self.alphabet.grammarlist:
-                for first_element in gd.first:
-                    checker = load_checker(first_element)
-                    if checker.check(self.current[0]):
-                        validelements.append(gd)
-                        break
-            if not validelements:
-                raise Exception("Not found")
             valid_alternatives = []
-            for gd in validelements:
+            for gd in self.alphabet.grammarlist:
                 checker = load_checker(gd)
                 for size in range(gd.maxsize or len(self.current), max(gd.minsize-1,0), -1):
                     if checker.check(self.current[:size]):
@@ -130,7 +121,7 @@ class AlphabetListLexer(Lexer):
                     self.consume()
                 yield Token(string, gd)
             else:
-                raise Exception("Multiple choices" + str([str(x) for x in validelements]))
+                raise Exception("Multiple choices")
 
     def lexer_generator(self, target):
         next(target)
