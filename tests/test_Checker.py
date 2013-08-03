@@ -81,13 +81,13 @@ class TestJsonSchemaChecker(unittest.TestCase):
                 "type" : ["string", "object"],
                 "properties" : {
                     "foo" : {"enum" : [1, 3]},
-                    "bar" : {
-                        "type" : "array",
-                        "properties" : {
-                            "bar" : {"required" : True},
-                            "baz" : {"minItems" : 2},
-                        }
-                    }
+                    #"bar" : { #See https://github.com/Julian/jsonschema/issues/89
+                    #    "type" : "array",
+                    #    "properties" : {
+                    #        "bar" : {"required" : True},
+                    #        "baz" : {"minItems" : 2},
+                    #    }
+                    #}
                 }
             }
         }
