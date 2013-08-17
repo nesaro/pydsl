@@ -33,8 +33,8 @@ def load_default_memory():
     dirname = resource_filename("pydsl.contrib", "")
     GLOBALCONFIG.memorylist.append(DirStorage(dirname + "/grammar/"))
     GLOBALCONFIG.memorylist.append(DirStorage(dirname + "/alphabet/"))
-    GLOBALCONFIG.memorylist.append(RegexpDictStorage(dirname + "/dict/regexp.dict"))
-    GLOBALCONFIG.memorylist.append(EncodingStorage(dirname + "/list/encoding.py"))
+    GLOBALCONFIG.memorylist.append(RegexpDictStorage(dirname + "/regexp.dict"))
+    GLOBALCONFIG.memorylist.append(EncodingStorage(dirname + "/encoding.py"))
     GLOBALCONFIG.memorylist.append(DirStorage(dirname + "/transformer/"))
 
 def default_formats():
