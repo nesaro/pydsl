@@ -22,7 +22,7 @@ __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
-LOG = logging.getLogger("Storage.Dict")
+LOG = logging.getLogger(__name__)
 from .Memory import Memory
 
 class DictStorage(Memory):
@@ -69,12 +69,12 @@ class RegexpDictStorage(DictStorage):
 
     def load(self, index, **kwargs):
         import re
+        flags = 0
         if "flags" in self._content[index]:
-            flags = 0
             if "i" in self._content[index]["flags"]:
                 flags |= re.I
-            return re.compile(self._content[index]["regexp"], flags)
-        return re.compile(self._content[index]["regexp"])
+        from pydsl.Grammar.Definition import RegularExpressionDefinition
+        return RegularExpressionDefinition(self._content[index]["regexp"], flags)
 
     def provided_iclasses(self):# -> list:
         return ["re"]

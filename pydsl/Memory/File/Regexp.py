@@ -53,5 +53,5 @@ def summary_re_from_file(filepath):
     from pydsl.Memory.File.Python import getFileTuple
     from pydsl.Abstract import ImmutableDict
     (_, _, fileBaseName, _) = getFileTuple(filepath)
-    return ImmutableDict({"iclass":"re","identifier":fileBaseName, "filepath":filepath})
+    return ImmutableDict({"iclass":"RegularExpression","identifier":fileBaseName, "filepath":filepath})
 
