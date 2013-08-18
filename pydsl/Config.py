@@ -33,7 +33,7 @@ def load_default_memory():
     dirname = resource_filename("pydsl.contrib", "")
     GLOBALCONFIG.memorylist.append(DirStorage(dirname + "/grammar/"))
     GLOBALCONFIG.memorylist.append(DirStorage(dirname + "/alphabet/"))
-    GLOBALCONFIG.memorylist.append(RegexpDictStorage(dirname + "/regexp.dict"))
+    GLOBALCONFIG.memorylist.append(RegexpDictStorage(dirname + "/regexp.py"))
     GLOBALCONFIG.memorylist.append(EncodingStorage(dirname + "/encoding.py"))
     GLOBALCONFIG.memorylist.append(DirStorage(dirname + "/transformer/"))
 
