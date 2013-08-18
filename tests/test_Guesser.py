@@ -31,7 +31,7 @@ class TestGuesser(unittest.TestCase):
     def testStuff(self):
         from pydsl.Guess import Guesser
         guesser = Guesser()
-        self.assertListEqual(sorted(list(guesser('1234'))), sorted(['IntegerTree','cstring','hex','unixFilename','integer','calc_ply','ascii', 'test_alphabet']))
+        self.assertListEqual(sorted(list(guesser('1234'))), sorted(['IntegerTree','cstring','hex','unixFilename','integer','calc_ply','ascii', 'test_alphabet', 'australian_postcode','swiss_postcode']))
         #self.assertListEqual(guesser.guess_alphabet('1234'), ['ascii'])
         #self.assertListEqual(guesser.guess_grammar('1234'), ['integer','cstring'])
         #self.assertRaises(Exception, guesser, None)
