@@ -14,7 +14,6 @@ mydict={
         "coordinate":{"regexp":"^\d{1,2}(\.\d*)?[NS] 1?\d{1,2}(\.\d*)?[EW]$"},
         "credit_card":{"regexp":"^(\d{4}-){3}\d{4}$|^(\d{4} ){3}\d{4}$|^\d{16}$"},
         "dms_coordinate":{"regexp":"[0-9]{1,2}[:|°][0-9]{1,2}[:|'](?:\b[0-9]+(?:\.[0-9]*)?|\.[0-9]+\b)\"?[N|S|E|W]"},
-        "dutch_postcode":{"regexp":"^[1-9][0-9]{3}\s?[a-zA-Z]{2}$"},
         "dutch_postcode":{"regexp":"^[1-9]{1}[0-9]{3}\s?[a-zA-Z]{2}$"},
         "email":{"regexp":"^(?P<user>[A-Z0-9._%+-]+)@(?P<domain>[A-Z0-9.-]+\.[A-Z]{2,4})$","flags":"i"},
         "FileFilter":{"regexp":"^([A-z]|[*?.])+$"},
