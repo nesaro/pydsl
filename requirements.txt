@@ -1,4 +1,5 @@
 git+https://github.com/Julian/jsonschema.git
+git+https://github.com/nesaro/regexps.git
 ply
 pika
 nose

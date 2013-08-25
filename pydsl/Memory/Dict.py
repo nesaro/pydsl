@@ -25,41 +25,11 @@ import logging
 LOG = logging.getLogger(__name__)
 from .Memory import Memory
 
-class DictStorage(Memory):
-    """Stores element in a python file using a python dictionary"""
-    def __init__(self, fullpath):
+class RegexpDictStorage(Memory):
+    def __init__(self, dictionary):
         Memory.__init__(self)
-        self._content = {}
-        from pydsl.Memory.Search.Searcher import MemorySearcher
-        self._searcher = MemorySearcher(self)
-        from pydsl.Memory.File.Python import getFileTuple
-        (_, _, fileBaseName, _) = getFileTuple(fullpath)
-        import imp
-        myobj = imp.load_source(fileBaseName, fullpath)
-        self._content.update(myobj.mydict)
+        self._content = dictionary
 
-    def __iter__(self):
-        self.index = 0
-        self.cache = []
-        self.cache += self.generate_all_summaries()
-        return self
-
-    def next(self):
-        try:
-            result = self.cache[self.index]
-        except IndexError:
-            raise StopIteration
-        self.index += 1
-        return result
-
-    def generate_all_summaries(self):
-        """A list of all elements of full elements"""
-        raise NotImplementedError
-        
-    def __contains__(self, index):
-        return index in self._content
-
-class RegexpDictStorage(DictStorage):
     def generate_all_summaries(self):# -> list:
         result = []
         from pydsl.Abstract import ImmutableDict
@@ -78,4 +48,21 @@ class RegexpDictStorage(DictStorage):
 
     def provided_iclasses(self):# -> list:
         return ["re"]
+
+    def __iter__(self):
+        self.index = 0
+        self.cache = []
+        self.cache += self.generate_all_summaries()
+        return self
+
+    def next(self):
+        try:
+            result = self.cache[self.index]
+        except IndexError:
+            raise StopIteration
+        self.index += 1
+        return result
+
+    def __contains__(self, index):
+        return index in self._content
 

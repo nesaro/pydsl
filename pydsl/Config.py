@@ -30,10 +30,11 @@ def load_default_memory():
     from pydsl.Memory.Directory import DirStorage
     from pydsl.Memory.Dict import RegexpDictStorage
     from pydsl.Memory.List import EncodingStorage
+    from regexps import res
     dirname = resource_filename("pydsl.contrib", "")
     GLOBALCONFIG.memorylist.append(DirStorage(dirname + "/grammar/"))
     GLOBALCONFIG.memorylist.append(DirStorage(dirname + "/alphabet/"))
-    GLOBALCONFIG.memorylist.append(RegexpDictStorage(dirname + "/regexp.py"))
+    GLOBALCONFIG.memorylist.append(RegexpDictStorage(res))
     GLOBALCONFIG.memorylist.append(EncodingStorage(dirname + "/encoding.py"))
     GLOBALCONFIG.memorylist.append(DirStorage(dirname + "/transformer/"))
 
