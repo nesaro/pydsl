@@ -45,16 +45,8 @@ class HostChannel(object):
                 raise TypeError
         self.inputdefinition = inputtypedict
         self.outputdefinition = outputtypedict
-        self.__inputchanneldic = _load_checker(inputtypedict)
-        self.__outputchanneldic = _load_checker(outputtypedict)
-
-    @property
-    def inputchanneldic(self):
-        return self.__inputchanneldic
-
-    @property
-    def outputchanneldic(self):
-        return self.__outputchanneldic
+        self.inputchanneldic = _load_checker(inputtypedict)
+        self.outputchanneldic = _load_checker(outputtypedict)
 
 class PythonTranslator(HostChannel):
     """ Python function based translator """
