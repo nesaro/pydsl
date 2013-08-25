@@ -82,7 +82,7 @@ class TestGrammarDefinitionBNF(unittest.TestCase):
 
     def testAlphabet(self):
         from pydsl.Grammar.Definition import StringGrammarDefinition
-        self.assertListEqual(self.grammardef.alphabet().grammar_list, [StringGrammarDefinition(x) for x in ["S","R"]])
+        self.assertListEqual(self.grammardef.alphabet().to_list, [StringGrammarDefinition(x) for x in ["S","R"]])
 
 @unittest.skip
 class TestGrammarDefinitionMongoDb(unittest.TestCase):

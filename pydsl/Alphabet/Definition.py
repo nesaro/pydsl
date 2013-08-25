@@ -23,7 +23,7 @@ __email__ = "nesaro@gmail.com"
 class AlphabetDefinition(object):
     """Defines an alphabet"""
     @property
-    def grammar_list(self):
+    def to_list(self):
         """Returns a list of allowed grammars"""
         raise NotImplementedError
 
@@ -43,13 +43,17 @@ class AlphabetListDefinition(AlphabetDefinition):
                 self.grammarlist.append(load(x))
             else:
                 self.grammarlist.append(x)
+        from pydsl.Grammar.Definition import GrammarDefinition
+        for x in self.grammarlist:
+            if not isinstance(x, GrammarDefinition):
+                raise TypeError("Expected GrammarDefinition, Got %s:%s" % (x.__class__.__name__,x))
 
     def __getitem__(self, index):
         """Retrieves token by index"""
         return self.grammarlist[index]
 
     @property
-    def grammar_list(self):
+    def to_list(self):
         return self.grammarlist
 
 
@@ -66,7 +70,20 @@ class Encoding(AlphabetDefinition):
         raise KeyError
 
     @property
-    def grammar_list(self):
+    def to_list(self):
         #FIXME: Only ascii
         from pydsl.Grammar.Definition import StringGrammarDefinition
         return [StringGrammarDefinition(chr(x)) for x in range(128)]
+
+
+class ConceptAlphabet(AlphabetDefinition):
+    """Stores a list of concepts"""
+    def __init__(self, conceptlist):
+        self.conceptlist = conceptlist
+
+    def __getitem__(self, item):
+        return self.conceptlist[item]
+
+    @property
+    def to_list(self):
+        return self.conceptlist

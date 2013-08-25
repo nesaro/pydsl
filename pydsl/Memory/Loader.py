@@ -60,11 +60,11 @@ def load_lexer(alphabet):
     if isinstance(alphabet, str):
         alphabet = load(alphabet)
     if isinstance(alphabet, AlphabetListDefinition):
-        from pydsl.Alphabet.Lexer import AlphabetListLexer
+        from pydsl.Translator.Lexer import AlphabetListLexer
         return AlphabetListLexer(alphabet)
     elif isinstance(alphabet, Encoding):
-        from pydsl.Alphabet.Lexer import EncodingLexer
-        return EncodingLexer(alphabet)
+        from pydsl.Translator.Lexer import EncodingTranslator
+        return EncodingTranslator(alphabet)
     else:
         raise ValueError(alphabet)
 
@@ -95,15 +95,25 @@ def load_validator(grammar):
     else:
         raise ValueError(grammar)
 
+def _load_checker(originaldic):
+    """Converts {"channelname","type"} into {"channelname",instance}"""
+    from pydsl.Memory.Loader import load_checker
+    result = {}
+    for key in originaldic:
+        result[key] = load_checker(str(originaldic[key]))
+    return result
+
 def load_translator(function):
     if isinstance(function, str):
         function = load(function)
     from pydsl.Grammar.Definition import PLYGrammar
     if isinstance(function, PLYGrammar):
-        from pydsl.Translator import PLYTranslator
+        from pydsl.Translator.Grammar import PLYTranslator
         return PLYTranslator(function)
     if isinstance(function, dict):
-        from pydsl.Translator import PythonTranslator
+        from pydsl.Translator.Grammar import PythonTranslator
+        function['inputdic'] = _load_checker(function['inputdic'])
+        function['outputdic'] = _load_checker(function['outputdic'])
         return PythonTranslator(**function)
     from pyparsing import OneOrMore
     if isinstance(function, OneOrMore):

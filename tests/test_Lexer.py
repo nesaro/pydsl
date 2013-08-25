@@ -65,3 +65,35 @@ class TestLexer(unittest.TestCase):
         text_generator(mylexer.lexer_generator(collector()))
         from pydsl.Alphabet.Token import Token
         self.assertListEqual(result, [Token("123", numbers), Token("abc",abc),Token("abc",abc), Token("123", numbers)])
+
+
+class TestConceptTranslator(unittest.TestCase):
+    def test_Concept(self):
+        from pydsl.Memory.Loader import load_lexer
+        from pydsl.Grammar.Definition import StringGrammarDefinition
+        from pydsl.Alphabet.Definition import AlphabetListDefinition
+        from pydsl.Alphabet.Token import Token
+        from pydsl.Translator.Lexer import ConceptTranslator
+        red = StringGrammarDefinition("red")
+        green = StringGrammarDefinition("green")
+        blue = StringGrammarDefinition("blue")
+        alphabet = AlphabetListDefinition([red,green,blue])
+        lexer = load_lexer(alphabet)
+
+        def concept_translator_fun(inputtokens):
+            result = []
+            for x in inputtokens:
+                if x == Token("red"):
+                    result.append("color red")
+                elif x == Token("green"):
+                    result.append("color green")
+                elif x == Token("blue"):
+                    result.append("color blue")
+                else:
+                    raise Exception(x.__class__.__name__)
+
+            return result
+
+        ct = ConceptTranslator(concept_translator_fun)
+
+        self.assertListEqual(ct(lexer("red")), ["color red"])

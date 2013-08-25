@@ -35,7 +35,7 @@ class AlphabetTranslator(object):
     def output_alphabet(self):
         raise NotImplementedError
 
-class EncodingLexer(AlphabetTranslator): #FIXME should be named EncodingAlphabetTranslator
+class EncodingTranslator(AlphabetTranslator):
     """Special Lexer that encodes from a string a reads a string"""
     def __init__(self, encoding):
         self.encoding = encoding
@@ -174,3 +174,14 @@ class AlphabetListLexer(Lexer):
                     if checker.check(currentstr):
                         buffer = buffer[x:]
                         target.send(Token(currentstr, gd))
+
+
+class ConceptTranslator(AlphabetTranslator):
+    def __init__(self, function):
+        self._function = function
+
+    def __call__(self, *args, **kwargs):
+        result = self._function(*args, **kwargs)
+        return result
+
+

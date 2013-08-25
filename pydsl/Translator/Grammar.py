@@ -24,35 +24,12 @@ __email__ = "nesaro@gmail.com"
 import logging
 LOG = logging.getLogger(__name__)
 
-def _load_checker(originaldic):
-    """Converts {"channelname","type"} into {"channelname",instance}"""
-    from pydsl.Memory.Loader import load_checker
-    result = {}
-    for key in originaldic:
-        result[key] = load_checker(str(originaldic[key]))
-    return result
-
-class HostChannel(object):
-    """A class that contains input and output string-named channels. Each channel must contain a Type object
-    Any class which inherits from this must also inherit from HostChannel
-    """
-    def __init__(self, inputtypedict, outputtypedict):
-        for key in inputtypedict:
-            if not isinstance(key, str):
-                raise TypeError
-        for key in outputtypedict:
-            if not isinstance(key, str):
-                raise TypeError
-        self.inputdefinition = inputtypedict
-        self.outputdefinition = outputtypedict
-        self.inputchanneldic = _load_checker(inputtypedict)
-        self.outputchanneldic = _load_checker(outputtypedict)
-
-class PythonTranslator(HostChannel):
+class PythonTranslator(object):
     """ Python function based translator """
     def __init__(self, inputdic, outputdic, function):
-        HostChannel.__init__(self, inputdic, outputdic)
         self._function = function
+        self.inputchanneldic = inputdic
+        self.outputchanneldic = outputdic
 
     def __call__(self, *args, **kwargs):
         for dickey in kwargs.keys():
@@ -60,17 +37,6 @@ class PythonTranslator(HostChannel):
                 raise ValueError("Invalid value %s for input %s (%s)" % (kwargs[dickey], dickey, self))
         result = self._function(*args, **kwargs)
         return result
-
-    def __str__(self):
-        return "<PythonTranslator: %s, %s" % (self.inputdefinition, self.outputdefinition)
-
-    @property
-    def summary(self):
-        inputdic = tuple(self.inputdefinition.values())
-        outputdic = tuple(self.outputdefinition.values())
-        result = {"iclass": "PythonTransformer", "input": inputdic, "output": outputdic}
-        from pypository.utils import ImmutableDict
-        return ImmutableDict(result)
 
 class PLYTranslator(object):
     def __init__(self, grammardefinition):
