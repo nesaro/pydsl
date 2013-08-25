@@ -49,21 +49,10 @@ def default_formats():
 
 class GlobalConfig(object):
     """Execution time global configuration"""
-    def __init__(self, persistent_dir=None, debuglevel=40):
-        self.persistent_dir = persistent_dir
+    def __init__(self, debuglevel=40):
         self.memorylist = []
         self.formatlist = default_formats()
         self.__debuglevel = debuglevel
-        if self.persistent_dir is None:
-            try:
-                import os
-                if not os.path.exists(os.environ['HOME'] + "/.pydsl/"):
-                    os.mkdir(os.environ['HOME'] + "/.pydsl/")
-                self.persistent_dir = os.environ['HOME'] + "/.pydsl/persistent/"
-                if not os.path.exists(self.persistent_dir):
-                    os.mkdir(self.persistent_dir)
-            except (OSError, KeyError):
-                LOG.exception("Unable to create persistent dir")
 
     def load(self, filename):
         """Load config from file"""
