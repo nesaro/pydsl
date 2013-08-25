@@ -16,10 +16,10 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 """ListLibrary"""
-from pydsl.Abstract import ImmutableDict
+from pypository.utils import ImmutableDict
 import logging
-LOG = logging.getLogger("Storage.List")
-from pydsl.Memory.Memory import Memory
+LOG = logging.getLogger(__name__)
+from pypository.List import ListStorage
 from pydsl.Alphabet.Definition import Encoding
 
 
@@ -27,47 +27,6 @@ from pydsl.Alphabet.Definition import Encoding
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
-
-
-class ListStorage(Memory):
-    """Stores element in a python file using a python list"""
-    def __init__(self, fullpath):
-        Memory.__init__(self)
-        self._content = {}
-        from pydsl.Memory.Search.Searcher import MemorySearcher
-        from pydsl.Memory.File.Python import getFileTuple
-        (_, _, fileBaseName, _) = getFileTuple(fullpath)
-        import imp
-        myobj = imp.load_source(fileBaseName, fullpath)
-        for element in myobj.mylist:
-            self._content[self._generatekey(element)] = element
-        self._searcher = MemorySearcher(self)
-
-    def __iter__(self):
-        self.index = 0
-        self.cache = []
-        self.cache += self.generate_all_summaries()
-        return self
-
-    def next(self):
-        try:
-            result = self.cache[self.index]
-        except IndexError:
-            raise StopIteration
-        self.index += 1
-        return result
-
-    def _generatekey(self, element):
-        """Generates a identifier for the input element to use in this memory"""
-        raise NotImplementedError
-
-    def generate_all_summaries(self):
-        """generates the full list of element summaries"""
-        raise NotImplementedError
-        
-    def __contains__(self, index):
-        return index in self._content
-
 
 class EncodingStorage(ListStorage):
     def _generatekey(self, element):

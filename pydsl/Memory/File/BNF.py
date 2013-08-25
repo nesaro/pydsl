@@ -151,9 +151,8 @@ def load_bnf_file(filepath):
 
 
 def summary_bnf_file(filepath):
-    from pydsl.Memory.File.Python import getFileTuple
+    from pypository.utils import ImmutableDict, getFileTuple
     (_, _, fileBaseName, _) = getFileTuple(filepath)
-    from pydsl.Abstract import ImmutableDict
     return ImmutableDict({"iclass":"BNFGrammar","identifier":fileBaseName, "filepath":filepath})
 
 def str_to_productionset(string):

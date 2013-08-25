@@ -69,7 +69,7 @@ class PythonTranslator(HostChannel):
         inputdic = tuple(self.inputdefinition.values())
         outputdic = tuple(self.outputdefinition.values())
         result = {"iclass": "PythonTransformer", "input": inputdic, "output": outputdic}
-        from pydsl.Abstract import ImmutableDict
+        from pypository.utils import ImmutableDict
         return ImmutableDict(result)
 
 class PLYTranslator(object):

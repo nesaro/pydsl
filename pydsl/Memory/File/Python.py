@@ -20,13 +20,8 @@
 
 import logging
 LOG = logging.getLogger(__name__)
-from pydsl.Abstract import ImmutableDict
+from pypository.utils import ImmutableDict, getFileTuple, load_module
 import imp
-
-def load_module(filepath, identifier = None):
-    if identifier is None:
-        (_, _, identifier, _) = getFileTuple(filepath)
-    return imp.load_source(identifier, filepath)
 
 def load_python_file(moduleobject):
     """ Try to create an indexable instance from a module"""
@@ -61,12 +56,6 @@ def load_python_file(moduleobject):
     else:
         raise ValueError(str(moduleobject))
 
-
-def getFileTuple(fullname):
-    import os.path
-    (dirName, fileName) = os.path.split(fullname)
-    (fileBaseName, fileExtension) = os.path.splitext(fileName)
-    return dirName, fileName, fileBaseName, fileExtension
 
 def summary_python_file(modulepath):
     (_, _, fileBaseName, ext) = getFileTuple(modulepath)

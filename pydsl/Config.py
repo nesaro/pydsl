@@ -27,9 +27,9 @@ LOG = logging.getLogger(__name__)
 from pkg_resources import resource_filename
 
 def load_default_memory():
-    from pydsl.Memory.Directory import DirStorage
     from pydsl.Memory.Dict import RegexpDictStorage
     from pydsl.Memory.List import EncodingStorage
+    from pydsl.Memory.Directory import DirStorage
     from regexps import res
     dirname = resource_filename("pydsl.contrib", "")
     GLOBALCONFIG.memorylist.append(DirStorage(dirname + "/grammar/"))

@@ -23,7 +23,7 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
-from .Memory import Memory
+from pypository.Memory import Memory
 
 class RegexpDictStorage(Memory):
     def __init__(self, dictionary):
@@ -32,7 +32,7 @@ class RegexpDictStorage(Memory):
 
     def generate_all_summaries(self):# -> list:
         result = []
-        from pydsl.Abstract import ImmutableDict
+        from pypository.utils import ImmutableDict
         for key in self._content:
             result.append(ImmutableDict({"identifier":key, "regexp":self._content[key]["regexp"], "iclass":"RegularExpression"}))
         return result

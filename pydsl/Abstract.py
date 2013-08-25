@@ -35,23 +35,3 @@ class Singleton(type):
         if cls.__instance is None:
             cls.__instance = type.__call__(cls, *args, **kw)
         return cls.__instance
-
-
-class ImmutableDict(dict):
-    """A dict with a hash method for dictionary use"""
-    def __hash__(self):
-        if not self:
-            return 0
-        items = tuple(self.items())
-        res = hash(items[0])
-        for item in items[1:]:
-            res ^= hash(item)
-        return res
-
-    def __eq__(self, other):
-        if len(self.keys()) != len(other.keys()):
-            return False
-        for key in self:
-            if other[key] != self.__getitem__(key):
-                return False
-        return True

@@ -23,10 +23,10 @@ def search_pp(inputset: set, filterlist = None) -> str:
         result += '\n'
     return result
 
-def filterset(inputset: set, filterlist = None) -> set:
+def filterset(inputset: set, filterlist = None):# -> set:
     if filterlist is None:
         return inputset #Don't filter at all
-    from pydsl.Abstract import ImmutableDict
+    from pypository.utils import ImmutableDict
     result = set()
     for element in inputset:
         telement = {}
