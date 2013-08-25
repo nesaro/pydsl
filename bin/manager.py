@@ -10,7 +10,7 @@ import logging
 from pydsl import VERSION
 from pydsl.Config import GLOBALCONFIG
 
-def search_pp(inputset: set, filterlist = None) -> str:
+def search_pp(inputset: set, filterlist = None):# -> str:
     """Search pretty print"""
     result = ""
     for element in inputset:
