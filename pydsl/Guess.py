@@ -29,9 +29,7 @@ import logging
 LOG = logging.getLogger(__name__)
 from pkg_resources import resource_filename
 from pydsl.Memory.Loader import load_checker
-from pydsl.Memory.List import EncodingStorage
 from pydsl.Memory.Search.Searcher import MemorySearcher
-from pydsl.Memory.Directory import DirStorage
 from pydsl.Config import GLOBALCONFIG
 
 
