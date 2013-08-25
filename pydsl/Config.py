@@ -28,14 +28,14 @@ from pkg_resources import resource_filename
 def load_default_memory():
     from pydsl.Memory.Dict import RegexpDictStorage
     from pydsl.Memory.List import EncodingStorage
-    from pydsl.Memory.Directory import DirStorage
+    from pypository.Directory import DirStorage
     from regexps import res
     dirname = resource_filename("pydsl.contrib", "")
-    GLOBALCONFIG.memorylist.append(DirStorage(dirname + "/grammar/"))
-    GLOBALCONFIG.memorylist.append(DirStorage(dirname + "/alphabet/"))
+    GLOBALCONFIG.memorylist.append(DirStorage(dirname + "/grammar/", GLOBALCONFIG.formatlist))
+    GLOBALCONFIG.memorylist.append(DirStorage(dirname + "/alphabet/", GLOBALCONFIG.formatlist))
     GLOBALCONFIG.memorylist.append(RegexpDictStorage(res))
     GLOBALCONFIG.memorylist.append(EncodingStorage(dirname + "/encoding.py"))
-    GLOBALCONFIG.memorylist.append(DirStorage(dirname + "/transformer/"))
+    GLOBALCONFIG.memorylist.append(DirStorage(dirname + "/transformer/", GLOBALCONFIG.formatlist))
 
 def default_formats():
     from pydsl.Memory.File.Regexp import load_re_from_file, summary_re_from_file
