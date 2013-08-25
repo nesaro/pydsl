@@ -21,7 +21,6 @@ __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
-from pydsl.Abstract import Singleton
 import logging
 LOG = logging.getLogger(__name__)
 from pkg_resources import resource_filename
@@ -81,6 +80,18 @@ class GlobalConfig(object):
     @debuglevel.setter
     def debuglevel(self, level):
         self.__debuglevel = level
+
+class Singleton(type):
+    """singleton pattern metaclass"""
+    #Only problem here is that classes can't have two metaclasses
+    def __init__(cls, name, bases, dct):
+        cls.__instance = None
+        type.__init__(cls, name, bases, dct)
+
+    def __call__(cls, *args, **kw):
+        if cls.__instance is None:
+            cls.__instance = type.__call__(cls, *args, **kw)
+        return cls.__instance
 
 GlobalConfig2 = Singleton('GlobalConfig2', (GlobalConfig, ), {})
 GLOBALCONFIG = GlobalConfig2()  # The only instance available
