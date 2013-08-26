@@ -22,16 +22,6 @@ Loading content from files
     mychecker = load_checker(grammardefinition)
     mychecker('mystring') # returns True or False
 
-Loading content from a directory
---------------------------------
-First store your grammar definitions in a directory,
-
-    from pydsl.Memory.Storage.Directory import DirStorage
-    from pydsl.Guess import Guesser
-    a = DirStorage("directory/")
-    guess = Guesser([a])
-    guess('string')
-
 Using contrib
 -------------------
     from pydsl.Memory.Loader import *
@@ -53,6 +43,7 @@ pydsl also provides a command line interface for the main functions:
 REQUIREMENTS
 ============
  * python >= 2.7
+ * pypository
  * optional: ply library ( http://www.dabeaz.com/ply/ )
 
 HELP
