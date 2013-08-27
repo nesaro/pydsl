@@ -100,7 +100,8 @@ def terminal_symbol_consume(symbol, word):
     return []
 
 class Parser(object):
-    """Parser abstract class. At this time, all parsers are tree based"""
+    """Expands an input based on grammar rules
+    At this time, all parsers are tree based"""
     def __init__(self, bnfgrammar):
         self._productionset = bnfgrammar
 

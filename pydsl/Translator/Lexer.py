@@ -27,6 +27,7 @@ from pydsl.Memory.Loader import load_checker
 from pydsl.Alphabet.Token import Token
 
 class AlphabetTranslator(object):
+    """Translates an input written in one Alphabet into another Alphabet"""
     @property
     def input_alphabet(self):
         raise NotImplementedError
@@ -55,9 +56,9 @@ class EncodingTranslator(AlphabetTranslator):
 
 
 class Lexer(AlphabetTranslator):
-    """Lexer follows an alphabet definition.
-    generates a list of tokens and it
-    is always described with a regular grammar"""
+    """Lexer receives an Alphabet in the initialization (A1).
+    Receives an input that belongs to A1 and generates a list of tokens in a different Alphabet A2
+    It is always described with a regular grammar"""
     def __init__(self):
         self.load(None)
 
@@ -177,6 +178,7 @@ class AlphabetListLexer(Lexer):
 
 
 class ConceptTranslator(AlphabetTranslator):
+    """Translates a set of concepts that belong to a ConceptAlphabet into another ConceptAlphabet"""
     def __init__(self, function):
         self._function = function
 

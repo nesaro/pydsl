@@ -21,7 +21,7 @@ __email__ = "nesaro@gmail.com"
 
 
 class AlphabetDefinition(object):
-    """Defines an alphabet"""
+    """Defines a set of valid elements"""
     @property
     def to_list(self):
         """Returns a list of allowed grammars"""
