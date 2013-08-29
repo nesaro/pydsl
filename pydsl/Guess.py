@@ -30,7 +30,7 @@ import logging
 LOG = logging.getLogger(__name__)
 from pkg_resources import resource_filename
 from pydsl.Memory.Loader import load_checker
-from pypository.search.Searcher import MemorySearcher
+from pypository.search.Searcher import Searcher
 from pydsl.Config import GLOBALCONFIG
 
 
@@ -40,7 +40,7 @@ class Guesser(object):
         if not memorylist:
             memorylist = GLOBALCONFIG.memorylist
         self.memorylist = memorylist
-        self.searcher = MemorySearcher([x.indexer() for x in memorylist])
+        self.searcher = Searcher([x.indexer for x in memorylist])
 
     def __call__(self, inputstring): #-> set:
         result = set()
