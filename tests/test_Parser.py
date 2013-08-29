@@ -22,9 +22,9 @@ __email__ = "nesaro@gmail.com"
 
 
 from pydsl.contrib.bnfgrammar import *
-from pydsl.Grammar.Parser.RecursiveDescent import RecursiveDescentParser
-from pydsl.Grammar.Parser.Weighted import WeightedParser
-from pydsl.Grammar.Parser.LR0 import LR0Parser
+from pydsl.Parser.RecursiveDescent import RecursiveDescentParser
+from pydsl.Parser.Weighted import WeightedParser
+from pydsl.Parser.LR0 import LR0Parser
 from pydsl.Translator.Lexer import EncodingTranslator
 import unittest
 
@@ -73,7 +73,7 @@ class TestParsers(unittest.TestCase):
 
     def testLR0ParseTable(self):
         """Tests the lr0 table generation"""
-        from pydsl.Grammar.Parser.LR0 import _slr_build_parser_table, build_states_sets
+        from pydsl.Parser.LR0 import _slr_build_parser_table, build_states_sets
         state_sets = build_states_sets(productionset0)
         self.assertEqual(len(state_sets), 5)
         #1 . EI: : . exp $ , 

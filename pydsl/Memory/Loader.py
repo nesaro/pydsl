@@ -74,11 +74,11 @@ def load_parser(grammar, parser = "auto"):
     from pydsl.Grammar.BNF import BNFGrammar
     if isinstance(grammar, BNFGrammar):
         if parser == "descent":
-            from pydsl.Grammar.Parser.RecursiveDescent import RecursiveDescentParser
+            from pydsl.Parser.RecursiveDescent import RecursiveDescentParser
             return RecursiveDescentParser(grammar)
         elif parser in ("auto" , "default" , "weighted"):
             #TODO Guess best parser
-            from pydsl.Grammar.Parser.Weighted import WeightedParser
+            from pydsl.Parser.Weighted import WeightedParser
             return WeightedParser(grammar)
         else:
             raise Exception("Wrong parser name: " + parser)

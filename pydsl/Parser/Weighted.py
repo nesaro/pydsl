@@ -145,7 +145,7 @@ class WeightedParser(TopDownParser):
 
     def __recursive_parser(self, onlysymbol, data, production, showerrors = False):
         """ Main function. It is recursive """
-        from ..Symbol import TerminalSymbol, NonTerminalSymbol, NullSymbol
+        from pydsl.Grammar.Symbol import TerminalSymbol, NonTerminalSymbol, NullSymbol
         if isinstance(onlysymbol, TerminalSymbol):
             #Locate every occurrence of word and return a set of results. Follow boundariesrules
             LOG.debug("Iteration: terminalsymbol")

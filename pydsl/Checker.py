@@ -63,10 +63,10 @@ class BNFChecker(Checker):
         Checker.__init__(self)
         parser = bnf.options.get("parser",parser)
         if parser == "descent" or parser == "auto" or parser == "default":
-            from .Grammar.Parser.RecursiveDescent import RecursiveDescentParser
+            from pydsl.Parser.RecursiveDescent import RecursiveDescentParser
             self.__parser = RecursiveDescentParser(bnf)
         elif parser == "weighted":
-            from .Grammar.Parser.Weighted import WeightedParser
+            from pydsl.Parser.Weighted import WeightedParser
             self.__parser = WeightedParser(bnf)
         else:
             LOG.error("Wrong parser name: " + parser)
