@@ -25,10 +25,12 @@ LOG = logging.getLogger(__name__)
 from pydsl.Memory.Loader import load_checker
 
 class Checker(object):
-    """ Ensures information follows a rule, protocol or has a shape.
-    Provides only check function, for complex operations, use Grammar"""
+    """ Ensures that input follows a rule, protocol, grammar alphabet..."""
     def __init__(self):
         pass
+
+    def __call__(self, value):
+        return self.check(value)
 
     def check(self, value):# -> bool:
         raise NotImplementedError

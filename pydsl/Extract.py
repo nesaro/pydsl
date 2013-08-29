@@ -16,9 +16,6 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 
-"""
-guess which types are the input data. 
-"""
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
@@ -33,7 +30,7 @@ from pydsl.Alphabet.Definition import AlphabetDefinition
 from pydsl.Grammar.Definition import GrammarDefinition
 
 def extract(grammar, inputdata):
-    """Calls check for every possible slice of text"""
+    """Extract every slice of the input data that belongs to the Grammar Definition"""
     checker = load_checker(grammar)
     totallen = len(inputdata)
     if isinstance(grammar, GrammarDefinition):

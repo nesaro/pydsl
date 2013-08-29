@@ -35,6 +35,7 @@ from pydsl.Config import GLOBALCONFIG
 
 
 class Guesser(object):
+    """Returns every grammar and alphabet definition that matches the input"""
     def __init__(self, memorylist = None):
         if not memorylist:
             memorylist = GLOBALCONFIG.memorylist
