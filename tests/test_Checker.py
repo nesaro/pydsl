@@ -114,3 +114,18 @@ class TestAlphabetListDefinitionChecker(unittest.TestCase):
         checker = AlphabetListChecker(a)
         self.assertTrue(checker.check('1234'))
         self.assertFalse(checker.check('abc'))
+
+class TestStringChecker(unittest.TestCase):
+    def testCheck(self):
+        """Test checker instantiation and call"""
+        from pydsl.Checker import StringChecker
+        grammarchecker = StringChecker("string123")
+        self.assertTrue(grammarchecker("string123"))
+        self.assertTrue(grammarchecker(["string123"]))
+        self.assertTrue(grammarchecker(("string123",)))
+        list_version = ["s","t","r","i","n","g","1","2","3"]
+        self.assertTrue(grammarchecker(("s","t","r","i","n","g","1","2","3",)))
+        self.assertTrue(grammarchecker(list_version))
+        self.assertTrue(grammarchecker([StringGrammarDefinition(x) for x in list_version]))
+        self.assertTrue(grammarchecker([Token(x) for x in list_version]))
+

@@ -144,9 +144,14 @@ class PLYChecker(Checker):
 class StringChecker(Checker):
     def __init__(self, gd):
         Checker.__init__(self)
+        if isinstance(gd, str):
+            from pydsl.Grammar.Definition import StringGrammarDefinition
+            gd = StringGrammarDefinition(gd)
         self.gd = gd
 
     def check(self, data):
+        if isinstance(data, list):
+            data = "".join(data)
         return self.gd.string == str(data)
 
 class JsonSchemaChecker(Checker):
