@@ -44,7 +44,8 @@ def terminal_symbol_reducer(symbol, word, production, fixed_start = False):
     elif symbol.boundariesrules == "any":
         pass
     elif isinstance(symbol.boundariesrules , int):
-        validresults = [x for x in validresults if x[0] == symbol.boundariesrules]
+        #validresults = [x for x in validresults if x[0] == symbol.boundariesrules]
+        pass
     else:
         raise ValueError("Unknown boundaries rules")
     from pydsl.Grammar.Tree import ParseTree
