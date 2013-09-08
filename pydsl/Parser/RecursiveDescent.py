@@ -23,7 +23,7 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
-from .Parser import TopDownParser, terminal_symbol_consume
+from .Parser import TopDownParser, terminal_symbol_reducer
 from pydsl.Grammar.Tree import ParseTree, Tree
 
 #Errors are stored elsewhere. If another alternative covers this error, we discard this alternative.
@@ -115,7 +115,7 @@ class RecursiveDescentParser(TopDownParser):
         if isinstance(onlysymbol, TerminalSymbol):
             #Locate every occurrence of word and return a set of results. Follow boundariesrules
             LOG.debug("Iteration: terminalsymbol")
-            result = terminal_symbol_consume(onlysymbol, data)
+            result = terminal_symbol_reducer(onlysymbol, data, production, fixed_start=True)
             if showerrors and not result:
                 return [ParseTree(0,len(data), [onlysymbol] , data, onlysymbol, valid = False)]
             return result

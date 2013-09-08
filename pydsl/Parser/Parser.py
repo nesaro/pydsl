@@ -25,79 +25,30 @@ import logging
 LOG = logging.getLogger(__name__)
 
 
-def terminal_symbol_reducer(symbol, word, production):
+def terminal_symbol_reducer(symbol, word, production, fixed_start = False):
     """ Reduces a terminal symbol """
-    from pydsl.Grammar.Tree import ParseTree
-    if not isinstance(word, str):
-        word = str(word)
+    if fixed_start:
+        max_begin = 1
+    else:
+        max_begin = len(word)
     validresults = []
+    for begin in range(0, max_begin):
+        for end in range(begin, len(word)+1):
+            if symbol.check(word[begin:end]):
+                validresults.append((end-begin, begin, end))
+    validresults = sorted(validresults, key=lambda x:x[0])
     if symbol.boundariesrules == "min":
-        LOG.debug("terminal_symbol_reducer: policy: min")
-        for begin in range(0, len(word)):
-            for end in range(begin, len(word)+1):
-                if symbol.check(word[begin:end]):
-                    LOG.debug("terminal_symbol_reducer: parsed:"+ str(word[begin:end]))
-                    validresults.append(ParseTree(begin, end, [symbol], word[begin:end], production))
-                    break #found the smallest valid symbol at begin
+        validresults = validresults[:1]
     elif symbol.boundariesrules == "max":
-        LOG.debug("terminal_symbol_reducer: policy: max")
-        for begin in range(0, len(word)):
-            maxword = 0
-            for end in range(begin, len(word)+1):
-                if symbol.check(word[begin:end]):
-                    LOG.debug("terminal_symbol_reducer: parsed:"+ str(word[begin:end]))
-                    maxword = end
-            if maxword > 0:
-                validresults.append(ParseTree(begin, maxword, [symbol], word[begin:maxword], production))
+        validresults = validresults[-1:]
     elif symbol.boundariesrules == "any":
-        LOG.debug("terminal_symbol_reducer: policy: any")
-        for begin in range(0, len(word)):
-            for end in range(begin, len(word)+1):
-                if symbol.check(word[begin:end]):
-                    validresults.append(ParseTree(begin, end, [symbol], word[begin:end], production))
+        pass
     elif isinstance(symbol.boundariesrules , int):
-        LOG.debug("terminal_symbol_reducer: policy: fixed")
-        size = symbol.boundariesrules
-        for begin in range(0, len(word)):
-            if symbol.check(word[begin:begin + size]):
-                LOG.debug("__auxReducer: parsed:"+ str(word[begin:begin + size]))
-                validresults.append(ParseTree(begin, begin + size, [symbol], word[begin:begin + size], production))
+        validresults = [x for x in validresults if x[0] == symbol.boundariesrules]
     else:
-        raise Exception("terminal_symbol_reducer: Unknown size policy")
-    return validresults
-
-def terminal_symbol_consume(symbol, word):
-    """ Reduces a terminal symbol. Always start from left"""
+        raise ValueError("Unknown boundaries rules")
     from pydsl.Grammar.Tree import ParseTree
-    begin = 0
-    if symbol.boundariesrules == "min":
-        for end in range(begin, len(word)+1):
-            if symbol.check(word[begin:end]):
-                return [ParseTree(begin, end, [symbol], word[begin:end], symbol)]
-    elif symbol.boundariesrules == "max":
-        LOG.debug("terminal_symbol_consume: policy: max")
-        maxword = 0
-        for end in range(begin, len(word)+1):
-            if symbol.check(word[begin:end]):
-                LOG.debug("terminal_symbol_reducer: parsed:"+ str(word[begin:end]))
-                maxword = end
-        if maxword > 0:
-           return[ParseTree(begin, maxword, [symbol], word[begin:maxword],
-               symbol)]
-    elif symbol.boundariesrules == "any":
-        validresults = []
-        for end in range(begin, len(word)+1):
-            if symbol.check(word[begin:end]):
-                validresults.append(ParseTree(begin, end, [symbol], word[begin:end], symbol))
-        return validresults
-    elif isinstance(symbol.boundariesrules,int):
-        size = symbol.boundariesrules
-        LOG.debug("terminal_symbol_consume: policy: fixed " + str(size))
-        if len(word) >= size and symbol.check(word[:size]):
-            return [ParseTree(0, size, [symbol], word[:size], symbol)]
-    else:
-        raise Exception("terminal_symbol_consume: Unknown size policy" + str(symbol.boundariesrules))
-    return []
+    return [ParseTree(begin, end, [symbol], word[begin:end], production) for (size, begin, end) in validresults]
 
 class Parser(object):
     """Expands an input based on grammar rules
@@ -127,6 +78,4 @@ class BottomUpParser(Parser):
     def __init__(self, bnfgrammar):
         from pydsl.Memory.Loader import load_lexer
         self._lexer = load_lexer(bnfgrammar.alphabet())
-        terminalsymbollist = bnfgrammar.terminalsymbollist
         Parser.__init__(self, bnfgrammar)
-        
