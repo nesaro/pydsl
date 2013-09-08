@@ -69,11 +69,10 @@ class RecursiveDescentResultTree(Tree):
             self.childlist.append(RecursiveDescentResultTree(content))
             return True
         elif self.childlist:
-            success = False
             for x in self.childlist:
                 if x.append(content, startpos):
-                    success = True
-            return success
+                    return True
+            return False
         elif content == self.content:
             LOG.debug("duplicated content")
             return False
