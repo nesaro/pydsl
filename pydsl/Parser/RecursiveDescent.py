@@ -97,8 +97,6 @@ class RecursiveDescentParser(TopDownParser):
     """Recursive descent parser class"""
     def get_trees(self, data, showerrors = False): # -> list:
         """ returns a list of trees with valid guesses """
-        if not isinstance(data, str):
-            data = str(data).strip()
         result = self.__recursive_parser(self._productionset.initialsymbol, data, self._productionset.main_production, showerrors)
         finalresult = []
         for eresult in result:
@@ -151,10 +149,8 @@ class RecursiveDescentParser(TopDownParser):
                         break #Try next alternative
                 else: # Alternative success (no break happened)
                     invalidstack += alternativeinvalidstack
-
                 for x in alternativetree.get_lists():
                     validstack.append(x)
-
             result = []
 
             LOG.debug("iteration result collection finished:" + str(validstack))
