@@ -27,6 +27,7 @@ LOG = logging.getLogger(__name__)
 
 def terminal_symbol_reducer(symbol, word, production, fixed_start = False):
     """ Reduces a terminal symbol """
+    #FIXME: This is the same code than extract for alphabets, should be merged
     if fixed_start:
         max_begin = 1
     else:
