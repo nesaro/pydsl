@@ -20,7 +20,8 @@ __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
-from pydsl.Translator.Lexer import EncodingTranslator
+from pydsl.Lexer import EncodingTranslator
+from pydsl.contrib.bnfgrammar import *
 
 
 class TestLexer2(unittest.TestCase):
@@ -87,7 +88,7 @@ class TestConceptTranslator(unittest.TestCase):
         from pydsl.Grammar.Definition import StringGrammarDefinition
         from pydsl.Alphabet.Definition import AlphabetListDefinition
         from pydsl.Alphabet.Token import Token
-        from pydsl.Translator.Lexer import ConceptTranslator
+        from pydsl.Lexer import ConceptTranslator
         red = StringGrammarDefinition("red")
         green = StringGrammarDefinition("green")
         blue = StringGrammarDefinition("blue")

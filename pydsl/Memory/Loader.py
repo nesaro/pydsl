@@ -60,10 +60,10 @@ def load_lexer(alphabet):
     if isinstance(alphabet, str):
         alphabet = load(alphabet)
     if isinstance(alphabet, AlphabetListDefinition):
-        from pydsl.Translator.Lexer import AlphabetListLexer
+        from pydsl.Lexer import AlphabetListLexer
         return AlphabetListLexer(alphabet)
     elif isinstance(alphabet, Encoding):
-        from pydsl.Translator.Lexer import EncodingTranslator
+        from pydsl.Lexer import EncodingTranslator
         return EncodingTranslator(alphabet)
     else:
         raise ValueError(alphabet)
