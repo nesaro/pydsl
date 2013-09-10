@@ -42,6 +42,15 @@ class TestLexer(unittest.TestCase):
         from pydsl.Config import load_default_memory
         load_default_memory()
 
+    def testTokenInput(self):
+        pass
+
+    def testListInput(self):
+        pass
+
+    def testEmptyInput(self):
+        pass
+
     def testSimpleLexing(self):
         """Test checker instantiation and call"""
         from pydsl.Memory.Loader import lexer_factory, load
@@ -82,7 +91,7 @@ class TestLexer(unittest.TestCase):
         from pydsl.Alphabet.Token import Token
         self.assertListEqual(result, [Token("123", numbers), Token("abc",abc),Token("abc",abc), Token("123", numbers)])
 
-class TestConceptTranslator(unittest.TestCase):
+class TestConceptLexer(unittest.TestCase):
     def test_Concept(self):
         from pydsl.Memory.Loader import lexer_factory
         from pydsl.Grammar.Definition import StringGrammarDefinition

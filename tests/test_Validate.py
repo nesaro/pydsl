@@ -40,3 +40,11 @@ class TestValidate(unittest.TestCase):
         validator = load_validator(productionset0)
         self.assertTrue(validator("input"))
 
+    def testTokenInput(self):
+        pass
+
+    def testListInput(self):
+        pass
+
+    def testEmptyInput(self):
+        pass

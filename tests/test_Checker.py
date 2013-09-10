@@ -23,6 +23,9 @@ import unittest
 
 class TestMongoChecker(unittest.TestCase):
     """Mongo checker"""
+    def testEmptyInput(self):
+        pass
+
     def testCheck(self):
         """Test checker instantiation and call"""
         bad = {"a":1,"b":3}
@@ -40,23 +43,54 @@ class TestMongoChecker(unittest.TestCase):
 
 class TestBNFChecker(unittest.TestCase):
     """BNF Checker"""
-    def testCheck(self):
+    def testStringInput(self):
         """Test checker instantiation and call"""
         from pydsl.Checker import BNFChecker
         from pydsl.contrib.bnfgrammar import productionset0
         grammardef = productionset0
         checker = BNFChecker(grammardef)
         self.assertTrue(checker.check("SR"))
+        self.assertTrue(checker.check(Token("S"), Token("R")))
+        self.assertTrue(checker.check(("S","R")))
         self.assertFalse(checker.check("SL"))
+
+    def testTokenInput(self):
+        pass
+
+    def testListInput(self):
+        pass
+
+    def testBinaryInput(self):
+        pass
+
+    def testEmptyInput(self):
+        pass
 
 class TestRegularExpressionChecker(unittest.TestCase):
     """BNF Checker"""
     def testCheck(self):
         """Test checker instantiation and call"""
         from pydsl.Checker import RegularExpressionChecker
-        checker = RegularExpressionChecker("abc")
-        self.assertTrue(checker.check("abc"))
+        input_str = "abc"
+        checker = RegularExpressionChecker(input_str)
+        self.assertTrue(checker.check(input_str))
+        self.assertTrue(checker.check([Token(x) for x in input_str]))
+        self.assertTrue(checker.check([x for x in input_str]))
+        self.assertTrue(checker.check(input_str))
         self.assertFalse(checker.check("abd"))
+
+    def testTokenInput(self):
+        pass
+
+    def testListInput(self):
+        pass
+
+    def testBinaryInput(self):
+        pass
+
+    def testEmptyInput(self):
+        pass
+
 
 class TestPLYChecker(unittest.TestCase):
     def testCheck(self):
@@ -68,6 +102,19 @@ class TestPLYChecker(unittest.TestCase):
         checker = PLYChecker(grammardef)
         self.assertTrue(checker.check("O"))
         self.assertFalse(checker.check("FALSE"))
+
+    def testTokenInput(self):
+        pass
+
+    def testListInput(self):
+        pass
+
+    def testBinaryInput(self):
+        pass
+
+    def testEmptyInput(self):
+        pass
+
 
 
 class TestJsonSchemaChecker(unittest.TestCase):
@@ -106,6 +153,18 @@ class TestEncodingChecker(unittest.TestCase):
         self.assertTrue(checker.check('asdf'))
         self.assertFalse(checker.check('£'))
 
+    def testTokenInput(self):
+        pass
+
+    def testListInput(self):
+        pass
+
+    def testBinaryInput(self):
+        pass
+
+    def testEmptyInput(self):
+        pass
+
 class TestAlphabetListDefinitionChecker(unittest.TestCase):
     def testCheck(self):
         from pydsl.Checker import AlphabetListChecker
@@ -114,6 +173,18 @@ class TestAlphabetListDefinitionChecker(unittest.TestCase):
         checker = AlphabetListChecker(a)
         self.assertTrue(checker.check('1234'))
         self.assertFalse(checker.check('abc'))
+
+    def testTokenInput(self):
+        pass
+
+    def testListInput(self):
+        pass
+
+    def testBinaryInput(self):
+        pass
+
+    def testEmptyInput(self):
+        pass
 
 class TestStringChecker(unittest.TestCase):
     def testCheck(self):
@@ -128,4 +199,16 @@ class TestStringChecker(unittest.TestCase):
         self.assertTrue(grammarchecker(list_version))
         self.assertTrue(grammarchecker([StringGrammarDefinition(x) for x in list_version]))
         self.assertTrue(grammarchecker([Token(x) for x in list_version]))
+
+    def testTokenInput(self):
+        pass
+
+    def testListInput(self):
+        pass
+
+    def testBinaryInput(self):
+        pass
+
+    def testEmptyInput(self):
+        pass
 

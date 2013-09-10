@@ -23,7 +23,7 @@ __email__ = "nesaro@gmail.com"
 import unittest
 
 
-class TestExtract(unittest.TestCase):
+class TestGrammarExtract(unittest.TestCase):
 
     def testGrammarDefinition(self):
         from pydsl.Extract import extract
@@ -33,9 +33,32 @@ class TestExtract(unittest.TestCase):
         self.assertListEqual(extract(gd,'abc1234abc'), expected_result)
         self.assertRaises(Exception, extract, None)
 
+    def testTokenInput(self):
+        pass
+
+    def testListInput(self):
+        pass
+
+    def testEmptyInput(self):
+        pass
+
+
+class TestAlphabetExtract(unittest.TestCase):
+
     def testAlphabet(self):
         from pydsl.Extract import extract
         from pydsl.Memory.Loader import load
         ad = load('ascii')
         self.assertListEqual(extract(ad,'a£'), [(0,1,'a')])
         self.assertRaises(Exception, extract, None)
+
+    def testTokenInput(self):
+        pass
+
+    def testListInput(self):
+        pass
+
+    def testEmptyInput(self):
+        pass
+
+
