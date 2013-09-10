@@ -25,13 +25,13 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
-from pydsl.Memory.Loader import load_checker
+from pydsl.Memory.Loader import checker_factory
 from pydsl.Alphabet.Definition import AlphabetDefinition
 from pydsl.Grammar.Definition import GrammarDefinition
 
 def extract(grammar, inputdata):
     """Extract every slice of the input data that belongs to the Grammar Definition"""
-    checker = load_checker(grammar)
+    checker = checker_factory(grammar)
     totallen = len(inputdata)
     if isinstance(grammar, GrammarDefinition):
         try:

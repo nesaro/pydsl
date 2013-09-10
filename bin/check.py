@@ -30,8 +30,8 @@ def checker(grammar, expression = None, input_file = None):
     #Generating and connecting output
     #listen to user, open read file, or other
     #configure output, write file, or other
-    from pydsl.Memory.Loader import load_checker
-    checker = load_checker(grammar)
+    from pydsl.Memory.Loader import checker_factory
+    checker = checker_factory(grammar)
     if expression:
         result = checker.check(expression)
         print(result)

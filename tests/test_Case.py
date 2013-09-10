@@ -26,8 +26,8 @@ class TestCase(unittest.TestCase):
         input_data = "1+2"
         from pydsl.Alphabet.Definition import Encoding
         ascii_encoding = Encoding("ascii")
-        from pydsl.Memory.Loader import load_lexer
-        ascii_lexer = load_lexer(ascii_encoding)
+        from pydsl.Memory.Loader import lexer_factory
+        ascii_lexer = lexer_factory(ascii_encoding)
         ascii_tokens = [x for x in ascii_lexer(input_data)]
         self.assertListEqual([str(x) for x in ascii_tokens], ['1', '+', '2'])
 

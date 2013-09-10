@@ -27,8 +27,8 @@ from pydsl.contrib.bnfgrammar import *
 class TestLexer2(unittest.TestCase):
     def testLexer(self):
         """Lexer call"""
-        from pydsl.Memory.Loader import load_lexer
-        lexer = load_lexer(productionset1.alphabet())
+        from pydsl.Memory.Loader import lexer_factory
+        lexer = lexer_factory(productionset1.alphabet())
         result = list(lexer(string1))
         self.assertTrue(result)
 
@@ -44,24 +44,24 @@ class TestLexer(unittest.TestCase):
 
     def testSimpleLexing(self):
         """Test checker instantiation and call"""
-        from pydsl.Memory.Loader import load_lexer, load
+        from pydsl.Memory.Loader import lexer_factory, load
         from pydsl.Alphabet.Definition import AlphabetListDefinition
         from pydsl.Alphabet.Token import Token
         integer = load('integer')
         date = load('Date')
         mydef = AlphabetListDefinition([integer,date])
-        lexer = load_lexer(mydef)
+        lexer = lexer_factory(mydef)
         self.assertListEqual(lexer("1234"), [(Token("1234",integer))])
         self.assertListEqual(lexer("123411/11/2001"), [Token("1", load("integer")),Token("2", load("integer")),Token("3", load("integer")),Token("4", load("integer")), Token("11/11/2001",date)])
 
     def testLexerGenerator(self):
-        from pydsl.Memory.Loader import load_lexer
+        from pydsl.Memory.Loader import lexer_factory
         from pydsl.Grammar.Definition import StringGrammarDefinition
         from pydsl.Alphabet.Definition import AlphabetListDefinition
         abc = StringGrammarDefinition("abc")
         numbers = StringGrammarDefinition("123")
         mydef = AlphabetListDefinition([abc, numbers])
-        mylexer = load_lexer(mydef)
+        mylexer = lexer_factory(mydef)
         def text_generator(receiver):
             next(receiver)
             receiver.send("123")
@@ -84,7 +84,7 @@ class TestLexer(unittest.TestCase):
 
 class TestConceptTranslator(unittest.TestCase):
     def test_Concept(self):
-        from pydsl.Memory.Loader import load_lexer
+        from pydsl.Memory.Loader import lexer_factory
         from pydsl.Grammar.Definition import StringGrammarDefinition
         from pydsl.Alphabet.Definition import AlphabetListDefinition
         from pydsl.Alphabet.Token import Token
@@ -93,7 +93,7 @@ class TestConceptTranslator(unittest.TestCase):
         green = StringGrammarDefinition("green")
         blue = StringGrammarDefinition("blue")
         alphabet = AlphabetListDefinition([red,green,blue])
-        lexer = load_lexer(alphabet)
+        lexer = lexer_factory(alphabet)
 
         def concept_translator_fun(inputtokens):
             result = []

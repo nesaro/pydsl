@@ -23,7 +23,7 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
-from pydsl.Memory.Loader import load_checker
+from pydsl.Memory.Loader import checker_factory
 from pydsl.Alphabet.Token import Token
 
 class AlphabetTranslator(object):
@@ -131,7 +131,7 @@ class AlphabetListLexer(Lexer):
             valid_alternatives = []
             index = tree.index
             for gd in self.alphabet.grammarlist:
-                checker = load_checker(gd)
+                checker = checker_factory(gd)
                 for size in range((gd.maxsize or len(self.string)) - index,
                                   max(gd.minsize-1,0),
                                   -1):
@@ -171,7 +171,7 @@ class AlphabetListLexer(Lexer):
             for x in range(1,len(buffer)):
                 currentstr = buffer[:x]
                 for gd in self.alphabet.grammarlist:
-                    checker = load_checker(gd)
+                    checker = checker_factory(gd)
                     if checker.check(currentstr):
                         buffer = buffer[x:]
                         target.send(Token(currentstr, gd))

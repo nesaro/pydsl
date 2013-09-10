@@ -78,6 +78,6 @@ class TopDownParser(Parser):
 class BottomUpParser(Parser):
     """ leaf to root parser"""
     def __init__(self, bnfgrammar):
-        from pydsl.Memory.Loader import load_lexer
-        self._lexer = load_lexer(bnfgrammar.alphabet())
+        from pydsl.Memory.Loader import lexer_factory
+        self._lexer = lexer_factory(bnfgrammar.alphabet())
         Parser.__init__(self, bnfgrammar)

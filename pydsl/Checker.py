@@ -22,7 +22,7 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
-from pydsl.Memory.Loader import load_checker
+from pydsl.Memory.Loader import checker_factory
 
 class Checker(object):
     """ Ensures that input follows a rule, protocol, grammar alphabet..."""
@@ -110,7 +110,7 @@ class MongoChecker(Checker):
                 operator = list(spec.keys())[0]
                 operand = list(spec.values())[0]
                 if operator == "$type":
-                    if not load_checker(operand).check(str(value)):
+                    if not checker_factory(operand).check(str(value)):
                         return False
                 elif operator == "$or":
                     if not any([self.__auxcheck({key:x}, data) for x in operand]):
@@ -174,8 +174,8 @@ class AlphabetListChecker(Checker):
         if not isinstance(gd, AlphabetListDefinition):
             raise TypeError
         self.gd = gd
-        from pydsl.Memory.Loader import load_checker
-        self.checkerinstances = [load_checker(x) for x in self.gd.grammarlist]
+        from pydsl.Memory.Loader import checker_factory
+        self.checkerinstances = [checker_factory(x) for x in self.gd.grammarlist]
 
     def check(self, data):
         for element in data:

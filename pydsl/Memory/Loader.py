@@ -22,7 +22,7 @@ __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
-def load_checker(grammar):
+def checker_factory(grammar):
     from pydsl.Grammar.BNF import BNFGrammar
     from pydsl.Grammar.Definition import PLYGrammar, RegularExpressionDefinition, MongoGrammar, StringGrammarDefinition, PythonGrammar
     from pydsl.Alphabet.Definition import AlphabetListDefinition
@@ -55,7 +55,7 @@ def load_checker(grammar):
     else:
         raise ValueError(grammar)
 
-def load_lexer(alphabet):
+def lexer_factory(alphabet):
     from pydsl.Alphabet.Definition import AlphabetListDefinition
     if isinstance(alphabet, str):
         alphabet = load(alphabet)
@@ -97,10 +97,10 @@ def load_validator(grammar):
 
 def _load_checker(originaldic):
     """Converts {"channelname","type"} into {"channelname",instance}"""
-    from pydsl.Memory.Loader import load_checker
+    from pydsl.Memory.Loader import checker_factory
     result = {}
     for key in originaldic:
-        result[key] = load_checker(str(originaldic[key]))
+        result[key] = checker_factory(str(originaldic[key]))
     return result
 
 def load_translator(function):

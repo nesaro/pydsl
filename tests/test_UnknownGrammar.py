@@ -20,7 +20,7 @@ __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
-from pydsl.Memory.Loader import load, load_lexer
+from pydsl.Memory.Loader import load, lexer_factory
 
 @unittest.skip
 class TestUnknown(unittest.TestCase):
@@ -30,7 +30,7 @@ class TestUnknown(unittest.TestCase):
 
     def testListAlphabet(self):
         listgrammar = load("list")
-        lexer = load_lexer(listgrammar)
+        lexer = lexer_factory(listgrammar)
         result = lexer("[x,y,z]")
         #THINK An special flag for trying to guess the content
         self.assertListEqual(result,["OPEN_LIST","UNK","SEPARATOR","UNK","SEPARATOR"])

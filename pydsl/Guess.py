@@ -29,7 +29,7 @@ __email__ = "nesaro@gmail.com"
 import logging
 LOG = logging.getLogger(__name__)
 from pkg_resources import resource_filename
-from pydsl.Memory.Loader import load_checker
+from pydsl.Memory.Loader import checker_factory
 from pypository.search.Searcher import Searcher
 from pydsl.Config import GLOBALCONFIG
 
@@ -57,7 +57,7 @@ class Guesser(object):
                         break
                 else:
                     continue # not found 
-                checker = load_checker(typ)
+                checker = checker_factory(typ)
                 if checker.check(inputstring):
                     result.add(str(name))
             except (TypeError, ValueError):
