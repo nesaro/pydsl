@@ -26,7 +26,7 @@ LOG = logging.getLogger(__name__)
 from pydsl.Memory.Loader import checker_factory
 from pydsl.Alphabet.Token import Token
 
-class AlphabetTranslator(object):
+class Lexer(object):
     """Translates an input written in one Alphabet into another Alphabet"""
     @property
     def input_alphabet(self):
@@ -36,7 +36,7 @@ class AlphabetTranslator(object):
     def output_alphabet(self):
         raise NotImplementedError
 
-class EncodingTranslator(AlphabetTranslator):
+class EncodingLexer(Lexer):
     """Special Lexer that encodes from a string a reads a string"""
     def __init__(self, encoding):
         self.encoding = encoding
@@ -55,7 +55,7 @@ class EncodingTranslator(AlphabetTranslator):
                 target.send(Token(x))
 
 
-class Lexer(AlphabetTranslator):
+class AlphabetLexer(Lexer):
     """Lexer receives an Alphabet in the initialization (A1).
     Receives an input that belongs to A1 and generates a list of tokens in a different Alphabet A2
     It is always described with a regular grammar"""
@@ -115,9 +115,9 @@ class Tree:
     def __bool__(self):
         return bool(self.content)
 
-class AlphabetListLexer(Lexer):
+class AlphabetListLexer(AlphabetLexer):
     def __init__(self, alphabet):
-        Lexer.__init__(self)
+        AlphabetLexer.__init__(self)
         self.alphabet = alphabet
 
     @property
@@ -177,7 +177,7 @@ class AlphabetListLexer(Lexer):
                         target.send(Token(currentstr, gd))
 
 
-class ConceptTranslator(AlphabetTranslator):
+class ConceptLexer(Lexer):
     """Translates a set of concepts that belong to a ConceptAlphabet into another ConceptAlphabet"""
     def __init__(self, function):
         self._function = function

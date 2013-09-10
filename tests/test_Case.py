@@ -51,8 +51,8 @@ class TestCase(unittest.TestCase):
             if number == "two":
                 return 2
  
-        from pydsl.Lexer import ConceptTranslator
-        to_concepts = ConceptTranslator(concept_translator_fun)
+        from pydsl.Lexer import ConceptLexer
+        to_concepts = ConceptLexer(concept_translator_fun)
         math_expression_concepts = to_concepts(ascii_tokens)
         self.assertListEqual(math_expression_concepts, ['one', 'addition', 'two'])
         grammar_def = [

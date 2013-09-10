@@ -25,7 +25,7 @@ from pydsl.contrib.bnfgrammar import *
 from pydsl.Parser.RecursiveDescent import RecursiveDescentParser
 from pydsl.Parser.Weighted import WeightedParser
 from pydsl.Parser.LR0 import LR0Parser
-from pydsl.Lexer import EncodingTranslator
+from pydsl.Lexer import EncodingLexer
 import unittest
 
 class TestParsers(unittest.TestCase):
@@ -93,7 +93,7 @@ class TestParsers(unittest.TestCase):
 
     def testLR0ParserStore(self):
         parser = LR0Parser(productionset0)
-        tokelist = [x for x in EncodingTranslator('utf8')(p0good)]
+        tokelist = [x for x in EncodingLexer('utf8')(p0good)]
         result = parser.check(tokelist)
         self.assertTrue(result)
 

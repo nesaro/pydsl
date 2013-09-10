@@ -63,8 +63,8 @@ def lexer_factory(alphabet):
         from pydsl.Lexer import AlphabetListLexer
         return AlphabetListLexer(alphabet)
     elif isinstance(alphabet, Encoding):
-        from pydsl.Lexer import EncodingTranslator
-        return EncodingTranslator(alphabet)
+        from pydsl.Lexer import EncodingLexer
+        return EncodingLexer(alphabet)
     else:
         raise ValueError(alphabet)
 
