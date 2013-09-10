@@ -117,6 +117,8 @@ class TestParsers(unittest.TestCase):
         parser = WeightedParser(productionset1)
         result = parser(string1)
         self.assertTrue(result)
+        self.assertTrue(parser([x for x in string1]))
+        self.assertTrue(parser([Token(x) for x in string1]))
 
     def testWeightedParserBad(self):
         parser = WeightedParser(productionset1)
@@ -153,16 +155,3 @@ class TestWeightedParser(unittest.TestCase):
         result = mix_results([set1b, set2b, set3b], None)
         #TODO: check result
         self.assertTrue(len(result) == 1)
-
-class TestLexer(unittest.TestCase):
-    def testLexer(self):
-        """Lexer call"""
-        from pydsl.Memory.Loader import load_lexer
-        lexer = load_lexer(productionset1.alphabet())
-        result = list(lexer(string1))
-        self.assertTrue(result)
-
-    def testencodingLexer(self):
-        lexer = EncodingTranslator('utf8')
-        result = list(lexer("abcde"))
-        print([str(x) for x in result])

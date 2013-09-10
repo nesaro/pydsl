@@ -20,6 +20,21 @@ __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
+from pydsl.Translator.Lexer import EncodingTranslator
+
+
+class TestLexer2(unittest.TestCase):
+    def testLexer(self):
+        """Lexer call"""
+        from pydsl.Memory.Loader import load_lexer
+        lexer = load_lexer(productionset1.alphabet())
+        result = list(lexer(string1))
+        self.assertTrue(result)
+
+    def testencodingLexer(self):
+        lexer = EncodingTranslator('utf8')
+        result = list(lexer("abcde"))
+        print([str(x) for x in result])
 
 class TestLexer(unittest.TestCase):
     def setUp(self):
@@ -65,7 +80,6 @@ class TestLexer(unittest.TestCase):
         text_generator(mylexer.lexer_generator(collector()))
         from pydsl.Alphabet.Token import Token
         self.assertListEqual(result, [Token("123", numbers), Token("abc",abc),Token("abc",abc), Token("123", numbers)])
-
 
 class TestConceptTranslator(unittest.TestCase):
     def test_Concept(self):
