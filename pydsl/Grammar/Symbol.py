@@ -58,7 +58,7 @@ class TerminalSymbol(Symbol):
             weight = weight or 49
         Symbol.__init__(self, weight)
         if boundariesrules not in ("min","max","any") and not isinstance(boundariesrules, int):
-            raise TypeError
+            raise TypeError("Unknown boundaries rules %s" % boundariesrules )
         if not gd:
             raise Exception
         self.gd = gd
