@@ -175,7 +175,7 @@ class RecursiveDescentParser(TopDownParser):
                     allvalid = all([x.valid for x in childlist])
                     if allvalid:
                         newresult = ParseTree(0, rightpos - leftpos, [onlysymbol],
-                                data[leftpos:rightpos], production, childlist)
+                                data[leftpos:rightpos], alternative, childlist)
                         newresult.valid = True
                         result.append(newresult)
             if showerrors and not result:
