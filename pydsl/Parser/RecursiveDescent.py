@@ -187,3 +187,70 @@ class RecursiveDescentParser(TopDownParser):
                 return [erroresult]
             return result
         raise Exception("Unknown symbol:" + str(onlysymbol))
+
+class SimpleRecursiveDescentParser(TopDownParser):
+    """Recursive descent parser class"""
+    def get_trees(self, data, showerrors = False): # -> list:
+        """ returns a list of trees with valid guesses """
+        result = self.__recursive_parser(self._productionset.initialsymbol, data, self._productionset.main_production)
+        finalresult = []
+        for eresult in result:
+            if eresult.leftpos == 0 and eresult.rightpos == len(data) and eresult not in finalresult:
+                finalresult.append(eresult)        
+        return finalresult
+
+    def __recursive_parser(self, onlysymbol, data, production):
+        """ Aux function. helps check_word"""
+        LOG.debug("__recursive_parser: Begin ")
+        if not data:
+            return []
+        from pydsl.Grammar.Symbol import TerminalSymbol, NullSymbol, NonTerminalSymbol
+        if isinstance(onlysymbol, TerminalSymbol):
+            #Locate every occurrence of word and return a set of results. Follow boundariesrules
+            LOG.debug("Iteration: terminalsymbol")
+            result = terminal_symbol_reducer(onlysymbol, data, production, fixed_start=True)
+            return result
+        elif isinstance(onlysymbol, NonTerminalSymbol):
+            validstack = []
+            for alternative in self._productionset.getProductionsBySide([onlysymbol]): #Alternative
+                alternativetree = RecursiveDescentResultTree(None)
+                for symbol in alternative.rightside: # Symbol
+                    symbol_success = False
+                    for totalpos in alternativetree.right_limit_list(): # Right limit
+                        if totalpos >= len(data):
+                            continue
+                        thisresult =  self.__recursive_parser(symbol, data[totalpos:], alternative)
+                        if thisresult and all(thisresult):
+                            symbol_success = True
+                            for x in thisresult:
+                                x.shift(totalpos)
+                                success = alternativetree.append(x, totalpos)
+                    if not symbol_success:
+                        LOG.debug("Symbol doesn't work" + str(symbol))
+                        break #Try next alternative
+                for x in alternativetree.get_lists():
+                    validstack.append(x)
+            result = []
+
+            LOG.debug("iteration result collection finished:" + str(validstack))
+            for alternative in self._productionset.getProductionsBySide([onlysymbol]):
+                for results in validstack:
+                    leftpos = results[0].leftpos
+                    rightpos = results[-1].rightpos
+                    if len(results) != len(alternative.rightside): 
+                        LOG.debug("Discarded: incorrect number of non null symbols")
+                        continue
+                    if rightpos > len(data):
+                        LOG.debug("Discarded: length mismatch")
+                        continue
+                    for x in range(min(len(alternative.rightside), len(results))):
+                        if results[x].content != alternative.rightside[x]:
+                            LOG.debug("Discarded: rule doesn't match partial result")
+                            continue
+                    childlist = [x for x in results]
+                    newresult = ParseTree(0, rightpos - leftpos, [onlysymbol],
+                            data[leftpos:rightpos], alternative, childlist)
+                    newresult.valid = True
+                    result.append(newresult)
+            return result
+        raise Exception("Unknown symbol:" + str(onlysymbol))

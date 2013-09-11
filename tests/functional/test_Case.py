@@ -78,3 +78,34 @@ class TestCase(unittest.TestCase):
             
         result = parse_tree_walker(parse_tree[0])
         self.assertEqual(result, 3)
+
+
+    def test_calculator(self):
+        from pydsl.Config import load_default_memory
+        load_default_memory()
+        grammar_def = [
+                "S ::= E",
+                "E ::= number operator number",
+                "number := Word,integer,max",
+                "operator := String,+",
+                ]
+        from pydsl.Memory.File.BNF import strlist_to_production_set
+        production_set = strlist_to_production_set(grammar_def)
+        from pydsl.Parser.RecursiveDescent import RecursiveDescentParser, SimpleRecursiveDescentParser
+        from pydsl.Parser.Weighted import WeightedParser
+        rdp = SimpleRecursiveDescentParser(production_set)
+        parse_tree = rdp("1+2")
+
+        def parse_tree_walker(tree):
+            from pydsl.Grammar.Symbol import NonTerminalSymbol
+            print(tree.childlist)
+            if tree.production.leftside[0] == NonTerminalSymbol("S"):
+                return parse_tree_walker(tree.childlist[0])
+            if tree.production.leftside[0] == NonTerminalSymbol("E"):
+                return int(tree.childlist[0].content) + int(tree.childlist[2].content)
+            else:
+                raise Exception
+            
+        result = parse_tree_walker(parse_tree[0])
+        self.assertEqual(result, 3)
+
