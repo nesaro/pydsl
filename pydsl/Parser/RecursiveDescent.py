@@ -92,8 +92,8 @@ class RecursiveDescentResultTree(Tree):
         return list(set(result))
 
 
-class RecursiveDescentParser(TopDownParser):
-    """Recursive descent parser class"""
+class BacktracingErrorRecursiveDescentParser(TopDownParser):
+    """Recursive descent parser implementation. Backtracing. Error support"""
     def get_trees(self, data, showerrors = False): # -> list:
         """ returns a list of trees with valid guesses """
         result = self.__recursive_parser(self._productionset.initialsymbol, data, self._productionset.main_production, showerrors)
@@ -188,10 +188,12 @@ class RecursiveDescentParser(TopDownParser):
             return result
         raise Exception("Unknown symbol:" + str(onlysymbol))
 
-class SimpleRecursiveDescentParser(TopDownParser):
-    """Recursive descent parser class"""
+class BacktracingRecursiveDescentParser(TopDownParser):
+    """Recursive descent parser implementation. Backtracing"""
     def get_trees(self, data, showerrors = False): # -> list:
         """ returns a list of trees with valid guesses """
+        if showerrors:
+            raise NotImplementedError("This parser doesn't implement errors")
         result = self.__recursive_parser(self._productionset.initialsymbol, data, self._productionset.main_production)
         finalresult = []
         for eresult in result:
@@ -204,7 +206,7 @@ class SimpleRecursiveDescentParser(TopDownParser):
         LOG.debug("__recursive_parser: Begin ")
         if not data:
             return []
-        from pydsl.Grammar.Symbol import TerminalSymbol, NullSymbol, NonTerminalSymbol
+        from pydsl.Grammar.Symbol import TerminalSymbol, NonTerminalSymbol
         if isinstance(onlysymbol, TerminalSymbol):
             #Locate every occurrence of word and return a set of results. Follow boundariesrules
             LOG.debug("Iteration: terminalsymbol")

@@ -6,7 +6,7 @@ __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
-from pydsl.Parser.RecursiveDescent import RecursiveDescentParser
+from pydsl.Parser.RecursiveDescent import BacktracingErrorRecursiveDescentParser
 from pydsl.Memory.File.BNF import load_bnf_file
 from pydsl.Memory.Loader import load,checker_factory
 
@@ -19,19 +19,19 @@ class TestLogicGrammars(unittest.TestCase):
         productionrulesetlogical = load_bnf_file("pydsl/contrib/grammar/LogicalExpression.bnf")
         #import pdb
         #pdb.set_trace()
-        parser = RecursiveDescentParser(productionrulesetlogical)
+        parser = BacktracingErrorRecursiveDescentParser(productionrulesetlogical)
         result = parser.get_trees(self.tokelist5)
         self.assertTrue(result)
 
     def testTrueFalse(self):
         productionrulesetlogical = load_bnf_file("pydsl/contrib/grammar/TrueFalse.bnf")
-        parser = RecursiveDescentParser(productionrulesetlogical)
+        parser = BacktracingErrorRecursiveDescentParser(productionrulesetlogical)
         result = parser.get_trees(self.tokelist5)
         self.assertTrue(result)
 
     def testLogicalExpression(self):
         productionrulesetlogical = load_bnf_file("pydsl/contrib/grammar/LogicalExpression.bnf")
-        parser = RecursiveDescentParser(productionrulesetlogical)
+        parser = BacktracingErrorRecursiveDescentParser(productionrulesetlogical)
         result = parser.get_trees("True&&False")
         self.assertTrue(result)
         result = parser.get_trees("True&|False")
@@ -42,7 +42,7 @@ class TestLogicGrammars(unittest.TestCase):
 class TestHTMLGrammars(unittest.TestCase):
     def testHTMLTable(self):
         productionrulesetlogical = load_bnf_file("pydsl/contrib/grammar/TrueHTMLTable.bnf")
-        parser = RecursiveDescentParser(productionrulesetlogical)
+        parser = BacktracingErrorRecursiveDescentParser(productionrulesetlogical)
         result = parser.get_trees("<table><tr><td>1</td></tr></table>")
         self.assertTrue(result)
         result = parser.get_trees("<trble><tr><td>1</td></tr></table>")

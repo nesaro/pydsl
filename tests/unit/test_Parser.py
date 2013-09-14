@@ -22,7 +22,7 @@ __email__ = "nesaro@gmail.com"
 
 
 from pydsl.contrib.bnfgrammar import *
-from pydsl.Parser.RecursiveDescent import RecursiveDescentParser
+from pydsl.Parser.RecursiveDescent import BacktracingErrorRecursiveDescentParser
 from pydsl.Parser.Weighted import WeightedParser
 from pydsl.Parser.LR0 import LR0Parser
 from pydsl.Lexer import EncodingLexer
@@ -31,7 +31,7 @@ import unittest
 class TestParsers(unittest.TestCase):
     @unittest.skip
     def testRecursiveLeftRecursion(self):
-        descentparser = RecursiveDescentParser(productionsetlr)
+        descentparser = BacktracingErrorRecursiveDescentParser(productionsetlr)
         result = descentparser(dots)
         self.assertTrue(result)
 
@@ -42,32 +42,32 @@ class TestParsers(unittest.TestCase):
         self.assertTrue(result)
 
     def testRightRecursion(self):
-        descentparser = RecursiveDescentParser(productionsetrr)
+        descentparser = BacktracingErrorRecursiveDescentParser(productionsetrr)
         result = descentparser(dots)
         self.assertTrue(result)
 
     def testCenterRecursion(self):
-        descentparser = RecursiveDescentParser(productionsetcr)
+        descentparser = BacktracingErrorRecursiveDescentParser(productionsetcr)
         result = descentparser(dots)
         self.assertTrue(result)
 
     def testRecursiveDescentParserStore(self):
-        descentparser = RecursiveDescentParser(productionset1)
+        descentparser = BacktracingErrorRecursiveDescentParser(productionset1)
         result = descentparser(string1)
         self.assertTrue(result)
 
     def testRecursiveDescentParserBad(self):
-        descentparser = RecursiveDescentParser(productionset1)
+        descentparser = BacktracingErrorRecursiveDescentParser(productionset1)
         result = descentparser(string2)
         self.assertFalse(result)
 
     def testRecursiveDescentParserNull(self):
-        descentparser = RecursiveDescentParser(productionset2)
+        descentparser = BacktracingErrorRecursiveDescentParser(productionset2)
         result = descentparser(string3)
         self.assertTrue(result)
 
     def testRecursiveDescentParserNullBad(self):
-        descentparser = RecursiveDescentParser(productionset2)
+        descentparser = BacktracingErrorRecursiveDescentParser(productionset2)
         result = descentparser(string4)
         self.assertFalse(result)
 
@@ -109,7 +109,7 @@ class TestParsers(unittest.TestCase):
         self.assertTrue(result)
 
     def testWeightedCenterRecursion(self):
-        descentparser = RecursiveDescentParser(productionsetcr)
+        descentparser = BacktracingErrorRecursiveDescentParser(productionsetcr)
         result = descentparser(dots)
         self.assertTrue(result)
 

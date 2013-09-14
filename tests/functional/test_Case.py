@@ -64,8 +64,8 @@ class TestCase(unittest.TestCase):
                 ]
         from pydsl.Memory.File.BNF import strlist_to_production_set
         production_set = strlist_to_production_set(grammar_def)
-        from pydsl.Parser.RecursiveDescent import RecursiveDescentParser
-        rdp = RecursiveDescentParser(production_set)
+        from pydsl.Parser.RecursiveDescent import BacktracingErrorRecursiveDescentParser
+        rdp = BacktracingErrorRecursiveDescentParser(production_set)
         parse_tree = rdp(math_expression_concepts)
         from pydsl.Grammar.Symbol import NonTerminalSymbol
         def parse_tree_walker(tree):
@@ -91,9 +91,8 @@ class TestCase(unittest.TestCase):
                 ]
         from pydsl.Memory.File.BNF import strlist_to_production_set
         production_set = strlist_to_production_set(grammar_def)
-        from pydsl.Parser.RecursiveDescent import RecursiveDescentParser, SimpleRecursiveDescentParser
-        from pydsl.Parser.Weighted import WeightedParser
-        rdp = SimpleRecursiveDescentParser(production_set)
+        from pydsl.Parser.RecursiveDescent import BacktracingRecursiveDescentParser
+        rdp = BacktracingRecursiveDescentParser(production_set)
         parse_tree = rdp("1+2")
 
         def parse_tree_walker(tree):
