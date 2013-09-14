@@ -93,7 +93,7 @@ class RecursiveDescentResultTree(Tree):
 
 
 class BacktracingErrorRecursiveDescentParser(TopDownParser):
-    """Recursive descent parser implementation. Backtracing. Error support"""
+    """Recursive descent parser implementation. Backtracing. Null support. Error support"""
     def get_trees(self, data, showerrors = False): # -> list:
         """ returns a list of trees with valid guesses """
         result = self.__recursive_parser(self._productionset.initialsymbol, data, self._productionset.main_production, showerrors)
