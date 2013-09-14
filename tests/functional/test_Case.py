@@ -91,8 +91,8 @@ class TestCase(unittest.TestCase):
                 ]
         from pydsl.Memory.File.BNF import strlist_to_production_set
         production_set = strlist_to_production_set(grammar_def)
-        from pydsl.Parser.RecursiveDescent import BacktracingRecursiveDescentParser
-        rdp = BacktracingRecursiveDescentParser(production_set)
+        from pydsl.Parser.RecursiveDescent import LL1RecursiveDescentParser
+        rdp = LL1RecursiveDescentParser(production_set)
         parse_tree = rdp("1+2")
 
         def parse_tree_walker(tree):

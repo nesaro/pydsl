@@ -256,3 +256,51 @@ class BacktracingRecursiveDescentParser(TopDownParser):
                     result.append(newresult)
             return result
         raise Exception("Unknown symbol:" + str(onlysymbol))
+
+class LL1RecursiveDescentParser(TopDownParser):
+    def get_trees(self, data, showerrors = False): # -> list:
+        """ returns a list of trees with valid guesses """
+        if showerrors:
+            raise NotImplementedError("This parser doesn't implement errors")
+        self.data = data
+        return self.__aux_parser(self._productionset.initialsymbol)
+
+    def __aux_parser(self, symbol):
+        while True:
+            from pydsl.Grammar.Symbol import TerminalSymbol
+            if isinstance(symbol, TerminalSymbol):
+                return self.match(symbol)
+            productions = self._productionset.getProductionsBySide(symbol)
+            first_of_each_production = {}
+            for production in productions:
+                first_of_each_production[production] = self._productionset.first_lookup(production.rightside[0])
+            valid_firsts = [x for (x,y) in first_of_each_production.items() if self.current in y]
+            if len(valid_firsts) != 1:
+                raise Exception
+            childlist = []
+            for element in valid_firsts[0].rightside:
+                childlist += self.__aux_parser(element)
+            left = childlist[0].left
+            right = childlist[-1].right
+            content = [x.content for x in childlist]
+            return ParseTree(left, right, [symbol], content, valid_firsts[0], childlist=childlist)
+
+
+    def consume(self):
+        self.index +=1
+        if self.index >= len(self.data):
+            raise Exception
+        return self.current
+
+    @property
+    def current(self):
+        return self.data[self.index]
+
+    def match(self, symbol):
+        if symbol.check(self.current):
+            self.consume()
+            return ParseTree(self.index-1, self.index, [symbol], self.current, None)
+        else:
+            raise Exception("Not matched")
+
+
