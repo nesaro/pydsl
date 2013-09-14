@@ -1,5 +1,5 @@
 def function(input):
-    return {"output":input}
+    return input
 
 
 iclass = "PythonTransformer"

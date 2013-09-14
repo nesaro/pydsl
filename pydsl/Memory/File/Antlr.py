@@ -24,7 +24,7 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
-from pydsl.Alphabet.Lexer import Lexer
+from pydsl.Lexer import AlphabetLexer
 from pydsl.Alphabet.Token import Token
 import re
 
@@ -63,7 +63,7 @@ chardict = {",": "COMMA",
         "$": "DOLLAR"}
 
 
-class ANLTRGrammarLexer(Lexer):
+class ANLTRGrammarLexer(AlphabetLexer):
     def matchchar(self, char):
         if not char in chardict:
             raise Exception

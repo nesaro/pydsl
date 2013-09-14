@@ -1,4 +1,5 @@
-#!/usr/bin/python3
+#!/usr/bin/env python
+
 # -*- coding: utf-8 -*-
 #This file is part of pydsl.
 #
@@ -75,13 +76,10 @@ def translate(transformer = None, expression = None, inputfiledic = None, output
     #listen to user, open read file, or other
     #configure output, write file, or other
     #print self._opt
-    mainfunc = load(transformer)
+    mainfunc = load_translator(transformer)
     if expression and not outputfiledic:
         myexpression = parse_shell_dict(expression)
         result = mainfunc(**myexpression)
-        if result:
-            for key in result.keys():
-                result[key] = str(result[key])
         print(result)
         return result #FIXME: this is the only condition that returns a result. Because of tests
     raise Exception("Invalid arguments")

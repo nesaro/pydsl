@@ -21,20 +21,21 @@ __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
-from pydsl.Abstract import Singleton
 import logging
 LOG = logging.getLogger(__name__)
 from pkg_resources import resource_filename
 
 def load_default_memory():
-    from pydsl.Memory.Directory import DirStorage
     from pydsl.Memory.Dict import RegexpDictStorage
     from pydsl.Memory.List import EncodingStorage
+    from pypository.Directory import DirStorage
+    from regexps import res
     dirname = resource_filename("pydsl.contrib", "")
-    GLOBALCONFIG.memorylist.append(DirStorage(dirname + "/grammar/"))
-    GLOBALCONFIG.memorylist.append(RegexpDictStorage(dirname + "/dict/regexp.dict"))
-    GLOBALCONFIG.memorylist.append(EncodingStorage(dirname + "/list/encoding.py"))
-    GLOBALCONFIG.memorylist.append(DirStorage(dirname + "/transformer/"))
+    GLOBALCONFIG.memorylist.append(DirStorage(dirname + "/grammar/", GLOBALCONFIG.formatlist))
+    GLOBALCONFIG.memorylist.append(DirStorage(dirname + "/alphabet/", GLOBALCONFIG.formatlist))
+    GLOBALCONFIG.memorylist.append(RegexpDictStorage(res))
+    GLOBALCONFIG.memorylist.append(EncodingStorage(dirname + "/encoding.py"))
+    GLOBALCONFIG.memorylist.append(DirStorage(dirname + "/transformer/", GLOBALCONFIG.formatlist))
 
 def default_formats():
     from pydsl.Memory.File.Regexp import load_re_from_file, summary_re_from_file
@@ -48,21 +49,10 @@ def default_formats():
 
 class GlobalConfig(object):
     """Execution time global configuration"""
-    def __init__(self, persistent_dir=None, debuglevel=40):
-        self.persistent_dir = persistent_dir
+    def __init__(self, debuglevel=40):
         self.memorylist = []
         self.formatlist = default_formats()
         self.__debuglevel = debuglevel
-        if self.persistent_dir is None:
-            try:
-                import os
-                if not os.path.exists(os.environ['HOME'] + "/.pydsl/"):
-                    os.mkdir(os.environ['HOME'] + "/.pydsl/")
-                self.persistent_dir = os.environ['HOME'] + "/.pydsl/persistent/"
-                if not os.path.exists(self.persistent_dir):
-                    os.mkdir(self.persistent_dir)
-            except (OSError, KeyError):
-                LOG.exception("Unable to create persistent dir")
 
     def load(self, filename):
         """Load config from file"""
@@ -79,6 +69,18 @@ class GlobalConfig(object):
     @debuglevel.setter
     def debuglevel(self, level):
         self.__debuglevel = level
+
+class Singleton(type):
+    """singleton pattern metaclass"""
+    #Only problem here is that classes can't have two metaclasses
+    def __init__(cls, name, bases, dct):
+        cls.__instance = None
+        type.__init__(cls, name, bases, dct)
+
+    def __call__(cls, *args, **kw):
+        if cls.__instance is None:
+            cls.__instance = type.__call__(cls, *args, **kw)
+        return cls.__instance
 
 GlobalConfig2 = Singleton('GlobalConfig2', (GlobalConfig, ), {})
 GLOBALCONFIG = GlobalConfig2()  # The only instance available

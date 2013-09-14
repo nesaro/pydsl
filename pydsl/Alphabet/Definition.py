@@ -21,9 +21,9 @@ __email__ = "nesaro@gmail.com"
 
 
 class AlphabetDefinition(object):
-    """Defines an alphabet"""
+    """Defines a set of valid elements"""
     @property
-    def grammar_list(self):
+    def to_list(self):
         """Returns a list of allowed grammars"""
         raise NotImplementedError
 
@@ -36,35 +36,26 @@ class AlphabetListDefinition(AlphabetDefinition):
     def __init__(self, grammarlist):
         if not grammarlist:
             raise ValueError
-        self.grammarlist = grammarlist
+        from pydsl.Memory.Loader import load
+        self.grammarlist = []
+        for x in grammarlist:
+            if isinstance(x, str):
+                self.grammarlist.append(load(x))
+            else:
+                self.grammarlist.append(x)
+        from pydsl.Grammar.Definition import GrammarDefinition
+        for x in self.grammarlist:
+            if not isinstance(x, GrammarDefinition):
+                raise TypeError("Expected GrammarDefinition, Got %s:%s" % (x.__class__.__name__,x))
 
     def __getitem__(self, index):
         """Retrieves token by index"""
         return self.grammarlist[index]
 
     @property
-    def grammar_list(self):
+    def to_list(self):
         return self.grammarlist
 
-
-class AlphabetDictDefinition(AlphabetDefinition):
-    """Uses a dict of grammar definitions"""
-    def __init__(self, grammarlist):
-        if not grammarlist:
-            raise ValueError
-        from pydsl.Memory.Loader import load
-        self.grammardict = {}
-        for x in grammarlist:
-            self.grammardict[x] = load(grammarlist[x])
-
-    def __getitem__(self, item):
-        """Retrieves token by name"""
-        from pydsl.Grammar.Definition import StringGrammarDefinition
-        return StringGrammarDefinition(self.grammardict[item])
-
-    @property
-    def grammar_list(self):
-        return list(self.grammardict.values())
 
 class Encoding(AlphabetDefinition):
     """Defines an alphabet using an encoding string"""
@@ -79,7 +70,20 @@ class Encoding(AlphabetDefinition):
         raise KeyError
 
     @property
-    def grammar_list(self):
+    def to_list(self):
         #FIXME: Only ascii
         from pydsl.Grammar.Definition import StringGrammarDefinition
         return [StringGrammarDefinition(chr(x)) for x in range(128)]
+
+
+class ConceptAlphabet(AlphabetDefinition):
+    """Stores a list of concepts"""
+    def __init__(self, conceptlist):
+        self.conceptlist = conceptlist
+
+    def __getitem__(self, item):
+        return self.conceptlist[item]
+
+    @property
+    def to_list(self):
+        return self.conceptlist

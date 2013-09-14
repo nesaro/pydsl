@@ -22,21 +22,32 @@ __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
-LOG = logging.getLogger("Storage.Dict")
-from .Memory import Memory
+LOG = logging.getLogger(__name__)
+from pypository.Memory import Memory
 
-class DictStorage(Memory):
-    """Stores element in a python file using a python dictionary"""
-    def __init__(self, fullpath):
+class RegexpDictStorage(Memory):
+    def __init__(self, dictionary):
         Memory.__init__(self)
-        self._content = {}
-        from pydsl.Memory.Search.Searcher import MemorySearcher
-        self._searcher = MemorySearcher(self)
-        from pydsl.Memory.File.Python import getFileTuple
-        (_, _, fileBaseName, _) = getFileTuple(fullpath)
-        import imp
-        myobj = imp.load_source(fileBaseName, fullpath)
-        self._content.update(myobj.mydict)
+        self._content = dictionary
+
+    def generate_all_summaries(self):# -> list:
+        result = []
+        from pypository.utils import ImmutableDict
+        for key in self._content:
+            result.append(ImmutableDict({"identifier":key, "regexp":self._content[key]["regexp"], "iclass":"RegularExpression"}))
+        return result
+
+    def load(self, index, **kwargs):
+        import re
+        flags = 0
+        if "flags" in self._content[index]:
+            if "i" in self._content[index]["flags"]:
+                flags |= re.I
+        from pydsl.Grammar.Definition import RegularExpressionDefinition
+        return RegularExpressionDefinition(self._content[index]["regexp"], flags)
+
+    def provided_iclasses(self):# -> list:
+        return ["re"]
 
     def __iter__(self):
         self.index = 0
@@ -52,30 +63,6 @@ class DictStorage(Memory):
         self.index += 1
         return result
 
-    def generate_all_summaries(self):
-        """A list of all elements of full elements"""
-        raise NotImplementedError
-        
     def __contains__(self, index):
         return index in self._content
-
-class RegexpDictStorage(DictStorage):
-    def generate_all_summaries(self):# -> list:
-        result = []
-        from pydsl.Abstract import ImmutableDict
-        for key in self._content:
-            result.append(ImmutableDict({"identifier":key, "regexp":self._content[key]["regexp"], "iclass":"RegularExpression"}))
-        return result
-
-    def load(self, index, **kwargs):
-        import re
-        if "flags" in self._content[index]:
-            flags = 0
-            if "i" in self._content[index]["flags"]:
-                flags |= re.I
-            return re.compile(self._content[index]["regexp"], flags)
-        return re.compile(self._content[index]["regexp"])
-
-    def provided_iclasses(self):# -> list:
-        return ["re"]
 

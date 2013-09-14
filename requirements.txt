@@ -1,4 +1,7 @@
 git+https://github.com/Julian/jsonschema.git
+git+https://github.com/nesaro/regexps.git
+git+https://github.com/nesaro/pypository.git
 ply
 pika
 nose
+pyparsing

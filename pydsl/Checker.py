@@ -22,13 +22,15 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
-from pydsl.Memory.Loader import load_checker
+from pydsl.Memory.Loader import checker_factory
 
 class Checker(object):
-    """ Ensures information follows a rule, protocol or has a shape.
-    Provides only check function, for complex operations, use Grammar"""
+    """ Ensures that input follows a rule, protocol, grammar alphabet..."""
     def __init__(self):
         pass
+
+    def __call__(self, value):
+        return self.check(value)
 
     def check(self, value):# -> bool:
         raise NotImplementedError
@@ -63,10 +65,10 @@ class BNFChecker(Checker):
         Checker.__init__(self)
         parser = bnf.options.get("parser",parser)
         if parser == "descent" or parser == "auto" or parser == "default":
-            from .Grammar.Parser.RecursiveDescent import RecursiveDescentParser
-            self.__parser = RecursiveDescentParser(bnf)
+            from pydsl.Parser.RecursiveDescent import BacktracingErrorRecursiveDescentParser
+            self.__parser = BacktracingErrorRecursiveDescentParser(bnf)
         elif parser == "weighted":
-            from .Grammar.Parser.Weighted import WeightedParser
+            from pydsl.Parser.Weighted import WeightedParser
             self.__parser = WeightedParser(bnf)
         else:
             LOG.error("Wrong parser name: " + parser)
@@ -108,7 +110,7 @@ class MongoChecker(Checker):
                 operator = list(spec.keys())[0]
                 operand = list(spec.values())[0]
                 if operator == "$type":
-                    if not load_checker(operand).check(str(value)):
+                    if not checker_factory(operand).check(str(value)):
                         return False
                 elif operator == "$or":
                     if not any([self.__auxcheck({key:x}, data) for x in operand]):
@@ -142,9 +144,14 @@ class PLYChecker(Checker):
 class StringChecker(Checker):
     def __init__(self, gd):
         Checker.__init__(self)
+        if isinstance(gd, str):
+            from pydsl.Grammar.Definition import StringGrammarDefinition
+            gd = StringGrammarDefinition(gd)
         self.gd = gd
 
     def check(self, data):
+        if isinstance(data, list):
+            data = "".join(data)
         return self.gd.string == str(data)
 
 class JsonSchemaChecker(Checker):
@@ -160,15 +167,15 @@ class JsonSchemaChecker(Checker):
             return False
         return True
 
-class AlphabetDictChecker(Checker):
+class AlphabetListChecker(Checker):
     def __init__(self, gd):
         Checker.__init__(self)
-        from pydsl.Alphabet.Definition import AlphabetDictDefinition
-        if not isinstance(gd, AlphabetDictDefinition):
+        from pydsl.Alphabet.Definition import AlphabetListDefinition
+        if not isinstance(gd, AlphabetListDefinition):
             raise TypeError
         self.gd = gd
-        from pydsl.Memory.Loader import load_checker
-        self.checkerinstances = [load_checker(x) for x in self.gd.grammardict.values()]
+        from pydsl.Memory.Loader import checker_factory
+        self.checkerinstances = [checker_factory(x) for x in self.gd.grammarlist]
 
     def check(self, data):
         for element in data:

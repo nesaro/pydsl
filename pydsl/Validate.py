@@ -25,6 +25,9 @@ LOG = logging.getLogger(__name__)
 
 
 class Validator(object):
+    """Receives a grammar and an input that doesn't belong to the grammar, 
+    expands the grammar by parsing it, returns a list of what's needed 
+    to become grammar compatible"""
     def __init__(self, grammar):
         self.gd = grammar
 

@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 # -*- coding: utf-8 -*-
 #This file is part of pydsl.
@@ -25,7 +25,7 @@ __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
-from pydsl.Memory.Loader import load_lexer
+from pydsl.Memory.Loader import lexer_factory
 
 def collector():
     try:
@@ -50,7 +50,7 @@ def lexer(alphabet, expression = None, inputfile = None, followfile = None):
     #Generating and connecting output
     #listen to user, open read file, or other
     #configure output, write file, or other
-    lexer = load_lexer(alphabet)
+    lexer = lexer_factory(alphabet)
     if expression:
         result = [str(x) for x in lexer(expression)]
         print(result)

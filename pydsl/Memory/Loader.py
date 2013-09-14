@@ -22,10 +22,10 @@ __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
-def load_checker(grammar):
+def checker_factory(grammar):
     from pydsl.Grammar.BNF import BNFGrammar
     from pydsl.Grammar.Definition import PLYGrammar, RegularExpressionDefinition, MongoGrammar, StringGrammarDefinition, PythonGrammar
-    from pydsl.Alphabet.Definition import AlphabetDictDefinition
+    from pydsl.Alphabet.Definition import AlphabetListDefinition
     if isinstance(grammar, str):
         grammar = load(grammar)
     if isinstance(grammar, BNFGrammar):
@@ -43,9 +43,9 @@ def load_checker(grammar):
     elif isinstance(grammar, PLYGrammar):
         from pydsl.Checker import PLYChecker
         return PLYChecker(grammar)
-    elif isinstance(grammar, AlphabetDictDefinition):
-        from pydsl.Checker import AlphabetDictChecker
-        return AlphabetDictChecker(grammar)
+    elif isinstance(grammar, AlphabetListDefinition):
+        from pydsl.Checker import AlphabetListChecker
+        return AlphabetListChecker(grammar)
     elif isinstance(grammar, StringGrammarDefinition):
         from pydsl.Checker import StringChecker
         return StringChecker(grammar)
@@ -55,18 +55,15 @@ def load_checker(grammar):
     else:
         raise ValueError(grammar)
 
-def load_lexer(alphabet):
-    from pydsl.Alphabet.Definition import AlphabetDictDefinition, AlphabetListDefinition
+def lexer_factory(alphabet):
+    from pydsl.Alphabet.Definition import AlphabetListDefinition
     if isinstance(alphabet, str):
         alphabet = load(alphabet)
-    if isinstance(alphabet, AlphabetDictDefinition):
-        from pydsl.Alphabet.Lexer import AlphabetDictLexer
-        return AlphabetDictLexer(alphabet)
     if isinstance(alphabet, AlphabetListDefinition):
-        from pydsl.Alphabet.Lexer import AlphabetListLexer
+        from pydsl.Lexer import AlphabetListLexer
         return AlphabetListLexer(alphabet)
     elif isinstance(alphabet, Encoding):
-        from pydsl.Alphabet.Lexer import EncodingLexer
+        from pydsl.Lexer import EncodingLexer
         return EncodingLexer(alphabet)
     else:
         raise ValueError(alphabet)
@@ -77,11 +74,11 @@ def load_parser(grammar, parser = "auto"):
     from pydsl.Grammar.BNF import BNFGrammar
     if isinstance(grammar, BNFGrammar):
         if parser == "descent":
-            from pydsl.Grammar.Parser.RecursiveDescent import RecursiveDescentParser
-            return RecursiveDescentParser(grammar)
+            from pydsl.Parser.RecursiveDescent import BacktracingErrorRecursiveDescentParser
+            return BacktracingErrorRecursiveDescentParser(grammar)
         elif parser in ("auto" , "default" , "weighted"):
             #TODO Guess best parser
-            from pydsl.Grammar.Parser.Weighted import WeightedParser
+            from pydsl.Parser.Weighted import WeightedParser
             return WeightedParser(grammar)
         else:
             raise Exception("Wrong parser name: " + parser)
@@ -98,38 +95,42 @@ def load_validator(grammar):
     else:
         raise ValueError(grammar)
 
+def _load_checker(originaldic):
+    """Converts {"channelname","type"} into {"channelname",instance}"""
+    from pydsl.Memory.Loader import checker_factory
+    result = {}
+    for key in originaldic:
+        result[key] = checker_factory(str(originaldic[key]))
+    return result
+
 def load_translator(function):
     if isinstance(function, str):
         function = load(function)
     from pydsl.Grammar.Definition import PLYGrammar
     if isinstance(function, PLYGrammar):
-        from pydsl.Translator import PLYTranslator
+        from pydsl.Translator.Grammar import PLYTranslator
         return PLYTranslator(function)
     if isinstance(function, dict):
-        from pydsl.Translator import PythonTranslator
+        from pydsl.Translator.Grammar import PythonTranslator
+        function['inputdic'] = _load_checker(function['inputdic'])
+        function['outputdic'] = _load_checker(function['outputdic'])
         return PythonTranslator(**function)
+    from pyparsing import OneOrMore
+    if isinstance(function, OneOrMore):
+        from pydsl.Translator import PyParsingTranslator
+        return PyParsingTranslator(function)
     raise ValueError(function)
 
 def load(identifier, memorylist = None):
     if not memorylist:
         from pydsl.Config import GLOBALCONFIG
         memorylist = GLOBALCONFIG.memorylist
-    results = search(identifier, memorylist)
-    if not results:
-        raise KeyError(identifier)
-    if len(results) > 1:
-        raise ValueError("Multiple results")
-    identifier = list(results)[0]["identifier"]
-    for memory in memorylist:
-        if identifier in memory:
-            return memory.load(identifier)
-    raise KeyError(identifier)
+    from pypository.Loader import load
+    return load(identifier, memorylist)
 
 def search(query, memorylist = None):
     if not memorylist:
         from pydsl.Config import GLOBALCONFIG
         memorylist = GLOBALCONFIG.memorylist
-    from pydsl.Memory.Search.Searcher import MemorySearcher
-    from pydsl.Memory.Search.Indexer import Indexer
-    searcher = MemorySearcher([Indexer(x) for x in memorylist])
-    return searcher.search(query)
+    from pypository.Loader import search
+    return search(query, memorylist)

@@ -19,29 +19,28 @@
 """
 guess which types are the input data. 
 """
+
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
-#FIXME: Use globalconfig memory list
 #TODO: Add Alphabet support
 
 
 import logging
 LOG = logging.getLogger(__name__)
 from pkg_resources import resource_filename
-from pydsl.Memory.Loader import load_checker
-from pydsl.Memory.List import EncodingStorage
-from pydsl.Memory.Search.Searcher import MemorySearcher
-from pydsl.Memory.Directory import DirStorage
+from pydsl.Memory.Loader import checker_factory
+from pypository.search.Searcher import Searcher
+from pydsl.Config import GLOBALCONFIG
 
 
 class Guesser(object):
+    """Returns every grammar and alphabet definition that matches the input"""
     def __init__(self, memorylist = None):
         if not memorylist:
-            dirname = resource_filename("pydsl.contrib","")
-            memorylist = [DirStorage(dirname + "/grammar/"), EncodingStorage(dirname + "/list/encoding.py")]
+            memorylist = GLOBALCONFIG.memorylist
         self.memorylist = memorylist
-        self.searcher = MemorySearcher([x.indexer() for x in memorylist])
+        self.searcher = Searcher([x.indexer for x in memorylist])
 
     def __call__(self, inputstring): #-> set:
         result = set()
@@ -58,9 +57,9 @@ class Guesser(object):
                         break
                 else:
                     continue # not found 
-                checker = load_checker(typ)
+                checker = checker_factory(typ)
                 if checker.check(inputstring):
                     result.add(str(name))
-            except TypeError:
+            except (TypeError, ValueError):
                 continue
         return result

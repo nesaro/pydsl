@@ -1,10 +1,6 @@
-#!/usr/bin/python3
+#!/usr/bin/env python
 
-""" Memory management
-   verbs:    i info
-             s search
-             l list elements
-"""
+""" Memory management binary """
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
@@ -14,7 +10,7 @@ import logging
 from pydsl import VERSION
 from pydsl.Config import GLOBALCONFIG
 
-def search_pp(inputset: set, filterlist = None) -> str:
+def search_pp(inputset: set, filterlist = None):# -> str:
     """Search pretty print"""
     result = ""
     for element in inputset:
@@ -27,10 +23,10 @@ def search_pp(inputset: set, filterlist = None) -> str:
         result += '\n'
     return result
 
-def filterset(inputset: set, filterlist = None) -> set:
+def filterset(inputset: set, filterlist = None):# -> set:
     if filterlist is None:
         return inputset #Don't filter at all
-    from pydsl.Abstract import ImmutableDict
+    from pypository.utils import ImmutableDict
     result = set()
     for element in inputset:
         telement = {}
@@ -77,13 +73,12 @@ def info(identifier, outputformat):
 
 if __name__ == "__main__":
     import argparse
-    TUSAGE = "usage: %(prog)s [options] verb [identifier]"
-    PARSER = argparse.ArgumentParser(usage = TUSAGE)
+    PARSER = argparse.ArgumentParser()
     PARSER.add_argument("-d", "--debuglevel", action="store", type=int, dest="debuglevel", help="Sets debug level")
     PARSER.add_argument('-o', dest='outputformat',nargs='?', choices=["str","json","raw"], default="str", help="output format")
     PARSER.add_argument('--version', action='version', version = VERSION)
     PARSER.add_argument('--filter', dest='myfilter',nargs='?', default=None, help="comma separated field list")
-    PARSER.add_argument("verb", metavar="verb" , help="verb")
+    PARSER.add_argument("verb", choices =("info","search","list","grammars","alphabets","functions"), help="action to execute")
     PARSER.add_argument("identifier", metavar="identifier" , nargs='?', help="command")
     from pydsl.Config import load_default_memory
     load_default_memory()
@@ -91,19 +86,32 @@ if __name__ == "__main__":
     import sys
     DEBUGLEVEL = ARGS.debuglevel or logging.WARNING
     logging.basicConfig(level = DEBUGLEVEL)
-    if ARGS.verb == "i":
+    if ARGS.verb == "info":
+        if not ARGS.identifier:
+            print("Please specify an identifier")
+            sys.exit(-1)
         info(ARGS.identifier, ARGS. outputformat)
-    elif ARGS.verb in ("s","l"):
+    elif ARGS.verb in ("search","list","grammars","alphabets","functions"):
         from pydsl.Memory.Loader import search
         myfilter = None
         if ARGS.myfilter:
             myfilter = ARGS.myfilter.split(',')
+        if ARGS.verb == "grammars":
+            identifier = "iclass=SymbolGrammar||iclass=PythonGrammar||iclass=PLY"
+        elif ARGS.verb == "alphabets":
+            identifier = "iclass=Encoding||iclass=AlphabetListDefinition"
+        elif ARGS.verb == "functions":
+            identifier = "iclass=PythonTransformer"
+        else:
+            identifier = ARGS.identifier
         if ARGS.outputformat == "str":
-            print(search_pp(search(ARGS.identifier), myfilter))
+            print(search_pp(search(identifier), myfilter))
         elif ARGS.outputformat == "json":
             import json
-            print(json.dumps(list(filterset(search(ARGS.identifier), myfilter))))
+            print(json.dumps(list(filterset(search(identifier), myfilter))))
+        else:
+            print("Unsupported output for action")
+            sys.exit(-1)
     else:
         print("Unknown verb")
-        print(TUSAGE)
         sys.exit(-1)

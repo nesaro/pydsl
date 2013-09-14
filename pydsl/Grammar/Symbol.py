@@ -58,7 +58,7 @@ class TerminalSymbol(Symbol):
             weight = weight or 49
         Symbol.__init__(self, weight)
         if boundariesrules not in ("min","max","any") and not isinstance(boundariesrules, int):
-            raise TypeError
+            raise TypeError("Unknown boundaries rules %s" % boundariesrules )
         if not gd:
             raise Exception
         self.gd = gd
@@ -69,8 +69,8 @@ class TerminalSymbol(Symbol):
 
     def check(self, data):# ->bool:
         """Checks if input is recognized as this symbol"""
-        from pydsl.Memory.Loader import load_checker
-        checker = load_checker(self.gd)
+        from pydsl.Memory.Loader import checker_factory
+        checker = checker_factory(self.gd)
         return checker.check(data)
 
     @property
