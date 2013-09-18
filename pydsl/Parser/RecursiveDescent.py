@@ -263,6 +263,7 @@ class LL1RecursiveDescentParser(TopDownParser):
         if showerrors:
             raise NotImplementedError("This parser doesn't implement errors")
         self.data = data
+        self.index = 0
         return self.__aux_parser(self._productionset.initialsymbol)
 
     def __aux_parser(self, symbol):
@@ -274,9 +275,10 @@ class LL1RecursiveDescentParser(TopDownParser):
             first_of_each_production = {}
             for production in productions:
                 first_of_each_production[production] = self._productionset.first_lookup(production.rightside[0])
-            valid_firsts = [x for (x,y) in first_of_each_production.items() if self.current in y]
+            from pydsl.Memory.Loader import checker_factory
+            valid_firsts = [production_instance for (production_instance,first_set) in first_of_each_production.items() if checker_factory(first_set).check(self.current)]
             if len(valid_firsts) != 1:
-                raise Exception
+                raise Exception("Expected only one valid production, found %s" % len(valid_firsts))
             childlist = []
             for element in valid_firsts[0].rightside:
                 childlist += self.__aux_parser(element)
@@ -294,7 +296,11 @@ class LL1RecursiveDescentParser(TopDownParser):
 
     @property
     def current(self):
-        return self.data[self.index]
+        result = self.data[self.index]
+        if isinstance(result, str):
+            from pydsl.Alphabet.Token import Token
+            result = Token(result)
+        return result
 
     def match(self, symbol):
         if symbol.check(self.current):
