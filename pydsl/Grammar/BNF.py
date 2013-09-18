@@ -189,13 +189,15 @@ class BNFGrammar(GrammarDefinition): #Only stores a ruleset, and methods to ask 
 
     def getProductionsBySide(self, symbollist, side = "left"):
         result = []
+        if isinstance(symbollist, Symbol):
+            symbollist = [symbollist]
         for rule in self.productions: #FIXME Is iterating over production only
             if side == "left":
                 part = rule.leftside
             elif side == "right":
                 part = rule.rightside
             else:
-                raise KeyError
+                raise ValueError("Unknown side value %s" % (side,))
             if len(part) != len(symbollist):
                 continue
             for ruleindex in range(len(part)):
