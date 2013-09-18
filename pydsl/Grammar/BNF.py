@@ -31,8 +31,8 @@ class Production(object):
         for element in rightside:
             if not isinstance(element, Symbol):
                 raise TypeError
-        self.leftside = leftside
-        self.rightside = rightside
+        self.leftside = tuple(leftside)
+        self.rightside = tuple(rightside)
 
     def __str__(self):
         """Pretty print"""
@@ -61,6 +61,9 @@ class Production(object):
         if len(self.leftside) != 1:
             raise Exception
         return self.leftside[0].name
+
+    def __hash__(self):
+        return hash(self.leftside) & hash(self.rightside)
 
 
 class BNFGrammar(GrammarDefinition): #Only stores a ruleset, and methods to ask properties or validity check 
