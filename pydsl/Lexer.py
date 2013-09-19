@@ -16,7 +16,7 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 """Base Lexer classes"""
-from pydsl.Factory import checker_factory
+from pydsl.Checker import checker_factory
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"

@@ -19,7 +19,7 @@
 """
 guess which types are the input data. 
 """
-from pydsl.Factory import checker_factory
+from pydsl.Checker import check
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
@@ -57,8 +57,7 @@ class Guesser(object):
                         break
                 else:
                     continue # not found 
-                checker = checker_factory(typ)
-                if checker.check(inputstring):
+                if check(typ, inputstring):
                     result.add(str(name))
             except (TypeError, ValueError):
                 continue

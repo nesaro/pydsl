@@ -19,7 +19,7 @@
 """
 check if input data belongs to a Type 
 """
-from pydsl.Factory import checker_factory
+from pydsl.Checker import checker_factory
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"

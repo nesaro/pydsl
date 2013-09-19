@@ -16,7 +16,7 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 """Symbols"""
-from pydsl.Factory import checker_factory
+from pydsl.Checker import check
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
@@ -70,8 +70,7 @@ class TerminalSymbol(Symbol):
 
     def check(self, data):# ->bool:
         """Checks if input is recognized as this symbol"""
-        checker = checker_factory(self.gd)
-        return checker.check(data)
+        return check(self.gd, data)
 
     @property
     def first(self):
