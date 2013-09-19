@@ -32,33 +32,28 @@ def checker_factory(grammar):
     from pydsl.Grammar.BNF import BNFGrammar
     from pydsl.Grammar.Definition import PLYGrammar, RegularExpressionDefinition, MongoGrammar, StringGrammarDefinition, PythonGrammar
     from pydsl.Alphabet.Definition import AlphabetListDefinition, Encoding
+    from collections import Iterable
     if isinstance(grammar, str):
         from pydsl.Memory.Loader import load
         grammar = load(grammar)
     if isinstance(grammar, BNFGrammar):
-        from pydsl.Checker import BNFChecker
         return BNFChecker(grammar)
     elif isinstance(grammar, RegularExpressionDefinition):
-        from pydsl.Checker import RegularExpressionChecker
         return RegularExpressionChecker(grammar)
     elif isinstance(grammar, PythonGrammar) or isinstance(grammar, dict) and "matchFun" in grammar:
-        from pydsl.Checker import PythonChecker
         return PythonChecker(grammar)
     elif isinstance(grammar, MongoGrammar):
-        from pydsl.Checker import MongoChecker
         return MongoChecker(grammar["spec"])
     elif isinstance(grammar, PLYGrammar):
-        from pydsl.Checker import PLYChecker
         return PLYChecker(grammar)
     elif isinstance(grammar, AlphabetListDefinition):
-        from pydsl.Checker import AlphabetListChecker
         return AlphabetListChecker(grammar)
     elif isinstance(grammar, StringGrammarDefinition):
-        from pydsl.Checker import StringChecker
         return StringChecker(grammar)
     elif isinstance(grammar, Encoding):
-        from pydsl.Checker import EncodingChecker
         return EncodingChecker(grammar)
+    elif isinstance(grammar, Iterable):
+        return IterableChecker(grammar)
     else:
         raise ValueError(grammar)
 
@@ -240,4 +235,15 @@ class EncodingChecker(Checker):
             except UnicodeDecodeError:
                 return False
             return True
+        return False
+
+class IterableChecker(Checker):
+    def __init__(self, iterable):
+        Checker.__init__(self)
+        self.iterable = iterable
+
+    def check(self,data):
+        for definition in self.iterable:
+            if check(definition, data):
+                return True
         return False
