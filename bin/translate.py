@@ -20,6 +20,7 @@
 """
 Calls a transformer
 """
+from pydsl.Factory import load_translator
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
@@ -27,7 +28,7 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 from pydsl.Exceptions import BadFileFormat
-from pydsl.Memory.Loader import load_translator
+
 LOG = logging.getLogger(__name__)
 
 def escapedsplitby(inputstring, separator):

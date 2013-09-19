@@ -16,6 +16,7 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 """Recursive descent parser"""
+from pydsl.Factory import checker_factory
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
@@ -275,7 +276,6 @@ class LL1RecursiveDescentParser(TopDownParser):
             first_of_each_production = {}
             for production in productions:
                 first_of_each_production[production] = self._productionset.first_lookup(production.rightside[0])
-            from pydsl.Memory.Loader import checker_factory
             valid_firsts = [production_instance for (production_instance,first_set) in first_of_each_production.items() if checker_factory(first_set).check(self.current)]
             if len(valid_firsts) != 1:
                 raise Exception("Expected only one valid production, found %s" % len(valid_firsts))

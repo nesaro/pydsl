@@ -14,6 +14,7 @@
 #
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
+from pydsl.Factory import checker_factory
 
 
 __author__ = "Nestor Arocha"
@@ -22,7 +23,7 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
-from pydsl.Memory.Loader import checker_factory
+
 
 class Checker(object):
     """ Ensures that input follows a rule, protocol, grammar alphabet..."""
@@ -174,7 +175,7 @@ class AlphabetListChecker(Checker):
         if not isinstance(gd, AlphabetListDefinition):
             raise TypeError
         self.gd = gd
-        from pydsl.Memory.Loader import checker_factory
+        from pydsl.Factory import checker_factory
         self.checkerinstances = [checker_factory(x) for x in self.gd.grammarlist]
 
     def check(self, data):

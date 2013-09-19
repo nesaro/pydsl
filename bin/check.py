@@ -19,6 +19,7 @@
 """
 check if input data belongs to a Type 
 """
+from pydsl.Factory import checker_factory
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
@@ -30,7 +31,6 @@ def checker(grammar, expression = None, input_file = None):
     #Generating and connecting output
     #listen to user, open read file, or other
     #configure output, write file, or other
-    from pydsl.Memory.Loader import checker_factory
     checker = checker_factory(grammar)
     if expression:
         result = checker.check(expression)

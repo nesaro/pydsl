@@ -21,6 +21,7 @@
 Generic validator for BNF Grammars. 
 Displays the part of the tree that doesn't conform the grammar definition
 """
+from pydsl.Factory import load_validator
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
@@ -47,7 +48,6 @@ def errors_to_list(postnode):
 def validate(sgrammar, expression = None, inputfile = None, outputformat = None):
     """Read input file contents, creates grammar and transform objects, create connections, 
     and afterwards reads required input/launch main loop"""
-    from pydsl.Memory.Loader import load_validator
     validator = load_validator(sgrammar)
     if expression:
         resulttrees = validator(expression)
