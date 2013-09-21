@@ -90,7 +90,7 @@ class PositionTree(Tree):
         """checks if it is a null result"""
         return self.valid
 
-    def __getitem__(self, key, order = "preorder"): #FIXME: getitem and optional argument??
+    def __getitem__(self, key):
         result = []
         mylist = self.to_list(order)
         for element in mylist:
