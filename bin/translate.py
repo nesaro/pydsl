@@ -20,7 +20,7 @@
 """
 Calls a transformer
 """
-from pydsl.Factory import load_translator
+from pydsl.Translator import translator_factory
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
@@ -77,7 +77,7 @@ def translate(transformer = None, expression = None, inputfiledic = None, output
     #listen to user, open read file, or other
     #configure output, write file, or other
     #print self._opt
-    mainfunc = load_translator(transformer)
+    mainfunc = translator_factory(transformer)
     if expression and not outputfiledic:
         myexpression = parse_shell_dict(expression)
         result = mainfunc(**myexpression)

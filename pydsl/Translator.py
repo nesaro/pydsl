@@ -16,6 +16,7 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 """Python Transformers"""
+from pydsl.Memory.Loader import load
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
@@ -55,3 +56,31 @@ class PyParsingTranslator(object):
     def __call__(self, input):
         return self.root_symbol.parseString(input)
 
+
+def translator_factory(function):
+    def _load_checker(originaldic):
+        """Converts {"channelname","type"} into {"channelname",instance}"""
+        result = {}
+        for key in originaldic:
+            from pydsl.Checker import checker_factory
+            result[key] = checker_factory(str(originaldic[key]))
+        return result
+    if isinstance(function, str):
+        function = load(function)
+    from pydsl.Grammar.Definition import PLYGrammar
+    if isinstance(function, PLYGrammar):
+        from pydsl.Translator.Grammar import PLYTranslator
+        return PLYTranslator(function)
+    if isinstance(function, dict):
+        from pydsl.Translator.Grammar import PythonTranslator
+        function['inputdic'] = _load_checker(function['inputdic'])
+        function['outputdic'] = _load_checker(function['outputdic'])
+        return PythonTranslator(**function)
+    from pyparsing import OneOrMore
+    if isinstance(function, OneOrMore):
+        from pydsl.Translator import PyParsingTranslator
+        return PyParsingTranslator(function)
+    raise ValueError(function)
+
+def translate(definition, data):
+    return translator_factory(definition)(**data)
