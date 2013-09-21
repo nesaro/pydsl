@@ -1,20 +1,20 @@
 #!/usr/bin/env python
 
 # -*- coding: utf-8 -*-
-#This file is part of pydsl.
+# This file is part of pydsl.
 #
-#pydsl is free software: you can redistribute it and/or modify
-#it under the terms of the GNU General Public License as published by
-#the Free Software Foundation, either version 3 of the License, or
+# pydsl is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
 #(at your option) any later version.
 #
-#pydsl is distributed in the hope that it will be useful,
-#but WITHOUT ANY WARRANTY; without even the implied warranty of
-#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#GNU General Public License for more details.
+# pydsl is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
 #
-#You should have received a copy of the GNU General Public License
-#along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
+# You should have received a copy of the GNU General Public License
+# along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 """
 generates token from input
@@ -35,10 +35,12 @@ def collector():
     except GeneratorExit:
         pass
 
+
 def file_generator(followfile, receiver):
-    from subprocess import Popen,PIPE,STDOUT
+    from subprocess import Popen, PIPE, STDOUT
     from time import sleep
-    process = Popen('tail -n 0 -F ' + followfile, stdout=PIPE,bufsize=0, stderr=STDOUT, shell=True)
+    process = Popen('tail -n 0 -F ' + followfile,
+                    stdout=PIPE, bufsize=0, stderr=STDOUT, shell=True)
     next(receiver)
     while True:
         line = process.stdout.readline()
@@ -47,10 +49,11 @@ def file_generator(followfile, receiver):
         else:
             sleep(0.5)
 
-def lexer(alphabet, expression = None, inputfile = None, followfile = None):
-    #Generating and connecting output
-    #listen to user, open read file, or other
-    #configure output, write file, or other
+
+def lexer(alphabet, expression=None, inputfile=None, followfile=None):
+    # Generating and connecting output
+    # listen to user, open read file, or other
+    # configure output, write file, or other
     lexer = lexer_factory(alphabet)
     if expression:
         result = [str(x) for x in lexer(expression)]
@@ -69,11 +72,15 @@ def lexer(alphabet, expression = None, inputfile = None, followfile = None):
 if __name__ == "__main__":
     import argparse
     TUSAGE = "usage: %(prog)s [options] alphabet"
-    PARSER = argparse.ArgumentParser(usage = TUSAGE)
-    PARSER.add_argument("-d", "--debuglevel", action="store", type=int, dest="debuglevel", help="Sets debug level")
-    PARSER.add_argument("-i", "--inputfile", action="store", dest="inputfile", help="input filename")
-    PARSER.add_argument("-f", "--followfile", action="store", dest="followfile", help="follow filename")
-    PARSER.add_argument("-e", "--expression", action="store", dest="expression", help="input expression")
+    PARSER = argparse.ArgumentParser(usage=TUSAGE)
+    PARSER.add_argument("-d", "--debuglevel", action="store",
+                        type=int, dest="debuglevel", help="Sets debug level")
+    PARSER.add_argument(
+        "-i", "--inputfile", action="store", dest="inputfile", help="input filename")
+    PARSER.add_argument(
+        "-f", "--followfile", action="store", dest="followfile", help="follow filename")
+    PARSER.add_argument(
+        "-e", "--expression", action="store", dest="expression", help="input expression")
     PARSER.add_argument("alphabet", metavar="alphabet", help="Alphabet name")
     ARGS = PARSER.parse_args()
     if not ARGS.expression and not ARGS.inputfile and not ARGS.followfile:
@@ -81,7 +88,7 @@ if __name__ == "__main__":
     ARGS = vars(ARGS)
     import sys
     DEBUGLEVEL = ARGS.pop("debuglevel") or logging.WARNING
-    logging.basicConfig(level = DEBUGLEVEL)
+    logging.basicConfig(level=DEBUGLEVEL)
     from pydsl.Config import load_default_memory
     load_default_memory()
     try:

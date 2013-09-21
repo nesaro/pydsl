@@ -21,6 +21,7 @@
 Calls a transformer
 """
 from pydsl.Translator import translator_factory
+import logging
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
@@ -103,15 +104,12 @@ if __name__ == "__main__":
     ARGS = vars(ARGS)
     DEBUGLEVEL = ARGS.pop('debuglevel', logging.WARNING)
     logging.basicConfig(level=DEBUGLEVEL)
-    from pydsl.Config import load_default_memory, GLOBALCONFIG
+    from pydsl.Config import load_default_memory
     load_default_memory()
     try:
         result = translate(**ARGS)
     except EOFError:
         sys.exit(0)
-    except BadFileFormat:
-        print("Error reading input file")
-        sys.exit(1)
     if not result:
         sys.exit(-1)
     sys.exit(0)

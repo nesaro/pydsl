@@ -10,7 +10,8 @@ import logging
 from pydsl import VERSION
 from pydsl.Config import GLOBALCONFIG
 
-def search_pp(inputset: set, filterlist = None):# -> str:
+
+def search_pp(inputset: set, filterlist=None):  # -> str:
     """Search pretty print"""
     result = ""
     for element in inputset:
@@ -23,9 +24,10 @@ def search_pp(inputset: set, filterlist = None):# -> str:
         result += '\n'
     return result
 
-def filterset(inputset: set, filterlist = None):# -> set:
+
+def filterset(inputset: set, filterlist=None):  # -> set:
     if filterlist is None:
-        return inputset #Don't filter at all
+        return inputset  # Don't filter at all
     from pypository.utils import ImmutableDict
     result = set()
     for element in inputset:
@@ -50,7 +52,7 @@ def info(identifier, outputformat):
         if hasattr(instance, "summary"):
             resultdic = instance.summary
         else:
-            resultdic = {"instance":instance}
+            resultdic = {"instance": instance}
         if outputformat == "str":
             for key in resultdic:
                 print(key + ": " + str(resultdic[key]))
@@ -74,24 +76,29 @@ def info(identifier, outputformat):
 if __name__ == "__main__":
     import argparse
     PARSER = argparse.ArgumentParser()
-    PARSER.add_argument("-d", "--debuglevel", action="store", type=int, dest="debuglevel", help="Sets debug level")
-    PARSER.add_argument('-o', dest='outputformat',nargs='?', choices=["str","json","raw"], default="str", help="output format")
-    PARSER.add_argument('--version', action='version', version = VERSION)
-    PARSER.add_argument('--filter', dest='myfilter',nargs='?', default=None, help="comma separated field list")
-    PARSER.add_argument("verb", choices =("info","search","list","grammars","alphabets","functions"), help="action to execute")
-    PARSER.add_argument("identifier", metavar="identifier" , nargs='?', help="command")
+    PARSER.add_argument("-d", "--debuglevel", action="store",
+                        type=int, dest="debuglevel", help="Sets debug level")
+    PARSER.add_argument('-o', dest='outputformat', nargs='?', choices=[
+                        "str", "json", "raw"], default="str", help="output format")
+    PARSER.add_argument('--version', action='version', version=VERSION)
+    PARSER.add_argument('--filter', dest='myfilter',
+                        nargs='?', default=None, help="comma separated field list")
+    PARSER.add_argument(
+        "verb", choices=("info", "search", "list", "grammars", "alphabets", "functions"), help="action to execute")
+    PARSER.add_argument(
+        "identifier", metavar="identifier", nargs='?', help="command")
     from pydsl.Config import load_default_memory
     load_default_memory()
     ARGS = PARSER.parse_args()
     import sys
     DEBUGLEVEL = ARGS.debuglevel or logging.WARNING
-    logging.basicConfig(level = DEBUGLEVEL)
+    logging.basicConfig(level=DEBUGLEVEL)
     if ARGS.verb == "info":
         if not ARGS.identifier:
             print("Please specify an identifier")
             sys.exit(-1)
         info(ARGS.identifier, ARGS. outputformat)
-    elif ARGS.verb in ("search","list","grammars","alphabets","functions"):
+    elif ARGS.verb in ("search", "list", "grammars", "alphabets", "functions"):
         from pydsl.Memory.Loader import search
         myfilter = None
         if ARGS.myfilter:
