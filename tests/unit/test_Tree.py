@@ -50,8 +50,3 @@ class TestTrees(unittest.TestCase):
     def testBasics(self):
         self.assertTrue(len(self.tree1) == 6)
         self.assertTrue(self.tree1.first_leaf() == self.firstleaf1)
-
-    def testTreeDistance(self):
-        from pydsl.Tree import zss_distance
-        self.assertTrue(zss_distance(self.tree1,self.tree2) == 1)
-
