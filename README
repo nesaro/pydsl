@@ -12,10 +12,8 @@ INSTALLATION
 
 USAGE
 =====
-To use pydsl as a library for your code, you can:
+Simple check session:
 
-Loading content from files
---------------------------
     from pydsl.Memory.File.BNF import load_bnf_file
     from pydsl.Checker import check
     grammardefinition = loand_bnf_file('myfile.bnf')
