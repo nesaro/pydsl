@@ -1,20 +1,20 @@
 #!/usr/bin/env python
 
 # -*- coding: utf-8 -*-
-#This file is part of pydsl.
+# This file is part of pydsl.
 #
-#pydsl is free software: you can redistribute it and/or modify
-#it under the terms of the GNU General Public License as published by
-#the Free Software Foundation, either version 3 of the License, or
+# pydsl is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
 #(at your option) any later version.
 #
-#pydsl is distributed in the hope that it will be useful,
-#but WITHOUT ANY WARRANTY; without even the implied warranty of
-#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#GNU General Public License for more details.
+# pydsl is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
 #
-#You should have received a copy of the GNU General Public License
-#along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
+# You should have received a copy of the GNU General Public License
+# along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 
 """
@@ -26,14 +26,9 @@ __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
-import logging
-from pydsl.Exceptions import BadFileFormat
-
-LOG = logging.getLogger(__name__)
-
 def escapedsplitby(inputstring, separator):
     """Splits inputstring with separator and using "\" as a escape character"""
-    #TODO check alternatives (shlex and csv)
+    # TODO check alternatives (shlex and csv)
     result = []
     while inputstring[0] == separator:
         inputstring = inputstring[1:]
@@ -60,7 +55,8 @@ def escapedsplitby(inputstring, separator):
     result.append(inputstring[lastindex:])
     return result
 
-def parse_shell_dict(inputstring): # -> dict:
+
+def parse_shell_dict(inputstring):  # -> dict:
     """Parses commandline input dicts. Example: a:b,c:d,e:f."""
     result = {}
     arglist = escapedsplitby(inputstring, ",")
@@ -70,37 +66,43 @@ def parse_shell_dict(inputstring): # -> dict:
     return result
 
 
-def translate(transformer = None, expression = None, inputfiledic = None, outputfiledic = None):
+def translate(transformer=None, expression=None, inputfiledic=None, outputfiledic=None):
     """Read input file contents, creates grammar and transform objects, create connections,
     and afterwards reads required input/launch main loop"""
-    #Generating and connecting output
-    #listen to user, open read file, or other
-    #configure output, write file, or other
-    #print self._opt
+    # Generating and connecting output
+    # listen to user, open read file, or other
+    # configure output, write file, or other
+    # print self._opt
     mainfunc = translator_factory(transformer)
     if expression and not outputfiledic:
         myexpression = parse_shell_dict(expression)
         result = mainfunc(**myexpression)
         print(result)
-        return result #FIXME: this is the only condition that returns a result. Because of tests
+        # FIXME: this is the only condition that returns a result. Because of
+        # tests
+        return result
     raise Exception("Invalid arguments")
 
 if __name__ == "__main__":
     import argparse
     TUSAGE = "usage: %(prog)s [options] transformername"
-    PARSER = argparse.ArgumentParser(usage = TUSAGE)
-    PARSER.add_argument("-d", "--debuglevel", action="store", type=int, dest="debuglevel", help="Sets debug level")
-    PARSER.add_argument("-i", "--inputfile", action="store", dest="inputfiledic", help="input filename dict")
-    PARSER.add_argument("-o", "--outputfile", action="store", dest="outputfiledic", help="output filename dict")
-    PARSER.add_argument("-e", "--expression", action="store", dest="expression", help="input expression")
+    PARSER = argparse.ArgumentParser(usage=TUSAGE)
+    PARSER.add_argument("-d", "--debuglevel", action="store",
+                        type=int, dest="debuglevel", help="Sets debug level")
+    PARSER.add_argument("-i", "--inputfile", action="store",
+                        dest="inputfiledic", help="input filename dict")
+    PARSER.add_argument("-o", "--outputfile", action="store",
+                        dest="outputfiledic", help="output filename dict")
+    PARSER.add_argument(
+        "-e", "--expression", action="store", dest="expression", help="input expression")
     PARSER.add_argument("transformer", help="Transformer name")
     ARGS = PARSER.parse_args()
     import sys
     if (ARGS.outputfiledic and not ARGS.expression) and (ARGS.outputfiledic and not ARGS.inputfiledic):
         PARSER.error("options -o and -e or -i must be together")
     ARGS = vars(ARGS)
-    DEBUGLEVEL = ARGS.pop('debuglevel',logging.WARNING)
-    logging.basicConfig(level = DEBUGLEVEL)
+    DEBUGLEVEL = ARGS.pop('debuglevel', logging.WARNING)
+    logging.basicConfig(level=DEBUGLEVEL)
     from pydsl.Config import load_default_memory, GLOBALCONFIG
     load_default_memory()
     try:
