@@ -16,8 +16,8 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 """Test wrapper"""
-from pydsl.Factory import load_validator
 from pydsl.Parser.Parser import parser_factory
+from pydsl.Validate import validator_factory
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
@@ -38,7 +38,7 @@ class TestValidate(unittest.TestCase):
     def testValidateLoad(self):
         from pydsl.contrib.bnfgrammar import productionset0
 
-        validator = load_validator(productionset0)
+        validator = validator_factory(productionset0)
         self.assertTrue(validator("input"))
 
     def testTokenInput(self):

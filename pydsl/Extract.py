@@ -14,8 +14,6 @@
 #
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
-from pydsl.Checker import checker_factory
-
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
@@ -25,6 +23,7 @@ import logging
 LOG = logging.getLogger(__name__)
 from pydsl.Alphabet.Definition import AlphabetDefinition
 from pydsl.Grammar.Definition import GrammarDefinition
+from pydsl.Checker import checker_factory
 
 def extract(grammar, inputdata):
     """Extract every slice of the input data that belongs to the Grammar Definition"""
