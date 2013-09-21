@@ -27,6 +27,7 @@ __email__ = "nesaro@gmail.com"
 import logging
 LOG = logging.getLogger(__name__)
 from pydsl.Alphabet.Token import Token
+from pydsl.Tree import Tree
 
 class Lexer(object):
     """Translates an input written in one Alphabet into another Alphabet"""
@@ -97,22 +98,22 @@ class AlphabetLexer(Lexer):
         """generator version of the lexer, yields a new token as soon as possible"""
         raise NotImplementedError
 
-class Tree:
+class LexerTree(Tree):
     def __init__(self, content=None, index=0, parent=None):
+        Tree.__init__(self)
         self.content = content
         self.parent = parent
         self.index = index
-        self.children = []
         self.new = True
 
     def append(self, content, index):
-        new = Tree(content, index, self)
-        self.children.append(new)
+        new = LexerTree(content, index, self)
+        self.append_child(new)
         self.new = False
         return new
 
     def remove(self, element):
-        self.children.remove(element)
+        self.childlist.remove(element)
 
     def __bool__(self):
         return bool(self.content)
@@ -128,7 +129,7 @@ class AlphabetListLexer(AlphabetLexer):
         return self.string[self.index:]
 
     def nextToken(self):
-        tree = Tree()
+        tree = LexerTree()
         while tree.index < len(self.string):
             valid_alternatives = []
             index = tree.index
@@ -145,7 +146,7 @@ class AlphabetListLexer(AlphabetLexer):
                 tree.parent.remove(tree)
                 tree = tree.parent
                 continue
-            if not tree.children and not tree.new:
+            if not tree.childlist and not tree.new:
                 tree.parent.remove(tree)
                 tree = tree.parent
                 continue
@@ -194,10 +195,8 @@ def lexer_factory(alphabet):
     if isinstance(alphabet, str):
         alphabet = load(alphabet)
     if isinstance(alphabet, AlphabetListDefinition):
-        from pydsl.Lexer import AlphabetListLexer
         return AlphabetListLexer(alphabet)
     elif isinstance(alphabet, Encoding):
-        from pydsl.Lexer import EncodingLexer
         return EncodingLexer(alphabet)
     else:
         raise ValueError(alphabet)
