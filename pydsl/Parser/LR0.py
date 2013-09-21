@@ -121,8 +121,7 @@ def _slr_build_parser_table(productionset):
                 LOG.debug("symbol: " + str(symbol))
                 LOG.debug("itemset: " + str(itemset))
             elif numberoptions > 1: #FIXME can it count duplicated entries?
-                from pydsl.Exceptions import LRConflictException
-                raise LRConflictException
+                raise Exception("LR Conflict")
     return result
     
 class ParserTable(object):

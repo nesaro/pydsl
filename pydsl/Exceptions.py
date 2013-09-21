@@ -23,9 +23,6 @@ __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 
-class LRConflictException(Exception):
-    pass
-
 class ParseError(Exception):
 
     def __init__(self, msg, offset):
