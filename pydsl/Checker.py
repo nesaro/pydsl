@@ -244,6 +244,9 @@ class IterableChecker(Checker):
 
     def check(self,data):
         for definition in self.iterable:
-            if check(definition, data):
-                return True
+            try:
+                if check(definition, data):
+                    return True
+            except KeyError:
+                pass
         return False
