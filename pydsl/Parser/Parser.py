@@ -51,7 +51,7 @@ def terminal_symbol_reducer(symbol, word, production, fixed_start = False):
         pass
     else:
         raise ValueError("Unknown boundaries rules")
-    from pydsl.Grammar.Tree import ParseTree
+    from pydsl.Tree import ParseTree
     return [ParseTree(begin, end, [symbol], word[begin:end], production) for (size, begin, end) in validresults]
 
 class Parser(object):

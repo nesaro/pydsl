@@ -20,7 +20,7 @@
 import logging
 LOG = logging.getLogger(__name__)
 from .Parser import TopDownParser, terminal_symbol_reducer
-from pydsl.Grammar.Tree import ParseTree
+from pydsl.Tree import ParseTree
 
 
 def _create_combined_list(input_list):
