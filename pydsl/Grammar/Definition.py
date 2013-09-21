@@ -78,6 +78,10 @@ class RegularExpressionDefinition(GrammarDefinition):
         if not isinstance(other, RegularExpressionDefinition):
             return False
         return self.regexpstr == other.regexpstr and self.flags == other.flags
+
+    def __str__(self):
+        return self.regexpstr
+
     @property
     def first(self):# -> set:
         i = 0

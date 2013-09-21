@@ -97,7 +97,7 @@ class PositionTree(Tree):
             if element.content == key:
                 result.append(element)
         if not result:
-            raise KeyError
+            raise KeyError("Element not found %s" % key)
         return result
 
     def __str__(self):
