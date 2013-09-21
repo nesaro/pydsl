@@ -19,7 +19,7 @@
 """
 generates token from input
 """
-from pydsl.Factory import lexer_factory
+from pydsl.Lexer import lexer_factory
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"

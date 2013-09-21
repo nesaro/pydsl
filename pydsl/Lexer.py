@@ -16,7 +16,9 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 """Base Lexer classes"""
+from pydsl.Alphabet.Definition import Encoding
 from pydsl.Checker import checker_factory
+from pydsl.Memory.Loader import load
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
@@ -187,3 +189,15 @@ class ConceptLexer(Lexer):
         return result
 
 
+def lexer_factory(alphabet):
+    from pydsl.Alphabet.Definition import AlphabetListDefinition
+    if isinstance(alphabet, str):
+        alphabet = load(alphabet)
+    if isinstance(alphabet, AlphabetListDefinition):
+        from pydsl.Lexer import AlphabetListLexer
+        return AlphabetListLexer(alphabet)
+    elif isinstance(alphabet, Encoding):
+        from pydsl.Lexer import EncodingLexer
+        return EncodingLexer(alphabet)
+    else:
+        raise ValueError(alphabet)
