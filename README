@@ -17,16 +17,10 @@ To use pydsl as a library for your code, you can:
 Loading content from files
 --------------------------
     from pydsl.Memory.File.BNF import load_bnf_file
+    from pydsl.Checker import check
     grammardefinition = loand_bnf_file('myfile.bnf')
-    from pydsl.Memory.Loader import *
-    mychecker = load_checker(grammardefinition)
-    mychecker('mystring') # returns True or False
+    check(grammardefinition,'mystring') # returns True or False
 
-Using contrib
--------------------
-    from pydsl.Memory.Loader import *
-    mychecker = load_checker(integer)
-    mychecker.check("1234")
 
 Using Binaries
 --------------
