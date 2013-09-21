@@ -67,7 +67,7 @@ class Tree(object):
         elif order == "postorder":
             return traversePostOrder(self)
         else:
-            raise KeyError
+            raise ValueError("Unknown order %s" % order)
 
     def first_leaf(self):
         """Returns the first lead node"""
@@ -107,14 +107,6 @@ class PositionTree(Tree):
                 result.append(element)
         if not result:
             raise KeyError("Element not found %s" % key)
-        return result
-
-    def __str__(self):
-        result = "<PositionTree: "
-        result += "(" + str(self.leftpos) + "," + str(self.rightpos)
-        if self.childlist:
-            result += ", children: " + str(self.childlist)
-        result += " >"
         return result
 
     def shift(self, amount):
@@ -209,12 +201,3 @@ class ParseTree(PositionTree):
             LOG.warning("Unable to add parser results")
             raise Exception
 
-    def __str__(self):
-        result = "<ParseTree: "
-        result += "(" + str(self.leftpos) + "," + str(self.rightpos)
-        result += ") SymbolList: "
-        result += str(self.symbollist)
-        if self.childlist:
-            result += ", children: " + str(self.childlist)
-        result += " >"
-        return result
