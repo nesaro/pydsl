@@ -25,25 +25,22 @@ __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
+from pydsl.Checker import check
 
 def checker(grammar, expression = None, input_file = None):
     #Generating and connecting output
     #listen to user, open read file, or other
     #configure output, write file, or other
-    from pydsl.Memory.Loader import checker_factory
-    checker = checker_factory(grammar)
     if expression:
-        result = checker.check(expression)
-        print(result)
-        return result
+        content = expression
     elif input_file:
         with open(input_file) as f:
             content = f.read()
-        result = checker.check(content)
-        print(result)
-        return result
     else:
         raise Exception
+    result = check(grammar,content)
+    print(result)
+    return result
 
 if __name__ == "__main__":
     import argparse

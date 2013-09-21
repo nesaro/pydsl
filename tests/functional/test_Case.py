@@ -14,6 +14,7 @@
 #
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
+from pydsl.Factory import lexer_factory
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
@@ -26,7 +27,6 @@ class TestCase(unittest.TestCase):
         input_data = "1+2"
         from pydsl.Alphabet.Definition import Encoding
         ascii_encoding = Encoding("ascii")
-        from pydsl.Memory.Loader import lexer_factory
         ascii_lexer = lexer_factory(ascii_encoding)
         ascii_tokens = [x for x in ascii_lexer(input_data)]
         self.assertListEqual([str(x) for x in ascii_tokens], ['1', '+', '2'])
@@ -91,8 +91,8 @@ class TestCase(unittest.TestCase):
                 ]
         from pydsl.Memory.File.BNF import strlist_to_production_set
         production_set = strlist_to_production_set(grammar_def)
-        from pydsl.Parser.RecursiveDescent import BacktracingRecursiveDescentParser
-        rdp = BacktracingRecursiveDescentParser(production_set)
+        from pydsl.Parser.RecursiveDescent import LL1RecursiveDescentParser
+        rdp = LL1RecursiveDescentParser(production_set)
         parse_tree = rdp("1+2")
 
         def parse_tree_walker(tree):
@@ -101,7 +101,7 @@ class TestCase(unittest.TestCase):
             if tree.production.leftside[0] == NonTerminalSymbol("S"):
                 return parse_tree_walker(tree.childlist[0])
             if tree.production.leftside[0] == NonTerminalSymbol("E"):
-                return int(tree.childlist[0].content) + int(tree.childlist[2].content)
+                return int(str(tree.childlist[0].content)) + int(str(tree.childlist[2].content))
             else:
                 raise Exception
             

@@ -22,7 +22,41 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
-from pydsl.Memory.Loader import checker_factory
+
+
+def check(definition, data):
+    checker = checker_factory(definition)
+    return checker(data)
+
+def checker_factory(grammar):
+    from pydsl.Grammar.BNF import BNFGrammar
+    from pydsl.Grammar.Definition import PLYGrammar, RegularExpressionDefinition, MongoGrammar, StringGrammarDefinition, PythonGrammar
+    from pydsl.Alphabet.Definition import AlphabetListDefinition, Encoding
+    from collections import Iterable
+    if isinstance(grammar, str):
+        from pydsl.Memory.Loader import load
+        grammar = load(grammar)
+    if isinstance(grammar, BNFGrammar):
+        return BNFChecker(grammar)
+    elif isinstance(grammar, RegularExpressionDefinition):
+        return RegularExpressionChecker(grammar)
+    elif isinstance(grammar, PythonGrammar) or isinstance(grammar, dict) and "matchFun" in grammar:
+        return PythonChecker(grammar)
+    elif isinstance(grammar, MongoGrammar):
+        return MongoChecker(grammar["spec"])
+    elif isinstance(grammar, PLYGrammar):
+        return PLYChecker(grammar)
+    elif isinstance(grammar, AlphabetListDefinition):
+        return AlphabetListChecker(grammar)
+    elif isinstance(grammar, StringGrammarDefinition):
+        return StringChecker(grammar)
+    elif isinstance(grammar, Encoding):
+        return EncodingChecker(grammar)
+    elif isinstance(grammar, Iterable):
+        return IterableChecker(grammar)
+    else:
+        raise ValueError(grammar)
+
 
 class Checker(object):
     """ Ensures that input follows a rule, protocol, grammar alphabet..."""
@@ -174,7 +208,6 @@ class AlphabetListChecker(Checker):
         if not isinstance(gd, AlphabetListDefinition):
             raise TypeError
         self.gd = gd
-        from pydsl.Memory.Loader import checker_factory
         self.checkerinstances = [checker_factory(x) for x in self.gd.grammarlist]
 
     def check(self, data):
@@ -202,4 +235,18 @@ class EncodingChecker(Checker):
             except UnicodeDecodeError:
                 return False
             return True
+        return False
+
+class IterableChecker(Checker):
+    def __init__(self, iterable):
+        Checker.__init__(self)
+        self.iterable = iterable
+
+    def check(self,data):
+        for definition in self.iterable:
+            try:
+                if check(definition, data):
+                    return True
+            except KeyError:
+                pass
         return False

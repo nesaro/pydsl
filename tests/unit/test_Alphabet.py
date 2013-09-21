@@ -14,13 +14,15 @@
 #
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
+from pydsl.Factory import lexer_factory
+from pydsl.Checker import checker_factory
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
-from pydsl.Memory.Loader import load, checker_factory, lexer_factory
+from pydsl.Memory.Loader import load
 from pydsl.Alphabet.Token import Token
 from pydsl.Alphabet.Definition import Encoding
 from pydsl.Config import load_default_memory

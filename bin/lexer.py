@@ -19,13 +19,14 @@
 """
 generates token from input
 """
+from pydsl.Factory import lexer_factory
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
-from pydsl.Memory.Loader import lexer_factory
+
 
 def collector():
     try:

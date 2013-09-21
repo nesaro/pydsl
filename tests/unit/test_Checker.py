@@ -20,6 +20,7 @@ __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
+from pydsl.Alphabet.Token import Token
 
 class TestMongoChecker(unittest.TestCase):
     """Mongo checker"""
