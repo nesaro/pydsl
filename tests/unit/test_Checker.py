@@ -51,7 +51,7 @@ class TestBNFChecker(unittest.TestCase):
         grammardef = productionset0
         checker = BNFChecker(grammardef)
         self.assertTrue(checker.check("SR"))
-        self.assertTrue(checker.check(Token("S"), Token("R")))
+        self.assertTrue(checker.check((Token("S"), Token("R"))))
         self.assertTrue(checker.check(("S","R")))
         self.assertFalse(checker.check("SL"))
 
