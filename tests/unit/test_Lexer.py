@@ -14,14 +14,13 @@
 #
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
-from pydsl.Factory import lexer_factory
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
-from pydsl.Lexer import EncodingLexer
+from pydsl.Lexer import EncodingLexer, lexer_factory
 from pydsl.contrib.bnfgrammar import *
 
 
@@ -53,7 +52,7 @@ class TestLexer(unittest.TestCase):
 
     def testSimpleLexing(self):
         """Test checker instantiation and call"""
-        from pydsl.Factory import lexer_factory, load
+        from pydsl.Memory.Loader import load
         from pydsl.Alphabet.Definition import AlphabetListDefinition
         from pydsl.Alphabet.Token import Token
         integer = load('integer')
@@ -64,7 +63,6 @@ class TestLexer(unittest.TestCase):
         self.assertListEqual(lexer("123411/11/2001"), [Token("1", load("integer")),Token("2", load("integer")),Token("3", load("integer")),Token("4", load("integer")), Token("11/11/2001",date)])
 
     def testLexerGenerator(self):
-        from pydsl.Factory import lexer_factory
         from pydsl.Grammar.Definition import StringGrammarDefinition
         from pydsl.Alphabet.Definition import AlphabetListDefinition
         abc = StringGrammarDefinition("abc")
@@ -93,7 +91,6 @@ class TestLexer(unittest.TestCase):
 
 class TestConceptLexer(unittest.TestCase):
     def test_Concept(self):
-        from pydsl.Factory import lexer_factory
         from pydsl.Grammar.Definition import StringGrammarDefinition
         from pydsl.Alphabet.Definition import AlphabetListDefinition
         from pydsl.Alphabet.Token import Token

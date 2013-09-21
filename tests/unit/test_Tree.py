@@ -23,7 +23,7 @@ import unittest
 
 class TestTrees(unittest.TestCase):
     def setUp(self):
-        from pydsl.Grammar.Tree import PositionTree
+        from pydsl.Tree import PositionTree
         a = PositionTree(0,6,"abcdef")
         self.firstleaf1 = PositionTree(0,1,"a")
         a.append_child(self.firstleaf1)
@@ -50,8 +50,3 @@ class TestTrees(unittest.TestCase):
     def testBasics(self):
         self.assertTrue(len(self.tree1) == 6)
         self.assertTrue(self.tree1.first_leaf() == self.firstleaf1)
-
-    def testTreeDistance(self):
-        from pydsl.Grammar.Tree import zss_distance
-        self.assertTrue(zss_distance(self.tree1,self.tree2) == 1)
-

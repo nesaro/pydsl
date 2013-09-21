@@ -1,19 +1,19 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-#this file is part of pydsl.
+# this file is part of pydsl.
 #
-#pydsl is free software: you can redistribute it and/or modify
-#it under the terms of the gnu general public license as published by
-#the free software foundation, either version 3 of the license, or
+# pydsl is free software: you can redistribute it and/or modify
+# it under the terms of the gnu general public license as published by
+# the free software foundation, either version 3 of the license, or
 #(at your option) any later version.
 #
-#pydsl is distributed in the hope that it will be useful,
-#but without any warranty; without even the implied warranty of
-#merchantability or fitness for a particular purpose.  see the
-#gnu general public license for more details.
+# pydsl is distributed in the hope that it will be useful,
+# but without any warranty; without even the implied warranty of
+# merchantability or fitness for a particular purpose.  see the
+# gnu general public license for more details.
 #
-#you should have received a copy of the gnu general public license
-#along with pydsl.  if not, see <http://www.gnu.org/licenses/>.
+# you should have received a copy of the gnu general public license
+# along with pydsl.  if not, see <http://www.gnu.org/licenses/>.
 
 """loader class"""
 

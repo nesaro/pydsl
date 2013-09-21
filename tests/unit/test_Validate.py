@@ -16,7 +16,8 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 """Test wrapper"""
-from pydsl.Factory import load_parser, load_validator
+from pydsl.Parser.Parser import parser_factory
+from pydsl.Validate import validator_factory
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
@@ -30,14 +31,14 @@ class TestValidate(unittest.TestCase):
         load_default_memory()
 
     def testBasic(self):
-        parser = load_parser('Date', 'descent')
+        parser = parser_factory('Date', 'descent')
         self.assertFalse(parser.get_trees("11/11/ab", True)[0].valid)
         self.assertTrue(parser.get_trees("11/11/2011", True)[0].valid)
 
     def testValidateLoad(self):
         from pydsl.contrib.bnfgrammar import productionset0
 
-        validator = load_validator(productionset0)
+        validator = validator_factory(productionset0)
         self.assertTrue(validator("input"))
 
     def testTokenInput(self):

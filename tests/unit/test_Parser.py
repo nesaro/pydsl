@@ -139,7 +139,7 @@ class TestWeightedParser(unittest.TestCase):
     @unittest.skip
     def testMixResults(self):
         from pydsl.Grammar.Parser.Weighted import mix_results
-        from pydsl.Grammar.Tree import ParseTree
+        from pydsl.Tree import ParseTree
         from pydsl.Grammar.Symbol import NullSymbol
         result1 = ParseTree(0, 3, [NullSymbol()], "", None)
         result2 = ParseTree(0, 5, [NullSymbol()], "", None)

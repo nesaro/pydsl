@@ -1,22 +1,24 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-#This file is part of pydsl.
+# This file is part of pydsl.
 #
-#pydsl is free software: you can redistribute it and/or modify
-#it under the terms of the GNU General Public License as published by
-#the Free Software Foundation, either version 3 of the License, or
+# pydsl is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
 #(at your option) any later version.
 #
-#pydsl is distributed in the hope that it will be useful,
-#but WITHOUT ANY WARRANTY; without even the implied warranty of
-#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#GNU General Public License for more details.
+# pydsl is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
 #
-#You should have received a copy of the GNU General Public License
-#along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
+# You should have received a copy of the GNU General Public License
+# along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 """Base Lexer classes"""
+from pydsl.Alphabet.Definition import Encoding
 from pydsl.Checker import checker_factory
+from pydsl.Memory.Loader import load
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
@@ -25,6 +27,7 @@ __email__ = "nesaro@gmail.com"
 import logging
 LOG = logging.getLogger(__name__)
 from pydsl.Alphabet.Token import Token
+from pydsl.Tree import Tree
 
 class Lexer(object):
     """Translates an input written in one Alphabet into another Alphabet"""
@@ -95,22 +98,22 @@ class AlphabetLexer(Lexer):
         """generator version of the lexer, yields a new token as soon as possible"""
         raise NotImplementedError
 
-class Tree:
+class LexerTree(Tree):
     def __init__(self, content=None, index=0, parent=None):
+        Tree.__init__(self)
         self.content = content
         self.parent = parent
         self.index = index
-        self.children = []
         self.new = True
 
     def append(self, content, index):
-        new = Tree(content, index, self)
-        self.children.append(new)
+        new = LexerTree(content, index, self)
+        self.append_child(new)
         self.new = False
         return new
 
     def remove(self, element):
-        self.children.remove(element)
+        self.childlist.remove(element)
 
     def __bool__(self):
         return bool(self.content)
@@ -126,7 +129,7 @@ class AlphabetListLexer(AlphabetLexer):
         return self.string[self.index:]
 
     def nextToken(self):
-        tree = Tree()
+        tree = LexerTree()
         while tree.index < len(self.string):
             valid_alternatives = []
             index = tree.index
@@ -143,7 +146,7 @@ class AlphabetListLexer(AlphabetLexer):
                 tree.parent.remove(tree)
                 tree = tree.parent
                 continue
-            if not tree.children and not tree.new:
+            if not tree.childlist and not tree.new:
                 tree.parent.remove(tree)
                 tree = tree.parent
                 continue
@@ -187,3 +190,13 @@ class ConceptLexer(Lexer):
         return result
 
 
+def lexer_factory(alphabet):
+    from pydsl.Alphabet.Definition import AlphabetListDefinition
+    if isinstance(alphabet, str):
+        alphabet = load(alphabet)
+    if isinstance(alphabet, AlphabetListDefinition):
+        return AlphabetListLexer(alphabet)
+    elif isinstance(alphabet, Encoding):
+        return EncodingLexer(alphabet)
+    else:
+        raise ValueError(alphabet)

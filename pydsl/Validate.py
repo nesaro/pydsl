@@ -14,7 +14,6 @@
 #
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
-from pydsl.Factory import load_parser
 
 
 __author__ = "Nestor Arocha"
@@ -23,6 +22,8 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
+from pydsl.Memory.Loader import load
+from pydsl.Parser.Parser import parser_factory
 
 
 class Validator(object):
@@ -38,6 +39,16 @@ class Validator(object):
 
 class BNFValidator(Validator):
     def __call__(self, inputstring):
-        parser = load_parser(self.gd, "descent")
+        parser = parser_factory(self.gd, "descent")
         resulttrees = parser.get_trees(inputstring, True)
         return resulttrees
+
+
+def validator_factory(grammar):
+    if isinstance(grammar, str):
+        grammar = load(grammar)
+    from pydsl.Grammar.BNF import BNFGrammar
+    if isinstance(grammar, BNFGrammar):
+        return BNFValidator(grammar)
+    else:
+        raise ValueError(grammar)

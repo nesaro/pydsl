@@ -29,7 +29,6 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
-from pkg_resources import resource_filename
 from pypository.search.Searcher import Searcher
 from pydsl.Config import GLOBALCONFIG
 

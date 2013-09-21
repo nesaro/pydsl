@@ -16,7 +16,8 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 """Parser module"""
-from pydsl.Factory import lexer_factory
+from pydsl.Lexer import lexer_factory
+from pydsl.Memory.Loader import load
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
@@ -50,7 +51,7 @@ def terminal_symbol_reducer(symbol, word, production, fixed_start = False):
         pass
     else:
         raise ValueError("Unknown boundaries rules")
-    from pydsl.Grammar.Tree import ParseTree
+    from pydsl.Tree import ParseTree
     return [ParseTree(begin, end, [symbol], word[begin:end], production) for (size, begin, end) in validresults]
 
 class Parser(object):
@@ -81,3 +82,21 @@ class BottomUpParser(Parser):
     def __init__(self, bnfgrammar):
         self._lexer = lexer_factory(bnfgrammar.alphabet())
         Parser.__init__(self, bnfgrammar)
+
+
+def parser_factory(grammar, parser = "auto"):
+    if isinstance(grammar, str):
+        grammar = load(grammar)
+    from pydsl.Grammar.BNF import BNFGrammar
+    if isinstance(grammar, BNFGrammar):
+        if parser == "descent":
+            from pydsl.Parser.RecursiveDescent import BacktracingErrorRecursiveDescentParser
+            return BacktracingErrorRecursiveDescentParser(grammar)
+        elif parser in ("auto" , "default" , "weighted"):
+            #TODO Guess best parser
+            from pydsl.Parser.Weighted import WeightedParser
+            return WeightedParser(grammar)
+        else:
+            raise Exception("Wrong parser name: " + parser)
+    else:
+        raise ValueError(grammar)

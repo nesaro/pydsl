@@ -16,6 +16,7 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 """Recursive descent parser"""
+from pydsl import Tree
 from pydsl.Checker import check
 
 __author__ = "Nestor Arocha"
@@ -25,7 +26,7 @@ __email__ = "nesaro@gmail.com"
 import logging
 LOG = logging.getLogger(__name__)
 from .Parser import TopDownParser, terminal_symbol_reducer
-from pydsl.Grammar.Tree import ParseTree, Tree
+from pydsl.Tree import ParseTree, Tree
 
 #Errors are stored elsewhere. If another alternative covers this error, we discard this alternative.
 #If not, we choose the alternative which covers more amount of input
