@@ -17,6 +17,7 @@
 
 """Parser module"""
 from pydsl.Factory import lexer_factory
+from pydsl.Memory.Loader import load
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
@@ -81,3 +82,21 @@ class BottomUpParser(Parser):
     def __init__(self, bnfgrammar):
         self._lexer = lexer_factory(bnfgrammar.alphabet())
         Parser.__init__(self, bnfgrammar)
+
+
+def parser_factory(grammar, parser = "auto"):
+    if isinstance(grammar, str):
+        grammar = load(grammar)
+    from pydsl.Grammar.BNF import BNFGrammar
+    if isinstance(grammar, BNFGrammar):
+        if parser == "descent":
+            from pydsl.Parser.RecursiveDescent import BacktracingErrorRecursiveDescentParser
+            return BacktracingErrorRecursiveDescentParser(grammar)
+        elif parser in ("auto" , "default" , "weighted"):
+            #TODO Guess best parser
+            from pydsl.Parser.Weighted import WeightedParser
+            return WeightedParser(grammar)
+        else:
+            raise Exception("Wrong parser name: " + parser)
+    else:
+        raise ValueError(grammar)

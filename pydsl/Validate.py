@@ -14,7 +14,7 @@
 #
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
-from pydsl.Factory import load_parser
+from pydsl.Parser.Parser import parser_factory
 
 
 __author__ = "Nestor Arocha"
@@ -38,6 +38,6 @@ class Validator(object):
 
 class BNFValidator(Validator):
     def __call__(self, inputstring):
-        parser = load_parser(self.gd, "descent")
+        parser = parser_factory(self.gd, "descent")
         resulttrees = parser.get_trees(inputstring, True)
         return resulttrees

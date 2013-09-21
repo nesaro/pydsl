@@ -41,22 +41,7 @@ def lexer_factory(alphabet):
         raise ValueError(alphabet)
 
 
-def load_parser(grammar, parser = "auto"):
-    if isinstance(grammar, str):
-        grammar = load(grammar)
-    from pydsl.Grammar.BNF import BNFGrammar
-    if isinstance(grammar, BNFGrammar):
-        if parser == "descent":
-            from pydsl.Parser.RecursiveDescent import BacktracingErrorRecursiveDescentParser
-            return BacktracingErrorRecursiveDescentParser(grammar)
-        elif parser in ("auto" , "default" , "weighted"):
-            #TODO Guess best parser
-            from pydsl.Parser.Weighted import WeightedParser
-            return WeightedParser(grammar)
-        else:
-            raise Exception("Wrong parser name: " + parser)
-    else:
-        raise ValueError(grammar)
+
 
 
 def load_validator(grammar):
