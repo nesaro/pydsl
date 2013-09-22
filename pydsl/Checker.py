@@ -21,6 +21,7 @@ __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
+from collections import Iterable
 LOG = logging.getLogger(__name__)
 
 
@@ -82,10 +83,12 @@ class RegularExpressionChecker(Checker):
         else:
             self.__regexp = regexp
 
-    def check(self, word):
+    def check(self, data):
         """returns True if any match any regexp"""
+        if isinstance(data, Iterable):
+            data = "".join([str(x) for x in data])
         try:
-            data = str(word)
+            data = str(data)
         except UnicodeDecodeError:
             return False
         if not data:
@@ -165,6 +168,8 @@ class PLYChecker(Checker):
         self.module = gd.module
 
     def check(self, data):
+        if isinstance(data, Iterable):
+            data = "".join([str(x) for x in data])
         from ply import yacc, lex
         lexer = lex.lex(self.module)
         parser = yacc.yacc(module = self.module)
@@ -184,8 +189,8 @@ class StringChecker(Checker):
         self.gd = gd
 
     def check(self, data):
-        if isinstance(data, list):
-            data = "".join(data)
+        if isinstance(data, Iterable):
+            data = "".join([str(x) for x in data])
         return self.gd.string == str(data)
 
 class JsonSchemaChecker(Checker):
@@ -211,6 +216,8 @@ class AlphabetListChecker(Checker):
         self.checkerinstances = [checker_factory(x) for x in self.gd.grammarlist]
 
     def check(self, data):
+        if isinstance(data, Iterable):
+            data = "".join([str(x) for x in data])
         for element in data:
             if not any([x.check(element) for x in self.checkerinstances]):
                 return False
@@ -223,6 +230,8 @@ class EncodingChecker(Checker):
 
     def check(self,data):
         encoding = self.gd.encoding
+        if isinstance(data, Iterable):
+            data = "".join([str(x) for x in data])
         if isinstance(data, str):
             try:
                 data.encode(encoding)
