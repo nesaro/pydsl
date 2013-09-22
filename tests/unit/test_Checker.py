@@ -151,6 +151,7 @@ class TestEncodingChecker(unittest.TestCase):
         from pydsl.Alphabet.Definition import Encoding
         a = Encoding('ascii')
         checker = EncodingChecker(a)
+        self.assertTrue(checker.check('1234'))
         self.assertTrue(checker.check('asdf'))
         self.assertFalse(checker.check('£'))
 
@@ -167,6 +168,10 @@ class TestEncodingChecker(unittest.TestCase):
         pass
 
 class TestAlphabetListDefinitionChecker(unittest.TestCase):
+    def setUp(self):
+        from pydsl.Config import load_default_memory
+        load_default_memory()
+
     def testCheck(self):
         from pydsl.Checker import AlphabetListChecker
         from pydsl.Alphabet.Definition import AlphabetListDefinition
@@ -191,6 +196,7 @@ class TestStringChecker(unittest.TestCase):
     def testCheck(self):
         """Test checker instantiation and call"""
         from pydsl.Checker import StringChecker
+        from pydsl.Grammar.Definition import StringGrammarDefinition
         grammarchecker = StringChecker("string123")
         self.assertTrue(grammarchecker("string123"))
         self.assertTrue(grammarchecker(["string123"]))

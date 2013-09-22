@@ -30,6 +30,7 @@ class TestGuesser(unittest.TestCase):
 
     def testStuff(self):
         from pydsl.Guess import Guesser
+        from pydsl.Alphabet.Token import Token
         guesser = Guesser()
         expected_result = sorted(['IntegerTree','cstring','hex','unixFilename','integer','calc_ply','ascii', 'test_alphabet', 'australian_postcode','swiss_postcode'])
         self.assertListEqual(sorted(list(guesser('1234'))), expected_result)
