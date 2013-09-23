@@ -43,7 +43,7 @@ class TestAlphabet(unittest.TestCase):
     def testLexer(self):
         lexer = lexer_factory(self.alphabet)
         self.assertListEqual(lexer("1234"), [(Token("1234",self.integer))])
-        self.assertListEqual(lexer("123411/11/2001"), [Token("1", load("integer")),Token("2", load("integer")),Token("3", load("integer")),Token("4", load("integer")), Token("11/11/2001",self.date)])
+        self.assertListEqual(lexer("123411/11/2001"), [Token("1234", load("integer")), Token("11/11/2001",self.date)])
 
     def testProperties(self):
         self.alphabet.grammarlist

@@ -60,7 +60,7 @@ class TestLexer(unittest.TestCase):
         mydef = AlphabetListDefinition([integer,date])
         lexer = lexer_factory(mydef)
         self.assertListEqual(lexer("1234"), [(Token("1234",integer))])
-        self.assertListEqual(lexer("123411/11/2001"), [Token("1", load("integer")),Token("2", load("integer")),Token("3", load("integer")),Token("4", load("integer")), Token("11/11/2001",date)])
+        self.assertListEqual(lexer("123411/11/2001"), [Token("1234", load("integer")),Token("11/11/2001",date)])
 
     def testLexerGenerator(self):
         from pydsl.Grammar.Definition import StringGrammarDefinition
