@@ -101,7 +101,7 @@ class PositionTree(Tree):
 
     def __getitem__(self, key):
         result = []
-        mylist = self.to_list(order)
+        mylist = self.to_list()
         for element in mylist:
             if element.content == key:
                 result.append(element)
