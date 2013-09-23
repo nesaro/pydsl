@@ -174,3 +174,6 @@ def lexer_factory(alphabet):
         return EncodingLexer(alphabet)
     else:
         raise ValueError(alphabet)
+
+def lex(definition, data):
+    return lexer_factory(definition)(data)
