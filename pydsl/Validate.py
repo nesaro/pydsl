@@ -52,3 +52,7 @@ def validator_factory(grammar):
         return BNFValidator(grammar)
     else:
         raise ValueError(grammar)
+
+
+def validate(definition, data):
+    return validator_factory(definition)(data)
