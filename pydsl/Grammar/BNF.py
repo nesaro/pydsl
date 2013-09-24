@@ -26,8 +26,9 @@ __email__ = "nesaro@gmail.com"
 
 
 class Production(object):
+
     def __init__(self, leftside, rightside):
-        #Left side must have at least one non terminal symbol
+        # Left side must have at least one non terminal symbol
         for element in rightside:
             if not isinstance(element, Symbol):
                 raise TypeError
@@ -36,8 +37,8 @@ class Production(object):
 
     def __str__(self):
         """Pretty print"""
-        leftstr = " ".join([ x.name for x in self.leftside])
-        rightstr = " ".join([ str(x) for x in self.rightside])
+        leftstr = " ".join([x.name for x in self.leftside])
+        rightstr = " ".join([str(x) for x in self.rightside])
         return leftstr + "::=" + rightstr
 
     def __eq__(self, other):
@@ -66,15 +67,18 @@ class Production(object):
         return hash(self.leftside) & hash(self.rightside)
 
 
-class BNFGrammar(GrammarDefinition): #Only stores a ruleset, and methods to ask properties or validity check 
+#Only stores a ruleset, and methods to ask properties or validity check
+class BNFGrammar(GrammarDefinition):
+
     def __init__(self, initialsymbol, fulllist, options=None):
         GrammarDefinition.__init__(self)
         self._initialsymbol = initialsymbol
         for rule in fulllist:
-            if fulllist.count(rule) >1:
+            if fulllist.count(rule) > 1:
                 raise ValueError("Duplicated rule: " + str(rule))
         self.fulllist = fulllist
-        if not options: options = {}
+        if not options:
+            options = {}
         self.options = options
 
     def alphabet(self):
@@ -130,7 +134,7 @@ class BNFGrammar(GrammarDefinition): #Only stores a ruleset, and methods to ask 
             result.append(EndSymbol())
         for production in self.productions:
             if symbol in production.rightside:
-                nextindex = production.rightside.index(symbol)+1
+                nextindex = production.rightside.index(symbol) + 1
                 while nextindex < len(production.rightside):
                     nextsymbol = production.rightside[nextindex]
                     firstlist = self.first_lookup(nextsymbol)
@@ -160,7 +164,7 @@ class BNFGrammar(GrammarDefinition): #Only stores a ruleset, and methods to ask 
         return UnknownSymbol in self.fulllist
 
     def __eq__(self, other):
-        if not isinstance(other,BNFGrammar):
+        if not isinstance(other, BNFGrammar):
             return False
         if self._initialsymbol != other.initialsymbol:
             return False
@@ -223,4 +227,4 @@ class BNFGrammar(GrammarDefinition): #Only stores a ruleset, and methods to ask 
         return self.productions.index(rule)
 
     def __str__(self):
-        return str(list(map(str,self.productions)))
+        return str(list(map(str, self.productions)))

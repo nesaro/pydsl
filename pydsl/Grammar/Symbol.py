@@ -50,16 +50,18 @@ class NonTerminalSymbol(Symbol):
             return False
         return self.name == other.name and self.weight == other.weight
 
-class TerminalSymbol(Symbol): 
-    def __init__(self, gd, weight = None, boundariesrules = None):
+
+class TerminalSymbol(Symbol):
+
+    def __init__(self, gd, weight=None, boundariesrules=None):
         if isinstance(gd, StringGrammarDefinition):
             weight = weight or 99
             boundariesrules = len(gd.string)
         else:
             weight = weight or 49
         Symbol.__init__(self, weight)
-        if boundariesrules not in ("min","max","any") and not isinstance(boundariesrules, int):
-            raise TypeError("Unknown boundaries rules %s" % boundariesrules )
+        if boundariesrules not in ("min", "max", "any") and not isinstance(boundariesrules, int):
+            raise TypeError("Unknown boundaries rules %s" % boundariesrules)
         if not gd:
             raise Exception
         self.gd = gd
@@ -75,7 +77,6 @@ class TerminalSymbol(Symbol):
     @property
     def first(self):
         return self.gd.first
-
 
     def __eq__(self, other):
         """StringTerminalSymbol are equals if definition and names are equal"""

@@ -21,6 +21,7 @@ __email__ = "nesaro@gmail.com"
 
 
 class GrammarDefinition(object):
+
     def __init__(self):
         pass
 

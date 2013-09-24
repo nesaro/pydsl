@@ -62,4 +62,3 @@ class RegexpDictStorage(Memory):
 
     def __contains__(self, index):
         return index in self._content
-
