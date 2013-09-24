@@ -46,9 +46,6 @@ class RegexpDictStorage(Memory):
         from pydsl.Grammar.Definition import RegularExpressionDefinition
         return RegularExpressionDefinition(self._content[index]["regexp"], flags)
 
-    def provided_iclasses(self):# -> list:
-        return ["re"]
-
     def __iter__(self):
         self.index = 0
         self.cache = []
