@@ -213,7 +213,7 @@ class Sequence:
         return set(x['right'] for x in self.possible_items)
 
     def append(self, left, right, content, check_position=True):
-        if left >= right:
+        if left > right:
             raise Exception
         if check_position == True and left:
             if left not in self.current_right:
