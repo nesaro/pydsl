@@ -69,16 +69,13 @@ def translator_factory(function):
         function = load(function)
     from pydsl.Grammar.Definition import PLYGrammar
     if isinstance(function, PLYGrammar):
-        from pydsl.Translator.Grammar import PLYTranslator
         return PLYTranslator(function)
     if isinstance(function, dict):
-        from pydsl.Translator.Grammar import PythonTranslator
         function['inputdic'] = _load_checker(function['inputdic'])
         function['outputdic'] = _load_checker(function['outputdic'])
         return PythonTranslator(**function)
     from pyparsing import OneOrMore
     if isinstance(function, OneOrMore):
-        from pydsl.Translator import PyParsingTranslator
         return PyParsingTranslator(function)
     raise ValueError(function)
 
