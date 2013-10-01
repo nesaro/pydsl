@@ -16,7 +16,7 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 """Parser module"""
-from pydsl.Lexer import lexer_factory
+from pydsl.Lex import lexer_factory
 from pydsl.Memory.Loader import load
 
 __author__ = "Nestor Arocha"

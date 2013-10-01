@@ -25,7 +25,7 @@ from pydsl.contrib.bnfgrammar import *
 from pydsl.Parser.RecursiveDescent import BacktracingErrorRecursiveDescentParser
 from pydsl.Parser.Weighted import WeightedParser
 from pydsl.Parser.LR0 import LR0Parser
-from pydsl.Lexer import EncodingLexer
+from pydsl.Lex import EncodingLexer
 import unittest
 
 class TestParsers(unittest.TestCase):

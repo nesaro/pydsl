@@ -24,7 +24,7 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
-from pydsl.Lexer import AlphabetLexer
+from pydsl.Lex import AlphabetLexer
 from pydsl.Alphabet.Token import Token
 import re
 

@@ -14,7 +14,7 @@
 #
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
-from pydsl.Lexer import lexer_factory
+from pydsl.Lex import lexer_factory
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
@@ -51,7 +51,7 @@ class TestCase(unittest.TestCase):
             if number == "two":
                 return 2
  
-        from pydsl.Lexer import ConceptLexer
+        from pydsl.Lex import ConceptLexer
         to_concepts = ConceptLexer(concept_translator_fun)
         math_expression_concepts = to_concepts(ascii_tokens)
         self.assertListEqual(math_expression_concepts, ['one', 'addition', 'two'])
@@ -109,7 +109,7 @@ class TestCase(unittest.TestCase):
         from pydsl.Alphabet.Definition import AlphabetListDefinition
         from pydsl.Grammar.Definition import StringGrammarDefinition
         math_alphabet = AlphabetListDefinition(['integer',StringGrammarDefinition('+')])
-        from pydsl.Lexer import lex
+        from pydsl.Lex import lex
         tokens = lex(math_alphabet, "11+2")
         parse_tree = rdp(tokens)
         result = parse_tree_walker(parse_tree[0])
