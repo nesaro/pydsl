@@ -100,3 +100,7 @@ def parser_factory(grammar, parser = "auto"):
             raise Exception("Wrong parser name: " + parser)
     else:
         raise ValueError(grammar)
+
+
+def parse(definition, data, parser = "auto"):
+    return parser_factory(definition, parser)(data)
