@@ -63,7 +63,7 @@ class Encoding(AlphabetDefinition):
         self.encoding = encoding
 
     def __getitem__(self, item):
-        from pydsl.Checker import EncodingChecker
+        from pydsl.Check import EncodingChecker
         if EncodingChecker(self).check(item):
             from pydsl.Grammar.Definition import StringGrammarDefinition
             return StringGrammarDefinition(item)

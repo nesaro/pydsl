@@ -62,7 +62,7 @@ def translator_factory(function):
         """Converts {"channelname","type"} into {"channelname",instance}"""
         result = {}
         for key in originaldic:
-            from pydsl.Checker import checker_factory
+            from pydsl.Check import checker_factory
             result[key] = checker_factory(str(originaldic[key]))
         return result
     if isinstance(function, str):

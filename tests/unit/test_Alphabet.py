@@ -14,7 +14,7 @@
 #
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
-from pydsl.Checker import checker_factory
+from pydsl.Check import checker_factory
 from pydsl.Lex import lexer_factory
 
 __author__ = "Nestor Arocha"

@@ -31,7 +31,7 @@ class TestMongoChecker(unittest.TestCase):
         """Test checker instantiation and call"""
         bad = {"a":1,"b":3}
         letter = {"a":1,"b":"asd"}
-        from pydsl.Checker import MongoChecker
+        from pydsl.Check import MongoChecker
         from pydsl.contrib.mongogrammar import spec, fullspec
         checker = MongoChecker(spec)
         self.assertTrue(checker.check(spec))
@@ -46,7 +46,7 @@ class TestBNFChecker(unittest.TestCase):
     """BNF Checker"""
     def testStringInput(self):
         """Test checker instantiation and call"""
-        from pydsl.Checker import BNFChecker
+        from pydsl.Check import BNFChecker
         from pydsl.contrib.bnfgrammar import productionset0
         grammardef = productionset0
         checker = BNFChecker(grammardef)
@@ -71,7 +71,7 @@ class TestRegularExpressionChecker(unittest.TestCase):
     """BNF Checker"""
     def testCheck(self):
         """Test checker instantiation and call"""
-        from pydsl.Checker import RegularExpressionChecker
+        from pydsl.Check import RegularExpressionChecker
         input_str = "abc"
         checker = RegularExpressionChecker(input_str)
         self.assertTrue(checker.check(input_str))
@@ -96,7 +96,7 @@ class TestRegularExpressionChecker(unittest.TestCase):
 class TestPLYChecker(unittest.TestCase):
     def testCheck(self):
         """Test checker instantiation and call"""
-        from pydsl.Checker import PLYChecker
+        from pydsl.Check import PLYChecker
         from pydsl.contrib.grammar import example_ply
         from pydsl.Grammar.Definition import PLYGrammar
         grammardef = PLYGrammar(example_ply)
@@ -122,7 +122,7 @@ class TestJsonSchemaChecker(unittest.TestCase):
     def testCheck(self):
         """Test checker instantiation and call"""
         from pydsl.Grammar.Definition import JsonSchema
-        from pydsl.Checker import JsonSchemaChecker
+        from pydsl.Check import JsonSchemaChecker
         schema = {
             "type" : "string",
             "items" : {
@@ -147,7 +147,7 @@ class TestJsonSchemaChecker(unittest.TestCase):
 
 class TestEncodingChecker(unittest.TestCase):
     def testCheck(self):
-        from pydsl.Checker import EncodingChecker
+        from pydsl.Check import EncodingChecker
         from pydsl.Alphabet.Definition import Encoding
         a = Encoding('ascii')
         checker = EncodingChecker(a)
@@ -173,7 +173,7 @@ class TestAlphabetListDefinitionChecker(unittest.TestCase):
         load_default_memory()
 
     def testCheck(self):
-        from pydsl.Checker import AlphabetListChecker
+        from pydsl.Check import AlphabetListChecker
         from pydsl.Alphabet.Definition import AlphabetListDefinition
         a = AlphabetListDefinition(['integer'])
         checker = AlphabetListChecker(a)
@@ -195,7 +195,7 @@ class TestAlphabetListDefinitionChecker(unittest.TestCase):
 class TestStringChecker(unittest.TestCase):
     def testCheck(self):
         """Test checker instantiation and call"""
-        from pydsl.Checker import StringChecker
+        from pydsl.Check import StringChecker
         from pydsl.Grammar.Definition import StringGrammarDefinition
         grammarchecker = StringChecker("string123")
         self.assertTrue(grammarchecker("string123"))

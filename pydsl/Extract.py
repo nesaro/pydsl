@@ -23,7 +23,7 @@ import logging
 LOG = logging.getLogger(__name__)
 from pydsl.Alphabet.Definition import AlphabetDefinition
 from pydsl.Grammar.Definition import GrammarDefinition
-from pydsl.Checker import checker_factory
+from pydsl.Check import checker_factory
 
 def extract(grammar, inputdata):
     """Extract every slice of the input data that belongs to the Grammar Definition"""

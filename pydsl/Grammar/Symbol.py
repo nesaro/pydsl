@@ -16,7 +16,7 @@
 # along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 """Symbols"""
-from pydsl.Checker import check
+from pydsl.Check import check
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
