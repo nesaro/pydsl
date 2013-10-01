@@ -26,16 +26,6 @@ REQUIREMENTS
  * pypository
  * optional: ply library ( http://www.dabeaz.com/ply/ )
 
-HELP
-====
- * https://github.com/nesaro/pydsl
- * http://pydsl.blogspot.co.uk
- * nesaro@gmail.com
-
-LICENSE
-=======
-GPLv3, see LICENSE file
-
 ABOUT
 =====
 pydsl is a language library written in python
