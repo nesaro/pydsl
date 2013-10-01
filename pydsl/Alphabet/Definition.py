@@ -36,7 +36,7 @@ class AlphabetListDefinition(AlphabetDefinition):
     def __init__(self, grammarlist):
         if not grammarlist:
             raise ValueError
-        from pydsl.Memory.Loader import load
+        from pydsl.Config import load
         self.grammarlist = []
         for x in grammarlist:
             if isinstance(x, str):

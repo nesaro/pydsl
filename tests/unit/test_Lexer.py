@@ -52,7 +52,7 @@ class TestLexer(unittest.TestCase):
 
     def testSimpleLexing(self):
         """Test checker instantiation and call"""
-        from pydsl.Memory.Loader import load
+        from pydsl.Config import load
         from pydsl.Alphabet.Definition import AlphabetListDefinition
         from pydsl.Alphabet.Token import Token
         integer = load('integer')

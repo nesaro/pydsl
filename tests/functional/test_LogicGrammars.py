@@ -9,7 +9,7 @@ __email__ = "nesaro@gmail.com"
 import unittest
 from pydsl.Parser.RecursiveDescent import BacktracingErrorRecursiveDescentParser
 from pydsl.Memory.File.BNF import load_bnf_file
-from pydsl.Memory.Loader import load
+from pydsl.Config import load
 
 
 class TestLogicGrammars(unittest.TestCase):

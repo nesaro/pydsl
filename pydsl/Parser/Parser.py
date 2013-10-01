@@ -17,7 +17,7 @@
 
 """Parser module"""
 from pydsl.Lex import lexer_factory
-from pydsl.Memory.Loader import load
+from pydsl.Config import load
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"

@@ -69,8 +69,8 @@ class GlobalConfig(object):
 
     """Execution time global configuration"""
 
+    memorylist = []
     def __init__(self, debuglevel=40):
-        self.memorylist = []
         self.formatlist = default_formats()
         self.__debuglevel = debuglevel
 
@@ -82,6 +82,19 @@ class GlobalConfig(object):
     def debuglevel(self, level):
         self.__debuglevel = level
 
+    @classmethod
+    def load(cls, identifier, memorylist=None):
+        if not memorylist:
+            memorylist = cls.memorylist
+        from pypository.Loader import load
+        return load(identifier, memorylist)
+
+    @classmethod
+    def search(cls, query, memorylist=None):
+        if not memorylist:
+            memorylist = cls.memorylist
+        from pypository.Loader import search
+        return search(query, memorylist)
 
 class Singleton(type):
 
@@ -98,3 +111,6 @@ class Singleton(type):
 
 GlobalConfig2 = Singleton('GlobalConfig2', (GlobalConfig, ), {})
 GLOBALCONFIG = GlobalConfig2()  # The only instance available
+
+load = GLOBALCONFIG.load
+search = GLOBALCONFIG.search

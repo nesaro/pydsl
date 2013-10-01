@@ -23,7 +23,7 @@ __email__ = "nesaro@gmail.com"
 from pydsl.Alphabet.Token import Token
 from pydsl.Alphabet.Definition import Encoding
 from pydsl.Check import checker_factory
-from pydsl.Memory.Loader import load
+from pydsl.Config import load
 
 
 

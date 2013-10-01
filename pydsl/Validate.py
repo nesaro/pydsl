@@ -22,7 +22,7 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
-from pydsl.Memory.Loader import load
+from pydsl.Config import load
 from pydsl.Parser.Parser import parser_factory
 
 

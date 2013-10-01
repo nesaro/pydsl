@@ -46,7 +46,7 @@ def __generateWordSymbol(rightside):
         raise TypeError
     br = args[2] #Boundary rule policy
 
-    from pydsl.Memory.Loader import load
+    from pydsl.Config import load
     return TerminalSymbol(load(args[1]), None, br)
 
 

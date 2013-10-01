@@ -9,7 +9,7 @@
 
 def matchFun(input):
     parentrelationlist = str(input).split(";")
-    from pydsl.Memory.Loader import load
+    from pydsl.Config import load
     integer = load("integer")
     for parentrelation in parentrelationlist:
         relation = parentrelation.split("\0")

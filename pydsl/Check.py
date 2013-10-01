@@ -35,7 +35,7 @@ def checker_factory(grammar):
     from pydsl.Alphabet.Definition import AlphabetListDefinition, Encoding
     from collections import Iterable
     if isinstance(grammar, str):
-        from pydsl.Memory.Loader import load
+        from pydsl.Config import load
         grammar = load(grammar)
     if isinstance(grammar, BNFGrammar):
         return BNFChecker(grammar)
