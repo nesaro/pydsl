@@ -40,7 +40,7 @@ def _create_combined_list(input_list):
     for result in input_list[0]:
         if not(isinstance(result, ParseTree)):
             raise TypeError
-        if result.leftpos == 0 or result.leftpos is None:
+        if not result.leftpos:
             midlist.append([result])
 
     #Processing Tail sets
@@ -164,6 +164,7 @@ class WeightedParser(TopDownParser):
                     #TODO: Add child
             if showerrors and not result:
                 return [ParseTree(0, len(data), [onlysymbol], data, production, valid = False)]
+            LOG.debug("Result " + str(result))
             return result
         elif isinstance(onlysymbol, NullSymbol):
             return[ParseTree(None, None, [onlysymbol], "", production)]
