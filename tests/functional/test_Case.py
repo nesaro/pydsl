@@ -97,7 +97,6 @@ class TestCase(unittest.TestCase):
 
         def parse_tree_walker(tree):
             from pydsl.Grammar.Symbol import NonTerminalSymbol
-            print(tree.childlist)
             if tree.production.leftside[0] == NonTerminalSymbol("S"):
                 return parse_tree_walker(tree.childlist[0])
             if tree.production.leftside[0] == NonTerminalSymbol("E"):
