@@ -41,7 +41,7 @@ class BNFValidator(Validator):
     def __call__(self, inputstring):
         parser = parser_factory(self.gd, "descent")
         resulttrees = parser.get_trees(inputstring, True)
-        return resulttrees
+        return [x for x in resulttrees if not x.valid]
 
 
 def validator_factory(grammar):
