@@ -299,9 +299,6 @@ class LL1RecursiveDescentParser(TopDownParser):
     @property
     def current(self):
         result = self.data[self.index]
-        if isinstance(result, str):
-            from pydsl.Alphabet.Token import Token
-            result = Token(result)
         return result
 
     def match(self, symbol):

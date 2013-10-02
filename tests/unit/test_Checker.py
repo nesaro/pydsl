@@ -20,7 +20,6 @@ __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
-from pydsl.Alphabet.Token import Token
 
 class TestMongoChecker(unittest.TestCase):
     """Mongo checker"""
@@ -51,7 +50,7 @@ class TestBNFChecker(unittest.TestCase):
         grammardef = productionset0
         checker = BNFChecker(grammardef)
         self.assertTrue(checker.check("SR"))
-        self.assertTrue(checker.check((Token("S"), Token("R"))))
+        self.assertTrue(checker.check((["S"],["R"])))
         self.assertTrue(checker.check(("S","R")))
         self.assertFalse(checker.check("SL"))
 
@@ -75,7 +74,7 @@ class TestRegularExpressionChecker(unittest.TestCase):
         input_str = "abc"
         checker = RegularExpressionChecker(input_str)
         self.assertTrue(checker.check(input_str))
-        self.assertTrue(checker.check([Token(x) for x in input_str]))
+        self.assertTrue(checker.check([x for x in input_str]))
         self.assertTrue(checker.check([x for x in input_str]))
         self.assertTrue(checker.check(input_str))
         self.assertFalse(checker.check("abd"))
@@ -205,7 +204,7 @@ class TestStringChecker(unittest.TestCase):
         self.assertTrue(grammarchecker(("s","t","r","i","n","g","1","2","3",)))
         self.assertTrue(grammarchecker(list_version))
         self.assertTrue(grammarchecker([StringGrammarDefinition(x) for x in list_version]))
-        self.assertTrue(grammarchecker([Token(x) for x in list_version]))
+        self.assertTrue(grammarchecker([x for x in list_version]))
 
     def testTokenInput(self):
         pass

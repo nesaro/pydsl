@@ -32,14 +32,13 @@ class TestCase(unittest.TestCase):
         self.assertListEqual([str(x) for x in ascii_tokens], ['1', '+', '2'])
 
         def concept_translator_fun(inputtokens):
-            from pydsl.Alphabet.Token import Token
             result = []
             for x in inputtokens:
-                if x == Token("1"):
+                if x == "1":
                     result.append("one")
-                elif x == Token("2"):
+                elif x == "2":
                     result.append("two")
-                elif x == Token("+"):
+                elif x == "+":
                     result.append("addition")
                 else:
                     raise Exception(x.__class__.__name__)

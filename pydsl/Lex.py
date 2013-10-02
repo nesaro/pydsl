@@ -20,7 +20,6 @@ __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
-from pydsl.Alphabet.Token import Token
 from pydsl.Alphabet.Definition import Encoding
 from pydsl.Check import checker_factory
 from pydsl.Config import load
@@ -48,7 +47,7 @@ class EncodingLexer(Lexer):
 
     def __call__(self, string):
         for x in string:
-            yield Token(x)
+            yield x
 
     def lexer_generator(self, target):
         next(target)
@@ -57,7 +56,7 @@ class EncodingLexer(Lexer):
             element = (yield)
             buffer += element  # Asumes string
             for x in buffer:
-                target.send(Token(x))
+                target.send(x)
 
 
 class AlphabetLexer(Lexer):
@@ -128,7 +127,7 @@ class AlphabetListLexer(AlphabetLexer):
             raise Exception("Nothing consumed")
         for left, right, gd in valid_alternatives:
             string = self.string[left:right]
-            tree.append(left, right, Token(string, gd), check_position=False)
+            tree.append(left, right, string, check_position=False)
 
         right_length_seq = []
         for x in tree.generate_valid_sequences():
@@ -149,7 +148,7 @@ class AlphabetListLexer(AlphabetLexer):
                     checker = checker_factory(gd)
                     if checker.check(currentstr):
                         buffer = buffer[x:]
-                        target.send(Token(currentstr, gd))
+                        target.send(currentstr)
 
 
 class ConceptLexer(Lexer):

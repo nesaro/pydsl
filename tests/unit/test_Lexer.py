@@ -54,13 +54,12 @@ class TestLexer(unittest.TestCase):
         """Test checker instantiation and call"""
         from pydsl.Config import load
         from pydsl.Alphabet.Definition import AlphabetListDefinition
-        from pydsl.Alphabet.Token import Token
         integer = load('integer')
         date = load('Date')
         mydef = AlphabetListDefinition([integer,date])
         lexer = lexer_factory(mydef)
-        self.assertListEqual(lexer("1234"), [(Token("1234",integer))])
-        self.assertListEqual(lexer("123411/11/2001"), [Token("1234", load("integer")),Token("11/11/2001",date)])
+        self.assertListEqual(lexer("1234"), ["1234"])
+        self.assertListEqual(lexer("123411/11/2001"), ["1234","11/11/2001"])
 
     def testLexerGenerator(self):
         from pydsl.Grammar.Definition import StringGrammarDefinition
@@ -86,14 +85,12 @@ class TestLexer(unittest.TestCase):
                 pass
 
         text_generator(mylexer.lexer_generator(collector()))
-        from pydsl.Alphabet.Token import Token
-        self.assertListEqual(result, [Token("123", numbers), Token("abc",abc),Token("abc",abc), Token("123", numbers)])
+        self.assertListEqual(result, ["123", "abc","abc", "123"])
 
 class TestConceptLexer(unittest.TestCase):
     def test_Concept(self):
         from pydsl.Grammar.Definition import StringGrammarDefinition
         from pydsl.Alphabet.Definition import AlphabetListDefinition
-        from pydsl.Alphabet.Token import Token
         from pydsl.Lex import ConceptLexer
         red = StringGrammarDefinition("red")
         green = StringGrammarDefinition("green")
@@ -104,11 +101,11 @@ class TestConceptLexer(unittest.TestCase):
         def concept_translator_fun(inputtokens):
             result = []
             for x in inputtokens:
-                if x == Token("red"):
+                if x == "red":
                     result.append("color red")
-                elif x == Token("green"):
+                elif x == "green":
                     result.append("color green")
-                elif x == Token("blue"):
+                elif x == "blue":
                     result.append("color blue")
                 else:
                     raise Exception(x.__class__.__name__)
