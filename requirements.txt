@@ -4,3 +4,4 @@ git+https://github.com/nesaro/pypository.git
 ply
 nose
 pyparsing
+git+https://github.com/nltk/nltk.git
