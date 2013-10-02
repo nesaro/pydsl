@@ -22,7 +22,6 @@ __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
-from pydsl.Alphabet.Token import Token
 from pydsl.Alphabet.Definition import Encoding
 from pydsl.Config import load, load_default_memory
 
@@ -41,8 +40,8 @@ class TestAlphabet(unittest.TestCase):
 
     def testLexer(self):
         lexer = lexer_factory(self.alphabet)
-        self.assertListEqual(lexer("1234"), [(Token("1234",self.integer))])
-        self.assertListEqual(lexer("123411/11/2001"), [Token("1234", load("integer")), Token("11/11/2001",self.date)])
+        self.assertListEqual(lexer("1234"), ["1234"])
+        self.assertListEqual(lexer("123411/11/2001"), ["1234","11/11/2001"])
 
     def testProperties(self):
         self.alphabet.grammarlist

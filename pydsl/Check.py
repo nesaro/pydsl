@@ -216,15 +216,12 @@ class AlphabetListChecker(Checker):
         self.checkerinstances = [checker_factory(x) for x in self.gd.grammarlist]
 
     def check(self, data):
-        from pydsl.Alphabet.Token import Token
         if isinstance(data, str):
-            data= [Token(data)]
+            data = [data]
         elif isinstance(data, Iterable):
             new_data = []
             for x in data:
                 if isinstance(x, str):
-                    new_data.append(Token(x))
-                elif isinstance(x, Token):
                     new_data.append(x)
                 else:
                     raise ValueError
