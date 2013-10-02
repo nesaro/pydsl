@@ -85,6 +85,9 @@ class BottomUpParser(Parser):
 
 
 def parser_factory(grammar, parser = "auto"):
+    if parser == "nltk":
+        from nltk import parse_cfg, RecursiveDescentParser
+        return RecursiveDescentParser(parse_cfg(grammar)) #FIXME parse_cfg should happen at the load grammar step
     if isinstance(grammar, str):
         grammar = load(grammar)
     from pydsl.Grammar.BNF import BNFGrammar

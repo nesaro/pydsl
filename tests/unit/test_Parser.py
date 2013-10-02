@@ -155,3 +155,19 @@ class TestWeightedParser(unittest.TestCase):
         result = mix_results([set1b, set2b, set3b], None)
         #TODO: check result
         self.assertTrue(len(result) == 1)
+
+class TestNLTKParser(unittest.TestCase):
+    def testParsing(self):
+        from pydsl.Parser.Parser import parser_factory
+        grammar = """
+        S -> NP VP
+        VP -> V NP | V NP PP
+        V -> "saw" | "ate"
+        NP -> "John" | "Mary" | "Bob" | Det N | Det N PP
+        Det -> "a" | "an" | "the" | "my"
+        N -> "dog" | "cat" | "cookie" | "park"
+        PP -> P NP
+        P -> "in" | "on" | "by" | "with"
+        """
+        parser = parser_factory(grammar, parser="nltk")
+        parser.parse("Mary saw Bob".split())
