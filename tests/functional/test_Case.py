@@ -84,7 +84,7 @@ class TestCase(unittest.TestCase):
         load_default_memory()
         grammar_def = [
                 "S ::= E",
-                "E ::= number operator number",
+                "E ::= E operator E | number",
                 "number := Word,integer,max",
                 "operator := String,+",
                 ]
