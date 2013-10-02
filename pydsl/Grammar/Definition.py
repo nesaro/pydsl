@@ -30,12 +30,12 @@ class GrammarDefinition(object):
         raise NotImplementedError
 
     @property
-    def first(self):# -> set:
+    def first(self):
         """List of possible first elements"""
         return [x for x in self.alphabet().to_list]
 
     @property
-    def minsize(self):# -> int:
+    def minsize(self):
         """Returns the minimum size in alphabet tokens"""
         return 0
 
@@ -84,7 +84,7 @@ class RegularExpressionDefinition(GrammarDefinition):
         return self.regexpstr
 
     @property
-    def first(self):# -> set:
+    def first(self):
         i = 0
         while True:
             if self.regexpstr[i] == "^":

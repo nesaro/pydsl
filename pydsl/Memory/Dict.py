@@ -30,7 +30,7 @@ class RegexpDictStorage(Memory):
         Memory.__init__(self)
         self._content = dictionary
 
-    def generate_all_summaries(self):# -> list:
+    def generate_all_summaries(self):
         result = []
         from pypository.utils import ImmutableDict
         for key in self._content:

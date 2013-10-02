@@ -70,7 +70,7 @@ class TerminalSymbol(Symbol):
     def __hash__(self):
         return hash(self.gd) ^ hash(self.boundariesrules)
 
-    def check(self, data):# ->bool:
+    def check(self, data):
         """Checks if input is recognized as this symbol"""
         return check(self.gd, data)
 
