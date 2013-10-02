@@ -16,7 +16,7 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 """Python Transformers"""
-from pydsl.Memory.Loader import load
+from pydsl.Config import load
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
