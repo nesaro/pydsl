@@ -23,17 +23,20 @@ from pypository.List import ListStorage
 from pydsl.Alphabet.Definition import Encoding
 
 
-
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
+
 class EncodingStorage(ListStorage):
-    def _generatekey(self, element):
+
+    @staticmethod
+    def _generatekey(element):
         return element
 
-    def load(self, index):
+    @staticmethod
+    def load(index):
         return Encoding(index)
 
     def generate_all_summaries(self):
-        return tuple([ImmutableDict({"identifier":x, "value":x, "iclass":"Encoding"}) for x in self._content])
+        return tuple([ImmutableDict({"identifier": x, "value": x, "iclass": "Encoding"}) for x in self._content])
