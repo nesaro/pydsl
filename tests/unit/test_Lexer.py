@@ -50,7 +50,7 @@ class TestLexer(unittest.TestCase):
     def testSimpleLexing(self):
         """Test checker instantiation and call"""
         from pydsl.Config import load
-        from pydsl.Alphabet.Definition import AlphabetListDefinition
+        from pydsl.Alphabet import AlphabetListDefinition
         integer = load('integer')
         date = load('Date')
         mydef = AlphabetListDefinition([integer,date])
@@ -60,7 +60,7 @@ class TestLexer(unittest.TestCase):
 
     def testLexerGenerator(self):
         from pydsl.Grammar.Definition import StringGrammarDefinition
-        from pydsl.Alphabet.Definition import AlphabetListDefinition
+        from pydsl.Alphabet import AlphabetListDefinition
         abc = StringGrammarDefinition("abc")
         numbers = StringGrammarDefinition("123")
         mydef = AlphabetListDefinition([abc, numbers])
@@ -87,7 +87,7 @@ class TestLexer(unittest.TestCase):
 class TestConceptLexer(unittest.TestCase):
     def test_Concept(self):
         from pydsl.Grammar.Definition import StringGrammarDefinition
-        from pydsl.Alphabet.Definition import AlphabetListDefinition
+        from pydsl.Alphabet import AlphabetListDefinition
         from pydsl.Lex import ConceptLexer
         red = StringGrammarDefinition("red")
         green = StringGrammarDefinition("green")

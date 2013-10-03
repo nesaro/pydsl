@@ -16,11 +16,13 @@
 # along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 """ListLibrary"""
-from pypository.utils import ImmutableDict
 import logging
+
+from pypository.utils import ImmutableDict
+
 LOG = logging.getLogger(__name__)
 from pypository.List import ListStorage
-from pydsl.Alphabet.Definition import Encoding
+from pydsl.Alphabet import Encoding
 
 
 __author__ = "Nestor Arocha"

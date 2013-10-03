@@ -25,7 +25,7 @@ import unittest
 class TestCase(unittest.TestCase):
     def test_main_case(self):
         input_data = "1+2"
-        from pydsl.Alphabet.Definition import Encoding
+        from pydsl.Alphabet import Encoding
         ascii_encoding = Encoding("ascii")
         ascii_lexer = lexer_factory(ascii_encoding)
         ascii_tokens = [x for x in ascii_lexer(input_data)]
@@ -105,7 +105,7 @@ class TestCase(unittest.TestCase):
             
         result = parse_tree_walker(parse_tree[0])
         self.assertEqual(result, 3)
-        from pydsl.Alphabet.Definition import AlphabetListDefinition
+        from pydsl.Alphabet import AlphabetListDefinition
         from pydsl.Grammar.Definition import StringGrammarDefinition
         math_alphabet = AlphabetListDefinition(['integer',StringGrammarDefinition('+')])
         from pydsl.Lex import lex
@@ -140,7 +140,7 @@ class TestCase(unittest.TestCase):
             
         result = parse_tree_walker(parse_tree[0])
         self.assertEqual(result, 3)
-        from pydsl.Alphabet.Definition import AlphabetListDefinition
+        from pydsl.Alphabet import AlphabetListDefinition
         from pydsl.Grammar.Definition import StringGrammarDefinition
         math_alphabet = AlphabetListDefinition(['integer',StringGrammarDefinition('+')])
         from pydsl.Lex import lex

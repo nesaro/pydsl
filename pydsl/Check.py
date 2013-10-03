@@ -32,7 +32,7 @@ def check(definition, data):
 def checker_factory(grammar):
     from pydsl.Grammar.BNF import BNFGrammar
     from pydsl.Grammar.Definition import PLYGrammar, RegularExpressionDefinition, MongoGrammar, StringGrammarDefinition, PythonGrammar
-    from pydsl.Alphabet.Definition import AlphabetListDefinition, Encoding
+    from pydsl.Alphabet import AlphabetListDefinition, Encoding
     from collections import Iterable
     if isinstance(grammar, str):
         from pydsl.Config import load
@@ -209,7 +209,7 @@ class JsonSchemaChecker(Checker):
 class AlphabetListChecker(Checker):
     def __init__(self, gd):
         Checker.__init__(self)
-        from pydsl.Alphabet.Definition import AlphabetListDefinition
+        from pydsl.Alphabet import AlphabetListDefinition
         if not isinstance(gd, AlphabetListDefinition):
             raise TypeError
         self.gd = gd

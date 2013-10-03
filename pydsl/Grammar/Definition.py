@@ -98,7 +98,7 @@ class RegularExpressionDefinition(GrammarDefinition):
         return getattr(self.regexp, attr)
 
     def alphabet(self):
-        from pydsl.Alphabet.Definition import Encoding
+        from pydsl.Alphabet import Encoding
         return Encoding("ascii")
 
 class StringGrammarDefinition(GrammarDefinition):
@@ -142,7 +142,7 @@ class JsonSchema(GrammarDefinition, dict):
         dict.__init__(self, *args, **kwargs)
 
     def alphabet(self):
-        from pydsl.Alphabet.Definition import Encoding
+        from pydsl.Alphabet import Encoding
         return Encoding("ascii")
 
 class MongoGrammar(GrammarDefinition, dict):
@@ -155,7 +155,7 @@ class MongoGrammar(GrammarDefinition, dict):
         return [StringGrammarDefinition("{")]
 
     def alphabet(self):
-        from pydsl.Alphabet.Definition import Encoding
+        from pydsl.Alphabet import Encoding
         return Encoding("ascii")
 
 class PythonGrammar(GrammarDefinition, dict):
@@ -166,5 +166,5 @@ class PythonGrammar(GrammarDefinition, dict):
     def alphabet(self):
         if "alphabet" in self:
             return self['alphabet']
-        from pydsl.Alphabet.Definition import Encoding
+        from pydsl.Alphabet import Encoding
         return Encoding("ascii")

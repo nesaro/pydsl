@@ -49,7 +49,7 @@ def load_python_file(moduleobject):
     elif iclass == "PythonTransformer":
         return resultdic
     elif iclass == "AlphabetList":
-        from pydsl.Alphabet.Definition import AlphabetListDefinition
+        from pydsl.Alphabet import AlphabetListDefinition
         return AlphabetListDefinition(**resultdic)
     elif iclass == "pyparsing":
         return resultdic['root_symbol']
