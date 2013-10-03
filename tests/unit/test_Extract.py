@@ -33,9 +33,6 @@ class TestGrammarExtract(unittest.TestCase):
         self.assertListEqual(extract(gd,'abc1234abc'), expected_result)
         self.assertRaises(Exception, extract, None)
 
-    def testTokenInput(self):
-        pass
-
     def testListInput(self):
         pass
 
@@ -51,9 +48,6 @@ class TestAlphabetExtract(unittest.TestCase):
         ad = load('ascii')
         self.assertListEqual(extract(ad,'a£'), [(0,1,'a')])
         self.assertRaises(Exception, extract, None)
-
-    def testTokenInput(self):
-        pass
 
     def testListInput(self):
         pass

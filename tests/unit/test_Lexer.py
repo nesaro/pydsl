@@ -41,9 +41,6 @@ class TestLexer(unittest.TestCase):
         from pydsl.Config import load_default_memory
         load_default_memory()
 
-    def testTokenInput(self):
-        pass
-
     def testListInput(self):
         pass
 

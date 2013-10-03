@@ -38,9 +38,6 @@ class TestGuesser(unittest.TestCase):
         #self.assertListEqual(guesser.guess_grammar('1234'), ['integer','cstring'])
         #self.assertRaises(Exception, guesser, None)
 
-    def testTokenInput(self):
-        pass
-
     def testListInput(self):
         pass
 
