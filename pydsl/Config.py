@@ -16,6 +16,7 @@
 # along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 """Global (per execution) elements"""
+from pydsl.Repository import EncodingStorage, RegexpDictStorage
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
@@ -29,8 +30,6 @@ import os
 
 
 def load_default_memory():
-    from pydsl.Memory.Dict import RegexpDictStorage
-    from pydsl.Memory.List import EncodingStorage
     from pypository.Directory import DirStorage
     dirname = resource_filename("pydsl.contrib", "")
     GLOBALCONFIG.memorylist.append(
