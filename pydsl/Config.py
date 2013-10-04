@@ -51,9 +51,9 @@ def load_default_memory():
 
 
 def default_formats():
-    from pydsl.Memory.File.Regexp import load_re_from_file, summary_re_from_file
-    from pydsl.Memory.File.BNF import load_bnf_file, summary_bnf_file
-    from pydsl.Memory.File.Python import summary_python_file, load_python_file
+    from pydsl.File.Regexp import load_re_from_file, summary_re_from_file
+    from pydsl.File.BNF import load_bnf_file, summary_bnf_file
+    from pydsl.File.Python import summary_python_file, load_python_file
     return [
         {"extension": ".py",
          "summary_from_file": summary_python_file,

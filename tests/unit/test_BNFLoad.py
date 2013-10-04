@@ -10,5 +10,5 @@ import unittest
 class TestPydsl(unittest.TestCase):
     """Loading a bnf instance from a .bnf file"""
     def testFileLoader(self):
-        from pydsl.Memory.File.BNF import load_bnf_file
+        from pydsl.File.BNF import load_bnf_file
         self.assertTrue(load_bnf_file("tests/Date.bnf"))

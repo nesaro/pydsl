@@ -2,7 +2,7 @@
 
 from pydsl.Grammar.Symbol import TerminalSymbol, NonTerminalSymbol, NullSymbol
 from pydsl.Grammar.BNF import Production, BNFGrammar
-from pydsl.Memory.File.BNF import strlist_to_production_set
+from pydsl.File.BNF import strlist_to_production_set
 from pydsl.Grammar.Definition import StringGrammarDefinition
 
 from pydsl.Config import load, load_default_memory

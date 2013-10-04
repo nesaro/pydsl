@@ -61,7 +61,7 @@ class TestCase(unittest.TestCase):
                 "two := String,two",
                 "addition := String,addition",
                 ]
-        from pydsl.Memory.File.BNF import strlist_to_production_set
+        from pydsl.File.BNF import strlist_to_production_set
         production_set = strlist_to_production_set(grammar_def)
         from pydsl.Parser.RecursiveDescent import BacktracingErrorRecursiveDescentParser
         rdp = BacktracingErrorRecursiveDescentParser(production_set)
@@ -88,7 +88,7 @@ class TestCase(unittest.TestCase):
                 "number := Word,integer,max",
                 "operator := String,+",
                 ]
-        from pydsl.Memory.File.BNF import strlist_to_production_set
+        from pydsl.File.BNF import strlist_to_production_set
         production_set = strlist_to_production_set(grammar_def)
         from pydsl.Parser.RecursiveDescent import LL1RecursiveDescentParser
         rdp = LL1RecursiveDescentParser(production_set)
@@ -123,7 +123,7 @@ class TestCase(unittest.TestCase):
                 "number := Word,integer,max",
                 "operator := String,+",
                 ]
-        from pydsl.Memory.File.BNF import strlist_to_production_set
+        from pydsl.File.BNF import strlist_to_production_set
         production_set = strlist_to_production_set(grammar_def)
         from pydsl.Parser.RecursiveDescent import LLkRecursiveDescentParser
         rdp = LLkRecursiveDescentParser(production_set)
