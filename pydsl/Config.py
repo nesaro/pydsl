@@ -24,13 +24,14 @@ __email__ = "nesaro@gmail.com"
 import logging
 LOG = logging.getLogger(__name__)
 from pkg_resources import resource_filename
+import imp
+import os
 
 
 def load_default_memory():
     from pydsl.Memory.Dict import RegexpDictStorage
     from pydsl.Memory.List import EncodingStorage
     from pypository.Directory import DirStorage
-    from regexps import res
     dirname = resource_filename("pydsl.contrib", "")
     GLOBALCONFIG.memorylist.append(
         DirStorage(
@@ -40,7 +41,8 @@ def load_default_memory():
         DirStorage(
             dirname + "/alphabet/",
             GLOBALCONFIG.formatlist))
-    GLOBALCONFIG.memorylist.append(RegexpDictStorage(res))
+    regexpmodule = imp.load_source("regexps", os.path.join(dirname,"regexps.py"))
+    GLOBALCONFIG.memorylist.append(RegexpDictStorage(regexpmodule.res))
     GLOBALCONFIG.memorylist.append(EncodingStorage(dirname + "/encoding.py"))
     GLOBALCONFIG.memorylist.append(
         DirStorage(
