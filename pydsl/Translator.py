@@ -77,6 +77,8 @@ def translator_factory(function):
     from pyparsing import OneOrMore
     if isinstance(function, OneOrMore):
         return PyParsingTranslator(function)
+    if isinstance(function, PythonTranslator):
+        return function
     raise ValueError(function)
 
 def translate(definition, data):
