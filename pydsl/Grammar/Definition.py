@@ -64,13 +64,18 @@ class PLYGrammar(GrammarDefinition):
 
 class RegularExpressionDefinition(GrammarDefinition):
     def __init__(self, regexp, flags = 0):
-        if not isinstance(regexp, str):
-            raise TypeError
         GrammarDefinition.__init__(self)
-        self.regexpstr = regexp
-        self.flags = flags
         import re
-        self.regexp = re.compile(regexp, flags)
+        retype = type(re.compile('hello, world'))
+        if isinstance(regexp, retype):
+            self.regexp = regexp
+            self.regexpstr = regexp.pattern
+        elif isinstance(regexp, str):
+            self.regexpstr = regexp
+            self.flags = flags
+            self.regexp = re.compile(regexp, flags)
+        else:
+            raise TypeError
 
     def __hash__(self):
         return hash(self.regexpstr)
