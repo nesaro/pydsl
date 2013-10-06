@@ -62,6 +62,12 @@ class Encoding(AlphabetDefinition):
     def __init__(self, encoding):
         self.encoding = encoding
 
+    def __eq__(self, other):
+        try:
+            return self.encoding == other.encoding
+        except AttributeError:
+            return False
+
     def __getitem__(self, item):
         from pydsl.Check import EncodingChecker
         if EncodingChecker(self).check(item):
