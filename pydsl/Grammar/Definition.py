@@ -70,6 +70,7 @@ class RegularExpressionDefinition(GrammarDefinition):
         if isinstance(regexp, retype):
             self.regexp = regexp
             self.regexpstr = regexp.pattern
+            self.flags = regexp.flags
         elif isinstance(regexp, str):
             self.regexpstr = regexp
             self.flags = flags
