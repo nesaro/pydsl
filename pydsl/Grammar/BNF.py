@@ -157,12 +157,6 @@ class BNFGrammar(GrammarDefinition):
         """Tests if exists right recursion"""
         raise NotImplementedError
 
-    @property
-    def is_abstract(self):
-        """Returns true if the grammar contains an unknown symbol"""
-        from pydsl.Grammar.Symbol import UnknownSymbol
-        return UnknownSymbol in self.fulllist
-
     def __eq__(self, other):
         if not isinstance(other, BNFGrammar):
             return False

@@ -88,17 +88,6 @@ class TerminalSymbol(Symbol):
     def __str__(self):
         return "<TS: " + str(self.gd) + ">"
 
-class UnknownSymbol(Symbol):
-    def __init__(self):
-        Symbol.__init__(self, 1)
-        self.boundariesrules = "any"
-
-    def __eq__(self, other):
-        return isinstance(other, UnknownSymbol)
-
-    def check(self, data):
-        return bool(data)
-
 class NullSymbol(Symbol):
     def __init__(self):
         Symbol.__init__(self, 100)

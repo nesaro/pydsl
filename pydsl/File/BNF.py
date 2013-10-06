@@ -24,7 +24,7 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 import re
-from pydsl.Grammar.Symbol import TerminalSymbol,  NonTerminalSymbol, NullSymbol, UnknownSymbol
+from pydsl.Grammar.Symbol import TerminalSymbol,  NonTerminalSymbol, NullSymbol
 from pydsl.Grammar.BNF import Production
 LOG = logging.getLogger(__name__)
 
@@ -87,8 +87,6 @@ def read_terminal_production(line):
         newsymbol = __generateWordSymbol(rightside)
     elif re.search("^Null", rightside):
         newsymbol = NullSymbol()
-    elif re.search("^Unk", rightside):
-        newsymbol = UnknownSymbol()
     else:
         raise ValueError("Unknown terminal production type " + str(rightside))
     return symbolnames[0], newsymbol
