@@ -26,28 +26,6 @@ __email__ = "nesaro@gmail.com"
 
 import unittest
 
-@unittest.skip
-class TestGrammarDefinitionRegularExpression(unittest.TestCase):
-    """Regular expression method tests"""
-    def setUp(self):
-        self.grammardef = None
-
-    def testEnumerate(self):
-        self.grammardef.enum()
-
-    def testFirst(self):
-        self.grammardef.first
-
-    def testMin(self):
-        self.grammardef.minsize
-
-    def testMax(self):
-        self.grammardef.maxsize
-
-    def testAlphabet(self):
-        self.assertListEqual(self.grammardef.alphabet(), AlphabetDefinition)
-
-
 class TestGrammarDefinitionBNF(unittest.TestCase):
     def setUp(self):
         from pydsl.contrib.bnfgrammar import productionset0
