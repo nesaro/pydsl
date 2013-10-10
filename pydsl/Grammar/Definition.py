@@ -169,6 +169,10 @@ class PythonGrammar(GrammarDefinition, dict):
         GrammarDefinition.__init__(self)
         dict.__init__(self, *args, **kwargs)
 
+    def __hash__(self):
+        from pypository.utils import ImmutableDict #FIXME!
+        return hash(ImmutableDict(self))        
+
     def alphabet(self):
         if "alphabet" in self:
             return self['alphabet']
