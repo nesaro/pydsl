@@ -76,7 +76,7 @@ class BNFGrammar(GrammarDefinition):
         for rule in fulllist:
             if fulllist.count(rule) > 1:
                 raise ValueError("Duplicated rule: " + str(rule))
-        self.fulllist = fulllist
+        self.fulllist = tuple(fulllist)
         if not options:
             options = {}
         self.options = options

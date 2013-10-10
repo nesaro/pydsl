@@ -18,8 +18,8 @@ centerrecursive=["S ::= E","E ::= dot E dot | dot","dot := String,."]
 symbol1 = TerminalSymbol(StringGrammarDefinition("S"))
 symbol2 = TerminalSymbol(StringGrammarDefinition("R"))
 final1 = NonTerminalSymbol("exp")
-rule1 = Production([final1], [symbol1, symbol2])
-productionset0 = BNFGrammar(final1, [rule1,symbol1,symbol2])
+rule1 = Production([final1], (symbol1, symbol2))
+productionset0 = BNFGrammar(final1, (rule1,symbol1,symbol2))
 p0good = "SR"
 p0bad = "SRL"
 
@@ -33,19 +33,19 @@ symbol5 = TerminalSymbol(load("cstring"), None, br)
 final1 = NonTerminalSymbol("storeexp") 
 final2 = NonTerminalSymbol("retrieveexp") 
 final3 = NonTerminalSymbol("exp")
-rule1 = Production([final1], [symbol1, symbol3, symbol5])
-rule2 = Production([final2], [symbol2, symbol3, symbol4])
+rule1 = Production([final1], (symbol1, symbol3, symbol5))
+rule2 = Production([final2], (symbol2, symbol3, symbol4))
 rule3 = Production([final3], [final1])
 rule4 = Production([final3], [final2])
-rulelist = [rule1, rule2, rule3, rule4, symbol1, symbol2, symbol3, symbol4, symbol5]
+rulelist = (rule1, rule2, rule3, rule4, symbol1, symbol2, symbol3, symbol4, symbol5)
 productionset1 = BNFGrammar(final3, rulelist)
 
 #productionset2 definition
 symbola = TerminalSymbol(StringGrammarDefinition("A"))
 symbolb = TerminalSymbol(StringGrammarDefinition("B"))
 nonterminal = NonTerminalSymbol("res")
-rulea = Production ([nonterminal], [symbola, NullSymbol(), symbolb])
-productionset2 = BNFGrammar(nonterminal, [rulea, symbola, symbolb])
+rulea = Production ((nonterminal,), (symbola, NullSymbol(), symbolb))
+productionset2 = BNFGrammar(nonterminal, (rulea, symbola, symbolb))
 productionsetlr = strlist_to_production_set(leftrecursive)
 productionsetrr = strlist_to_production_set(rightrecursive)
 productionsetcr = strlist_to_production_set(centerrecursive)
