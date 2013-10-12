@@ -111,7 +111,10 @@ class BNFGrammar(GrammarDefinition):
         return result
 
     def first_lookup(self, symbol, size=1):
-        """Returns the first terminal symbol produced by the input symbol within this grammar definition"""
+        """
+        Returns a Grammar Definition with the first n terminal symbols
+        produced by the input symbol
+        """
         if isinstance(symbol, (TerminalSymbol, NullSymbol)):
             return [symbol]
         result = []
@@ -166,12 +169,6 @@ class BNFGrammar(GrammarDefinition):
             if self.productions[index] != other.productions[index]:
                 return False
         return True
-
-    #def __getitem__(self, index):
-    #    for rule in self.productionlist:
-    #        if rule.name == index:
-    #            return rule
-    #    raise IndexError
 
     @property
     def initialsymbol(self):
