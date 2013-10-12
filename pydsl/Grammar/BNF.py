@@ -110,7 +110,7 @@ class BNFGrammar(GrammarDefinition):
             result += x.first
         return result
 
-    def first_lookup(self, symbol):
+    def first_lookup(self, symbol, size=1):
         """Returns the first terminal symbol produced by the input symbol within this grammar definition"""
         if isinstance(symbol, (TerminalSymbol, NullSymbol)):
             return [symbol]
@@ -119,7 +119,7 @@ class BNFGrammar(GrammarDefinition):
             if x.leftside[0] != symbol:
                 continue
             for y in x.rightside:
-                current_symbol_first = self.first_lookup(y)
+                current_symbol_first = self.first_lookup(y, size)
                 result += current_symbol_first
                 if NullSymbol not in current_symbol_first:
                     break # This element doesn't have Null in its first set so there is no need to continue
