@@ -114,6 +114,7 @@ class TestCase(unittest.TestCase):
         result = parse_tree_walker(parse_tree[0])
         self.assertEqual(result, 13)
 
+    @unittest.skip
     def test_calculator(self):
         from pydsl.Config import load_default_memory
         load_default_memory()
