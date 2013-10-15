@@ -30,7 +30,7 @@ class TestStringGrammarMatch(unittest.TestCase):
         self.matcher = match_factory(self.grammardef)
 
     def testOkMatch(self):
-        self.assertListEqual(self.matcher("abcd"), ["abc","d"])
+        self.assertEqual(self.matcher("abcd"), ("abc","d"))
 
     def testNoMatch(self):
         self.assertRaises(Exception, self.matcher, "d")
