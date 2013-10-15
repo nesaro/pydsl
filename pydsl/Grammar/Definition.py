@@ -178,3 +178,19 @@ class PythonGrammar(GrammarDefinition, dict):
             return self['alphabet']
         from pydsl.Alphabet import Encoding
         return Encoding("ascii")
+
+def grammar_factory(input_definition):
+    if isinstance(input_definition, str):
+        return String(input_definition)
+    import re
+    retype = type(re.compile('hello, world'))
+    if isinstance(input_definition, retype):
+        return RegularExpression(retype)
+    if isinstance(input_definition, collections.Iterable):
+        if isinstance(input_definition[0], str):
+            #Return a composition grammar ([a,b] -> "a|b")
+            pass
+        elif isinstance(input_definition[0], collections.Iterable):
+            #
+            pass
+    raise ValueError("Unable to create a grammar for %s" % input_definition)
