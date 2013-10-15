@@ -28,8 +28,8 @@ class TestGrammarDefinitionBNF(unittest.TestCase):
         self.assertListEqual([x for x in self.grammardef.enum()], ["SR"])
 
     def testFirst(self):
-        from pydsl.Grammar.Definition import StringGrammarDefinition
-        self.assertListEqual(self.grammardef.first, [StringGrammarDefinition("S")])
+        from pydsl.Grammar.Definition import String
+        self.assertListEqual(self.grammardef.first, [String("S")])
 
     @unittest.skip
     def testMin(self):
@@ -41,9 +41,9 @@ class TestGrammarDefinitionBNF(unittest.TestCase):
 
     def testFirstLookup(self):
         from pydsl.Grammar.Symbol import NonTerminalSymbol, TerminalSymbol
-        from pydsl.Grammar.Definition import StringGrammarDefinition
+        from pydsl.Grammar.Definition import String
         print(self.grammardef.first_lookup(NonTerminalSymbol("exp"))[0])
-        self.assertListEqual(self.grammardef.first_lookup(NonTerminalSymbol("exp")),[TerminalSymbol(StringGrammarDefinition("S"))])
+        self.assertListEqual(self.grammardef.first_lookup(NonTerminalSymbol("exp")),[TerminalSymbol(String("S"))])
 
     def testNextLookup(self):
         from pydsl.Grammar.Symbol import NonTerminalSymbol, EndSymbol
@@ -51,5 +51,5 @@ class TestGrammarDefinitionBNF(unittest.TestCase):
         self.assertListEqual(self.grammardef.next_lookup(NonTerminalSymbol("exp")),[EndSymbol()])
 
     def testAlphabet(self):
-        from pydsl.Grammar.Definition import StringGrammarDefinition
-        self.assertListEqual(self.grammardef.alphabet().to_list, [StringGrammarDefinition(x) for x in ["S","R"]])
+        from pydsl.Grammar.Definition import String
+        self.assertListEqual(self.grammardef.alphabet().to_list, [String(x) for x in ["S","R"]])

@@ -25,18 +25,19 @@ __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
+from pydsl.Grammar.Definition import MongoGrammar, String
+from pydsl.Alphabet import Encoding
 
 
-@unittest.skip
 class TestGrammarDefinitionMongoDb(unittest.TestCase):
     def setUp(self):
-        self.grammardef = None
+        self.grammardef = MongoGrammar({'id':123})
 
     def testEnumerate(self):
-        self.grammardef.enum()
+        self.assertRaises(NotImplementedError, self.grammardef.enum)
 
     def testFirst(self):
-        self.grammardef.first
+        self.assertListEqual(self.grammardef.first, [String("{")])
 
     def testMin(self):
         self.grammardef.minsize
@@ -45,7 +46,7 @@ class TestGrammarDefinitionMongoDb(unittest.TestCase):
         self.grammardef.maxsize
 
     def testAlphabet(self):
-        self.assertListEqual(self.grammardef.alphabet(), AlphabetDefinition)
+        self.assertEqual(self.grammardef.alphabet(), Encoding('ascii'))
 
 @unittest.skip
 class TestGrammarDefinitionPLY(unittest.TestCase):
@@ -73,14 +74,13 @@ class TestGrammarDefinitionPLY(unittest.TestCase):
     def testAlphabet(self):
         self.assertListEqual(self.grammardef.alphabet(), AlphabetDefinition)
 
-@unittest.skip
 class TestGrammarDefinitionJson(unittest.TestCase):
     def setUp(self):
         from pydsl.Grammar.Definition import JsonSchema
         self.grammardef = JsonSchema({})
 
     def testEnumerate(self):
-        self.grammardef.enum()
+        self.assertRaises(NotImplementedError, self.grammardef.enum)
 
     def testFirst(self):
         self.grammardef.first
@@ -92,5 +92,5 @@ class TestGrammarDefinitionJson(unittest.TestCase):
         self.grammardef.maxsize
 
     def testAlphabet(self):
-        self.assertListEqual(self.grammardef.alphabet(), AlphabetDefinition)
+        self.assertEqual(self.grammardef.alphabet(), Encoding('ascii'))
 

@@ -24,7 +24,7 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
-from pydsl.Grammar.Definition import StringGrammarDefinition
+from pydsl.Grammar.Definition import String
 
 class Symbol(object):
     def __init__(self, weight):
@@ -54,7 +54,7 @@ class NonTerminalSymbol(Symbol):
 class TerminalSymbol(Symbol):
 
     def __init__(self, gd, weight=None, boundariesrules=None):
-        if isinstance(gd, StringGrammarDefinition):
+        if isinstance(gd, String):
             weight = weight or 99
             boundariesrules = len(gd.string)
         else:
