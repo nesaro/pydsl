@@ -38,8 +38,8 @@ class TestGrammarDefinitionRegularExpression(unittest.TestCase):
     def testFirst(self):
         re1 = RegularExpressionDefinition(re.compile('^a$'))
         self.assertEqual(len(re1.first),1)
-        from pydsl.Grammar.Definition import StringGrammarDefinition
-        self.assertEqual(re1.first[0],StringGrammarDefinition('a'))
+        from pydsl.Grammar.Definition import String
+        self.assertEqual(re1.first[0],String('a'))
 
     def testMin(self):
         re1 = RegularExpressionDefinition(re.compile('^a$'))

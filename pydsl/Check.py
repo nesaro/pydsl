@@ -31,7 +31,7 @@ def check(definition, data):
 
 def checker_factory(grammar):
     from pydsl.Grammar.BNF import BNFGrammar
-    from pydsl.Grammar.Definition import PLYGrammar, RegularExpressionDefinition, MongoGrammar, StringGrammarDefinition, PythonGrammar
+    from pydsl.Grammar.Definition import PLYGrammar, RegularExpressionDefinition, MongoGrammar, String, PythonGrammar
     from pydsl.Alphabet import AlphabetListDefinition, Encoding
     from collections import Iterable
     if isinstance(grammar, str):
@@ -49,7 +49,7 @@ def checker_factory(grammar):
         return PLYChecker(grammar)
     elif isinstance(grammar, AlphabetListDefinition):
         return AlphabetListChecker(grammar)
-    elif isinstance(grammar, StringGrammarDefinition):
+    elif isinstance(grammar, String):
         return StringChecker(grammar)
     elif isinstance(grammar, Encoding):
         return EncodingChecker(grammar)
@@ -184,8 +184,8 @@ class StringChecker(Checker):
     def __init__(self, gd):
         Checker.__init__(self)
         if isinstance(gd, str):
-            from pydsl.Grammar.Definition import StringGrammarDefinition
-            gd = StringGrammarDefinition(gd)
+            from pydsl.Grammar.Definition import String
+            gd = String(gd)
         self.gd = gd
 
     def check(self, data):

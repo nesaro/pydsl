@@ -97,8 +97,8 @@ class RegularExpressionDefinition(GrammarDefinition):
                 i+=1
                 continue
             if self.regexpstr[i] == "[":
-                return [StringGrammarDefinition(x) for x in self.regexpstr[i+1:self.regexpstr.find("]")]]
-            return [StringGrammarDefinition(self.regexpstr[i])]
+                return [String(x) for x in self.regexpstr[i+1:self.regexpstr.find("]")]]
+            return [String(self.regexpstr[i])]
 
     def __getattr__(self, attr):
         return getattr(self.regexp, attr)
@@ -107,7 +107,7 @@ class RegularExpressionDefinition(GrammarDefinition):
         from pydsl.Alphabet import Encoding
         return Encoding("ascii")
 
-class StringGrammarDefinition(GrammarDefinition):
+class String(GrammarDefinition):
     def __init__(self, string):
         GrammarDefinition.__init__(self)
         self.string = string
@@ -123,7 +123,7 @@ class StringGrammarDefinition(GrammarDefinition):
 
     @property
     def first(self):
-        return [StringGrammarDefinition(self.string[0])]
+        return [String(self.string[0])]
 
     def enum(self):
         yield self.string
@@ -140,7 +140,7 @@ class StringGrammarDefinition(GrammarDefinition):
         return str(self.string)
 
     def alphabet(self):
-        return [StringGrammarDefinition(x) for x in self.string]
+        return [String(x) for x in self.string]
 
 class JsonSchema(GrammarDefinition, dict):
     def __init__(self, *args, **kwargs):
@@ -158,7 +158,7 @@ class MongoGrammar(GrammarDefinition, dict):
 
     @property
     def first(self):
-        return [StringGrammarDefinition("{")]
+        return [String("{")]
 
     def alphabet(self):
         from pydsl.Alphabet import Encoding

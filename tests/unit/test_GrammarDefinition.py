@@ -25,7 +25,7 @@ __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
-from pydsl.Grammar.Definition import MongoGrammar, StringGrammarDefinition
+from pydsl.Grammar.Definition import MongoGrammar, String
 from pydsl.Alphabet import Encoding
 
 
@@ -37,7 +37,7 @@ class TestGrammarDefinitionMongoDb(unittest.TestCase):
         self.assertRaises(NotImplementedError, self.grammardef.enum)
 
     def testFirst(self):
-        self.assertListEqual(self.grammardef.first, [StringGrammarDefinition("{")])
+        self.assertListEqual(self.grammardef.first, [String("{")])
 
     def testMin(self):
         self.grammardef.minsize
