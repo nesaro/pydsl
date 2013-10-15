@@ -180,7 +180,7 @@ class TestStringChecker(unittest.TestCase):
     def testCheck(self):
         """Test checker instantiation and call"""
         from pydsl.Check import StringChecker
-        from pydsl.Grammar.Definition import StringGrammarDefinition
+        from pydsl.Grammar.Definition import String
         grammarchecker = StringChecker("string123")
         self.assertTrue(grammarchecker("string123"))
         self.assertTrue(grammarchecker(["string123"]))
@@ -188,7 +188,7 @@ class TestStringChecker(unittest.TestCase):
         list_version = ["s","t","r","i","n","g","1","2","3"]
         self.assertTrue(grammarchecker(("s","t","r","i","n","g","1","2","3",)))
         self.assertTrue(grammarchecker(list_version))
-        self.assertTrue(grammarchecker([StringGrammarDefinition(x) for x in list_version]))
+        self.assertTrue(grammarchecker([String(x) for x in list_version]))
         self.assertTrue(grammarchecker([x for x in list_version]))
 
     def testListInput(self):

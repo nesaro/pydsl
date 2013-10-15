@@ -37,8 +37,8 @@ def __generateStringSymbol(rightside):
     content = tail
     if len(tail) > 2 and tail[1][0] == "'" and tail[1][-1] == "'":
         content = tail[1][1:-1]
-    from pydsl.Grammar.Definition import StringGrammarDefinition
-    return TerminalSymbol(StringGrammarDefinition(content))
+    from pydsl.Grammar.Definition import String
+    return TerminalSymbol(String(content))
 
 def __generateWordSymbol(rightside):
     args = rightside.split(",")

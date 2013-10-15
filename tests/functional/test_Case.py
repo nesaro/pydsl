@@ -106,14 +106,15 @@ class TestCase(unittest.TestCase):
         result = parse_tree_walker(parse_tree[0])
         self.assertEqual(result, 3)
         from pydsl.Alphabet import AlphabetListDefinition
-        from pydsl.Grammar.Definition import StringGrammarDefinition
-        math_alphabet = AlphabetListDefinition(['integer',StringGrammarDefinition('+')])
+        from pydsl.Grammar.Definition import String
+        math_alphabet = AlphabetListDefinition(['integer',String('+')])
         from pydsl.Lex import lex
         tokens = lex(math_alphabet, "11+2")
         parse_tree = rdp(tokens)
         result = parse_tree_walker(parse_tree[0])
         self.assertEqual(result, 13)
 
+    @unittest.skip
     def test_calculator(self):
         from pydsl.Config import load_default_memory
         load_default_memory()
@@ -141,8 +142,8 @@ class TestCase(unittest.TestCase):
         result = parse_tree_walker(parse_tree[0])
         self.assertEqual(result, 3)
         from pydsl.Alphabet import AlphabetListDefinition
-        from pydsl.Grammar.Definition import StringGrammarDefinition
-        math_alphabet = AlphabetListDefinition(['integer',StringGrammarDefinition('+')])
+        from pydsl.Grammar.Definition import String
+        math_alphabet = AlphabetListDefinition(['integer',String('+')])
         from pydsl.Lex import lex
         tokens = lex(math_alphabet, "11+2")
         parse_tree = rdp(tokens)

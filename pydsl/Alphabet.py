@@ -71,15 +71,15 @@ class Encoding(AlphabetDefinition):
     def __getitem__(self, item):
         from pydsl.Check import EncodingChecker
         if EncodingChecker(self).check(item):
-            from pydsl.Grammar.Definition import StringGrammarDefinition
-            return StringGrammarDefinition(item)
+            from pydsl.Grammar.Definition import String
+            return String(item)
         raise KeyError
 
     @property
     def to_list(self):
         #FIXME: Only ascii
-        from pydsl.Grammar.Definition import StringGrammarDefinition
-        return [StringGrammarDefinition(chr(x)) for x in range(128)]
+        from pydsl.Grammar.Definition import String
+        return [String(chr(x)) for x in range(128)]
 
 
 class ConceptAlphabet(AlphabetDefinition):
