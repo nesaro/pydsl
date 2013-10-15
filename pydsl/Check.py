@@ -31,7 +31,7 @@ def check(definition, data):
 
 def checker_factory(grammar):
     from pydsl.Grammar.BNF import BNFGrammar
-    from pydsl.Grammar.Definition import PLYGrammar, RegularExpressionDefinition, MongoGrammar, String, PythonGrammar
+    from pydsl.Grammar.Definition import PLYGrammar, RegularExpression, MongoGrammar, String, PythonGrammar
     from pydsl.Alphabet import AlphabetListDefinition, Encoding
     from collections import Iterable
     if isinstance(grammar, str):
@@ -39,7 +39,7 @@ def checker_factory(grammar):
         grammar = load(grammar)
     if isinstance(grammar, BNFGrammar):
         return BNFChecker(grammar)
-    elif isinstance(grammar, RegularExpressionDefinition):
+    elif isinstance(grammar, RegularExpression):
         return RegularExpressionChecker(grammar)
     elif isinstance(grammar, PythonGrammar) or isinstance(grammar, dict) and "matchFun" in grammar:
         return PythonChecker(grammar)

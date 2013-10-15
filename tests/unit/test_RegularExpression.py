@@ -21,36 +21,36 @@ __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
-from pydsl.Grammar.Definition import RegularExpressionDefinition
+from pydsl.Grammar.Definition import RegularExpression
 import re
 
 class TestGrammarDefinitionRegularExpression(unittest.TestCase):
     """Regular expression method tests"""
     def testInstantiation(self):
-        re1 = RegularExpressionDefinition('^a$')
-        re2 = RegularExpressionDefinition(re.compile('^a$'))
+        re1 = RegularExpression('^a$')
+        re2 = RegularExpression(re.compile('^a$'))
         self.assertEqual(str(re1), str(re2)) #FIXME python3 default flag value is 32
 
     def testEnumerate(self):
-        re1 = RegularExpressionDefinition(re.compile('^a$'))
+        re1 = RegularExpression(re.compile('^a$'))
         self.assertRaises(NotImplementedError, re1.enum)
 
     def testFirst(self):
-        re1 = RegularExpressionDefinition(re.compile('^a$'))
+        re1 = RegularExpression(re.compile('^a$'))
         self.assertEqual(len(re1.first),1)
         from pydsl.Grammar.Definition import String
         self.assertEqual(re1.first[0],String('a'))
 
     def testMin(self):
-        re1 = RegularExpressionDefinition(re.compile('^a$'))
+        re1 = RegularExpression(re.compile('^a$'))
         re1.minsize
 
     def testMax(self):
-        re1 = RegularExpressionDefinition(re.compile('^a$'))
+        re1 = RegularExpression(re.compile('^a$'))
         re1.maxsize
 
     def testAlphabet(self):
         from pydsl.Alphabet import Encoding
-        re1 = RegularExpressionDefinition(re.compile('^a$'))
+        re1 = RegularExpression(re.compile('^a$'))
         self.assertEqual(re1.alphabet(), Encoding('ascii'))
 

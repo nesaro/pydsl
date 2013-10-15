@@ -24,9 +24,9 @@ import unittest
 class TestTranslate(unittest.TestCase):
     def testEcho(self):
         from pydsl.Translator import translate, PythonTranslator
-        from pydsl.Grammar.Definition import RegularExpressionDefinition
+        from pydsl.Grammar.Definition import RegularExpression
         from pydsl.Check import checker_factory
-        cstring = checker_factory(RegularExpressionDefinition('.*'))
+        cstring = checker_factory(RegularExpression('.*'))
         def function(my_input):
             return my_input
         pt = PythonTranslator({'my_input':cstring}, {'output':cstring}, function)

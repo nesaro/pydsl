@@ -57,8 +57,8 @@ class RegexpDictStorage(Memory):
         if "flags" in self._content[index]:
             if "i" in self._content[index]["flags"]:
                 flags |= re.I
-        from pydsl.Grammar.Definition import RegularExpressionDefinition
-        return RegularExpressionDefinition(self._content[index]["regexp"], flags)
+        from pydsl.Grammar.Definition import RegularExpression
+        return RegularExpression(self._content[index]["regexp"], flags)
 
     def __iter__(self):
         self.index = 0

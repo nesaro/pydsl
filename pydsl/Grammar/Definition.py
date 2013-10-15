@@ -62,7 +62,7 @@ class PLYGrammar(GrammarDefinition):
     def minsize(self):
         raise NotImplementedError
 
-class RegularExpressionDefinition(GrammarDefinition):
+class RegularExpression(GrammarDefinition):
     def __init__(self, regexp, flags = 0):
         GrammarDefinition.__init__(self)
         import re
@@ -82,7 +82,7 @@ class RegularExpressionDefinition(GrammarDefinition):
         return hash(self.regexpstr)
 
     def __eq__(self, other):
-        if not isinstance(other, RegularExpressionDefinition):
+        if not isinstance(other, RegularExpression):
             return False
         return self.regexpstr == other.regexpstr and self.flags == other.flags
 
