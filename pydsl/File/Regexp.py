@@ -48,8 +48,8 @@ def load_re_from_file(filepath):
     flags = 0
     if "i" in flagstr:
         flags |= re.I
-    from pydsl.Grammar.Definition import RegularExpressionDefinition
-    return RegularExpressionDefinition(regexp, flags)
+    from pydsl.Grammar.Definition import RegularExpression
+    return RegularExpression(regexp, flags)
 
 def summary_re_from_file(filepath):
     (_, _, fileBaseName, _) = getFileTuple(filepath)

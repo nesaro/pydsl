@@ -59,10 +59,10 @@ class TestLexer(unittest.TestCase):
         self.assertListEqual(lexer("123411/11/2001"), ["1234","11/11/2001"])
 
     def testLexerGenerator(self):
-        from pydsl.Grammar.Definition import StringGrammarDefinition
+        from pydsl.Grammar.Definition import String
         from pydsl.Alphabet import AlphabetListDefinition
-        abc = StringGrammarDefinition("abc")
-        numbers = StringGrammarDefinition("123")
+        abc = String("abc")
+        numbers = String("123")
         mydef = AlphabetListDefinition([abc, numbers])
         mylexer = lexer_factory(mydef)
         def text_generator(receiver):
@@ -86,12 +86,12 @@ class TestLexer(unittest.TestCase):
 
 class TestConceptLexer(unittest.TestCase):
     def test_Concept(self):
-        from pydsl.Grammar.Definition import StringGrammarDefinition
+        from pydsl.Grammar.Definition import String
         from pydsl.Alphabet import AlphabetListDefinition
         from pydsl.Lex import ConceptLexer
-        red = StringGrammarDefinition("red")
-        green = StringGrammarDefinition("green")
-        blue = StringGrammarDefinition("blue")
+        red = String("red")
+        green = String("green")
+        blue = String("blue")
         alphabet = AlphabetListDefinition([red,green,blue])
         lexer = lexer_factory(alphabet)
 

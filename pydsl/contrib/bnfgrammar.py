@@ -3,7 +3,7 @@
 from pydsl.Grammar.Symbol import TerminalSymbol, NonTerminalSymbol, NullSymbol
 from pydsl.Grammar.BNF import Production, BNFGrammar
 from pydsl.File.BNF import strlist_to_production_set
-from pydsl.Grammar.Definition import StringGrammarDefinition
+from pydsl.Grammar.Definition import String
 
 from pydsl.Config import load, load_default_memory
 load_default_memory()
@@ -15,8 +15,8 @@ centerrecursive=["S ::= E","E ::= dot E dot | dot","dot := String,."]
 
 #productionset0 definition
 
-symbol1 = TerminalSymbol(StringGrammarDefinition("S"))
-symbol2 = TerminalSymbol(StringGrammarDefinition("R"))
+symbol1 = TerminalSymbol(String("S"))
+symbol2 = TerminalSymbol(String("R"))
 final1 = NonTerminalSymbol("exp")
 rule1 = Production([final1], (symbol1, symbol2))
 productionset0 = BNFGrammar(final1, (rule1,symbol1,symbol2))
@@ -25,9 +25,9 @@ p0bad = "SRL"
 
 
 #productionset1 definition
-symbol1 = TerminalSymbol(StringGrammarDefinition("S"))
-symbol2 = TerminalSymbol(StringGrammarDefinition("R"))
-symbol3 = TerminalSymbol(StringGrammarDefinition(":"))
+symbol1 = TerminalSymbol(String("S"))
+symbol2 = TerminalSymbol(String("R"))
+symbol3 = TerminalSymbol(String(":"))
 symbol4 = TerminalSymbol(load("integer"), None, br)
 symbol5 = TerminalSymbol(load("cstring"), None, br)
 final1 = NonTerminalSymbol("storeexp") 
@@ -41,8 +41,8 @@ rulelist = (rule1, rule2, rule3, rule4, symbol1, symbol2, symbol3, symbol4, symb
 productionset1 = BNFGrammar(final3, rulelist)
 
 #productionset2 definition
-symbola = TerminalSymbol(StringGrammarDefinition("A"))
-symbolb = TerminalSymbol(StringGrammarDefinition("B"))
+symbola = TerminalSymbol(String("A"))
+symbolb = TerminalSymbol(String("B"))
 nonterminal = NonTerminalSymbol("res")
 rulea = Production ((nonterminal,), (symbola, NullSymbol(), symbolb))
 productionset2 = BNFGrammar(nonterminal, (rulea, symbola, symbolb))
