@@ -25,7 +25,7 @@ import logging
 LOG = logging.getLogger(__name__)
 
 
-from pydsl.Grammar.Definition import String
+from pydsl.Grammar.Definition import String, RegularExpression
 
 class Matcher(object):
     """ Consumes a part of the input, returns the tail as well..."""
@@ -49,10 +49,25 @@ class StringMatcher(Matcher):
             return value[:len(self.definition.string)], value[len(self.definition.string):]
         raise Exception("No match")
 
+class RegularExpressionMatcher(Matcher):
+    def __init__(self, definition):
+        if isinstance(definition, str):
+            definition = RegularExpression(definition)
+        self.definition = definition
+
+    def match(self, value):
+        match_result =  self.definition.regexp.match(value)
+        if match_result:
+            return value[:match_result.end()], value[match_result.end():]
+        raise Exception("No match")
+
 
 def match_factory(definition):
     if isinstance(definition, String):
         return StringMatcher(definition)
+    elif isinstance(definition, RegularExpression):
+        return RegularExpressionMatcher(definition)
+    raise ValueError()
 
 def match(definition, data):
     return match_factory(definition)(data)

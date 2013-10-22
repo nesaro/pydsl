@@ -21,7 +21,7 @@ __email__ = "nesaro@gmail.com"
 
 import unittest
 
-from pydsl.Grammar.Definition import String
+from pydsl.Grammar.Definition import String,RegularExpression
 from pydsl.Match import match_factory
 
 class TestStringMatch(unittest.TestCase):
@@ -35,3 +35,14 @@ class TestStringMatch(unittest.TestCase):
     def testNoMatch(self):
         self.assertRaises(Exception, self.matcher, "d")
 
+
+class TestRegExpMatch(unittest.TestCase):
+    def setUp(self):
+        self.grammardef = RegularExpression("abc")
+        self.matcher = match_factory(self.grammardef)
+
+    def testOkMatch(self):
+        self.assertEqual(self.matcher("abcd"), ("abc","d"))
+
+    def testNoMatch(self):
+        self.assertRaises(Exception, self.matcher, "d")
