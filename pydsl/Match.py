@@ -25,7 +25,7 @@ import logging
 LOG = logging.getLogger(__name__)
 
 
-from pydsl.Grammar.Definition import StringGrammarDefinition
+from pydsl.Grammar.Definition import String
 
 class Matcher(object):
     """ Consumes a part of the input, returns the tail as well..."""
@@ -41,7 +41,7 @@ class Matcher(object):
 class StringMatcher(Matcher):
     def __init__(self, definition):
         if isinstance(definition, str):
-            definition = StringGrammarDefinition(definition)
+            definition = String(definition)
         self.definition = definition
 
     def match(self, value):
@@ -51,7 +51,7 @@ class StringMatcher(Matcher):
 
 
 def match_factory(definition):
-    if isinstance(definition, StringGrammarDefinition):
+    if isinstance(definition, String):
         return StringMatcher(definition)
 
 def match(definition, data):

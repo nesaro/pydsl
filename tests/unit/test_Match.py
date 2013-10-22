@@ -21,12 +21,12 @@ __email__ = "nesaro@gmail.com"
 
 import unittest
 
-from pydsl.Grammar.Definition import StringGrammarDefinition
+from pydsl.Grammar.Definition import String
 from pydsl.Match import match_factory
 
-class TestStringGrammarMatch(unittest.TestCase):
+class TestStringMatch(unittest.TestCase):
     def setUp(self):
-        self.grammardef = StringGrammarDefinition("abc")
+        self.grammardef = String("abc")
         self.matcher = match_factory(self.grammardef)
 
     def testOkMatch(self):
