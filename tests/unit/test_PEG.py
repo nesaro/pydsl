@@ -15,29 +15,34 @@
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Tests spark integration"""
+"""Tests PEG grammars"""
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
-from pydsl.Grammar.Definition import StringGrammarDefinition, GrammarDefinition
+from pydsl.Grammar.Definition import String, GrammarDefinition
 from pydsl.Grammar.PEG import Many, Choice, Not, Sequence
 
 class TestPEG(unittest.TestCase):
     def testMany(self):
-        mygrammar = Many(StringGrammarDefinition("a"))
+        mygrammar = Many(String("a"))
         self.assertTrue(isinstance(mygrammar, GrammarDefinition))
 
     def testChoice(self):
-        mygrammar = Choice((StringGrammarDefinition("a"), StringGrammarDefinition("b")))
+        mygrammar = Choice((String("a"), String("b")))
         self.assertTrue(isinstance(mygrammar, GrammarDefinition))
+        from pydsl.Check import check
+        self.assertTrue(check(mygrammar, "a"))
+        self.assertTrue(check(mygrammar, "b"))
+        self.assertFalse(check(mygrammar, "c"))
+        self.assertListEqual(mygrammar, mygrammar.first)
 
     def testNot(self):
-        mygrammar = Not(StringGrammarDefinition("a"))
+        mygrammar = Not(String("a"))
         self.assertTrue(isinstance(mygrammar, GrammarDefinition))
 
     def testSequence(self):
-        mygrammar = Sequence((StringGrammarDefinition("a"), StringGrammarDefinition("b")))
+        mygrammar = Sequence((String("a"), String("b")))
         self.assertTrue(isinstance(mygrammar, GrammarDefinition))
