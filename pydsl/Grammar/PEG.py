@@ -35,10 +35,7 @@ class Many(GrammarDefinition):
         GrammarDefinition.__init__(self)
         self.element = element
 
-class Choice(GrammarDefinition, list):
-    def __init__(self, *args, **kwargs):
-        GrammarDefinition.__init__(self)
-        list.__init__(self, *args, **kwargs)
+#Choice is equivalent to Alphabet 
 
 class Sequence(GrammarDefinition, list):
     def __init__(self, *args, **kwargs):

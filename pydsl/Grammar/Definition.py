@@ -31,8 +31,8 @@ class GrammarDefinition(object):
 
     @property
     def first(self):# -> set:
-        """List of possible first elements"""
-        return [x for x in self.alphabet().to_list]
+        """Grammar definition with all possible first elements"""
+        return self.alphabet()
 
     @property
     def minsize(self):# -> int:

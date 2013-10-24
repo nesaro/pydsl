@@ -23,6 +23,10 @@ __email__ = "nesaro@gmail.com"
 class AlphabetDefinition(object):
     """Defines a set of valid elements"""
     @property
+    def first(self):
+        return self
+
+    @property
     def to_list(self):
         """Returns a list of allowed grammars"""
         raise NotImplementedError
