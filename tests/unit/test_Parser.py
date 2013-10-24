@@ -124,7 +124,6 @@ class TestWeightedParser(unittest.TestCase):
         result = parser(string1)
         self.assertTrue(result)
         self.assertTrue(parser([x for x in string1]))
-        self.assertTrue(parser([Token(x) for x in string1]))
 
     def testWeightedParserBad(self):
         parser = WeightedParser(productionset1)

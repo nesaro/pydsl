@@ -79,7 +79,7 @@ def mix_results(resultll, productionset):
             symbollist = []
             compoundword = ""
             for element in combination:
-                compoundword += element.content
+                compoundword += str(element.content)
                 symbollist += element.symbollist
             finalresult = ParseTree(left_pos, right_pos, symbollist, compoundword, combination[0].production, valid = all([x for x in combination]))
             #Add childs to result. FIXME Adding already created elements as children of the new one
