@@ -104,7 +104,7 @@ class BNFGrammar(GrammarDefinition):
 
     @property
     def first(self):
-        """Returns the list of terminal symbols that can be the first element of this grammar"""
+        """Returns the a grammar definition that includes all first elements of this grammar""" #TODO
         result = []
         for x in self.first_lookup(self.initialsymbol):
             result += x.first
