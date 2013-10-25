@@ -165,7 +165,15 @@ class MongoGrammar(GrammarDefinition, dict):
         return Encoding("ascii")
 
 class PythonGrammar(GrammarDefinition, dict):
+    """
+    A Python dictionary that defines a Grammar.
+    it must define at least matchFun
+    """
     def __init__(self, *args, **kwargs):
+        """
+        It receives a dictionary constructor which must define
+        matchFun. Example: {'matchFun':<function x at 0x000000>}
+        """
         GrammarDefinition.__init__(self)
         dict.__init__(self, *args, **kwargs)
 
