@@ -29,20 +29,14 @@ def extract(grammar, inputdata):
     """Extract every slice of the input data that belongs to the Grammar Definition"""
     checker = checker_factory(grammar)
     totallen = len(inputdata)
-    if isinstance(grammar, GrammarDefinition):
-        try:
-            maxl = grammar.maxsize or totallen
-        except NotImplementedError:
-            maxl = totallen
-        try:
-            minl = grammar.minsize
-        except NotImplementedError:
-            minl = 1
-    elif isinstance(grammar, AlphabetDefinition):
+    try:
+        maxl = grammar.maxsize or totallen
+    except NotImplementedError:
         maxl = totallen
+    try:
+        minl = grammar.minsize
+    except NotImplementedError:
         minl = 1
-    else:
-        raise TypeError
     maxwsize = maxl - minl + 1
     result = []
     for i in range(totallen):
