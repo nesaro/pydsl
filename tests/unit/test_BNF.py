@@ -18,7 +18,7 @@
 import unittest
 
 
-class TestGrammarDefinitionBNF(unittest.TestCase):
+class TestBNF(unittest.TestCase):
     def setUp(self):
         from pydsl.contrib.bnfgrammar import productionset0
         self.grammardef = productionset0
@@ -42,12 +42,12 @@ class TestGrammarDefinitionBNF(unittest.TestCase):
     def testFirstLookup(self):
         from pydsl.Grammar.Symbol import NonTerminalSymbol, TerminalSymbol
         from pydsl.Grammar.Definition import String
-        print(self.grammardef.first_lookup(NonTerminalSymbol("exp"))[0])
+        self.grammardef.first_lookup(NonTerminalSymbol("exp"))[0]
         self.assertListEqual(self.grammardef.first_lookup(NonTerminalSymbol("exp")),[TerminalSymbol(String("S"))])
 
     def testNextLookup(self):
         from pydsl.Grammar.Symbol import NonTerminalSymbol, EndSymbol
-        print(self.grammardef.next_lookup(NonTerminalSymbol("exp"))[0])
+        self.grammardef.next_lookup(NonTerminalSymbol("exp"))[0]
         self.assertListEqual(self.grammardef.next_lookup(NonTerminalSymbol("exp")),[EndSymbol()])
 
     def testAlphabet(self):
