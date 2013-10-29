@@ -18,7 +18,7 @@
 
 """Tests the Grammar definition instances"""
 
-from pydsl.Alphabet import AlphabetDefinition
+from pydsl.Alphabet import Alphabet
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
@@ -72,7 +72,7 @@ class TestGrammarDefinitionPLY(unittest.TestCase):
         self.grammardef.maxsize
 
     def testAlphabet(self):
-        self.assertListEqual(self.grammardef.alphabet(), AlphabetDefinition)
+        self.assertListEqual(self.grammardef.alphabet(), Alphabet)
 
 class TestGrammarDefinitionJson(unittest.TestCase):
     def setUp(self):

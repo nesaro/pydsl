@@ -19,9 +19,9 @@ __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
-from pydsl.Grammar.Definition import GrammarDefinition
+from pydsl.Grammar.Definition import Grammar
 
-class AlphabetDefinition(GrammarDefinition):
+class Alphabet(Grammar):
     """Defines a set of valid elements"""
     @property
     def first(self):
@@ -36,7 +36,7 @@ class AlphabetDefinition(GrammarDefinition):
         """Returns true if the alphabet contains the token"""
         raise NotImplementedError
 
-class AlphabetListDefinition(AlphabetDefinition):
+class AlphabetListDefinition(Alphabet):
     """Uses a list of grammar definitions"""
     def __init__(self, grammarlist):
         if not grammarlist:
@@ -48,9 +48,9 @@ class AlphabetListDefinition(AlphabetDefinition):
                 self.grammarlist.append(load(x))
             else:
                 self.grammarlist.append(x)
-        from pydsl.Grammar.Definition import GrammarDefinition
+        from pydsl.Grammar.Definition import Grammar
         for x in self.grammarlist:
-            if not isinstance(x, GrammarDefinition):
+            if not isinstance(x, Grammar):
                 raise TypeError("Expected GrammarDefinition, Got %s:%s" % (x.__class__.__name__,x))
 
     def minsize(self):
@@ -65,7 +65,7 @@ class AlphabetListDefinition(AlphabetDefinition):
         return self.grammarlist
 
 
-class Encoding(AlphabetDefinition):
+class Encoding(Alphabet):
     """Defines an alphabet using an encoding string"""
     def __init__(self, encoding):
         self.encoding = encoding
@@ -90,7 +90,7 @@ class Encoding(AlphabetDefinition):
         return [String(chr(x)) for x in range(128)]
 
 
-class ConceptAlphabet(AlphabetDefinition):
+class ConceptAlphabet(Alphabet):
     """Stores a list of concepts"""
     def __init__(self, conceptlist):
         self.conceptlist = conceptlist

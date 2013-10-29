@@ -18,7 +18,7 @@
 """Production rules"""
 
 from pydsl.Grammar.Symbol import Symbol, TerminalSymbol, NullSymbol, EndSymbol
-from pydsl.Grammar.Definition import GrammarDefinition
+from pydsl.Grammar.Definition import Grammar
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
@@ -68,10 +68,10 @@ class Production(object):
 
 
 #Only stores a ruleset, and methods to ask properties or validity check
-class BNFGrammar(GrammarDefinition):
+class BNFGrammar(Grammar):
 
     def __init__(self, initialsymbol, fulllist, options=None):
-        GrammarDefinition.__init__(self)
+        Grammar.__init__(self)
         self._initialsymbol = initialsymbol
         for rule in fulllist:
             if fulllist.count(rule) > 1:
