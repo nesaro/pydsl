@@ -19,9 +19,14 @@ __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
+from pydsl.Grammar.Definition import GrammarDefinition
 
-class AlphabetDefinition(object):
+class AlphabetDefinition(GrammarDefinition):
     """Defines a set of valid elements"""
+    @property
+    def first(self):
+        return self
+
     @property
     def to_list(self):
         """Returns a list of allowed grammars"""
@@ -47,6 +52,9 @@ class AlphabetListDefinition(AlphabetDefinition):
         for x in self.grammarlist:
             if not isinstance(x, GrammarDefinition):
                 raise TypeError("Expected GrammarDefinition, Got %s:%s" % (x.__class__.__name__,x))
+
+    def minsize(self):
+        return 1 #FIXME: In some cases could be 0
 
     def __getitem__(self, index):
         """Retrieves token by index"""
