@@ -36,6 +36,10 @@ class Alphabet(Grammar):
         """Returns true if the alphabet contains the token"""
         raise NotImplementedError
 
+    @property
+    def minsize(self):
+        return 1 #FIXME: In some cases could be 0
+
 class AlphabetListDefinition(Alphabet):
     """Uses a list of grammar definitions"""
     def __init__(self, grammarlist):
@@ -52,9 +56,6 @@ class AlphabetListDefinition(Alphabet):
         for x in self.grammarlist:
             if not isinstance(x, Grammar):
                 raise TypeError("Expected GrammarDefinition, Got %s:%s" % (x.__class__.__name__,x))
-
-    def minsize(self):
-        return 1 #FIXME: In some cases could be 0
 
     def __getitem__(self, index):
         """Retrieves token by index"""
