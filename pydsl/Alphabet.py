@@ -55,7 +55,7 @@ class AlphabetListDefinition(Alphabet):
         from pydsl.Grammar.Definition import Grammar
         for x in self.grammarlist:
             if not isinstance(x, Grammar):
-                raise TypeError("Expected GrammarDefinition, Got %s:%s" % (x.__class__.__name__,x))
+                raise TypeError("Expected Grammar, Got %s:%s" % (x.__class__.__name__,x))
 
     def __getitem__(self, index):
         """Retrieves token by index"""
