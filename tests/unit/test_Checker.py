@@ -199,3 +199,13 @@ class TestStringChecker(unittest.TestCase):
     def testEmptyInput(self):
         pass
 
+
+class TestSequenceChecker(unittest.TestCase):
+    def testCheck(self):
+        from pydsl.Grammar.PEG import Sequence
+        from pydsl.Check import SequenceChecker
+        from pydsl.Grammar.Definition import String
+        sequence = Sequence((String("a"), String("b"), String("c")))
+        checker = SequenceChecker(sequence)
+        self.assertTrue(checker.check("abc"))
+        self.assertFalse(checker.check("abd"))

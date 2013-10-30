@@ -27,7 +27,6 @@ https://launchpad.net/pymeta
 
 """
 
-
 from .Definition import Grammar
 
 class Many(Grammar):
