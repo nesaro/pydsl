@@ -28,21 +28,21 @@ https://launchpad.net/pymeta
 """
 
 
-from .Definition import GrammarDefinition
+from .Definition import Grammar
 
-class Many(GrammarDefinition):
+class Many(Grammar):
     def __init__(self, element):
-        GrammarDefinition.__init__(self)
+        Grammar.__init__(self)
         self.element = element
 
 #Choice is equivalent to Alphabet 
 
-class Sequence(GrammarDefinition, list):
+class Sequence(Grammar, list):
     def __init__(self, *args, **kwargs):
-        GrammarDefinition.__init__(self)
+        Grammar.__init__(self)
         list.__init__(self, *args, **kwargs)
 
-class Not(GrammarDefinition, list):
+class Not(Grammar, list):
     def __init__(self, element):
-        GrammarDefinition.__init__(self)
+        Grammar.__init__(self)
         self.element = element

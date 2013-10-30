@@ -22,14 +22,14 @@ __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
-from pydsl.Grammar.Definition import String, GrammarDefinition
+from pydsl.Grammar.Definition import String, Grammar
 from pydsl.Grammar.PEG import Many, Not, Sequence
 from pydsl.Alphabet import AlphabetListDefinition
 
 class TestPEG(unittest.TestCase):
     def testMany(self):
         mygrammar = Many(String("a"))
-        self.assertTrue(isinstance(mygrammar, GrammarDefinition))
+        self.assertTrue(isinstance(mygrammar, Grammar))
 
     def testChoice(self):
         mygrammar = AlphabetListDefinition((String("a"), String("b")))
@@ -41,8 +41,8 @@ class TestPEG(unittest.TestCase):
 
     def testNot(self):
         mygrammar = Not(String("a"))
-        self.assertTrue(isinstance(mygrammar, GrammarDefinition))
+        self.assertTrue(isinstance(mygrammar, Grammar))
 
     def testSequence(self):
         mygrammar = Sequence((String("a"), String("b")))
-        self.assertTrue(isinstance(mygrammar, GrammarDefinition))
+        self.assertTrue(isinstance(mygrammar, Grammar))
