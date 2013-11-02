@@ -89,16 +89,3 @@ class Encoding(Alphabet):
         #FIXME: Only ascii
         from pydsl.Grammar.Definition import String
         return [String(chr(x)) for x in range(128)]
-
-
-class ConceptAlphabet(Alphabet):
-    """Stores a list of concepts"""
-    def __init__(self, conceptlist):
-        self.conceptlist = conceptlist
-
-    def __getitem__(self, item):
-        return self.conceptlist[item]
-
-    @property
-    def to_list(self):
-        return self.conceptlist

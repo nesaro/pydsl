@@ -84,11 +84,11 @@ class TestLexer(unittest.TestCase):
         text_generator(mylexer.lexer_generator(collector()))
         self.assertListEqual(result, ["123", "abc","abc", "123"])
 
-class TestConceptLexer(unittest.TestCase):
+class TestPythonLexer(unittest.TestCase):
     def test_Concept(self):
         from pydsl.Grammar.Definition import String
         from pydsl.Alphabet import AlphabetListDefinition
-        from pydsl.Lex import ConceptLexer
+        from pydsl.Lex import PythonLexer
         red = String("red")
         green = String("green")
         blue = String("blue")
@@ -109,6 +109,6 @@ class TestConceptLexer(unittest.TestCase):
 
             return result
 
-        ct = ConceptLexer(concept_translator_fun)
+        ct = PythonLexer(concept_translator_fun)
 
         self.assertListEqual(ct(lexer("red")), ["color red"])
