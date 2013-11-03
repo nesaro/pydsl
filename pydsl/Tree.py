@@ -230,10 +230,14 @@ class Sequence:
                 for current_valid in valid_sets[:]:
                     if possible['left'] == current_valid[-1]['right']:
                         if current_valid + [possible] not in valid_sets:
-                            valid_sets.append(current_valid + [possible])
-                            change = True
+                            if possible['content'] != current_valid[-1]['content']:
+                                valid_sets.append(current_valid + [possible])
+                                change = True
         return valid_sets
 
-
+    def right_limit_list(self):
+        if not self.possible_items:
+            return [0]
+        return list(set([x[-1]['right'] for x in self.generate_valid_sequences()]))
 
 
