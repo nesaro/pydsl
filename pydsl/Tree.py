@@ -91,7 +91,7 @@ class PositionTree(Tree):
 
     def __eq__(self, other):
         try:
-            return self.production == other.production and self.content == other.content and self.leftpos == other.leftpos and self.rightpos == other.rightpos and self.valid == other.valid
+            return self.leftpos == other.leftpos and self.rightpos == other.rightpos and self.valid == other.valid and self.content == other.content #FIXME comparing production can cause infinite recursion
         except AttributeError:
             return False
 
