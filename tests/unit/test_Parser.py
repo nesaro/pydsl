@@ -22,23 +22,17 @@ __email__ = "nesaro@gmail.com"
 
 
 from pydsl.contrib.bnfgrammar import *
-from pydsl.Parser.RecursiveDescent import BacktracingErrorRecursiveDescentParser
+from pydsl.Parser.RecursiveDescent import BacktracingErrorRecursiveDescentParser, LL1RecursiveDescentParser
 from pydsl.Parser.Weighted import WeightedParser
 from pydsl.Parser.LR0 import LR0Parser
-from pydsl.Lexer import EncodingLexer
+from pydsl.Lex import EncodingLexer
 import unittest
 
-class TestParsers(unittest.TestCase):
+class TestBacktracingRecursiveDescentParser(unittest.TestCase):
     @unittest.skip
     def testRecursiveLeftRecursion(self):
         descentparser = BacktracingErrorRecursiveDescentParser(productionsetlr)
         result = descentparser(dots)
-        self.assertTrue(result)
-
-    @unittest.skip
-    def testWeightedLeftRecursion(self):
-        parser = WeightedParser(productionsetlr)
-        result = parser(dots)
         self.assertTrue(result)
 
     def testRightRecursion(self):
@@ -71,6 +65,8 @@ class TestParsers(unittest.TestCase):
         result = descentparser(string4)
         self.assertFalse(result)
 
+
+class TestLR0Parser(unittest.TestCase):
     def testLR0ParseTable(self):
         """Tests the lr0 table generation"""
         from pydsl.Parser.LR0 import _slr_build_parser_table, build_states_sets
@@ -103,13 +99,23 @@ class TestParsers(unittest.TestCase):
         result = parser(string2)
         self.assertFalse(result)
 
+
+
+class TestWeightedParser(unittest.TestCase):
+    @unittest.skip
+    def testWeightedLeftRecursion(self):
+        parser = WeightedParser(productionsetlr)
+        result = parser(dots)
+        self.assertTrue(result)
+
+
     def testWeightedRightRecursion(self):
         parser = WeightedParser(productionsetrr)
         result = parser(dots)
         self.assertTrue(result)
 
     def testWeightedCenterRecursion(self):
-        descentparser = BacktracingErrorRecursiveDescentParser(productionsetcr)
+        descentparser = WeightedParser(productionsetcr)
         result = descentparser(dots)
         self.assertTrue(result)
 
@@ -118,7 +124,6 @@ class TestParsers(unittest.TestCase):
         result = parser(string1)
         self.assertTrue(result)
         self.assertTrue(parser([x for x in string1]))
-        self.assertTrue(parser([Token(x) for x in string1]))
 
     def testWeightedParserBad(self):
         parser = WeightedParser(productionset1)
@@ -135,12 +140,11 @@ class TestParsers(unittest.TestCase):
         result = parser(string4)
         self.assertFalse(result)
 
-class TestWeightedParser(unittest.TestCase):
     @unittest.skip
     def testMixResults(self):
-        from pydsl.Grammar.Parser.Weighted import mix_results
+        from pydsl.Parser.Weighted import mix_results
         from pydsl.Tree import ParseTree
-        from pydsl.Grammar.Symbol import NullSymbol
+        from pydsl.Symbol import NullSymbol
         result1 = ParseTree(0, 3, [NullSymbol()], "", None)
         result2 = ParseTree(0, 5, [NullSymbol()], "", None)
         result3 = ParseTree(3, 6, [NullSymbol()], "", None)
@@ -155,3 +159,31 @@ class TestWeightedParser(unittest.TestCase):
         result = mix_results([set1b, set2b, set3b], None)
         #TODO: check result
         self.assertTrue(len(result) == 1)
+        
+
+
+class TestLL1RecursiveDescentParser(unittest.TestCase):
+    @unittest.skip
+    def testRecursiveLeftRecursion(self):
+        descentparser = LL1RecursiveDescentParser(productionsetlr)
+        result = descentparser(dots)
+        self.assertTrue(result)
+
+    def testRightRecursion(self):
+        descentparser = LL1RecursiveDescentParser(productionsetrr)
+        self.assertRaises(Exception, descentparser,dots) #Ambiguous grammar
+
+    def testCenterRecursion(self):
+        descentparser = LL1RecursiveDescentParser(productionsetcr)
+        self.assertRaises(Exception, descentparser,dots) #Ambiguous grammar
+
+    def testLL1RecursiveDescentParserStore(self):
+        descentparser = LL1RecursiveDescentParser(productionset1)
+        result = descentparser(string1)
+        self.assertTrue(result)
+
+    def testLL1RecursiveDescentParserBad(self):
+        descentparser = LL1RecursiveDescentParser(productionset1)
+        result = descentparser(string2)
+        self.assertFalse(result)
+

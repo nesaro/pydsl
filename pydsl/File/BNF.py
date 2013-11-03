@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #This file is part of pydsl.
 #
@@ -24,7 +24,7 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 import re
-from pydsl.Grammar.Symbol import TerminalSymbol,  NonTerminalSymbol, NullSymbol, UnknownSymbol
+from pydsl.Grammar.Symbol import TerminalSymbol,  NonTerminalSymbol, NullSymbol
 from pydsl.Grammar.BNF import Production
 LOG = logging.getLogger(__name__)
 
@@ -37,8 +37,8 @@ def __generateStringSymbol(rightside):
     content = tail
     if len(tail) > 2 and tail[1][0] == "'" and tail[1][-1] == "'":
         content = tail[1][1:-1]
-    from pydsl.Grammar.Definition import StringGrammarDefinition
-    return TerminalSymbol(StringGrammarDefinition(content))
+    from pydsl.Grammar.Definition import String
+    return TerminalSymbol(String(content))
 
 def __generateWordSymbol(rightside):
     args = rightside.split(",")
@@ -46,7 +46,7 @@ def __generateWordSymbol(rightside):
         raise TypeError
     br = args[2] #Boundary rule policy
 
-    from pydsl.Memory.Loader import load
+    from pydsl.Config import load
     return TerminalSymbol(load(args[1]), None, br)
 
 
@@ -87,8 +87,6 @@ def read_terminal_production(line):
         newsymbol = __generateWordSymbol(rightside)
     elif re.search("^Null", rightside):
         newsymbol = NullSymbol()
-    elif re.search("^Unk", rightside):
-        newsymbol = UnknownSymbol()
     else:
         raise ValueError("Unknown terminal production type " + str(rightside))
     return symbolnames[0], newsymbol

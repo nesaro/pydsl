@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #This file is part of pydsl.
 #
@@ -18,82 +18,26 @@
 
 """Tests the Grammar definition instances"""
 
-from pydsl.Alphabet.Definition import AlphabetDefinition
+from pydsl.Alphabet import Alphabet
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
-
-@unittest.skip
-class TestGrammarDefinitionRegularExpression(unittest.TestCase):
-    """Regular expression method tests"""
-    def setUp(self):
-        self.grammardef = None
-
-    def testEnumerate(self):
-        self.grammardef.enum()
-
-    def testFirst(self):
-        self.grammardef.first
-
-    def testMin(self):
-        self.grammardef.minsize
-
-    def testMax(self):
-        self.grammardef.maxsize
-
-    def testAlphabet(self):
-        self.assertListEqual(self.grammardef.alphabet(), AlphabetDefinition)
+from pydsl.Grammar.Definition import MongoGrammar, String
+from pydsl.Alphabet import Encoding
 
 
-class TestGrammarDefinitionBNF(unittest.TestCase):
-    def setUp(self):
-        from pydsl.contrib.bnfgrammar import productionset0
-        self.grammardef = productionset0
-
-    @unittest.skip
-    def testEnumerate(self):
-        self.assertListEqual([x for x in self.grammardef.enum()], ["SR"])
-
-    def testFirst(self):
-        from pydsl.Grammar.Definition import StringGrammarDefinition
-        self.assertListEqual(self.grammardef.first, [StringGrammarDefinition("S")])
-
-    @unittest.skip
-    def testMin(self):
-        self.assertEqual(self.grammardef.minsize,2)
-
-    @unittest.skip
-    def testMax(self):
-        self.assertEqual(self.grammardef.maxsize,2)
-
-    def testFirstLookup(self):
-        from pydsl.Grammar.Symbol import NonTerminalSymbol, TerminalSymbol
-        from pydsl.Grammar.Definition import StringGrammarDefinition
-        print(self.grammardef.first_lookup(NonTerminalSymbol("exp"))[0])
-        self.assertListEqual(self.grammardef.first_lookup(NonTerminalSymbol("exp")),[TerminalSymbol(StringGrammarDefinition("S"))])
-
-    def testNextLookup(self):
-        from pydsl.Grammar.Symbol import NonTerminalSymbol, EndSymbol
-        print(self.grammardef.next_lookup(NonTerminalSymbol("exp"))[0])
-        self.assertListEqual(self.grammardef.next_lookup(NonTerminalSymbol("exp")),[EndSymbol()])
-
-    def testAlphabet(self):
-        from pydsl.Grammar.Definition import StringGrammarDefinition
-        self.assertListEqual(self.grammardef.alphabet().to_list, [StringGrammarDefinition(x) for x in ["S","R"]])
-
-@unittest.skip
 class TestGrammarDefinitionMongoDb(unittest.TestCase):
     def setUp(self):
-        self.grammardef = None
+        self.grammardef = MongoGrammar({'id':123})
 
     def testEnumerate(self):
-        self.grammardef.enum()
+        self.assertRaises(NotImplementedError, self.grammardef.enum)
 
     def testFirst(self):
-        self.grammardef.first
+        self.assertListEqual(self.grammardef.first, [String("{")])
 
     def testMin(self):
         self.grammardef.minsize
@@ -102,7 +46,7 @@ class TestGrammarDefinitionMongoDb(unittest.TestCase):
         self.grammardef.maxsize
 
     def testAlphabet(self):
-        self.assertListEqual(self.grammardef.alphabet(), AlphabetDefinition)
+        self.assertEqual(self.grammardef.alphabet(), Encoding('ascii'))
 
 @unittest.skip
 class TestGrammarDefinitionPLY(unittest.TestCase):
@@ -128,16 +72,15 @@ class TestGrammarDefinitionPLY(unittest.TestCase):
         self.grammardef.maxsize
 
     def testAlphabet(self):
-        self.assertListEqual(self.grammardef.alphabet(), AlphabetDefinition)
+        self.assertListEqual(self.grammardef.alphabet(), Alphabet)
 
-@unittest.skip
 class TestGrammarDefinitionJson(unittest.TestCase):
     def setUp(self):
         from pydsl.Grammar.Definition import JsonSchema
         self.grammardef = JsonSchema({})
 
     def testEnumerate(self):
-        self.grammardef.enum()
+        self.assertRaises(NotImplementedError, self.grammardef.enum)
 
     def testFirst(self):
         self.grammardef.first
@@ -149,5 +92,5 @@ class TestGrammarDefinitionJson(unittest.TestCase):
         self.grammardef.maxsize
 
     def testAlphabet(self):
-        self.assertListEqual(self.grammardef.alphabet(), AlphabetDefinition)
+        self.assertEqual(self.grammardef.alphabet(), Encoding('ascii'))
 

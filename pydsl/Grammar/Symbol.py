@@ -16,7 +16,7 @@
 # along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 """Symbols"""
-from pydsl.Checker import check
+from pydsl.Check import check
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
@@ -24,7 +24,7 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
-from pydsl.Grammar.Definition import StringGrammarDefinition
+from pydsl.Grammar.Definition import String
 
 class Symbol(object):
     def __init__(self, weight):
@@ -50,16 +50,18 @@ class NonTerminalSymbol(Symbol):
             return False
         return self.name == other.name and self.weight == other.weight
 
-class TerminalSymbol(Symbol): 
-    def __init__(self, gd, weight = None, boundariesrules = None):
-        if isinstance(gd, StringGrammarDefinition):
+
+class TerminalSymbol(Symbol):
+
+    def __init__(self, gd, weight=None, boundariesrules=None):
+        if isinstance(gd, String):
             weight = weight or 99
             boundariesrules = len(gd.string)
         else:
             weight = weight or 49
         Symbol.__init__(self, weight)
-        if boundariesrules not in ("min","max","any") and not isinstance(boundariesrules, int):
-            raise TypeError("Unknown boundaries rules %s" % boundariesrules )
+        if boundariesrules not in ("min", "max", "any") and not isinstance(boundariesrules, int):
+            raise TypeError("Unknown boundaries rules %s" % boundariesrules)
         if not gd:
             raise Exception
         self.gd = gd
@@ -76,7 +78,6 @@ class TerminalSymbol(Symbol):
     def first(self):
         return self.gd.first
 
-
     def __eq__(self, other):
         """StringTerminalSymbol are equals if definition and names are equal"""
         try:
@@ -86,17 +87,6 @@ class TerminalSymbol(Symbol):
 
     def __str__(self):
         return "<TS: " + str(self.gd) + ">"
-
-class UnknownSymbol(Symbol):
-    def __init__(self):
-        Symbol.__init__(self, 1)
-        self.boundariesrules = "any"
-
-    def __eq__(self, other):
-        return isinstance(other, UnknownSymbol)
-
-    def check(self, data):
-        return bool(data)
 
 class NullSymbol(Symbol):
     def __init__(self):

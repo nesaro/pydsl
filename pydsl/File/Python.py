@@ -49,7 +49,7 @@ def load_python_file(moduleobject):
     elif iclass == "PythonTransformer":
         return resultdic
     elif iclass == "AlphabetList":
-        from pydsl.Alphabet.Definition import AlphabetListDefinition
+        from pydsl.Alphabet import AlphabetListDefinition
         return AlphabetListDefinition(**resultdic)
     elif iclass == "pyparsing":
         return resultdic['root_symbol']
@@ -58,6 +58,10 @@ def load_python_file(moduleobject):
 
 
 def summary_python_file(modulepath):
+    """
+    generates a dictionary describing the content of a pydsl serialized file,
+    which are grammars, alphabets and functions
+    """
     (_, _, fileBaseName, ext) = getFileTuple(modulepath)
     moduleobject = imp.load_source(fileBaseName, modulepath)
     result = {"identifier":fileBaseName, "iclass":moduleobject.iclass, "filepath":modulepath}

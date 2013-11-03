@@ -17,7 +17,7 @@
 
 """Recursive descent parser"""
 from pydsl import Tree
-from pydsl.Checker import check
+from pydsl.Check import check
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
@@ -266,7 +266,10 @@ class LL1RecursiveDescentParser(TopDownParser):
             raise NotImplementedError("This parser doesn't implement errors")
         self.data = data
         self.index = 0
-        return [self.__aux_parser(self._productionset.initialsymbol)]
+        try:
+            return [self.__aux_parser(self._productionset.initialsymbol)]
+        except IndexError:
+            return []
 
     def __aux_parser(self, symbol):
         from pydsl.Grammar.Symbol import TerminalSymbol
@@ -299,9 +302,6 @@ class LL1RecursiveDescentParser(TopDownParser):
     @property
     def current(self):
         result = self.data[self.index]
-        if isinstance(result, str):
-            from pydsl.Alphabet.Token import Token
-            result = Token(result)
         return result
 
     def match(self, symbol):

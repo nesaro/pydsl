@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #This file is part of pydsl.
 #
@@ -16,7 +16,7 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 """Python Transformers"""
-from pydsl.Memory.Loader import load
+from pydsl.Config import load
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
@@ -62,24 +62,23 @@ def translator_factory(function):
         """Converts {"channelname","type"} into {"channelname",instance}"""
         result = {}
         for key in originaldic:
-            from pydsl.Checker import checker_factory
+            from pydsl.Check import checker_factory
             result[key] = checker_factory(str(originaldic[key]))
         return result
     if isinstance(function, str):
         function = load(function)
     from pydsl.Grammar.Definition import PLYGrammar
     if isinstance(function, PLYGrammar):
-        from pydsl.Translator.Grammar import PLYTranslator
         return PLYTranslator(function)
     if isinstance(function, dict):
-        from pydsl.Translator.Grammar import PythonTranslator
         function['inputdic'] = _load_checker(function['inputdic'])
         function['outputdic'] = _load_checker(function['outputdic'])
         return PythonTranslator(**function)
     from pyparsing import OneOrMore
     if isinstance(function, OneOrMore):
-        from pydsl.Translator import PyParsingTranslator
         return PyParsingTranslator(function)
+    if isinstance(function, PythonTranslator):
+        return function
     raise ValueError(function)
 
 def translate(definition, data):

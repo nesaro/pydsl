@@ -18,7 +18,7 @@
 """Production rules"""
 
 from pydsl.Grammar.Symbol import Symbol, TerminalSymbol, NullSymbol, EndSymbol
-from pydsl.Grammar.Definition import GrammarDefinition
+from pydsl.Grammar.Definition import Grammar
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
@@ -26,8 +26,9 @@ __email__ = "nesaro@gmail.com"
 
 
 class Production(object):
+
     def __init__(self, leftside, rightside):
-        #Left side must have at least one non terminal symbol
+        # Left side must have at least one non terminal symbol
         for element in rightside:
             if not isinstance(element, Symbol):
                 raise TypeError
@@ -36,8 +37,8 @@ class Production(object):
 
     def __str__(self):
         """Pretty print"""
-        leftstr = " ".join([ x.name for x in self.leftside])
-        rightstr = " ".join([ str(x) for x in self.rightside])
+        leftstr = " ".join([x.name for x in self.leftside])
+        rightstr = " ".join([str(x) for x in self.rightside])
         return leftstr + "::=" + rightstr
 
     def __eq__(self, other):
@@ -66,19 +67,22 @@ class Production(object):
         return hash(self.leftside) & hash(self.rightside)
 
 
-class BNFGrammar(GrammarDefinition): #Only stores a ruleset, and methods to ask properties or validity check 
+#Only stores a ruleset, and methods to ask properties or validity check
+class BNFGrammar(Grammar):
+
     def __init__(self, initialsymbol, fulllist, options=None):
-        GrammarDefinition.__init__(self)
+        Grammar.__init__(self)
         self._initialsymbol = initialsymbol
         for rule in fulllist:
-            if fulllist.count(rule) >1:
+            if fulllist.count(rule) > 1:
                 raise ValueError("Duplicated rule: " + str(rule))
-        self.fulllist = fulllist
-        if not options: options = {}
+        self.fulllist = tuple(fulllist)
+        if not options:
+            options = {}
         self.options = options
 
     def alphabet(self):
-        from pydsl.Alphabet.Definition import AlphabetListDefinition
+        from pydsl.Alphabet import AlphabetListDefinition
         return AlphabetListDefinition([x.gd for x in self.terminalsymbollist])
 
     @property
@@ -100,14 +104,17 @@ class BNFGrammar(GrammarDefinition): #Only stores a ruleset, and methods to ask 
 
     @property
     def first(self):
-        """Returns the list of terminal symbols that can be the first element of this grammar"""
+        """Returns the a grammar definition that includes all first elements of this grammar""" #TODO
         result = []
         for x in self.first_lookup(self.initialsymbol):
             result += x.first
         return result
 
-    def first_lookup(self, symbol):
-        """Returns the first terminal symbol produced by the input symbol within this grammar definition"""
+    def first_lookup(self, symbol, size=1):
+        """
+        Returns a Grammar Definition with the first n terminal symbols
+        produced by the input symbol
+        """
         if isinstance(symbol, (TerminalSymbol, NullSymbol)):
             return [symbol]
         result = []
@@ -115,7 +122,7 @@ class BNFGrammar(GrammarDefinition): #Only stores a ruleset, and methods to ask 
             if x.leftside[0] != symbol:
                 continue
             for y in x.rightside:
-                current_symbol_first = self.first_lookup(y)
+                current_symbol_first = self.first_lookup(y, size)
                 result += current_symbol_first
                 if NullSymbol not in current_symbol_first:
                     break # This element doesn't have Null in its first set so there is no need to continue
@@ -130,7 +137,7 @@ class BNFGrammar(GrammarDefinition): #Only stores a ruleset, and methods to ask 
             result.append(EndSymbol())
         for production in self.productions:
             if symbol in production.rightside:
-                nextindex = production.rightside.index(symbol)+1
+                nextindex = production.rightside.index(symbol) + 1
                 while nextindex < len(production.rightside):
                     nextsymbol = production.rightside[nextindex]
                     firstlist = self.first_lookup(nextsymbol)
@@ -153,14 +160,8 @@ class BNFGrammar(GrammarDefinition): #Only stores a ruleset, and methods to ask 
         """Tests if exists right recursion"""
         raise NotImplementedError
 
-    @property
-    def is_abstract(self):
-        """Returns true if the grammar contains an unknown symbol"""
-        from pydsl.Grammar.Symbol import UnknownSymbol
-        return UnknownSymbol in self.fulllist
-
     def __eq__(self, other):
-        if not isinstance(other,BNFGrammar):
+        if not isinstance(other, BNFGrammar):
             return False
         if self._initialsymbol != other.initialsymbol:
             return False
@@ -168,12 +169,6 @@ class BNFGrammar(GrammarDefinition): #Only stores a ruleset, and methods to ask 
             if self.productions[index] != other.productions[index]:
                 return False
         return True
-
-    #def __getitem__(self, index):
-    #    for rule in self.productionlist:
-    #        if rule.name == index:
-    #            return rule
-    #    raise IndexError
 
     @property
     def initialsymbol(self):
@@ -223,4 +218,4 @@ class BNFGrammar(GrammarDefinition): #Only stores a ruleset, and methods to ask 
         return self.productions.index(rule)
 
     def __str__(self):
-        return str(list(map(str,self.productions)))
+        return str(list(map(str, self.productions)))

@@ -20,7 +20,7 @@ __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
-from pydsl.Lexer import EncodingLexer, lexer_factory
+from pydsl.Lex import EncodingLexer, lexer_factory
 from pydsl.contrib.bnfgrammar import *
 
 
@@ -41,9 +41,6 @@ class TestLexer(unittest.TestCase):
         from pydsl.Config import load_default_memory
         load_default_memory()
 
-    def testTokenInput(self):
-        pass
-
     def testListInput(self):
         pass
 
@@ -52,21 +49,20 @@ class TestLexer(unittest.TestCase):
 
     def testSimpleLexing(self):
         """Test checker instantiation and call"""
-        from pydsl.Memory.Loader import load
-        from pydsl.Alphabet.Definition import AlphabetListDefinition
-        from pydsl.Alphabet.Token import Token
+        from pydsl.Config import load
+        from pydsl.Alphabet import AlphabetListDefinition
         integer = load('integer')
         date = load('Date')
         mydef = AlphabetListDefinition([integer,date])
         lexer = lexer_factory(mydef)
-        self.assertListEqual(lexer("1234"), [(Token("1234",integer))])
-        self.assertListEqual(lexer("123411/11/2001"), [Token("1", load("integer")),Token("2", load("integer")),Token("3", load("integer")),Token("4", load("integer")), Token("11/11/2001",date)])
+        self.assertListEqual(lexer("1234"), ["1234"])
+        self.assertListEqual(lexer("123411/11/2001"), ["1234","11/11/2001"])
 
     def testLexerGenerator(self):
-        from pydsl.Grammar.Definition import StringGrammarDefinition
-        from pydsl.Alphabet.Definition import AlphabetListDefinition
-        abc = StringGrammarDefinition("abc")
-        numbers = StringGrammarDefinition("123")
+        from pydsl.Grammar.Definition import String
+        from pydsl.Alphabet import AlphabetListDefinition
+        abc = String("abc")
+        numbers = String("123")
         mydef = AlphabetListDefinition([abc, numbers])
         mylexer = lexer_factory(mydef)
         def text_generator(receiver):
@@ -86,35 +82,33 @@ class TestLexer(unittest.TestCase):
                 pass
 
         text_generator(mylexer.lexer_generator(collector()))
-        from pydsl.Alphabet.Token import Token
-        self.assertListEqual(result, [Token("123", numbers), Token("abc",abc),Token("abc",abc), Token("123", numbers)])
+        self.assertListEqual(result, ["123", "abc","abc", "123"])
 
-class TestConceptLexer(unittest.TestCase):
+class TestPythonLexer(unittest.TestCase):
     def test_Concept(self):
-        from pydsl.Grammar.Definition import StringGrammarDefinition
-        from pydsl.Alphabet.Definition import AlphabetListDefinition
-        from pydsl.Alphabet.Token import Token
-        from pydsl.Lexer import ConceptLexer
-        red = StringGrammarDefinition("red")
-        green = StringGrammarDefinition("green")
-        blue = StringGrammarDefinition("blue")
+        from pydsl.Grammar.Definition import String
+        from pydsl.Alphabet import AlphabetListDefinition
+        from pydsl.Lex import PythonLexer
+        red = String("red")
+        green = String("green")
+        blue = String("blue")
         alphabet = AlphabetListDefinition([red,green,blue])
         lexer = lexer_factory(alphabet)
 
         def concept_translator_fun(inputtokens):
             result = []
             for x in inputtokens:
-                if x == Token("red"):
+                if x == "red":
                     result.append("color red")
-                elif x == Token("green"):
+                elif x == "green":
                     result.append("color green")
-                elif x == Token("blue"):
+                elif x == "blue":
                     result.append("color blue")
                 else:
                     raise Exception(x.__class__.__name__)
 
             return result
 
-        ct = ConceptLexer(concept_translator_fun)
+        ct = PythonLexer(concept_translator_fun)
 
         self.assertListEqual(ct(lexer("red")), ["color red"])

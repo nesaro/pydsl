@@ -20,7 +20,8 @@ __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 
-class GrammarDefinition(object):
+class Grammar(object):
+
     def __init__(self):
         pass
 
@@ -30,8 +31,8 @@ class GrammarDefinition(object):
 
     @property
     def first(self):# -> set:
-        """List of possible first elements"""
-        return [x for x in self.alphabet().to_list]
+        """Grammar definition with all possible first elements"""
+        return self.alphabet()
 
     @property
     def minsize(self):# -> int:
@@ -47,10 +48,10 @@ class GrammarDefinition(object):
         """Returns the alphabet used by this grammar"""
         raise NotImplementedError
 
-class PLYGrammar(GrammarDefinition):
+class PLYGrammar(Grammar):
     """PLY based grammar"""
     def __init__(self, module):
-        GrammarDefinition.__init__(self)
+        Grammar.__init__(self)
         self.module = module
 
     @property
@@ -61,21 +62,27 @@ class PLYGrammar(GrammarDefinition):
     def minsize(self):
         raise NotImplementedError
 
-class RegularExpressionDefinition(GrammarDefinition):
+class RegularExpression(Grammar):
     def __init__(self, regexp, flags = 0):
-        if not isinstance(regexp, str):
-            raise TypeError
-        GrammarDefinition.__init__(self)
-        self.regexpstr = regexp
-        self.flags = flags
+        Grammar.__init__(self)
         import re
-        self.regexp = re.compile(regexp, flags)
+        retype = type(re.compile('hello, world'))
+        if isinstance(regexp, retype):
+            self.regexp = regexp
+            self.regexpstr = regexp.pattern
+            self.flags = regexp.flags
+        elif isinstance(regexp, str):
+            self.regexpstr = regexp
+            self.flags = flags
+            self.regexp = re.compile(regexp, flags)
+        else:
+            raise TypeError
 
     def __hash__(self):
         return hash(self.regexpstr)
 
     def __eq__(self, other):
-        if not isinstance(other, RegularExpressionDefinition):
+        if not isinstance(other, RegularExpression):
             return False
         return self.regexpstr == other.regexpstr and self.flags == other.flags
 
@@ -90,19 +97,19 @@ class RegularExpressionDefinition(GrammarDefinition):
                 i+=1
                 continue
             if self.regexpstr[i] == "[":
-                return [StringGrammarDefinition(x) for x in self.regexpstr[i+1:self.regexpstr.find("]")]]
-            return [StringGrammarDefinition(self.regexpstr[i])]
+                return [String(x) for x in self.regexpstr[i+1:self.regexpstr.find("]")]]
+            return [String(self.regexpstr[i])]
 
     def __getattr__(self, attr):
         return getattr(self.regexp, attr)
 
     def alphabet(self):
-        from pydsl.Alphabet.Definition import Encoding
+        from pydsl.Alphabet import Encoding
         return Encoding("ascii")
 
-class StringGrammarDefinition(GrammarDefinition):
+class String(Grammar):
     def __init__(self, string):
-        GrammarDefinition.__init__(self)
+        Grammar.__init__(self)
         self.string = string
 
     def __hash__(self):
@@ -116,7 +123,7 @@ class StringGrammarDefinition(GrammarDefinition):
 
     @property
     def first(self):
-        return [StringGrammarDefinition(self.string[0])]
+        return [String(self.string[0])]
 
     def enum(self):
         yield self.string
@@ -133,37 +140,65 @@ class StringGrammarDefinition(GrammarDefinition):
         return str(self.string)
 
     def alphabet(self):
-        return [StringGrammarDefinition(x) for x in self.string]
+        return [String(x) for x in self.string]
 
-class JsonSchema(GrammarDefinition, dict):
+class JsonSchema(Grammar, dict):
     def __init__(self, *args, **kwargs):
-        GrammarDefinition.__init__(self)
+        Grammar.__init__(self)
         dict.__init__(self, *args, **kwargs)
 
     def alphabet(self):
-        from pydsl.Alphabet.Definition import Encoding
+        from pydsl.Alphabet import Encoding
         return Encoding("ascii")
 
-class MongoGrammar(GrammarDefinition, dict):
+class MongoGrammar(Grammar, dict):
     def __init__(self, *args, **kwargs):
-        GrammarDefinition.__init__(self)
+        Grammar.__init__(self)
         dict.__init__(self, *args, **kwargs)
 
     @property
     def first(self):
-        return [StringGrammarDefinition("{")]
+        return [String("{")]
 
     def alphabet(self):
-        from pydsl.Alphabet.Definition import Encoding
+        from pydsl.Alphabet import Encoding
         return Encoding("ascii")
 
-class PythonGrammar(GrammarDefinition, dict):
+class PythonGrammar(Grammar, dict):
+    """
+    A Python dictionary that defines a Grammar.
+    it must define at least matchFun
+    """
     def __init__(self, *args, **kwargs):
-        GrammarDefinition.__init__(self)
+        """
+        It receives a dictionary constructor which must define
+        matchFun. Example: {'matchFun':<function x at 0x000000>}
+        """
+        Grammar.__init__(self)
         dict.__init__(self, *args, **kwargs)
+
+    def __hash__(self):
+        from pypository.utils import ImmutableDict #FIXME!
+        return hash(ImmutableDict(self))        
 
     def alphabet(self):
         if "alphabet" in self:
             return self['alphabet']
-        from pydsl.Alphabet.Definition import Encoding
+        from pydsl.Alphabet import Encoding
         return Encoding("ascii")
+
+def grammar_factory(input_definition):
+    if isinstance(input_definition, str):
+        return String(input_definition)
+    import re
+    retype = type(re.compile('hello, world'))
+    if isinstance(input_definition, retype):
+        return RegularExpression(retype)
+    if isinstance(input_definition, collections.Iterable):
+        if isinstance(input_definition[0], str):
+            #Return a composition grammar ([a,b] -> "a|b")
+            pass
+        elif isinstance(input_definition[0], collections.Iterable):
+            #
+            pass
+    raise ValueError("Unable to create a grammar for %s" % input_definition)

@@ -21,6 +21,7 @@ __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
+from collections import Iterable
 LOG = logging.getLogger(__name__)
 
 
@@ -30,15 +31,16 @@ def check(definition, data):
 
 def checker_factory(grammar):
     from pydsl.Grammar.BNF import BNFGrammar
-    from pydsl.Grammar.Definition import PLYGrammar, RegularExpressionDefinition, MongoGrammar, StringGrammarDefinition, PythonGrammar
-    from pydsl.Alphabet.Definition import AlphabetListDefinition, Encoding
+    from pydsl.Grammar.PEG import Sequence
+    from pydsl.Grammar.Definition import PLYGrammar, RegularExpression, MongoGrammar, String, PythonGrammar
+    from pydsl.Alphabet import AlphabetListDefinition, Encoding
     from collections import Iterable
     if isinstance(grammar, str):
-        from pydsl.Memory.Loader import load
+        from pydsl.Config import load
         grammar = load(grammar)
     if isinstance(grammar, BNFGrammar):
         return BNFChecker(grammar)
-    elif isinstance(grammar, RegularExpressionDefinition):
+    elif isinstance(grammar, RegularExpression):
         return RegularExpressionChecker(grammar)
     elif isinstance(grammar, PythonGrammar) or isinstance(grammar, dict) and "matchFun" in grammar:
         return PythonChecker(grammar)
@@ -48,10 +50,12 @@ def checker_factory(grammar):
         return PLYChecker(grammar)
     elif isinstance(grammar, AlphabetListDefinition):
         return AlphabetListChecker(grammar)
-    elif isinstance(grammar, StringGrammarDefinition):
+    elif isinstance(grammar, String):
         return StringChecker(grammar)
     elif isinstance(grammar, Encoding):
         return EncodingChecker(grammar)
+    elif isinstance(grammar, Sequence):
+        return SequenceChecker(grammar)
     elif isinstance(grammar, Iterable):
         return IterableChecker(grammar)
     else:
@@ -82,10 +86,12 @@ class RegularExpressionChecker(Checker):
         else:
             self.__regexp = regexp
 
-    def check(self, word):
+    def check(self, data):
         """returns True if any match any regexp"""
+        if isinstance(data, Iterable):
+            data = "".join([str(x) for x in data])
         try:
-            data = str(word)
+            data = str(data)
         except UnicodeDecodeError:
             return False
         if not data:
@@ -165,6 +171,8 @@ class PLYChecker(Checker):
         self.module = gd.module
 
     def check(self, data):
+        if isinstance(data, Iterable):
+            data = "".join([str(x) for x in data])
         from ply import yacc, lex
         lexer = lex.lex(self.module)
         parser = yacc.yacc(module = self.module)
@@ -179,13 +187,13 @@ class StringChecker(Checker):
     def __init__(self, gd):
         Checker.__init__(self)
         if isinstance(gd, str):
-            from pydsl.Grammar.Definition import StringGrammarDefinition
-            gd = StringGrammarDefinition(gd)
+            from pydsl.Grammar.Definition import String
+            gd = String(gd)
         self.gd = gd
 
     def check(self, data):
-        if isinstance(data, list):
-            data = "".join(data)
+        if isinstance(data, Iterable):
+            data = "".join([str(x) for x in data])
         return self.gd.string == str(data)
 
 class JsonSchemaChecker(Checker):
@@ -204,15 +212,25 @@ class JsonSchemaChecker(Checker):
 class AlphabetListChecker(Checker):
     def __init__(self, gd):
         Checker.__init__(self)
-        from pydsl.Alphabet.Definition import AlphabetListDefinition
+        from pydsl.Alphabet import AlphabetListDefinition
         if not isinstance(gd, AlphabetListDefinition):
             raise TypeError
         self.gd = gd
         self.checkerinstances = [checker_factory(x) for x in self.gd.grammarlist]
 
     def check(self, data):
+        if isinstance(data, str):
+            data = [data]
+        elif isinstance(data, Iterable):
+            new_data = []
+            for x in data:
+                if isinstance(x, str):
+                    new_data.append(x)
+                else:
+                    raise ValueError
+            data = new_data
         for element in data:
-            if not any([x.check(element) for x in self.checkerinstances]):
+            if not any((x.check(element) for x in self.checkerinstances)):
                 return False
         return True
 
@@ -223,6 +241,8 @@ class EncodingChecker(Checker):
 
     def check(self,data):
         encoding = self.gd.encoding
+        if isinstance(data, Iterable):
+            data = "".join([str(x) for x in data])
         if isinstance(data, str):
             try:
                 data.encode(encoding)
@@ -250,3 +270,16 @@ class IterableChecker(Checker):
             except KeyError:
                 pass
         return False
+
+class SequenceChecker(Checker):
+    def __init__(self, sequence):
+        Checker.__init__(self)
+        self.sequence = sequence
+
+    def check(self,data):
+        if len(self.sequence) != len(data):
+            return False
+        for index in range(len(self.sequence)):
+            if not check(self.sequence[index], data[index]):
+                return False
+        return True

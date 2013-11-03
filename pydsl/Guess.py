@@ -19,7 +19,7 @@
 """
 guess which types are the input data. 
 """
-from pydsl.Checker import check
+from pydsl.Check import check
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
@@ -41,7 +41,7 @@ class Guesser(object):
         self.memorylist = memorylist
         self.searcher = Searcher([x.indexer for x in memorylist])
 
-    def __call__(self, inputstring): #-> set:
+    def __call__(self, data): #-> set:
         result = set()
         for summary in self.searcher.search():
             try:
@@ -56,8 +56,11 @@ class Guesser(object):
                         break
                 else:
                     continue # not found 
-                if check(typ, inputstring):
+                if check(typ, data):
                     result.add(str(name))
             except (TypeError, ValueError):
                 continue
         return result
+
+def guess(data):
+    return Guesser()(data)

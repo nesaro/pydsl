@@ -14,23 +14,21 @@
 #
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
-from pydsl.Checker import checker_factory
-from pydsl.Lexer import lexer_factory
+from pydsl.Check import checker_factory
+from pydsl.Lex import lexer_factory
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
-from pydsl.Memory.Loader import load
-from pydsl.Alphabet.Token import Token
-from pydsl.Alphabet.Definition import Encoding
-from pydsl.Config import load_default_memory
+from pydsl.Alphabet import Encoding
+from pydsl.Config import load, load_default_memory
 
 class TestAlphabet(unittest.TestCase):
     def setUp(self):
         load_default_memory()
-        from pydsl.Alphabet.Definition import AlphabetListDefinition
+        from pydsl.Alphabet import AlphabetListDefinition
         self.integer = load("integer")
         self.date = load("Date")
         self.alphabet = AlphabetListDefinition([self.integer,self.date])
@@ -42,8 +40,8 @@ class TestAlphabet(unittest.TestCase):
 
     def testLexer(self):
         lexer = lexer_factory(self.alphabet)
-        self.assertListEqual(lexer("1234"), [(Token("1234",self.integer))])
-        self.assertListEqual(lexer("123411/11/2001"), [Token("1", load("integer")),Token("2", load("integer")),Token("3", load("integer")),Token("4", load("integer")), Token("11/11/2001",self.date)])
+        self.assertListEqual(lexer("1234"), ["1234"])
+        self.assertListEqual(lexer("123411/11/2001"), ["1234","11/11/2001"])
 
     def testProperties(self):
         self.alphabet.grammarlist

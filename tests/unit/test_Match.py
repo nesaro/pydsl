@@ -15,25 +15,34 @@
 # You should have received a copy of the GNU General Public License
 # along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
-"""ListLibrary"""
-from pypository.utils import ImmutableDict
-import logging
-LOG = logging.getLogger(__name__)
-from pypository.List import ListStorage
-from pydsl.Alphabet.Definition import Encoding
-
-
-
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
-class EncodingStorage(ListStorage):
-    def _generatekey(self, element):
-        return element
+import unittest
 
-    def load(self, index):
-        return Encoding(index)
+from pydsl.Grammar.Definition import String,RegularExpression
+from pydsl.Match import match_factory
 
-    def generate_all_summaries(self):
-        return tuple([ImmutableDict({"identifier":x, "value":x, "iclass":"Encoding"}) for x in self._content])
+class TestStringMatch(unittest.TestCase):
+    def setUp(self):
+        self.grammardef = String("abc")
+        self.matcher = match_factory(self.grammardef)
+
+    def testOkMatch(self):
+        self.assertEqual(self.matcher("abcd"), ("abc","d"))
+
+    def testNoMatch(self):
+        self.assertRaises(Exception, self.matcher, "d")
+
+
+class TestRegExpMatch(unittest.TestCase):
+    def setUp(self):
+        self.grammardef = RegularExpression("abc")
+        self.matcher = match_factory(self.grammardef)
+
+    def testOkMatch(self):
+        self.assertEqual(self.matcher("abcd"), ("abc","d"))
+
+    def testNoMatch(self):
+        self.assertRaises(Exception, self.matcher, "d")

@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #This file is part of pydsl.
 #
@@ -19,25 +19,16 @@ __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
-from pydsl.Grammar.Definition import GrammarDefinition, StringGrammarDefinition
+import unittest
 
-class Token(object):
-    """ Stores a token and the associated grammar definition.
-    Alias is an alternative name for this token"""
-    def __init__(self, string, gd=None, alias = None):
-        if gd is None:
-            gd = StringGrammarDefinition(string)
-        if not isinstance(gd, GrammarDefinition):
-            raise TypeError
-        self.gd = gd
-        self.string = string
-        self.alias = alias
+class TestTranslate(unittest.TestCase):
+    def testEcho(self):
+        from pydsl.Translator import translate, PythonTranslator
+        from pydsl.Grammar.Definition import RegularExpression
+        from pydsl.Check import checker_factory
+        cstring = checker_factory(RegularExpression('.*'))
+        def function(my_input):
+            return my_input
+        pt = PythonTranslator({'my_input':cstring}, {'output':cstring}, function)
+        self.assertEqual(translate(pt,{'my_input':"1234"}),"1234")
 
-    def __str__(self):
-        return self.string
-
-    def __eq__(self, other):
-        try:
-            return self.gd == other.gd and self.string == other.string and self.alias == other.alias
-        except AttributeError:
-            return False

@@ -40,7 +40,7 @@ def _create_combined_list(input_list):
     for result in input_list[0]:
         if not(isinstance(result, ParseTree)):
             raise TypeError
-        if result.leftpos == 0 or result.leftpos is None:
+        if not result.leftpos:
             midlist.append([result])
 
     #Processing Tail sets
@@ -79,7 +79,7 @@ def mix_results(resultll, productionset):
             symbollist = []
             compoundword = ""
             for element in combination:
-                compoundword += element.content
+                compoundword += str(element.content)
                 symbollist += element.symbollist
             finalresult = ParseTree(left_pos, right_pos, symbollist, compoundword, combination[0].production, valid = all([x for x in combination]))
             #Add childs to result. FIXME Adding already created elements as children of the new one
@@ -159,11 +159,12 @@ class WeightedParser(TopDownParser):
                 #result += self.__recursive_parser(alternative.rightside, data, alternative, showerrors)
                 alternative_result = self.__handle_alternative(alternative.rightside, data, alternative, showerrors)
                 for x in alternative_result:
-                    if x.symbollist == alternative.rightside: #Filters incomplete attempts
+                    if list(x.symbollist) == list(alternative.rightside): #Filters incomplete attempts
                         result.append(ParseTree(x.leftpos, x.rightpos, [onlysymbol], data[x.leftpos:x.rightpos], production, valid = True))
                     #TODO: Add child
             if showerrors and not result:
                 return [ParseTree(0, len(data), [onlysymbol], data, production, valid = False)]
+            LOG.debug("Result " + str(result))
             return result
         elif isinstance(onlysymbol, NullSymbol):
             return[ParseTree(None, None, [onlysymbol], "", production)]

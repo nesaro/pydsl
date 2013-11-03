@@ -16,8 +16,8 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 """Parser module"""
-from pydsl.Lexer import lexer_factory
-from pydsl.Memory.Loader import load
+from pydsl.Lex import lexer_factory
+from pydsl.Config import load
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
@@ -100,3 +100,7 @@ def parser_factory(grammar, parser = "auto"):
             raise Exception("Wrong parser name: " + parser)
     else:
         raise ValueError(grammar)
+
+
+def parse(definition, data, parser = "auto"):
+    return parser_factory(definition, parser)(data)

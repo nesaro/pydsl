@@ -1,7 +1,33 @@
 DESCRIPTION
 ===========
 
-pydsl is a language library written in python. It provides high level functions for Grammars/Alphabets, hiding the complexity of parsers and similar tools
+pydsl is a language library written in python. It provides functions for Grammars and Alphabets.
+
+    from pydsl.File.BNF import load_bnf_file
+    grammardefinition = loand_bnf_file('myfile.bnf')
+    grammardefinition.alphabet # Returns the alphabet used by this grammar
+    grammardefinition.minsize
+    grammardefinition.maxsize 
+    grammardefinition.enumerate # Returns a generator that generates every accepted word
+
+    from pydsl.Checker import check
+    check(grammardefinition,'mystring') # returns True or False
+
+    from pydsl.Match import match
+    match(grammardefinition,'mystring') # returns ('my','string')
+
+    from pydsl.Parser import parse
+    parse(grammardefinition,'mystring') # returns a ParseTree
+
+    from pydsl.Extract import extract
+    extract(grammardefinition,'abcmystringabc') # returns ('mystring',3,11)
+
+    from pydsl.Validate import validate
+    validate(grammardefinition,'mystrng') # returns a ParseTree with the missing i and a note
+
+    from pydsl.Guess import guess
+    guess('mystring') # Returns a set that includes grammardefinition
+
 
 INSTALLATION
 ============
@@ -10,33 +36,11 @@ INSTALLATION
  * pip:
    * pip install pydsl
 
-USAGE
-=====
-To use pydsl as a library for your code, you can:
-
-Loading content from files
---------------------------
-    from pydsl.Memory.File.BNF import load_bnf_file
-    from pydsl.Checker import check
-    grammardefinition = loand_bnf_file('myfile.bnf')
-    check(grammardefinition,'mystring') # returns True or False
-
-
 REQUIREMENTS
 ============
  * python >= 2.7
  * pypository
  * optional: ply library ( http://www.dabeaz.com/ply/ )
-
-HELP
-====
- * https://github.com/nesaro/pydsl
- * http://pydsl.blogspot.co.uk
- * nesaro@gmail.com
-
-LICENSE
-=======
-GPLv3, see LICENSE file
 
 ABOUT
 =====

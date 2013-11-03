@@ -1,2 +1,2 @@
-grammarlist = {"integer","Date"}
+grammarlist = ["integer","Date"]
 iclass = "AlphabetList"

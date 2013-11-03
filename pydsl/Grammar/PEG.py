@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 # This file is part of pydsl.
 #
@@ -15,22 +15,33 @@
 # You should have received a copy of the GNU General Public License
 # along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
-
-"""Exceptions definitions"""
-
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
+"""Parser expression grammars
 
-class ParseError(Exception):
+Loosely based on pymeta
 
-    def __init__(self, msg, offset):
-        self.msg = msg
-        self.offset = offset
+https://launchpad.net/pymeta
 
-    def __repr__(self):
-        return "ParseError(%r, %r)" % (self.msg, self.offset)
+"""
 
-    def __str__(self):
-        return "%s at position %s" % (self.msg, self.offset + 1)
+from .Definition import Grammar
+
+class Many(Grammar):
+    def __init__(self, element):
+        Grammar.__init__(self)
+        self.element = element
+
+#Choice is equivalent to Alphabet 
+
+class Sequence(Grammar, list):
+    def __init__(self, *args, **kwargs):
+        Grammar.__init__(self)
+        list.__init__(self, *args, **kwargs)
+
+class Not(Grammar, list):
+    def __init__(self, element):
+        Grammar.__init__(self)
+        self.element = element

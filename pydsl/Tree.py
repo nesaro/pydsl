@@ -67,7 +67,7 @@ class Tree(object):
         elif order == "postorder":
             return traversePostOrder(self)
         else:
-            raise KeyError
+            raise ValueError("Unknown order %s" % order)
 
     def first_leaf(self):
         """Returns the first lead node"""
@@ -101,20 +101,12 @@ class PositionTree(Tree):
 
     def __getitem__(self, key):
         result = []
-        mylist = self.to_list(order)
+        mylist = self.to_list()
         for element in mylist:
             if element.content == key:
                 result.append(element)
         if not result:
             raise KeyError("Element not found %s" % key)
-        return result
-
-    def __str__(self):
-        result = "<PositionTree: "
-        result += "(" + str(self.leftpos) + "," + str(self.rightpos)
-        if self.childlist:
-            result += ", children: " + str(self.childlist)
-        result += " >"
         return result
 
     def shift(self, amount):
@@ -209,12 +201,39 @@ class ParseTree(PositionTree):
             LOG.warning("Unable to add parser results")
             raise Exception
 
-    def __str__(self):
-        result = "<ParseTree: "
-        result += "(" + str(self.leftpos) + "," + str(self.rightpos)
-        result += ") SymbolList: "
-        result += str(self.symbollist)
-        if self.childlist:
-            result += ", children: " + str(self.childlist)
-        result += " >"
-        return result
+
+class Sequence:
+    def __init__(self):
+        self.possible_items = []
+
+    @property
+    def current_right(self):
+        if not self.possible_items:
+            return set([0])
+        return set(x['right'] for x in self.possible_items)
+
+    def append(self, left, right, content, check_position=True):
+        if left > right:
+            raise Exception
+        if check_position == True and left:
+            if left not in self.current_right:
+                raise ValueError("Unable to add element")
+        self.possible_items.append({'left':left, 'right':right, 'content':content})
+
+    def generate_valid_sequences(self):
+        """Returns list"""
+        valid_sets = [[x] for x in self.possible_items if x['left'] == 0]
+        change = True
+        while change:
+            change = False
+            for possible in self.possible_items:
+                for current_valid in valid_sets[:]:
+                    if possible['left'] == current_valid[-1]['right']:
+                        if current_valid + [possible] not in valid_sets:
+                            valid_sets.append(current_valid + [possible])
+                            change = True
+        return valid_sets
+
+
+
+

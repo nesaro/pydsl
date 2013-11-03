@@ -14,7 +14,7 @@
 #
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
-from pydsl.Lexer import lexer_factory
+from pydsl.Lex import lexer_factory
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
@@ -25,21 +25,20 @@ import unittest
 class TestCase(unittest.TestCase):
     def test_main_case(self):
         input_data = "1+2"
-        from pydsl.Alphabet.Definition import Encoding
+        from pydsl.Alphabet import Encoding
         ascii_encoding = Encoding("ascii")
         ascii_lexer = lexer_factory(ascii_encoding)
         ascii_tokens = [x for x in ascii_lexer(input_data)]
         self.assertListEqual([str(x) for x in ascii_tokens], ['1', '+', '2'])
 
         def concept_translator_fun(inputtokens):
-            from pydsl.Alphabet.Token import Token
             result = []
             for x in inputtokens:
-                if x == Token("1"):
+                if x == "1":
                     result.append("one")
-                elif x == Token("2"):
+                elif x == "2":
                     result.append("two")
-                elif x == Token("+"):
+                elif x == "+":
                     result.append("addition")
                 else:
                     raise Exception(x.__class__.__name__)
@@ -51,8 +50,8 @@ class TestCase(unittest.TestCase):
             if number == "two":
                 return 2
  
-        from pydsl.Lexer import ConceptLexer
-        to_concepts = ConceptLexer(concept_translator_fun)
+        from pydsl.Lex import PythonLexer
+        to_concepts = PythonLexer(concept_translator_fun)
         math_expression_concepts = to_concepts(ascii_tokens)
         self.assertListEqual(math_expression_concepts, ['one', 'addition', 'two'])
         grammar_def = [
@@ -62,7 +61,7 @@ class TestCase(unittest.TestCase):
                 "two := String,two",
                 "addition := String,addition",
                 ]
-        from pydsl.Memory.File.BNF import strlist_to_production_set
+        from pydsl.File.BNF import strlist_to_production_set
         production_set = strlist_to_production_set(grammar_def)
         from pydsl.Parser.RecursiveDescent import BacktracingErrorRecursiveDescentParser
         rdp = BacktracingErrorRecursiveDescentParser(production_set)
@@ -80,7 +79,7 @@ class TestCase(unittest.TestCase):
         self.assertEqual(result, 3)
 
 
-    def test_calculator(self):
+    def test_calculator_simple(self):
         from pydsl.Config import load_default_memory
         load_default_memory()
         grammar_def = [
@@ -89,7 +88,7 @@ class TestCase(unittest.TestCase):
                 "number := Word,integer,max",
                 "operator := String,+",
                 ]
-        from pydsl.Memory.File.BNF import strlist_to_production_set
+        from pydsl.File.BNF import strlist_to_production_set
         production_set = strlist_to_production_set(grammar_def)
         from pydsl.Parser.RecursiveDescent import LL1RecursiveDescentParser
         rdp = LL1RecursiveDescentParser(production_set)
@@ -97,7 +96,6 @@ class TestCase(unittest.TestCase):
 
         def parse_tree_walker(tree):
             from pydsl.Grammar.Symbol import NonTerminalSymbol
-            print(tree.childlist)
             if tree.production.leftside[0] == NonTerminalSymbol("S"):
                 return parse_tree_walker(tree.childlist[0])
             if tree.production.leftside[0] == NonTerminalSymbol("E"):
@@ -107,4 +105,62 @@ class TestCase(unittest.TestCase):
             
         result = parse_tree_walker(parse_tree[0])
         self.assertEqual(result, 3)
+        from pydsl.Alphabet import AlphabetListDefinition
+        from pydsl.Grammar.Definition import String
+        math_alphabet = AlphabetListDefinition(['integer',String('+')])
+        from pydsl.Lex import lex
+        tokens = lex(math_alphabet, "11+2")
+        parse_tree = rdp(tokens)
+        result = parse_tree_walker(parse_tree[0])
+        self.assertEqual(result, 13)
 
+    @unittest.skip
+    def test_calculator(self):
+        from pydsl.Config import load_default_memory
+        load_default_memory()
+        grammar_def = [
+                "S ::= E",
+                "E ::= E operator E | number",
+                "number := Word,integer,max",
+                "operator := String,+",
+                ]
+        from pydsl.File.BNF import strlist_to_production_set
+        production_set = strlist_to_production_set(grammar_def)
+        from pydsl.Parser.RecursiveDescent import LLkRecursiveDescentParser
+        rdp = LLkRecursiveDescentParser(production_set)
+        parse_tree = rdp("1+2")
+
+        def parse_tree_walker(tree):
+            from pydsl.Grammar.Symbol import NonTerminalSymbol
+            if tree.production.leftside[0] == NonTerminalSymbol("S"):
+                return parse_tree_walker(tree.childlist[0])
+            if tree.production.leftside[0] == NonTerminalSymbol("E"):
+                return int(str(tree.childlist[0].content)) + int(str(tree.childlist[2].content))
+            else:
+                raise Exception
+            
+        result = parse_tree_walker(parse_tree[0])
+        self.assertEqual(result, 3)
+        from pydsl.Alphabet import AlphabetListDefinition
+        from pydsl.Grammar.Definition import String
+        math_alphabet = AlphabetListDefinition(['integer',String('+')])
+        from pydsl.Lex import lex
+        tokens = lex(math_alphabet, "11+2")
+        parse_tree = rdp(tokens)
+        result = parse_tree_walker(parse_tree[0])
+        self.assertEqual(result, 13)
+        tokens = lex(math_alphabet, "11+2+2")
+        parse_tree = rdp(tokens)
+        result = parse_tree_walker(parse_tree[0])
+        self.assertEqual(result, 15)
+        tokens = lex(math_alphabet, "11+2*2")
+        parse_tree = rdp(tokens)
+        result = parse_tree_walker(parse_tree[0])
+        self.assertEqual(result, 15)
+        tokens = lex(math_alphabet, "11*2*2")
+        parse_tree = rdp(tokens)
+        result = parse_tree_walker(parse_tree[0])
+        self.assertEqual(result, 44)
+        tokens = lex(math_alphabet, "11*2*2")
+        result = alphabet_int_to_hex(tokens)
+        self.assertEqual(result, "b*2*2")

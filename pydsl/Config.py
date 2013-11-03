@@ -16,6 +16,7 @@
 # along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 """Global (per execution) elements"""
+from pydsl.Repository import EncodingStorage, RegexpDictStorage
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
@@ -24,13 +25,12 @@ __email__ = "nesaro@gmail.com"
 import logging
 LOG = logging.getLogger(__name__)
 from pkg_resources import resource_filename
+import imp
+import os
 
 
 def load_default_memory():
-    from pydsl.Memory.Dict import RegexpDictStorage
-    from pydsl.Memory.List import EncodingStorage
     from pypository.Directory import DirStorage
-    from regexps import res
     dirname = resource_filename("pydsl.contrib", "")
     GLOBALCONFIG.memorylist.append(
         DirStorage(
@@ -40,7 +40,8 @@ def load_default_memory():
         DirStorage(
             dirname + "/alphabet/",
             GLOBALCONFIG.formatlist))
-    GLOBALCONFIG.memorylist.append(RegexpDictStorage(res))
+    regexpmodule = imp.load_source("regexps", os.path.join(dirname,"regexps.py"))
+    GLOBALCONFIG.memorylist.append(RegexpDictStorage(regexpmodule.res))
     GLOBALCONFIG.memorylist.append(EncodingStorage(dirname + "/encoding.py"))
     GLOBALCONFIG.memorylist.append(
         DirStorage(
@@ -49,9 +50,9 @@ def load_default_memory():
 
 
 def default_formats():
-    from pydsl.Memory.File.Regexp import load_re_from_file, summary_re_from_file
-    from pydsl.Memory.File.BNF import load_bnf_file, summary_bnf_file
-    from pydsl.Memory.File.Python import summary_python_file, load_python_file
+    from pydsl.File.Regexp import load_re_from_file, summary_re_from_file
+    from pydsl.File.BNF import load_bnf_file, summary_bnf_file
+    from pydsl.File.Python import summary_python_file, load_python_file
     return [
         {"extension": ".py",
          "summary_from_file": summary_python_file,
@@ -69,8 +70,8 @@ class GlobalConfig(object):
 
     """Execution time global configuration"""
 
+    memorylist = []
     def __init__(self, debuglevel=40):
-        self.memorylist = []
         self.formatlist = default_formats()
         self.__debuglevel = debuglevel
 
@@ -82,6 +83,19 @@ class GlobalConfig(object):
     def debuglevel(self, level):
         self.__debuglevel = level
 
+    @classmethod
+    def load(cls, identifier, memorylist=None):
+        if not memorylist:
+            memorylist = cls.memorylist
+        from pypository.Loader import load
+        return load(identifier, memorylist)
+
+    @classmethod
+    def search(cls, query, memorylist=None):
+        if not memorylist:
+            memorylist = cls.memorylist
+        from pypository.Loader import search
+        return search(query, memorylist)
 
 class Singleton(type):
 
@@ -98,3 +112,6 @@ class Singleton(type):
 
 GlobalConfig2 = Singleton('GlobalConfig2', (GlobalConfig, ), {})
 GLOBALCONFIG = GlobalConfig2()  # The only instance available
+
+load = GLOBALCONFIG.load
+search = GLOBALCONFIG.search

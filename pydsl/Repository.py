@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # This file is part of pydsl.
 #
@@ -15,15 +15,29 @@
 # You should have received a copy of the GNU General Public License
 # along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Dictionary based library"""
+from pydsl.Alphabet import Encoding
+from pypository.utils import ImmutableDict
+from pypository.List import ListStorage
+from pypository.Memory import Memory
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
-import logging
-LOG = logging.getLogger(__name__)
-from pypository.Memory import Memory
+
+class EncodingStorage(ListStorage):
+
+    @staticmethod
+    def _generatekey(element):
+        return element
+
+    @staticmethod
+    def load(index):
+        return Encoding(index)
+
+    def generate_all_summaries(self):
+        return tuple([ImmutableDict({"identifier": x, "value": x, "iclass": "Encoding"}) for x in self._content])
+
 
 class RegexpDictStorage(Memory):
     def __init__(self, dictionary):
@@ -43,11 +57,8 @@ class RegexpDictStorage(Memory):
         if "flags" in self._content[index]:
             if "i" in self._content[index]["flags"]:
                 flags |= re.I
-        from pydsl.Grammar.Definition import RegularExpressionDefinition
-        return RegularExpressionDefinition(self._content[index]["regexp"], flags)
-
-    def provided_iclasses(self):# -> list:
-        return ["re"]
+        from pydsl.Grammar.Definition import RegularExpression
+        return RegularExpression(self._content[index]["regexp"], flags)
 
     def __iter__(self):
         self.index = 0
@@ -65,4 +76,3 @@ class RegexpDictStorage(Memory):
 
     def __contains__(self, index):
         return index in self._content
-
