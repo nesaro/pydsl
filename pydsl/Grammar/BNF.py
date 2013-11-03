@@ -108,7 +108,9 @@ class BNFGrammar(Grammar):
         result = []
         for x in self.first_lookup(self.initialsymbol):
             result += x.first
-        return result
+        if len(result) == 1:
+            return result[0]
+        return AlphabetListDefinition(result)
 
     def first_lookup(self, symbol, size=1):
         """

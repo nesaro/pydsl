@@ -29,7 +29,7 @@ class TestBNF(unittest.TestCase):
 
     def testFirst(self):
         from pydsl.Grammar.Definition import String
-        self.assertListEqual(self.grammardef.first, [String("S")])
+        self.assertEqual(self.grammardef.first, String("S"))
 
     @unittest.skip
     def testMin(self):
