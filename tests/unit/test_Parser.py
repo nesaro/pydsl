@@ -144,7 +144,7 @@ class TestWeightedParser(unittest.TestCase):
     def testMixResults(self):
         from pydsl.Parser.Weighted import mix_results
         from pydsl.Tree import ParseTree
-        from pydsl.Symbol import NullSymbol
+        from pydsl.Grammar.Symbol import NullSymbol
         result1 = ParseTree(0, 3, [NullSymbol()], "", None)
         result2 = ParseTree(0, 5, [NullSymbol()], "", None)
         result3 = ParseTree(3, 6, [NullSymbol()], "", None)
