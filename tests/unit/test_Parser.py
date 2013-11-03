@@ -124,7 +124,6 @@ class TestWeightedParser(unittest.TestCase):
         result = parser(string1)
         self.assertTrue(result)
         self.assertTrue(parser([x for x in string1]))
-        self.assertTrue(parser([Token(x) for x in string1]))
 
     def testWeightedParserBad(self):
         parser = WeightedParser(productionset1)
@@ -143,9 +142,9 @@ class TestWeightedParser(unittest.TestCase):
 
     @unittest.skip
     def testMixResults(self):
-        from pydsl.Grammar.Parser.Weighted import mix_results
+        from pydsl.Parser.Weighted import mix_results
         from pydsl.Tree import ParseTree
-        from pydsl.Grammar.Symbol import NullSymbol
+        from pydsl.Symbol import NullSymbol
         result1 = ParseTree(0, 3, [NullSymbol()], "", None)
         result2 = ParseTree(0, 5, [NullSymbol()], "", None)
         result3 = ParseTree(3, 6, [NullSymbol()], "", None)

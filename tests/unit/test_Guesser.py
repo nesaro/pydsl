@@ -27,7 +27,6 @@ class TestGuesser(unittest.TestCase):
         from pydsl.Config import load_default_memory
         load_default_memory()
 
-
     def testStuff(self):
         from pydsl.Guess import Guesser
         guesser = Guesser()

@@ -21,28 +21,22 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
-from pydsl.Alphabet import AlphabetDefinition
-from pydsl.Grammar.Definition import GrammarDefinition
+from pydsl.Alphabet import Alphabet
+from pydsl.Grammar.Definition import Grammar
 from pydsl.Check import checker_factory
 
 def extract(grammar, inputdata):
     """Extract every slice of the input data that belongs to the Grammar Definition"""
     checker = checker_factory(grammar)
     totallen = len(inputdata)
-    if isinstance(grammar, GrammarDefinition):
-        try:
-            maxl = grammar.maxsize or totallen
-        except NotImplementedError:
-            maxl = totallen
-        try:
-            minl = grammar.minsize
-        except NotImplementedError:
-            minl = 1
-    elif isinstance(grammar, AlphabetDefinition):
+    try:
+        maxl = grammar.maxsize or totallen
+    except NotImplementedError:
         maxl = totallen
+    try:
+        minl = grammar.minsize
+    except NotImplementedError:
         minl = 1
-    else:
-        raise TypeError
     maxwsize = maxl - minl + 1
     result = []
     for i in range(totallen):
