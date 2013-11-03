@@ -26,7 +26,10 @@ class TestDiff(unittest.TestCase):
         pass
 
     def testDiffSimple(self):
+        from pydsl.Alphabet import AlphabetListDefinition
+        from pydsl.Grammar.Definition import String
+        alphabet = AlphabetListDefinition([String(x) for x in "abcde1"])
         elem1 = "abcde"
         elem2 = "abcd1"
         from pydsl.Diff import diff
-        print(diff(elem1, elem2))
+        self.assertTrue(diff(alphabet, elem1, elem2))

@@ -16,42 +16,22 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha"
+__copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
-from pydsl.Guess import Guesser
-from pydsl.Memory.Loader import load_parser, load_lexer#, load_diff
 
 def lcs(list1, list2):
     import difflib
     differences = difflib.SequenceMatcher(None, list1, list2)
     return differences.get_matching_blocks()
 
+def diff_factory(definition):
+    from pydsl.Alphabet import AlphabetListDefinition
+    if isinstance(definition, AlphabetListDefinition):
+        return lcs
+    raise ValueError
 
-def diff(content1, content2, grammarlist = (), alphabetlist = ()):
-    result = {}
-    if not grammarlist and not alphabetlist:
-        guess = Guesser()
-        guess1 = set(guess(content1))
-        guess2 = set(guess(content2))
-        grammarlist = list(guess1.union(guess2))
-    for al in alphabetlist:
-        lexer = load_lexer(al)
-        tknlist1 = lexer(content1)
-        tknlist2 = lexer(content2)
-        result[al] = lcs(tknlist1, tknlist2)
-    for grammar in grammarlist:
-        try:
-            parser = load_parser(grammar)
-        except:
-            continue
-        else:
-            tree1 = parser.to_parse_tree(content1)
-            tree2 = parser.to_parse_tree(content2)
-            diff = load_diff("tree")
-            result[grammar + "_tree"] = diff(tree1, tree2)
-        diff = load_diff(grammar)
-        result[grammar] = diff(content1, content2)
-    return result
+def diff(definition, element1, element2):
+    return diff_factory(definition)(element1, element2)
