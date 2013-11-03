@@ -266,7 +266,10 @@ class LL1RecursiveDescentParser(TopDownParser):
             raise NotImplementedError("This parser doesn't implement errors")
         self.data = data
         self.index = 0
-        return [self.__aux_parser(self._productionset.initialsymbol)]
+        try:
+            return [self.__aux_parser(self._productionset.initialsymbol)]
+        except IndexError:
+            return []
 
     def __aux_parser(self, symbol):
         from pydsl.Grammar.Symbol import TerminalSymbol

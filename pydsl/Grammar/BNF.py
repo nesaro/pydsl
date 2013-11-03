@@ -18,7 +18,7 @@
 """Production rules"""
 
 from pydsl.Grammar.Symbol import Symbol, TerminalSymbol, NullSymbol, EndSymbol
-from pydsl.Grammar.Definition import GrammarDefinition
+from pydsl.Grammar.Definition import Grammar
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
@@ -68,10 +68,10 @@ class Production(object):
 
 
 #Only stores a ruleset, and methods to ask properties or validity check
-class BNFGrammar(GrammarDefinition):
+class BNFGrammar(Grammar):
 
     def __init__(self, initialsymbol, fulllist, options=None):
-        GrammarDefinition.__init__(self)
+        Grammar.__init__(self)
         self._initialsymbol = initialsymbol
         for rule in fulllist:
             if fulllist.count(rule) > 1:
@@ -104,7 +104,7 @@ class BNFGrammar(GrammarDefinition):
 
     @property
     def first(self):
-        """Returns the list of terminal symbols that can be the first element of this grammar"""
+        """Returns the a grammar definition that includes all first elements of this grammar""" #TODO
         result = []
         for x in self.first_lookup(self.initialsymbol):
             result += x.first

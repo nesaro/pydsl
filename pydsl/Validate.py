@@ -27,9 +27,11 @@ from pydsl.Parser.Parser import parser_factory
 
 
 class Validator(object):
-    """Receives a grammar and an input that doesn't belong to the grammar, 
+    """
+    Receives a grammar and an input that doesn't belong to the grammar,
     expands the grammar by parsing it, returns a list of what's needed 
-    to become grammar compatible"""
+    to become grammar compatible
+    """
     def __init__(self, grammar):
         self.gd = grammar
 
@@ -45,14 +47,21 @@ class BNFValidator(Validator):
 
 
 def validator_factory(grammar):
+    """
+    Creates a validator instance from a grammar definition
+    """
     if isinstance(grammar, str):
         grammar = load(grammar)
     from pydsl.Grammar.BNF import BNFGrammar
     if isinstance(grammar, BNFGrammar):
         return BNFValidator(grammar)
     else:
-        raise ValueError(grammar)
+        raise ValueError("Only BNF Grammars allowed, got %s:%s" % (str(grammar.__class__.__name__), grammar))
 
 
 def validate(definition, data):
+    """
+    convenience function
+    instantiates a validator and validates the data
+    """
     return validator_factory(definition)(data)

@@ -31,6 +31,7 @@ def check(definition, data):
 
 def checker_factory(grammar):
     from pydsl.Grammar.BNF import BNFGrammar
+    from pydsl.Grammar.PEG import Sequence
     from pydsl.Grammar.Definition import PLYGrammar, RegularExpression, MongoGrammar, String, PythonGrammar
     from pydsl.Alphabet import AlphabetListDefinition, Encoding
     from collections import Iterable
@@ -53,6 +54,8 @@ def checker_factory(grammar):
         return StringChecker(grammar)
     elif isinstance(grammar, Encoding):
         return EncodingChecker(grammar)
+    elif isinstance(grammar, Sequence):
+        return SequenceChecker(grammar)
     elif isinstance(grammar, Iterable):
         return IterableChecker(grammar)
     else:
@@ -267,3 +270,16 @@ class IterableChecker(Checker):
             except KeyError:
                 pass
         return False
+
+class SequenceChecker(Checker):
+    def __init__(self, sequence):
+        Checker.__init__(self)
+        self.sequence = sequence
+
+    def check(self,data):
+        if len(self.sequence) != len(data):
+            return False
+        for index in range(len(self.sequence)):
+            if not check(self.sequence[index], data[index]):
+                return False
+        return True

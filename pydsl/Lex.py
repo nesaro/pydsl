@@ -151,10 +151,8 @@ class AlphabetListLexer(AlphabetLexer):
                         target.send(currentstr)
 
 
-class ConceptLexer(Lexer):
-
-    """Translates a set of concepts that belong to a ConceptAlphabet into another ConceptAlphabet"""
-
+class PythonLexer(Lexer):
+    """A python function based lexer"""
     def __init__(self, function):
         self._function = function
 

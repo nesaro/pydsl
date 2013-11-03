@@ -58,6 +58,10 @@ def load_python_file(moduleobject):
 
 
 def summary_python_file(modulepath):
+    """
+    generates a dictionary describing the content of a pydsl serialized file,
+    which are grammars, alphabets and functions
+    """
     (_, _, fileBaseName, ext) = getFileTuple(modulepath)
     moduleobject = imp.load_source(fileBaseName, modulepath)
     result = {"identifier":fileBaseName, "iclass":moduleobject.iclass, "filepath":modulepath}
