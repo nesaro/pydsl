@@ -33,7 +33,7 @@ def checker_factory(grammar):
     from pydsl.Grammar.BNF import BNFGrammar
     from pydsl.Grammar.PEG import Sequence
     from pydsl.Grammar.Definition import PLYGrammar, RegularExpression, MongoGrammar, String, PythonGrammar
-    from pydsl.Grammar.Alphabet import AlphabetListDefinition, Encoding
+    from pydsl.Grammar.Alphabet import Choice, Encoding
     from collections import Iterable
     if isinstance(grammar, str):
         from pydsl.Config import load
@@ -48,7 +48,7 @@ def checker_factory(grammar):
         return MongoChecker(grammar["spec"])
     elif isinstance(grammar, PLYGrammar):
         return PLYChecker(grammar)
-    elif isinstance(grammar, AlphabetListDefinition):
+    elif isinstance(grammar, Choice):
         return AlphabetListChecker(grammar)
     elif isinstance(grammar, String):
         return StringChecker(grammar)
@@ -212,8 +212,8 @@ class JsonSchemaChecker(Checker):
 class AlphabetListChecker(Checker):
     def __init__(self, gd):
         Checker.__init__(self)
-        from pydsl.Grammar.Alphabet import AlphabetListDefinition
-        if not isinstance(gd, AlphabetListDefinition):
+        from pydsl.Grammar.Alphabet import Choice
+        if not isinstance(gd, Choice):
             raise TypeError
         self.gd = gd
         self.checkerinstances = [checker_factory(x) for x in self.gd.grammarlist]

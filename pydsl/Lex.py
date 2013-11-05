@@ -162,10 +162,10 @@ class PythonLexer(Lexer):
 
 
 def lexer_factory(alphabet):
-    from pydsl.Grammar.Alphabet import AlphabetListDefinition
+    from pydsl.Grammar.Alphabet import Choice
     if isinstance(alphabet, str):
         alphabet = load(alphabet)
-    if isinstance(alphabet, AlphabetListDefinition):
+    if isinstance(alphabet, Choice):
         return AlphabetListLexer(alphabet)
     elif isinstance(alphabet, Encoding):
         return EncodingLexer(alphabet)

@@ -160,8 +160,8 @@ class TestAlphabetListDefinitionChecker(unittest.TestCase):
 
     def testCheck(self):
         from pydsl.Check import AlphabetListChecker
-        from pydsl.Grammar.Alphabet import AlphabetListDefinition
-        a = AlphabetListDefinition(['integer'])
+        from pydsl.Grammar.Alphabet import Choice
+        a = Choice(['integer'])
         checker = AlphabetListChecker(a)
         self.assertTrue(checker.check('1234'))
         self.assertFalse(checker.check('abc'))

@@ -28,10 +28,10 @@ from pydsl.Config import load, load_default_memory
 class TestAlphabet(unittest.TestCase):
     def setUp(self):
         load_default_memory()
-        from pydsl.Grammar.Alphabet import AlphabetListDefinition
+        from pydsl.Grammar.Alphabet import Choice
         self.integer = load("integer")
         self.date = load("Date")
-        self.alphabet = AlphabetListDefinition([self.integer,self.date])
+        self.alphabet = Choice([self.integer,self.date])
 
     def testChecker(self):
         checker = checker_factory(self.alphabet)

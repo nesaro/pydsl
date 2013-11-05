@@ -49,8 +49,8 @@ def load_python_file(moduleobject):
     elif iclass == "PythonTransformer":
         return resultdic
     elif iclass == "AlphabetList":
-        from pydsl.Grammar.Alphabet import AlphabetListDefinition
-        return AlphabetListDefinition(**resultdic)
+        from pydsl.Grammar.Alphabet import Choice
+        return Choice(**resultdic)
     elif iclass == "pyparsing":
         return resultdic['root_symbol']
     else:
