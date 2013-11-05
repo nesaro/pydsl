@@ -110,7 +110,7 @@ class BNFGrammar(Grammar):
             result += x.first
         if len(result) == 1:
             return result[0]
-        return AlphabetListDefinition(result)
+        return Choice(result)
 
     def first_lookup(self, symbol, size=1):
         """
@@ -132,8 +132,8 @@ class BNFGrammar(Grammar):
                     break # This element doesn't have Null in its first set so there is no need to continue
         if not result:
             raise KeyError("Symbol doesn't exist in this grammar")
-        from pydsl.Alphabet import AlphabetListDefinition
-        return AlphabetListDefinition(result)
+        from pydsl.Grammar.Alphabet import Choice
+        return Choice(result)
 
     def next_lookup(self, symbol):
         """Returns the next TerminalSymbols produced by the input symbol within this grammar definition"""
