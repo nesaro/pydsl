@@ -120,11 +120,13 @@ class BNFGrammar(Grammar):
         if isinstance(symbol, (TerminalSymbol, NullSymbol)):
             return [symbol]
         result = []
-        for x in self.productions:
-            if x.leftside[0] != symbol:
+        for production in self.productions:
+            if production.leftside[0] != symbol:
                 continue
-            for y in x.rightside:
-                current_symbol_first = self.first_lookup(y, size)
+            for right_symbol in production.rightside:
+                if right_symbol == symbol: #Avoids infinite recursion
+                    break
+                current_symbol_first = self.first_lookup(right_symbol, size)
                 result += current_symbol_first
                 if NullSymbol not in current_symbol_first:
                     break # This element doesn't have Null in its first set so there is no need to continue
