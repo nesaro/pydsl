@@ -137,7 +137,7 @@ class TestJsonSchemaChecker(unittest.TestCase):
 class TestEncodingChecker(unittest.TestCase):
     def testCheck(self):
         from pydsl.Check import EncodingChecker
-        from pydsl.Alphabet import Encoding
+        from pydsl.Grammar.Alphabet import Encoding
         a = Encoding('ascii')
         checker = EncodingChecker(a)
         self.assertTrue(checker.check('1234'))
@@ -160,7 +160,7 @@ class TestAlphabetListDefinitionChecker(unittest.TestCase):
 
     def testCheck(self):
         from pydsl.Check import AlphabetListChecker
-        from pydsl.Alphabet import AlphabetListDefinition
+        from pydsl.Grammar.Alphabet import AlphabetListDefinition
         a = AlphabetListDefinition(['integer'])
         checker = AlphabetListChecker(a)
         self.assertTrue(checker.check('1234'))

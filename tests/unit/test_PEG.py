@@ -24,7 +24,7 @@ __email__ = "nesaro@gmail.com"
 import unittest
 from pydsl.Grammar.Definition import String, Grammar
 from pydsl.Grammar.PEG import Many, Not, Sequence
-from pydsl.Alphabet import AlphabetListDefinition
+from pydsl.Grammar.Alphabet import AlphabetListDefinition
 
 class TestPEG(unittest.TestCase):
     def testMany(self):

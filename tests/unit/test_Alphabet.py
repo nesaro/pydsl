@@ -22,13 +22,13 @@ __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
-from pydsl.Alphabet import Encoding
+from pydsl.Grammar.Alphabet import Encoding
 from pydsl.Config import load, load_default_memory
 
 class TestAlphabet(unittest.TestCase):
     def setUp(self):
         load_default_memory()
-        from pydsl.Alphabet import AlphabetListDefinition
+        from pydsl.Grammar.Alphabet import AlphabetListDefinition
         self.integer = load("integer")
         self.date = load("Date")
         self.alphabet = AlphabetListDefinition([self.integer,self.date])
