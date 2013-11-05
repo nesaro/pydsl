@@ -50,7 +50,7 @@ class TestGrammarDefinitionRegularExpression(unittest.TestCase):
         re1.maxsize
 
     def testAlphabet(self):
-        from pydsl.Alphabet import Encoding
+        from pydsl.Grammar.Alphabet import Encoding
         re1 = RegularExpression(re.compile('^a$'))
         self.assertEqual(re1.alphabet(), Encoding('ascii'))
 

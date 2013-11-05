@@ -82,8 +82,8 @@ class BNFGrammar(Grammar):
         self.options = options
 
     def alphabet(self):
-        from pydsl.Alphabet import AlphabetListDefinition
-        return AlphabetListDefinition([x.gd for x in self.terminalsymbollist])
+        from pydsl.Grammar.Alphabet import Choice
+        return Choice([x.gd for x in self.terminalsymbollist])
 
     @property
     def productions(self):

@@ -20,7 +20,7 @@ __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
-from pydsl.Alphabet import Encoding
+from pydsl.Grammar.Alphabet import Encoding
 from pydsl.Check import checker_factory
 from pydsl.Config import load
 
@@ -162,10 +162,10 @@ class PythonLexer(Lexer):
 
 
 def lexer_factory(alphabet):
-    from pydsl.Alphabet import AlphabetListDefinition
+    from pydsl.Grammar.Alphabet import Choice
     if isinstance(alphabet, str):
         alphabet = load(alphabet)
-    if isinstance(alphabet, AlphabetListDefinition):
+    if isinstance(alphabet, Choice):
         return AlphabetListLexer(alphabet)
     elif isinstance(alphabet, Encoding):
         return EncodingLexer(alphabet)

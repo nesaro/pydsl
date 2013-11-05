@@ -33,7 +33,7 @@ def checker_factory(grammar):
     from pydsl.Grammar.BNF import BNFGrammar
     from pydsl.Grammar.PEG import Sequence
     from pydsl.Grammar.Definition import PLYGrammar, RegularExpression, MongoGrammar, String, PythonGrammar
-    from pydsl.Alphabet import AlphabetListDefinition, Encoding
+    from pydsl.Grammar.Alphabet import Choice, Encoding
     from collections import Iterable
     if isinstance(grammar, str):
         from pydsl.Config import load
@@ -48,8 +48,8 @@ def checker_factory(grammar):
         return MongoChecker(grammar["spec"])
     elif isinstance(grammar, PLYGrammar):
         return PLYChecker(grammar)
-    elif isinstance(grammar, AlphabetListDefinition):
-        return AlphabetListChecker(grammar)
+    elif isinstance(grammar, Choice):
+        return ChoiceChecker(grammar)
     elif isinstance(grammar, String):
         return StringChecker(grammar)
     elif isinstance(grammar, Encoding):
@@ -209,30 +209,17 @@ class JsonSchemaChecker(Checker):
             return False
         return True
 
-class AlphabetListChecker(Checker):
+class ChoiceChecker(Checker):
     def __init__(self, gd):
         Checker.__init__(self)
-        from pydsl.Alphabet import AlphabetListDefinition
-        if not isinstance(gd, AlphabetListDefinition):
+        from pydsl.Grammar.Alphabet import Choice
+        if not isinstance(gd, Choice):
             raise TypeError
         self.gd = gd
         self.checkerinstances = [checker_factory(x) for x in self.gd.grammarlist]
 
     def check(self, data):
-        if isinstance(data, str):
-            data = [data]
-        elif isinstance(data, Iterable):
-            new_data = []
-            for x in data:
-                if isinstance(x, str):
-                    new_data.append(x)
-                else:
-                    raise ValueError
-            data = new_data
-        for element in data:
-            if not any((x.check(element) for x in self.checkerinstances)):
-                return False
-        return True
+        return any((x.check(data) for x in self.checkerinstances))
 
 class EncodingChecker(Checker):
     def __init__(self, gd):

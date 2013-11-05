@@ -22,21 +22,22 @@ __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
-from pydsl.Alphabet import Encoding
+from pydsl.Grammar.Alphabet import Encoding
 from pydsl.Config import load, load_default_memory
 
 class TestAlphabet(unittest.TestCase):
     def setUp(self):
         load_default_memory()
-        from pydsl.Alphabet import AlphabetListDefinition
+        from pydsl.Grammar.Alphabet import Choice
         self.integer = load("integer")
         self.date = load("Date")
-        self.alphabet = AlphabetListDefinition([self.integer,self.date])
+        self.alphabet = Choice([self.integer,self.date])
 
     def testChecker(self):
         checker = checker_factory(self.alphabet)
-        self.assertTrue(checker.check(["1234","11/11/1991"]))
-        self.assertFalse(checker.check(["bcdf"]))
+        self.assertTrue(checker.check("1234"))
+        self.assertTrue(checker.check("11/11/1991"))
+        self.assertFalse(checker.check("bcdf"))
 
     def testLexer(self):
         lexer = lexer_factory(self.alphabet)
