@@ -49,7 +49,7 @@ def checker_factory(grammar):
     elif isinstance(grammar, PLYGrammar):
         return PLYChecker(grammar)
     elif isinstance(grammar, Choice):
-        return AlphabetListChecker(grammar)
+        return ChoiceChecker(grammar)
     elif isinstance(grammar, String):
         return StringChecker(grammar)
     elif isinstance(grammar, Encoding):
@@ -209,7 +209,7 @@ class JsonSchemaChecker(Checker):
             return False
         return True
 
-class AlphabetListChecker(Checker):
+class ChoiceChecker(Checker):
     def __init__(self, gd):
         Checker.__init__(self)
         from pydsl.Grammar.Alphabet import Choice

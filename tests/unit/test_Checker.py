@@ -159,10 +159,10 @@ class TestAlphabetListDefinitionChecker(unittest.TestCase):
         load_default_memory()
 
     def testCheck(self):
-        from pydsl.Check import AlphabetListChecker
+        from pydsl.Check import ChoiceChecker
         from pydsl.Grammar.Alphabet import Choice
         a = Choice(['integer'])
-        checker = AlphabetListChecker(a)
+        checker = ChoiceChecker(a)
         self.assertTrue(checker.check('1234'))
         self.assertFalse(checker.check('abc'))
 
