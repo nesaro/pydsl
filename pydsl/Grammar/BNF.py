@@ -118,7 +118,7 @@ class BNFGrammar(Grammar):
         produced by the input symbol
         """
         if isinstance(symbol, (TerminalSymbol, NullSymbol)):
-            return [symbol]
+            return [symbol.gd]
         result = []
         for production in self.productions:
             if production.leftside[0] != symbol:
@@ -132,7 +132,8 @@ class BNFGrammar(Grammar):
                     break # This element doesn't have Null in its first set so there is no need to continue
         if not result:
             raise KeyError("Symbol doesn't exist in this grammar")
-        return result
+        from pydsl.Alphabet import AlphabetListDefinition
+        return AlphabetListDefinition(result)
 
     def next_lookup(self, symbol):
         """Returns the next TerminalSymbols produced by the input symbol within this grammar definition"""

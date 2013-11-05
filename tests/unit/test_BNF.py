@@ -41,9 +41,10 @@ class TestBNF(unittest.TestCase):
 
     def testFirstLookup(self):
         from pydsl.Grammar.Symbol import NonTerminalSymbol, TerminalSymbol
+        from pydsl.Alphabet import AlphabetListDefinition
         from pydsl.Grammar.Definition import String
         self.grammardef.first_lookup(NonTerminalSymbol("exp"))[0]
-        self.assertListEqual(self.grammardef.first_lookup(NonTerminalSymbol("exp")),[TerminalSymbol(String("S"))])
+        self.assertEqual(self.grammardef.first_lookup(NonTerminalSymbol("exp")).to_list,AlphabetListDefinition([String("S")]).to_list)
 
     def testNextLookup(self):
         from pydsl.Grammar.Symbol import NonTerminalSymbol, EndSymbol

@@ -213,10 +213,11 @@ class LL1RecursiveDescentParser(TopDownParser):
             LOG.debug("symbol matched %s" % result)
             return result
         productions = self._productionset.getProductionsBySide(symbol)
-        first_of_each_production = {}
+        valid_firsts = []        
         for production in productions:
-            first_of_each_production[production] = [x.gd for x in self._productionset.first_lookup(production.rightside[0])]
-        valid_firsts = [production_instance for (production_instance,first_set) in first_of_each_production.items() if check(first_set, self.current)]
+            first_of_production = self._productionset.first_lookup(production.rightside[0])
+            if check(first_of_production, self.current):
+                valid_firsts.append(production)
         if len(valid_firsts) != 1:
             raise Exception("Expected only one valid production, found %s" % len(valid_firsts))
         childlist = []
@@ -264,11 +265,12 @@ class LLkRecursiveDescentParser(TopDownParser):
             result= self.match(symbol)
             LOG.debug("symbol matched %s" % result)
             return result
+        valid_firsts = []
         productions = self._productionset.getProductionsBySide(symbol)
-        first_of_each_production = {}
         for production in productions:
-            first_of_each_production[production] = [x for x in self._productionset.first_lookup(production.rightside[0], self.lookahead)]
-        valid_firsts = [production_instance for (production_instance,first_set) in first_of_each_production.items() if check(first_set, self.current)]
+            first_of_production = self._productionset.first_lookup(production.rightside[0])
+            if check(first_of_production, self.current):
+                valid_firsts.append(production)
         if len(valid_firsts) != 1:
             raise Exception("Expected only one valid production, found %s" % len(valid_firsts))
         childlist = []
