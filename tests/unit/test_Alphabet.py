@@ -35,8 +35,9 @@ class TestAlphabet(unittest.TestCase):
 
     def testChecker(self):
         checker = checker_factory(self.alphabet)
-        self.assertTrue(checker.check(["1234","11/11/1991"]))
-        self.assertFalse(checker.check(["bcdf"]))
+        self.assertTrue(checker.check("1234"))
+        self.assertTrue(checker.check("11/11/1991"))
+        self.assertFalse(checker.check("bcdf"))
 
     def testLexer(self):
         lexer = lexer_factory(self.alphabet)

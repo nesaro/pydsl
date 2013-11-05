@@ -219,20 +219,7 @@ class ChoiceChecker(Checker):
         self.checkerinstances = [checker_factory(x) for x in self.gd.grammarlist]
 
     def check(self, data):
-        if isinstance(data, str):
-            data = [data]
-        elif isinstance(data, Iterable):
-            new_data = []
-            for x in data:
-                if isinstance(x, str):
-                    new_data.append(x)
-                else:
-                    raise ValueError
-            data = new_data
-        for element in data:
-            if not any((x.check(element) for x in self.checkerinstances)):
-                return False
-        return True
+        return any((x.check(data) for x in self.checkerinstances))
 
 class EncodingChecker(Checker):
     def __init__(self, gd):
