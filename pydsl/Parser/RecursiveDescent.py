@@ -16,8 +16,6 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 """Recursive descent parser"""
-from pydsl import Tree
-from pydsl.Check import check
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
@@ -26,7 +24,8 @@ __email__ = "nesaro@gmail.com"
 import logging
 LOG = logging.getLogger(__name__)
 from .Parser import TopDownParser, terminal_symbol_reducer
-from pydsl.Tree import ParseTree, Tree, Sequence
+from pydsl.Tree import ParseTree, Sequence
+from pydsl.Check import check
 
 class BacktracingErrorRecursiveDescentParser(TopDownParser):
     """Recursive descent parser implementation. Backtracing. Null support. Error support"""
