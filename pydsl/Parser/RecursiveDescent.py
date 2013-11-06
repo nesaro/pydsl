@@ -268,7 +268,7 @@ class LLkRecursiveDescentParser(TopDownParser):
         valid_firsts = []
         productions = self._productionset.getProductionsBySide(symbol)
         for production in productions:
-            first_of_production = self._productionset.first_lookup(production.rightside[0])
+            first_of_production = self._productionset.first_lookup(production.rightside[0], self.lookahead)
             if check(first_of_production, self.current):
                 valid_firsts.append(production)
         if len(valid_firsts) != 1:
