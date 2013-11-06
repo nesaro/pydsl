@@ -57,9 +57,6 @@ def terminal_symbol_reducer(symbol, word, production, fixed_start = False):
 class Parser(object):
     """Expands an input based on grammar rules
     At this time, all parsers are tree based"""
-    def __init__(self, bnfgrammar):
-        self._productionset = bnfgrammar
-
     def get_trees(self, word): # -> list:
         """ returns a ParseTree list with all guesses """
         raise NotImplementedError
@@ -75,13 +72,13 @@ class Parser(object):
 class TopDownParser(Parser):
     """Top down parser like descent parser"""
     def __init__(self, bnfgrammar):
-        Parser.__init__(self, bnfgrammar)
+        self._productionset = bnfgrammar
 
 class BottomUpParser(Parser):
     """ leaf to root parser"""
     def __init__(self, bnfgrammar):
         self._lexer = lexer_factory(bnfgrammar.alphabet())
-        Parser.__init__(self, bnfgrammar)
+        self._productionset = bnfgrammar
 
 
 def parser_factory(grammar, parser = "auto"):

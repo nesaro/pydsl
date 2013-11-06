@@ -187,3 +187,12 @@ class TestLL1RecursiveDescentParser(unittest.TestCase):
         result = descentparser(string2)
         self.assertFalse(result)
 
+class TestPEGParser(unittest.TestCase):
+    def testBasicChoice(self):
+        from pydsl.Grammar.Alphabet import Choice
+        from pydsl.Tree import ParseTree
+        from pydsl.Parser.PEG import PEGParser
+        gd = Choice([String('a'), String('b')])
+        parser = PEGParser(gd)
+        result = parser('a')
+        self.assertTrue(isinstance(result, ParseTree))
