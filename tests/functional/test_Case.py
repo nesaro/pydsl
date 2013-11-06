@@ -15,6 +15,7 @@
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 from pydsl.Lex import lexer_factory
+from pydsl.Parser.LL import LLkRecursiveDescentParser, LL1RecursiveDescentParser
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
@@ -63,7 +64,7 @@ class TestCase(unittest.TestCase):
                 ]
         from pydsl.File.BNF import strlist_to_production_set
         production_set = strlist_to_production_set(grammar_def)
-        from pydsl.Parser.RecursiveDescent import BacktracingErrorRecursiveDescentParser
+        from pydsl.Parser.Backtracing import BacktracingErrorRecursiveDescentParser
         rdp = BacktracingErrorRecursiveDescentParser(production_set)
         parse_tree = rdp(math_expression_concepts)
         from pydsl.Grammar.Symbol import NonTerminalSymbol
@@ -90,7 +91,6 @@ class TestCase(unittest.TestCase):
                 ]
         from pydsl.File.BNF import strlist_to_production_set
         production_set = strlist_to_production_set(grammar_def)
-        from pydsl.Parser.RecursiveDescent import LL1RecursiveDescentParser
         rdp = LL1RecursiveDescentParser(production_set)
         parse_tree = rdp("1+2")
 
@@ -125,7 +125,6 @@ class TestCase(unittest.TestCase):
                 ]
         from pydsl.File.BNF import strlist_to_production_set
         production_set = strlist_to_production_set(grammar_def)
-        from pydsl.Parser.RecursiveDescent import LLkRecursiveDescentParser
         rdp = LLkRecursiveDescentParser(production_set)
         parse_tree = rdp("1+2")
 
