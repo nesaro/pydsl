@@ -22,6 +22,11 @@ LOG = logging.getLogger(__name__)
 from .Parser import TopDownParser, terminal_symbol_reducer
 from pydsl.Tree import ParseTree
 
+def filter_by_size(l, size):
+    for element in l[:]:
+        if len(element) != size:
+            l.remove(element)
+    return l
 
 def _create_combined_list(input_list):
     """
@@ -29,39 +34,31 @@ def _create_combined_list(input_list):
     [a, b, c] -> [[a1,b1,c1],[a2,b1,c1]] ....
     """
 
-    midlist = [] #All blocks combinations are stored here. Each element is a list of viable sequences
     input_list = [x for x in input_list if x]
     if not input_list:
         return []
-    validsets = 1
 
-    #Processing head set
+    # All blocks combinations are stored here.
+    # Each element is a list of viable sequences
+    midlist = [[x] for x in input_list[0] if not x.leftpos]
 
-    for result in input_list[0]:
-        if not(isinstance(result, ParseTree)):
-            raise TypeError
-        if not result.leftpos:
-            midlist.append([result])
-
+    valid_sets = 1
     #Processing Tail sets
-    for resultl in input_list[1:]:
+    for group in input_list[1:]:
         #For each result list
-        if not resultl:
+        if not group:
             continue
-        for result in resultl:
+        for result in group:
             #for each result
-            for middleresult in midlist[:]:
+            for existing_result in midlist[:]:
                 #Here we mix every result with intermediate results list
-                prevright = [x.rightpos for x in middleresult if x.rightpos is not None][-1]
-                if result.leftpos is None or prevright == result.leftpos:
-                    midlist.append(middleresult + [result])
-        validsets += 1
+                prev_right = [x.rightpos for x in existing_result if x.rightpos is not None][-1]
+                if result.leftpos is None or prev_right == result.leftpos:
+                    midlist.append(existing_result + [result])
+        valid_sets += 1
 
         #Removes all results that have less elements than the number of valid sets
-        for element in midlist[:]:
-            if len(element) != validsets:
-                midlist.remove(element)
-
+        midlist = filter_by_size(midlist, valid_sets)
     return midlist
 
 def mix_results(resultll, productionset):
@@ -72,28 +69,27 @@ def mix_results(resultll, productionset):
     for combination in midlist:
         if len(combination) == 1:
             finallist.append(combination[0])
-        else:
-            left_pos = [x.leftpos for x in combination if x.leftpos is not None][0]
-            right_pos = [x.rightpos for x in combination if x.rightpos is not None][-1]
-            #Creates a node with all elements, and originals nodes are the childs of the new node
-            symbollist = []
-            compoundword = ""
-            for element in combination:
-                compoundword += str(element.content)
-                symbollist += element.symbollist
-            finalresult = ParseTree(left_pos, right_pos, symbollist, compoundword, combination[0].production, valid = all([x for x in combination]))
-            #Add childs to result. FIXME Adding already created elements as children of the new one
-            rightside = []
-            for child in combination:
-                assert(child != finalresult) #Avoid recursion
-                finalresult.append_child(child)
-                rightside += child.symbollist #Creating the rightside of the production to guess the full production #FIXME doesn't work with terminals
-            try:
-                finalresult.production = productionset.getProductionsBySide(rightside, "right")
-            except IndexError:
-                finalresult.production = None
-            finally:
-                finallist.append(finalresult) #rule found; we add bound together version
+            continue
+        left_pos = [x.leftpos for x in combination if x.leftpos is not None][0]
+        right_pos = [x.rightpos for x in combination if x.rightpos is not None][-1]
+        compoundword = "".join([str(x.content) for x in combination])
+        #Creates a node with all elements, and originals nodes are the childs of the new node
+        symbollist = []
+        for element in combination:
+            symbollist += element.symbollist
+        finalresult = ParseTree(left_pos, right_pos, symbollist, compoundword, combination[0].production, valid = all([x for x in combination]))
+        #Add childs to result. FIXME Adding already created elements as children of the new one
+        rightside = []
+        for child in combination:
+            assert(child != finalresult) #Avoid recursion
+            finalresult.append_child(child)
+            rightside += child.symbollist #Creating the rightside of the production to guess the full production #FIXME doesn't work with terminals
+        try:
+            finalresult.production = productionset.getProductionsBySide(rightside, "right")
+        except IndexError:
+            finalresult.production = None
+        finally:
+            finallist.append(finalresult) #rule found; we add bound together version
     return finallist
 
 def locate_heavier_symbol(symbols):
