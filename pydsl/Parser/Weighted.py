@@ -151,13 +151,13 @@ class WeightedParser(TopDownParser):
         if isinstance(onlysymbol, TerminalSymbol):
             #Locate every occurrence of word and return a set of results. Follow boundariesrules
             LOG.debug("Iteration: terminalsymbol")
-            result = terminal_symbol_reducer(onlysymbol, data, onlysymbol) #FIXME add information about production
+            result = terminal_symbol_reducer(onlysymbol, data, onlysymbol)
             if showerrors and not result:
-                return [ParseTree(0,len(data), [onlysymbol] , data, valid = False)] #FIXME add information about production
+                return [ParseTree(0,len(data), onlysymbol , data, valid = False)]
             return result
         elif isinstance(onlysymbol, NonTerminalSymbol):
             result = []
-            for alternative in self._productionset.getProductionsBySide([onlysymbol]):
+            for alternative in self._productionset.getProductionsBySide(onlysymbol):
                 #result += self.__recursive_parser(alternative.rightside, data, alternative, showerrors)
                 alternative_result = self.__handle_alternative(alternative.rightside, data, alternative, showerrors)
                 for x in alternative_result:
@@ -165,12 +165,12 @@ class WeightedParser(TopDownParser):
                     if not isinstance(x_symbol, list):
                         x_symbol = [x_symbol]
                     if x_symbol == list(alternative.rightside): #Filters incomplete attempts
-                        result.append(ParseTree(x.leftpos, x.rightpos, [onlysymbol], data[x.leftpos:x.rightpos], valid = True))
+                        result.append(ParseTree(x.leftpos, x.rightpos, onlysymbol, data[x.leftpos:x.rightpos], valid = True))
                     #TODO: Add child
             if showerrors and not result:
-                return [ParseTree(0, len(data), [onlysymbol], data, valid = False)]
+                return [ParseTree(0, len(data), onlysymbol, data, valid = False)]
             LOG.debug("Result " + str(result))
             return result
         elif isinstance(onlysymbol, NullSymbol):
-            return[ParseTree(None, None, [onlysymbol], "")]
+            return[ParseTree(None, None, onlysymbol, "")]
         raise Exception
