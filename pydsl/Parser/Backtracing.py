@@ -52,7 +52,7 @@ class BacktracingErrorRecursiveDescentParser(TopDownParser):
                 return [ParseTree(0,len(data), [onlysymbol] , data, onlysymbol, valid = False)]
             return result
         elif isinstance(onlysymbol, NullSymbol):
-            return [ParseTree(0, 0, [onlysymbol], "", production)]
+            return [ParseTree(0, 0, [onlysymbol], "")]
         elif isinstance(onlysymbol, NonTerminalSymbol):
             validstack = []
             invalidstack = []
@@ -110,14 +110,13 @@ class BacktracingErrorRecursiveDescentParser(TopDownParser):
                     allvalid = all([x.valid for x in childlist])
                     if allvalid:
                         newresult = ParseTree(0, rightpos - leftpos, [onlysymbol],
-                                data[leftpos:rightpos], alternative, childlist)
+                                data[leftpos:rightpos], childlist = childlist)
                         newresult.valid = True
                         result.append(newresult)
             if showerrors and not result:
-                erroresult = ParseTree(0,len(data), [onlysymbol] , data, production, valid = False)
+                erroresult = ParseTree(0,len(data), [onlysymbol] , data, valid = False)
                 for invalid in invalidstack:
-                    current_symbol = invalid.production if isinstance(invalid.production, (TerminalSymbol, NullSymbol)) else invalid.production.leftside[0]
-                    if current_symbol in production.rightside:
+                    if invalid.content in production.rightside:
                         erroresult.append_child(invalid)
                 return [erroresult]
             return result

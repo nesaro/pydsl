@@ -77,7 +77,7 @@ def mix_results(resultll, productionset):
         symbollist = []
         for element in combination:
             symbollist += element.symbollist
-        finalresult = ParseTree(left_pos, right_pos, symbollist, compoundword, combination[0].production, valid = all([x for x in combination]))
+        finalresult = ParseTree(left_pos, right_pos, symbollist, compoundword, valid = all([x for x in combination]))
         #Add childs to result. FIXME Adding already created elements as children of the new one
         rightside = []
         for child in combination:
@@ -147,7 +147,7 @@ class WeightedParser(TopDownParser):
             LOG.debug("Iteration: terminalsymbol")
             result = terminal_symbol_reducer(onlysymbol, data, onlysymbol) #FIXME add information about production
             if showerrors and not result:
-                return [ParseTree(0,len(data), [onlysymbol] , data, onlysymbol, valid = False)] #FIXME add information about production
+                return [ParseTree(0,len(data), [onlysymbol] , data, valid = False)] #FIXME add information about production
             return result
         elif isinstance(onlysymbol, NonTerminalSymbol):
             result = []
@@ -156,12 +156,12 @@ class WeightedParser(TopDownParser):
                 alternative_result = self.__handle_alternative(alternative.rightside, data, alternative, showerrors)
                 for x in alternative_result:
                     if list(x.symbollist) == list(alternative.rightside): #Filters incomplete attempts
-                        result.append(ParseTree(x.leftpos, x.rightpos, [onlysymbol], data[x.leftpos:x.rightpos], production, valid = True))
+                        result.append(ParseTree(x.leftpos, x.rightpos, [onlysymbol], data[x.leftpos:x.rightpos], valid = True))
                     #TODO: Add child
             if showerrors and not result:
-                return [ParseTree(0, len(data), [onlysymbol], data, production, valid = False)]
+                return [ParseTree(0, len(data), [onlysymbol], data, valid = False)]
             LOG.debug("Result " + str(result))
             return result
         elif isinstance(onlysymbol, NullSymbol):
-            return[ParseTree(None, None, [onlysymbol], "", production)]
+            return[ParseTree(None, None, [onlysymbol], "")]
         raise Exception
