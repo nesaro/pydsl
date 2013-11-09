@@ -188,7 +188,6 @@ class TestLL1RecursiveDescentParser(unittest.TestCase):
         result = descentparser(string2)
         self.assertFalse(result)
 
-@unittest.skip
 class TestPEGParser(unittest.TestCase):
     def testBasicChoice(self):
         from pydsl.Grammar.Alphabet import Choice
