@@ -121,48 +121,6 @@ class PositionTree(Tree):
             return 0
         return self.rightpos - self.leftpos
 
-    def coverage(self):
-        if not self:
-            return 0, len(self)
-        if self.childlist:
-            childtotal = 0
-            childcoverage = 0
-            for child in self.childlist:
-                newcoverage, newtotal = child.coverage()
-                childcoverage += newcoverage
-                childtotal += newtotal
-            assert(childtotal == len(self))
-            return childcoverage, childtotal
-        else:
-            return len(self), len(self)
-
-    def get_by_symbol(self, index):
-        if isinstance(self.production, TerminalSymbol):
-            # FIXME quick hack for terminal rules
-            return [(self.leftpos, self.rightpos)]
-        result = []
-        if self.production.leftside[0].name == index:
-            result.append((self.leftpos, self.rightpos))
-        else:
-            LOG.debug(
-                "Not equal: " + str(self.production.leftside[0].name) + " and :" + str(index))
-        for child in self.childlist:
-            result += child.get_by_symbol(index)
-        return result
-
-    def __contains__(self, index):
-        if isinstance(self.production, TerminalSymbol):
-            # FIXME quick hack for terminal rules
-            return index == self.production.name
-        if not self.production.leftside:
-            return False
-        if self.production.leftside[0].name == index:
-            return True
-        for child in self.childlist:
-            if child.get_by_symbol(index):
-                return True
-        return False
-
 
 class ParseTree(PositionTree):
 
