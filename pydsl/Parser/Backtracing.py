@@ -47,7 +47,7 @@ class BacktracingErrorRecursiveDescentParser(TopDownParser):
         if isinstance(onlysymbol, TerminalSymbol):
             #Locate every occurrence of word and return a set of results. Follow boundariesrules
             LOG.debug("Iteration: terminalsymbol")
-            result = terminal_symbol_reducer(onlysymbol, data, production, fixed_start=True)
+            result = terminal_symbol_reducer(onlysymbol, data, fixed_start=True)
             if showerrors and not result:
                 return [ParseTree(0,len(data), onlysymbol , data, onlysymbol, valid = False)]
             return result
@@ -143,7 +143,7 @@ class BacktracingRecursiveDescentParser(TopDownParser):
         if isinstance(onlysymbol, TerminalSymbol):
             #Locate every occurrence of word and return a set of results. Follow boundariesrules
             LOG.debug("Iteration: terminalsymbol")
-            result = terminal_symbol_reducer(onlysymbol, data, production, fixed_start=True)
+            result = terminal_symbol_reducer(onlysymbol, data, fixed_start=True)
             return result
         elif isinstance(onlysymbol, NonTerminalSymbol):
             validstack = []

@@ -151,7 +151,7 @@ class WeightedParser(TopDownParser):
         if isinstance(onlysymbol, TerminalSymbol):
             #Locate every occurrence of word and return a set of results. Follow boundariesrules
             LOG.debug("Iteration: terminalsymbol")
-            result = terminal_symbol_reducer(onlysymbol, data, onlysymbol)
+            result = terminal_symbol_reducer(onlysymbol, data)
             if showerrors and not result:
                 return [ParseTree(0,len(data), onlysymbol , data, valid = False)]
             return result
