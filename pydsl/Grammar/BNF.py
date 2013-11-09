@@ -108,7 +108,9 @@ class BNFGrammar(Grammar):
         result = []
         for x in self.first_lookup(self.initialsymbol):
             result += x.first
-        return result
+        if len(result) == 1:
+            return result[0]
+        return Choice(result)
 
     def first_lookup(self, symbol, size=1):
         """
@@ -116,19 +118,22 @@ class BNFGrammar(Grammar):
         produced by the input symbol
         """
         if isinstance(symbol, (TerminalSymbol, NullSymbol)):
-            return [symbol]
+            return [symbol.gd]
         result = []
-        for x in self.productions:
-            if x.leftside[0] != symbol:
+        for production in self.productions:
+            if production.leftside[0] != symbol:
                 continue
-            for y in x.rightside:
-                current_symbol_first = self.first_lookup(y, size)
+            for right_symbol in production.rightside:
+                if right_symbol == symbol: #Avoids infinite recursion
+                    break
+                current_symbol_first = self.first_lookup(right_symbol, size)
                 result += current_symbol_first
                 if NullSymbol not in current_symbol_first:
                     break # This element doesn't have Null in its first set so there is no need to continue
         if not result:
             raise KeyError("Symbol doesn't exist in this grammar")
-        return result
+        from pydsl.Grammar.Alphabet import Choice
+        return Choice(result)
 
     def next_lookup(self, symbol):
         """Returns the next TerminalSymbols produced by the input symbol within this grammar definition"""

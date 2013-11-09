@@ -14,6 +14,7 @@
 #
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
+from pydsl.Parser.LL import LL1RecursiveDescentParser
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
@@ -22,7 +23,7 @@ __email__ = "nesaro@gmail.com"
 
 
 from pydsl.contrib.bnfgrammar import *
-from pydsl.Parser.RecursiveDescent import BacktracingErrorRecursiveDescentParser, LL1RecursiveDescentParser
+from pydsl.Parser.Backtracing import BacktracingErrorRecursiveDescentParser
 from pydsl.Parser.Weighted import WeightedParser
 from pydsl.Parser.LR0 import LR0Parser
 from pydsl.Lex import EncodingLexer
@@ -144,7 +145,7 @@ class TestWeightedParser(unittest.TestCase):
     def testMixResults(self):
         from pydsl.Parser.Weighted import mix_results
         from pydsl.Tree import ParseTree
-        from pydsl.Symbol import NullSymbol
+        from pydsl.Grammar.Symbol import NullSymbol
         result1 = ParseTree(0, 3, [NullSymbol()], "", None)
         result2 = ParseTree(0, 5, [NullSymbol()], "", None)
         result3 = ParseTree(3, 6, [NullSymbol()], "", None)

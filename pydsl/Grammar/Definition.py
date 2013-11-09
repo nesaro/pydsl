@@ -31,7 +31,7 @@ class Grammar(object):
 
     @property
     def first(self):# -> set:
-        """Grammar definition with all possible first elements"""
+        """Grammar definition that matches every possible first element"""
         return self.alphabet()
 
     @property
