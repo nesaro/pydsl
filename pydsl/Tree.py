@@ -115,16 +115,14 @@ class ParseTree(PositionTree):
 
     """ Stores a descent parser iteration result """
 
-    def __init__(self, leftpos, rightpos, symbollist, content, childlist=None, valid=True):
+    def __init__(self, leftpos, rightpos, symbol, content, childlist=None, valid=True):
         if not isinstance(leftpos, int) and leftpos is not None:
             raise TypeError
         if not isinstance(rightpos, int) and rightpos is not None:
             raise TypeError
-        if not isinstance(symbollist, list):
-            raise TypeError
         from pydsl.Grammar.BNF import Production
         PositionTree.__init__(self, leftpos, rightpos, content, valid, childlist)
-        self.symbollist = symbollist
+        self.symbol = symbol
 
 
 class Sequence:

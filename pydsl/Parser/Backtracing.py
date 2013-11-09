@@ -94,7 +94,7 @@ class BacktracingErrorRecursiveDescentParser(TopDownParser):
                     nnullresults = 0
                     leftpos = results[0]['left']
                     rightpos = results[-1]['right']
-                    for y in [x['content'].symbollist for x in results]:
+                    for y in [x['content'].symbol for x in results]:
                         nnullresults += y.count(NullSymbol())
                     if len(results) - nnullresults != len(alternative.rightside) - nullcount:
                         LOG.debug("Discarded: incorrect number of non null symbols")

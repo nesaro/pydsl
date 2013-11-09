@@ -69,11 +69,11 @@ class TestCase(unittest.TestCase):
         parse_tree = rdp(math_expression_concepts)
         from pydsl.Grammar.Symbol import NonTerminalSymbol
         def parse_tree_walker(tree):
-            if tree.symbollist[0] == NonTerminalSymbol("S"):
+            if tree.symbol[0] == NonTerminalSymbol("S"):
                 return parse_tree_walker(tree.childlist[0])
-            if tree.symbollist[0] == NonTerminalSymbol("E"):
-                return to_number(tree.childlist[0].symbollist[0].gd.string) + to_number(tree.childlist[2].symbollist[0].gd.string)
-            raise Exception(tree.symbollist)
+            if tree.symbol[0] == NonTerminalSymbol("E"):
+                return to_number(tree.childlist[0].symbol[0].gd.string) + to_number(tree.childlist[2].symbol[0].gd.string)
+            raise Exception
             
         result = parse_tree_walker(parse_tree[0])
         self.assertEqual(result, 3)
@@ -95,9 +95,9 @@ class TestCase(unittest.TestCase):
 
         def parse_tree_walker(tree):
             from pydsl.Grammar.Symbol import NonTerminalSymbol
-            if tree.symbollist[0] == NonTerminalSymbol("S"):
+            if tree.symbol[0] == NonTerminalSymbol("S"):
                 return parse_tree_walker(tree.childlist[0])
-            if tree.symbollist[0] == NonTerminalSymbol("E"):
+            if tree.symbol[0] == NonTerminalSymbol("E"):
                 return int(str(tree.childlist[0].content)) + int(str(tree.childlist[2].content))
             else:
                 raise Exception
