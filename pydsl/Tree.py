@@ -98,16 +98,6 @@ class PositionTree(Tree):
         """checks if it is a null result"""
         return self.valid
 
-    def __getitem__(self, key):
-        result = []
-        mylist = self.to_list()
-        for element in mylist:
-            if element.content == key:
-                result.append(element)
-        if not result:
-            raise KeyError("Element not found %s" % key)
-        return result
-
     def shift(self, amount):
         """ shifts position """
         if self.leftpos is not None:
@@ -135,25 +125,6 @@ class ParseTree(PositionTree):
         from pydsl.Grammar.BNF import Production
         PositionTree.__init__(self, leftpos, rightpos, content, valid, childlist)
         self.symbollist = symbollist
-
-    def __add__(self, other):
-        """ Adds two results. Only if self.rightpos = other.leftpos and parents are the same """
-        if not isinstance(other, ParseTree):
-            raise TypeError
-        if other == []:
-            return ParseTree(self.leftpos, self.rightpos, self.symbollist,
-                             self.content, self.production, self.childlist)  # FIXME: Must return a childlist copy
-        if self.rightpos == other.leftpos and self.production == other.production:
-            leftpos = self.leftpos
-            rightpos = other.rightpos
-            production = self.production
-            content = self.content + other.content
-            symbollist = self.symbollist + other.symbollist
-            childlist = self.childlist + other.childlist
-            return ParseTree(leftpos, rightpos, symbollist, content, production, childlist)
-        else:
-            LOG.warning("Unable to add parser results")
-            raise Exception
 
 
 class Sequence:
