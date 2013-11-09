@@ -76,14 +76,20 @@ def mix_results(resultll, productionset):
         #Creates a node with all elements, and originals nodes are the childs of the new node
         symbollist = []
         for element in combination:
-            symbollist += element.symbol
+            if isinstance(element.symbol, list):
+                symbollist += element.symbol
+            else:
+                symbollist.append(element.symbol)
         finalresult = ParseTree(left_pos, right_pos, symbollist, compoundword, valid = all([x for x in combination]))
         #Add childs to result. FIXME Adding already created elements as children of the new one
         rightside = []
         for child in combination:
             assert(child != finalresult) #Avoid recursion
             finalresult.append_child(child)
-            rightside += child.symbol #Creating the rightside of the production to guess the full production #FIXME doesn't work with terminals
+            if isinstance(child.symbol, list):
+                rightside += child.symbol #Creating the rightside of the production to guess the full production #FIXME doesn't work with terminals
+            else:
+                rightside.append(child.symbol)
         try:
             finalresult.production = productionset.getProductionsBySide(rightside, "right")
         except IndexError:
@@ -155,7 +161,10 @@ class WeightedParser(TopDownParser):
                 #result += self.__recursive_parser(alternative.rightside, data, alternative, showerrors)
                 alternative_result = self.__handle_alternative(alternative.rightside, data, alternative, showerrors)
                 for x in alternative_result:
-                    if list(x.symbol) == list(alternative.rightside): #Filters incomplete attempts
+                    x_symbol = x.symbol
+                    if not isinstance(x_symbol, list):
+                        x_symbol = [x_symbol]
+                    if x_symbol == list(alternative.rightside): #Filters incomplete attempts
                         result.append(ParseTree(x.leftpos, x.rightpos, [onlysymbol], data[x.leftpos:x.rightpos], valid = True))
                     #TODO: Add child
             if showerrors and not result:
