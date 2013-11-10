@@ -26,11 +26,12 @@ LOG = logging.getLogger(__name__)
 from pydsl.Grammar.Symbol import TerminalSymbol
 
 
-class PositionTree(object):
+class ParseTree(object):
 
     """Stores the position of the original tree"""
 
-    def __init__(self, leftpos, rightpos, content, valid=True, childlist=None):
+    def __init__(self, leftpos, rightpos, symbol, content, childlist=None, valid=True):
+        self.symbol = symbol
         if not isinstance(leftpos, int) and leftpos is not None:
             raise TypeError
         if not isinstance(rightpos, int) and rightpos is not None:
@@ -68,15 +69,6 @@ class PositionTree(object):
     def append(self, dpr):
         """appends dpr to childlist"""
         self.childlist.append(dpr)
-
-
-class ParseTree(PositionTree):
-
-    """ Stores a descent parser iteration result """
-
-    def __init__(self, leftpos, rightpos, symbol, content, childlist=None, valid=True):
-        PositionTree.__init__(self, leftpos, rightpos, content, valid, childlist)
-        self.symbol = symbol
 
 
 class Sequence:
