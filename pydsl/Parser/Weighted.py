@@ -85,7 +85,7 @@ def mix_results(resultll, productionset):
         rightside = []
         for child in combination:
             assert(child != finalresult) #Avoid recursion
-            finalresult.append_child(child)
+            finalresult.append(child)
             if isinstance(child.symbol, list):
                 rightside += child.symbol #Creating the rightside of the production to guess the full production #FIXME doesn't work with terminals
             else:

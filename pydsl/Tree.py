@@ -26,63 +26,18 @@ LOG = logging.getLogger(__name__)
 from pydsl.Grammar.Symbol import TerminalSymbol
 
 
-def traversePreOrder(item):
-    result = [item]
-    for child in item.childlist:
-        result += traversePreOrder(child)
-    return result
-
-
-def traverseInOrder(item):
-    result = [traverseInOrder(item.childlist[0]), item]
-    for child in item.childlist[1:]:
-        result += traverseInOrder(child)
-    return result
-
-
-def traversePostOrder(item):
-    result = []
-    for child in item.childlist:
-        result += traversePostOrder(child)
-    result.append(item)
-    return result
-
-
-class Tree(object):
-
-    def __init__(self, childlist=None):
-        if not childlist:
-            childlist = []
-        self.childlist = childlist
-
-    def append_child(self, dpr):
-        """appends dpr to childlist"""
-        self.childlist.append(dpr)
-
-    def to_list(self, order="preorder"):
-        if order == "preorder":
-            return traversePreOrder(self)
-        elif order == "inorder":
-            return traverseInOrder(self)
-        elif order == "postorder":
-            return traversePostOrder(self)
-        else:
-            raise ValueError("Unknown order %s" % order)
-
-    def first_leaf(self):
-        """Returns the first lead node"""
-        if self.childlist:
-            return self.childlist[0].first_leaf()
-        else:
-            return self
-
-
-class PositionTree(Tree):
+class PositionTree(object):
 
     """Stores the position of the original tree"""
 
     def __init__(self, leftpos, rightpos, content, valid=True, childlist=None):
-        Tree.__init__(self, childlist)
+        if not isinstance(leftpos, int) and leftpos is not None:
+            raise TypeError
+        if not isinstance(rightpos, int) and rightpos is not None:
+            raise TypeError
+        if not childlist:
+            childlist = []
+        self.childlist = childlist
         self.leftpos = leftpos
         self.rightpos = rightpos
         self.content = content
@@ -110,17 +65,16 @@ class PositionTree(Tree):
             return 0
         return self.rightpos - self.leftpos
 
+    def append(self, dpr):
+        """appends dpr to childlist"""
+        self.childlist.append(dpr)
+
 
 class ParseTree(PositionTree):
 
     """ Stores a descent parser iteration result """
 
     def __init__(self, leftpos, rightpos, symbol, content, childlist=None, valid=True):
-        if not isinstance(leftpos, int) and leftpos is not None:
-            raise TypeError
-        if not isinstance(rightpos, int) and rightpos is not None:
-            raise TypeError
-        from pydsl.Grammar.BNF import Production
         PositionTree.__init__(self, leftpos, rightpos, content, valid, childlist)
         self.symbol = symbol
 
