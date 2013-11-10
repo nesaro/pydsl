@@ -76,14 +76,20 @@ def mix_results(resultll, productionset):
         #Creates a node with all elements, and originals nodes are the childs of the new node
         symbollist = []
         for element in combination:
-            symbollist += element.symbollist
-        finalresult = ParseTree(left_pos, right_pos, symbollist, compoundword, combination[0].production, valid = all([x for x in combination]))
+            if isinstance(element.symbol, list):
+                symbollist += element.symbol
+            else:
+                symbollist.append(element.symbol)
+        finalresult = ParseTree(left_pos, right_pos, symbollist, compoundword, valid = all([x for x in combination]))
         #Add childs to result. FIXME Adding already created elements as children of the new one
         rightside = []
         for child in combination:
             assert(child != finalresult) #Avoid recursion
-            finalresult.append_child(child)
-            rightside += child.symbollist #Creating the rightside of the production to guess the full production #FIXME doesn't work with terminals
+            finalresult.append(child)
+            if isinstance(child.symbol, list):
+                rightside += child.symbol #Creating the rightside of the production to guess the full production #FIXME doesn't work with terminals
+            else:
+                rightside.append(child.symbol)
         try:
             finalresult.production = productionset.getProductionsBySide(rightside, "right")
         except IndexError:
@@ -145,23 +151,26 @@ class WeightedParser(TopDownParser):
         if isinstance(onlysymbol, TerminalSymbol):
             #Locate every occurrence of word and return a set of results. Follow boundariesrules
             LOG.debug("Iteration: terminalsymbol")
-            result = terminal_symbol_reducer(onlysymbol, data, onlysymbol) #FIXME add information about production
+            result = terminal_symbol_reducer(onlysymbol, data)
             if showerrors and not result:
-                return [ParseTree(0,len(data), [onlysymbol] , data, onlysymbol, valid = False)] #FIXME add information about production
+                return [ParseTree(0,len(data), onlysymbol , data, valid = False)]
             return result
         elif isinstance(onlysymbol, NonTerminalSymbol):
             result = []
-            for alternative in self._productionset.getProductionsBySide([onlysymbol]):
+            for alternative in self._productionset.getProductionsBySide(onlysymbol):
                 #result += self.__recursive_parser(alternative.rightside, data, alternative, showerrors)
                 alternative_result = self.__handle_alternative(alternative.rightside, data, alternative, showerrors)
                 for x in alternative_result:
-                    if list(x.symbollist) == list(alternative.rightside): #Filters incomplete attempts
-                        result.append(ParseTree(x.leftpos, x.rightpos, [onlysymbol], data[x.leftpos:x.rightpos], production, valid = True))
+                    x_symbol = x.symbol
+                    if not isinstance(x_symbol, list):
+                        x_symbol = [x_symbol]
+                    if x_symbol == list(alternative.rightside): #Filters incomplete attempts
+                        result.append(ParseTree(x.leftpos, x.rightpos, onlysymbol, data[x.leftpos:x.rightpos], valid = True))
                     #TODO: Add child
             if showerrors and not result:
-                return [ParseTree(0, len(data), [onlysymbol], data, production, valid = False)]
+                return [ParseTree(0, len(data), onlysymbol, data, valid = False)]
             LOG.debug("Result " + str(result))
             return result
         elif isinstance(onlysymbol, NullSymbol):
-            return[ParseTree(None, None, [onlysymbol], "", production)]
+            return[ParseTree(None, None, onlysymbol, "")]
         raise Exception

@@ -114,7 +114,7 @@ class LL1RecursiveDescentParser(TopDownParser):
         left = childlist[0].leftpos
         right = childlist[-1].rightpos
         content = [x.content for x in childlist]
-        return ParseTree(left, right, [symbol], content, valid_firsts[0], childlist=childlist)
+        return ParseTree(left, right, symbol, content, childlist=childlist)
 
 
     def consume(self):
@@ -131,6 +131,6 @@ class LL1RecursiveDescentParser(TopDownParser):
         if symbol.check(self.current):
             current = self.current
             self.consume()
-            return ParseTree(self.index-1, self.index, [symbol], current, None)
+            return ParseTree(self.index-1, self.index, symbol, current)
         else:
             raise Exception("Not matched")

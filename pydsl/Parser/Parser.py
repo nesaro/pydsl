@@ -27,7 +27,7 @@ import logging
 LOG = logging.getLogger(__name__)
 
 
-def terminal_symbol_reducer(symbol, word, production, fixed_start = False):
+def terminal_symbol_reducer(symbol, word, fixed_start = False):
     """ Reduces a terminal symbol """
     #FIXME: This is the same code than extract for alphabets, should be merged
     if fixed_start:
@@ -52,7 +52,7 @@ def terminal_symbol_reducer(symbol, word, production, fixed_start = False):
     else:
         raise ValueError("Unknown boundaries rules")
     from pydsl.Tree import ParseTree
-    return [ParseTree(begin, end, [symbol], word[begin:end], production) for (size, begin, end) in validresults]
+    return [ParseTree(begin, end, symbol, word[begin:end]) for (size, begin, end) in validresults]
 
 class Parser(object):
     """Expands an input based on grammar rules

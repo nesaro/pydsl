@@ -47,12 +47,12 @@ class BacktracingErrorRecursiveDescentParser(TopDownParser):
         if isinstance(onlysymbol, TerminalSymbol):
             #Locate every occurrence of word and return a set of results. Follow boundariesrules
             LOG.debug("Iteration: terminalsymbol")
-            result = terminal_symbol_reducer(onlysymbol, data, production, fixed_start=True)
+            result = terminal_symbol_reducer(onlysymbol, data, fixed_start=True)
             if showerrors and not result:
-                return [ParseTree(0,len(data), [onlysymbol] , data, onlysymbol, valid = False)]
+                return [ParseTree(0,len(data), onlysymbol , data, onlysymbol, valid = False)]
             return result
         elif isinstance(onlysymbol, NullSymbol):
-            return [ParseTree(0, 0, [onlysymbol], "", production)]
+            return [ParseTree(0, 0, onlysymbol, "")]
         elif isinstance(onlysymbol, NonTerminalSymbol):
             validstack = []
             invalidstack = []
@@ -94,8 +94,7 @@ class BacktracingErrorRecursiveDescentParser(TopDownParser):
                     nnullresults = 0
                     leftpos = results[0]['left']
                     rightpos = results[-1]['right']
-                    for y in [x['content'].symbollist for x in results]:
-                        nnullresults += y.count(NullSymbol())
+                    nnullresults = len([x for x in results if x['content'].symbol == NullSymbol()])
                     if len(results) - nnullresults != len(alternative.rightside) - nullcount:
                         LOG.debug("Discarded: incorrect number of non null symbols")
                         continue
@@ -109,15 +108,14 @@ class BacktracingErrorRecursiveDescentParser(TopDownParser):
                     childlist = [x['content'] for x in results]
                     allvalid = all([x.valid for x in childlist])
                     if allvalid:
-                        newresult = ParseTree(0, rightpos - leftpos, [onlysymbol],
-                                data[leftpos:rightpos], alternative, childlist)
+                        newresult = ParseTree(0, rightpos - leftpos, onlysymbol,
+                                data[leftpos:rightpos], childlist = childlist)
                         newresult.valid = True
                         result.append(newresult)
             if showerrors and not result:
-                erroresult = ParseTree(0,len(data), [onlysymbol] , data, production, valid = False)
+                erroresult = ParseTree(0,len(data), onlysymbol , data, valid = False)
                 for invalid in invalidstack:
-                    current_symbol = invalid.production if isinstance(invalid.production, (TerminalSymbol, NullSymbol)) else invalid.production.leftside[0]
-                    if current_symbol in production.rightside:
+                    if invalid.content in production.rightside:
                         erroresult.append_child(invalid)
                 return [erroresult]
             return result
@@ -145,7 +143,7 @@ class BacktracingRecursiveDescentParser(TopDownParser):
         if isinstance(onlysymbol, TerminalSymbol):
             #Locate every occurrence of word and return a set of results. Follow boundariesrules
             LOG.debug("Iteration: terminalsymbol")
-            result = terminal_symbol_reducer(onlysymbol, data, production, fixed_start=True)
+            result = terminal_symbol_reducer(onlysymbol, data, fixed_start=True)
             return result
         elif isinstance(onlysymbol, NonTerminalSymbol):
             validstack = []
@@ -185,7 +183,7 @@ class BacktracingRecursiveDescentParser(TopDownParser):
                             LOG.debug("Discarded: rule doesn't match partial result")
                             continue
                     childlist = [x for x in results]
-                    newresult = ParseTree(0, rightpos - leftpos, [onlysymbol],
+                    newresult = ParseTree(0, rightpos - leftpos, onlysymbol,
                             data[leftpos:rightpos], alternative, childlist)
                     newresult.valid = True
                     result.append(newresult)
