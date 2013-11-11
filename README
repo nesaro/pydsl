@@ -1,7 +1,7 @@
 DESCRIPTION
 ===========
 
-pydsl is a language library written in python. It provides functions for Grammars and Alphabets.
+pydsl is a language library written in python. It provides some verbs for Grammars.
 
     from pydsl.File.BNF import load_bnf_file
     grammardefinition = loand_bnf_file('myfile.bnf')
@@ -44,5 +44,4 @@ REQUIREMENTS
 
 ABOUT
 =====
-pydsl is a language library written in python
 Copyright (C) 2008-2013 Nestor Arocha (nesaro@gmail.com)
