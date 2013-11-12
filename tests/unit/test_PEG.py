@@ -37,7 +37,7 @@ class TestPEG(unittest.TestCase):
         self.assertTrue(check(mygrammar, "a"))
         self.assertTrue(check(mygrammar, "b"))
         self.assertFalse(check(mygrammar, "c"))
-        self.assertEqual(mygrammar, mygrammar.first)
+        self.assertEqual(mygrammar, mygrammar.first())
 
     def testNot(self):
         mygrammar = Not(String("a"))

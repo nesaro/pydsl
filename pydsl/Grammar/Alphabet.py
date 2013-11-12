@@ -23,7 +23,6 @@ from pydsl.Grammar.Definition import Grammar
 
 class Alphabet(Grammar):
     """Defines a set of valid elements"""
-    @property
     def first(self):
         return self
 

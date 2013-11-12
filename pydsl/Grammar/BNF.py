@@ -102,7 +102,6 @@ class BNFGrammar(Grammar):
                     result.append(y)
         return result
 
-    @property
     def first(self):
         """Returns the a grammar definition that includes all first elements of this grammar""" #TODO
         result = []
