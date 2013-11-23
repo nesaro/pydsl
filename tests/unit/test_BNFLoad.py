@@ -7,8 +7,8 @@
 
 import unittest
 
-class TestPydsl(unittest.TestCase):
+class TestFileLoader(unittest.TestCase):
     """Loading a bnf instance from a .bnf file"""
     def testFileLoader(self):
         from pydsl.File.BNF import load_bnf_file
-        self.assertTrue(load_bnf_file("tests/Date.bnf"))
+        self.assertTrue(load_bnf_file("pydsl/contrib/grammar/Date.bnf"))

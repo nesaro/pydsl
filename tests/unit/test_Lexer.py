@@ -22,6 +22,9 @@ __email__ = "nesaro@gmail.com"
 import unittest
 from pydsl.Lex import EncodingLexer, lexer_factory
 from pydsl.contrib.bnfgrammar import *
+from pydsl.Config import load, load_default_memory
+from pydsl.Grammar.Definition import String
+from pydsl.Grammar.Alphabet import Choice
 
 
 class TestLexer2(unittest.TestCase):
@@ -38,7 +41,6 @@ class TestLexer2(unittest.TestCase):
 
 class TestLexer(unittest.TestCase):
     def setUp(self):
-        from pydsl.Config import load_default_memory
         load_default_memory()
 
     def testListInput(self):
@@ -49,8 +51,6 @@ class TestLexer(unittest.TestCase):
 
     def testSimpleLexing(self):
         """Test checker instantiation and call"""
-        from pydsl.Config import load
-        from pydsl.Grammar.Alphabet import Choice
         integer = load('integer')
         date = load('Date')
         mydef = Choice([integer,date])
@@ -59,8 +59,6 @@ class TestLexer(unittest.TestCase):
         self.assertListEqual(lexer("123411/11/2001"), ["1234","11/11/2001"])
 
     def testLexerGenerator(self):
-        from pydsl.Grammar.Definition import String
-        from pydsl.Grammar.Alphabet import Choice
         abc = String("abc")
         numbers = String("123")
         mydef = Choice([abc, numbers])
@@ -86,8 +84,6 @@ class TestLexer(unittest.TestCase):
 
 class TestPythonLexer(unittest.TestCase):
     def test_Concept(self):
-        from pydsl.Grammar.Definition import String
-        from pydsl.Grammar.Alphabet import Choice
         from pydsl.Lex import PythonLexer
         red = String("red")
         green = String("green")

@@ -101,18 +101,17 @@ class RegularExpressionChecker(Checker):
 
 class BNFChecker(Checker):
     """Calls another program to perform checking. Args are always file names"""
-    def __init__(self, bnf, parser = "auto"):
+    def __init__(self, bnf, parser = None):
         Checker.__init__(self)
         parser = bnf.options.get("parser",parser)
-        if parser == "descent" or parser == "auto" or parser == "default":
+        if parser in ("descent", "auto", "default", None):
             from pydsl.Parser.Backtracing import BacktracingErrorRecursiveDescentParser
             self.__parser = BacktracingErrorRecursiveDescentParser(bnf)
         elif parser == "weighted":
             from pydsl.Parser.Weighted import WeightedParser
             self.__parser = WeightedParser(bnf)
         else:
-            LOG.error("Wrong parser name: " + parser)
-            raise Exception
+            raise ValueError("Unknown parser : " + parser)
 
     def check(self, data):
         try:

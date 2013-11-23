@@ -14,7 +14,6 @@
 #
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
-from pydsl.Parser.LL import LL1RecursiveDescentParser
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
@@ -27,6 +26,7 @@ from pydsl.Parser.Backtracing import BacktracingErrorRecursiveDescentParser
 from pydsl.Parser.Weighted import WeightedParser
 from pydsl.Parser.LR0 import LR0Parser
 from pydsl.Lex import EncodingLexer
+from pydsl.Parser.LL import LL1RecursiveDescentParser
 import unittest
 
 class TestBacktracingRecursiveDescentParser(unittest.TestCase):

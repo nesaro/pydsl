@@ -47,11 +47,7 @@ class TestAlphabet(unittest.TestCase):
     def testProperties(self):
         self.alphabet.grammarlist
 
-    def testGenerateSymbol(self):
+    def testEncoding(self):
         alphabet = Encoding('ascii')
-        print(alphabet['a'])
-        print(self.alphabet[0])
-
-class TestLexerExamples:
-    pass
-    #string to ascii
+        self.assertTrue(alphabet['a'])
+        self.assertTrue(self.alphabet[0])

@@ -72,7 +72,7 @@ class BottomUpParser(Parser):
         self._productionset = bnfgrammar
 
 
-def parser_factory(grammar, parser = "auto"):
+def parser_factory(grammar, parser = None):
     if isinstance(grammar, str):
         grammar = load(grammar)
     from pydsl.Grammar.BNF import BNFGrammar
@@ -80,12 +80,12 @@ def parser_factory(grammar, parser = "auto"):
         if parser == "descent":
             from pydsl.Parser.Backtracing import BacktracingErrorRecursiveDescentParser
             return BacktracingErrorRecursiveDescentParser(grammar)
-        elif parser in ("auto" , "default" , "weighted"):
+        elif parser in ("auto" , "default" , "weighted", None):
             #TODO Guess best parser
             from pydsl.Parser.Weighted import WeightedParser
             return WeightedParser(grammar)
         else:
-            raise Exception("Wrong parser name: " + parser)
+            raise Exception("Wrong parser name: " + str(parser))
     else:
         raise ValueError(grammar)
 

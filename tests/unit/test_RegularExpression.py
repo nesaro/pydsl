@@ -24,7 +24,7 @@ import unittest
 from pydsl.Grammar.Definition import RegularExpression
 import re
 
-class TestGrammarDefinitionRegularExpression(unittest.TestCase):
+class TestRegularExpression(unittest.TestCase):
     """Regular expression method tests"""
     def testInstantiation(self):
         re1 = RegularExpression('^a$')

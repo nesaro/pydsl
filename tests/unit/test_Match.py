@@ -21,7 +21,7 @@ __email__ = "nesaro@gmail.com"
 
 import unittest
 
-from pydsl.Grammar.Definition import String,RegularExpression
+from pydsl.Grammar.Definition import String, RegularExpression
 from pydsl.Match import match_factory
 
 class TestStringMatch(unittest.TestCase):
