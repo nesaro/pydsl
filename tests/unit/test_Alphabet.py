@@ -44,9 +44,6 @@ class TestAlphabet(unittest.TestCase):
         self.assertListEqual(lexer("1234"), ["1234"])
         self.assertListEqual(lexer("123411/11/2001"), ["1234","11/11/2001"])
 
-    def testProperties(self):
-        self.alphabet.grammarlist
-
     def testEncoding(self):
         alphabet = Encoding('ascii')
         self.assertTrue(alphabet['a'])

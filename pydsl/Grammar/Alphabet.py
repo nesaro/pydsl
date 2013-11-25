@@ -28,34 +28,29 @@ class Alphabet(Grammar):
         return self
 
     @property
-    def to_list(self):
-        """Returns a list of allowed grammars"""
-        raise NotImplementedError
-
-    def __contains__(self, token):
-        """Returns true if the alphabet contains the token"""
-        raise NotImplementedError
+    def maxsize(self):
+        return None
 
     @property
     def minsize(self):
         return 1 #FIXME: In some cases could be 0
 
-class Choice(Alphabet):
+class Choice(Alphabet, list):
     """Uses a list of grammar definitions"""
     def __init__(self, grammarlist, base_alphabet = None):
         Alphabet.__init__(self, base_alphabet)
         if not grammarlist:
             raise ValueError
+        result = []
         from pydsl.Config import load
-        self.grammarlist = []
         for x in grammarlist:
             if isinstance(x, str):
-                self.grammarlist.append(load(x))
+                result.append(load(x))
             else:
-                self.grammarlist.append(x)
-        from pydsl.Grammar.Definition import Grammar
+                result.append(x)
+        list.__init__(self, result)
         base_alphabet_list = []
-        for x in self.grammarlist:
+        for x in self:
             if not isinstance(x, Grammar):
                 raise TypeError("Expected Grammar, Got %s:%s" % (x.__class__.__name__,x))
             if x.base_alphabet not in base_alphabet_list:
@@ -63,20 +58,13 @@ class Choice(Alphabet):
         if len(base_alphabet_list) != 1:
             raise ValueError('Different base alphabets from members')
 
-    def __getitem__(self, index):
-        """Retrieves token by index"""
-        return self.grammarlist[index]
-
-    @property
-    def to_list(self):
-        return self.grammarlist
-
     def __add__(self, other):
-        return Choice(self.grammarlist + other.grammarlist)
+        return Choice(list.__add__(self,other))
 
 class Encoding(Alphabet):
     """Defines an alphabet using an encoding string"""
     def __init__(self, encoding):
+        Alphabet.__init__(self)
         self.encoding = encoding
 
     def __eq__(self, other):

@@ -215,7 +215,7 @@ class ChoiceChecker(Checker):
         if not isinstance(gd, Choice):
             raise TypeError
         self.gd = gd
-        self.checkerinstances = [checker_factory(x) for x in self.gd.grammarlist]
+        self.checkerinstances = [checker_factory(x) for x in self.gd]
 
     def check(self, data):
         return any((x.check(data) for x in self.checkerinstances))

@@ -25,9 +25,6 @@ import collections
 class Grammar(object):
 
     def __init__(self, base_alphabet = None):
-        if base_alphabet is None:
-            from pydsl.Grammar.Alphabet import Encoding
-            base_alphabet = Encoding("ascii")
         self.base_alphabet = base_alphabet
 
     def enum(self):
@@ -52,6 +49,9 @@ class Grammar(object):
 
     def alphabet(self):
         """Returns the alphabet used by this grammar"""
+        if self.base_alphabet is None:
+            from pydsl.Grammar.Alphabet import Encoding
+            self.base_alphabet = Encoding("ascii")
         return self.base_alphabet
 
 class PLYGrammar(Grammar):

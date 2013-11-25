@@ -117,7 +117,7 @@ class AlphabetListLexer(AlphabetLexer):
         from pydsl.Tree import Sequence
         tree = Sequence()  # This is the extract algorithm
         valid_alternatives = []
-        for gd in self.alphabet.grammarlist:
+        for gd in self.alphabet:
             checker = checker_factory(gd)
             for left in range(0, len(self.string)):
                 for right in range(left +1, len(self.string) +1 ):
@@ -144,7 +144,7 @@ class AlphabetListLexer(AlphabetLexer):
             buffer += element  # Asumes string
             for x in range(1, len(buffer)):
                 currentstr = buffer[:x]
-                for gd in self.alphabet.grammarlist:
+                for gd in self.alphabet:
                     checker = checker_factory(gd)
                     if checker.check(currentstr):
                         buffer = buffer[x:]
