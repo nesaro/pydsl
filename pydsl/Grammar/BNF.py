@@ -146,16 +146,6 @@ class BNFGrammar(Grammar):
 
         return result
 
-    @property
-    def left_recursive(self):# -> bool:
-        """Tests if the grammar is left recursive"""
-        raise NotImplementedError
-
-    @property
-    def right_recursive(self):# -> bool:
-        """Tests if the grammar is right recursive"""
-        raise NotImplementedError
-
     def __eq__(self, other):
         if not isinstance(other, BNFGrammar):
             return False

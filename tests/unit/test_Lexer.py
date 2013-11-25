@@ -25,9 +25,10 @@ from pydsl.contrib.bnfgrammar import *
 from pydsl.Config import load, load_default_memory
 from pydsl.Grammar.Definition import String
 from pydsl.Grammar.Alphabet import Choice
+from pydsl.Grammar.PEG import Sequence
 
 
-class TestLexer2(unittest.TestCase):
+class TestEncodingLexer(unittest.TestCase):
     def testLexer(self):
         """Lexer call"""
         lexer = lexer_factory(productionset1.alphabet())
@@ -39,15 +40,17 @@ class TestLexer2(unittest.TestCase):
         result = list(lexer("abcde"))
         print([str(x) for x in result])
 
-class TestLexer(unittest.TestCase):
+class TestChoiceLexer(unittest.TestCase):
     def setUp(self):
         load_default_memory()
 
-    def testListInput(self):
-        pass
-
+    @unittest.skip("Raises an exception")
     def testEmptyInput(self):
-        pass
+        integer = load('integer')
+        date = load('Date')
+        mydef = Choice([integer,date])
+        lexer = lexer_factory(mydef)
+        self.assertFalse(lexer(""))
 
     def testSimpleLexing(self):
         """Test checker instantiation and call"""
@@ -81,6 +84,23 @@ class TestLexer(unittest.TestCase):
 
         text_generator(mylexer.lexer_generator(collector()))
         self.assertListEqual(result, ["123", "abc","abc", "123"])
+
+    def testSecondLevelGrammar(self):
+        a = String("a")
+        b = String("b")
+        c = String("c")
+        x = String("x")
+        y = String("y")
+        z = String("z")
+        first_level = Choice([a,b,c])
+        first_levelb = Choice([x,y,z])
+        second_level = Sequence([a,b], base_alphabet=first_level)
+        from pydsl.Check import checker_factory
+        checker = checker_factory(second_level)
+        self.assertTrue(checker([a,b]))
+        second_level_alphabet = Choice([first_level, first_levelb], base_alphabet=first_level+first_levelb)
+        lexer = lexer_factory(second_level_alphabet)
+        self.assertListEqual(lexer([a,b]), [[a],[b]])
 
 class TestPythonLexer(unittest.TestCase):
     def test_Concept(self):

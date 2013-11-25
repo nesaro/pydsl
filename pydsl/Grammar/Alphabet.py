@@ -42,7 +42,8 @@ class Alphabet(Grammar):
 
 class Choice(Alphabet):
     """Uses a list of grammar definitions"""
-    def __init__(self, grammarlist):
+    def __init__(self, grammarlist, base_alphabet = None):
+        Alphabet.__init__(self, base_alphabet)
         if not grammarlist:
             raise ValueError
         from pydsl.Config import load
@@ -53,9 +54,14 @@ class Choice(Alphabet):
             else:
                 self.grammarlist.append(x)
         from pydsl.Grammar.Definition import Grammar
+        base_alphabet_list = []
         for x in self.grammarlist:
             if not isinstance(x, Grammar):
                 raise TypeError("Expected Grammar, Got %s:%s" % (x.__class__.__name__,x))
+            if x.base_alphabet not in base_alphabet_list:
+                base_alphabet_list.append(x.base_alphabet)
+        if len(base_alphabet_list) != 1:
+            raise ValueError('Different base alphabets from members')
 
     def __getitem__(self, index):
         """Retrieves token by index"""
@@ -65,6 +71,8 @@ class Choice(Alphabet):
     def to_list(self):
         return self.grammarlist
 
+    def __add__(self, other):
+        return Choice(self.grammarlist + other.grammarlist)
 
 class Encoding(Alphabet):
     """Defines an alphabet using an encoding string"""

@@ -16,6 +16,7 @@
 # along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 """Base Lexer classes"""
+
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
@@ -23,7 +24,6 @@ __email__ = "nesaro@gmail.com"
 from pydsl.Grammar.Alphabet import Encoding
 from pydsl.Check import checker_factory
 from pydsl.Config import load
-
 
 
 class Lexer(object):
@@ -115,7 +115,7 @@ class AlphabetListLexer(AlphabetLexer):
 
     def nextToken(self):
         from pydsl.Tree import Sequence
-        tree = Sequence() #This is the extract algorightm
+        tree = Sequence()  # This is the extract algorithm
         valid_alternatives = []
         for gd in self.alphabet.grammarlist:
             checker = checker_factory(gd)
