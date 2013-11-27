@@ -35,7 +35,7 @@ class Grammar(object):
     def first(self):# -> set:
         """Grammar definition that matches every possible first element.
         the returned value is a subset of the base_alphabet"""
-        return self.alphabet()
+        return self.alphabet
 
     @property
     def minsize(self):# -> int:
@@ -47,6 +47,7 @@ class Grammar(object):
         """Returns the max size in alphabet tokens"""
         return None
 
+    @property
     def alphabet(self):
         """Returns the alphabet used by this grammar"""
         if self.base_alphabet is None:
@@ -164,6 +165,7 @@ class PythonGrammar(Grammar, dict):
         from pypository.utils import ImmutableDict #FIXME!
         return hash(ImmutableDict(self))        
 
+    @property
     def alphabet(self):
         if "alphabet" in self:
             return self['alphabet']

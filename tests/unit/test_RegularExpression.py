@@ -52,5 +52,5 @@ class TestRegularExpression(unittest.TestCase):
     def testAlphabet(self):
         from pydsl.Grammar.Alphabet import Encoding
         re1 = RegularExpression(re.compile('^a$'))
-        self.assertEqual(re1.alphabet(), Encoding('ascii'))
+        self.assertEqual(re1.alphabet, Encoding('ascii'))
 

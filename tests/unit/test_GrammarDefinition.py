@@ -46,7 +46,7 @@ class TestGrammarDefinitionMongoDb(unittest.TestCase):
         self.grammardef.maxsize
 
     def testAlphabet(self):
-        self.assertEqual(self.grammardef.alphabet(), Encoding('ascii'))
+        self.assertEqual(self.grammardef.alphabet, Encoding('ascii'))
 
 @unittest.skip
 class TestGrammarDefinitionPLY(unittest.TestCase):
@@ -72,7 +72,7 @@ class TestGrammarDefinitionPLY(unittest.TestCase):
         self.grammardef.maxsize
 
     def testAlphabet(self):
-        self.assertListEqual(self.grammardef.alphabet(), Alphabet)
+        self.assertListEqual(self.grammardef.alphabet, Alphabet)
 
 class TestGrammarDefinitionJson(unittest.TestCase):
     def setUp(self):
@@ -92,5 +92,5 @@ class TestGrammarDefinitionJson(unittest.TestCase):
         self.grammardef.maxsize
 
     def testAlphabet(self):
-        self.assertEqual(self.grammardef.alphabet(), Encoding('ascii'))
+        self.assertEqual(self.grammardef.alphabet, Encoding('ascii'))
 
