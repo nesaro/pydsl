@@ -131,7 +131,7 @@ class TestEncodingChecker(unittest.TestCase):
         pass
 
 
-class TestAlphabetListDefinitionChecker(unittest.TestCase):
+class TestChoiceChecker(unittest.TestCase):
     def setUp(self):
         from pydsl.Config import load_default_memory
         load_default_memory()

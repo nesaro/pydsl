@@ -94,15 +94,14 @@ class AlphabetLexer(Lexer):
     def __call__(self, string):  # -> "TokenList":
         """Tokenizes input, generating a list of tokens"""
         self.string = string
-        result = [x for x in self.nextToken()]
-        return result
+        return [x for x in self.nextToken(True)]
 
     def lexer_generator(self):
         """generator version of the lexer, yields a new token as soon as possible"""
         raise NotImplementedError
 
 
-class AlphabetListLexer(AlphabetLexer):
+class ChoiceLexer(AlphabetLexer):
 
     def __init__(self, alphabet):
         AlphabetLexer.__init__(self)
@@ -166,7 +165,7 @@ def lexer_factory(alphabet):
     if isinstance(alphabet, str):
         alphabet = load(alphabet)
     if isinstance(alphabet, Choice):
-        return AlphabetListLexer(alphabet)
+        return ChoiceLexer(alphabet)
     elif isinstance(alphabet, Encoding):
         return EncodingLexer(alphabet)
     else:
