@@ -112,7 +112,7 @@ class ChoiceLexer(AlphabetLexer):
         """Returns the element under the cursor until the end of the string"""
         return self.string[self.index:]
 
-    def nextToken(self):
+    def nextToken(self, include_gd=False):
         from pydsl.Tree import Sequence
         tree = Sequence()  # This is the extract algorithm
         valid_alternatives = []
@@ -126,14 +126,20 @@ class ChoiceLexer(AlphabetLexer):
             raise Exception("Nothing consumed")
         for left, right, gd in valid_alternatives:
             string = self.string[left:right]
-            tree.append(left, right, string, check_position=False)
+            if isinstance(string, list):
+                from pydsl.Grammar import String
+                string = String("".join(str(x) for x in string))
+            tree.append(left, right, string, gd, check_position=False)
 
         right_length_seq = []
         for x in tree.generate_valid_sequences():
             if x[-1]['right'] == len(self.string):
                 right_length_seq.append(x)
         for y in sorted(right_length_seq, key=lambda x:len(x))[0]: #Always gets the match with less tokens
-            yield y['content']
+            if include_gd:
+                yield y['content'], y.get('gd')
+            else:
+                yield y['content']
 
     def lexer_generator(self, target):
         next(target)

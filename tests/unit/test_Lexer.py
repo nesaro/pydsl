@@ -58,8 +58,8 @@ class TestChoiceLexer(unittest.TestCase):
         date = load('Date')
         mydef = Choice([integer,date])
         lexer = lexer_factory(mydef)
-        self.assertListEqual(lexer("1234"), ["1234"])
-        self.assertListEqual(lexer("123411/11/2001"), ["1234","11/11/2001"])
+        self.assertListEqual(lexer("1234"), [("1234", integer)])
+        self.assertListEqual(lexer("123411/11/2001"), [("1234", integer),("11/11/2001", date)])
 
     def testLexerGenerator(self):
         abc = String("abc")
@@ -100,7 +100,7 @@ class TestChoiceLexer(unittest.TestCase):
         self.assertTrue(checker([a,b]))
         second_level_alphabet = Choice([first_level, first_levelb], base_alphabet=first_level+first_levelb)
         lexer = lexer_factory(second_level_alphabet)
-        self.assertListEqual(lexer([a,b]), [[a],[b]])
+        self.assertListEqual(lexer([a,b]), [(a,first_level),(b,first_level)])
 
 class TestPythonLexer(unittest.TestCase):
     def test_Concept(self):
@@ -113,7 +113,7 @@ class TestPythonLexer(unittest.TestCase):
 
         def concept_translator_fun(inputtokens):
             result = []
-            for x in inputtokens:
+            for x,_ in inputtokens:
                 if x == "red":
                     result.append("color red")
                 elif x == "green":

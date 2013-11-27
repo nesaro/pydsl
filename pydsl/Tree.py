@@ -80,13 +80,16 @@ class Sequence:
             return set([0])
         return set(x['right'] for x in self.possible_items)
 
-    def append(self, left, right, content, check_position=True):
+    def append(self, left, right, content, gd = None, check_position=True):
         if left > right:
             raise Exception
         if check_position == True and left:
             if left not in self.current_right:
                 raise ValueError("Unable to add element")
-        self.possible_items.append({'left':left, 'right':right, 'content':content})
+        result = {'left':left, 'right':right, 'content':content}
+        if gd:
+            result['gd'] = gd
+        self.possible_items.append(result)
 
     def generate_valid_sequences(self):
         """Returns list"""
