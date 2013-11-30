@@ -68,7 +68,7 @@ class TopDownParser(Parser):
 class BottomUpParser(Parser):
     """ leaf to root parser"""
     def __init__(self, bnfgrammar):
-        self._lexer = lexer_factory(bnfgrammar.alphabet())
+        self._lexer = lexer_factory(bnfgrammar.alphabet)
         self._productionset = bnfgrammar
 
 

@@ -31,7 +31,7 @@ from pydsl.Grammar.PEG import Sequence
 class TestEncodingLexer(unittest.TestCase):
     def testLexer(self):
         """Lexer call"""
-        lexer = lexer_factory(productionset1.alphabet())
+        lexer = lexer_factory(productionset1.alphabet)
         result = list(lexer(string1))
         self.assertTrue(result)
 
