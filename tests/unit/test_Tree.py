@@ -52,6 +52,7 @@ class TestTrees(unittest.TestCase):
 
 
 class TestSequence(unittest.TestCase):
+    @unittest.skip
     def testMain(self):
         from pydsl.Tree import Sequence
         seq = Sequence()
