@@ -61,5 +61,5 @@ class TestSequence(unittest.TestCase):
         seq.append(2,3,".")
         seq.append(3,4,".")
         seq.append(4,5,".")
-        self.assertEqual(len(seq.generate_valid_sequences()[-1]), 5)
+        self.assertEqual(len(seq.valid_sequences()[-1]), 5)
 

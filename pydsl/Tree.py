@@ -91,7 +91,7 @@ class Sequence:
             result['gd'] = gd
         self.possible_items.append(result)
 
-    def generate_valid_sequences(self):
+    def valid_sequences(self):
         """Returns list"""
         valid_sets = [[x] for x in self.possible_items if x['left'] == 0]
         change = True
@@ -109,6 +109,6 @@ class Sequence:
     def right_limit_list(self):
         if not self.possible_items:
             return [0]
-        return list(set([x[-1]['right'] for x in self.generate_valid_sequences()]))
+        return list(set([x[-1]['right'] for x in self.valid_sequences()]))
 
 

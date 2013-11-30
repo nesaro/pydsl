@@ -132,7 +132,7 @@ class ChoiceLexer(AlphabetLexer):
             tree.append(left, right, string, gd, check_position=False)
 
         right_length_seq = []
-        for x in tree.generate_valid_sequences():
+        for x in tree.valid_sequences():
             if x[-1]['right'] == len(self.string):
                 right_length_seq.append(x)
         if not right_length_seq:

@@ -83,7 +83,7 @@ class BacktracingErrorRecursiveDescentParser(TopDownParser):
                         break #Try next alternative
                 else: # Alternative success (no break happened)
                     invalidstack += alternativeinvalidstack
-                for x in alternativetree.generate_valid_sequences():
+                for x in alternativetree.valid_sequences():
                     validstack.append(x)
             result = []
 
@@ -163,7 +163,7 @@ class BacktracingRecursiveDescentParser(TopDownParser):
                     if not symbol_success:
                         LOG.debug("Symbol doesn't work" + str(symbol))
                         break #Try next alternative
-                for x in alternativetree.generate_valid_sequences():
+                for x in alternativetree.valid_sequences():
                     validstack.append(x)
             result = []
 
