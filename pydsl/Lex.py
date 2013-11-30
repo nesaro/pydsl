@@ -135,6 +135,8 @@ class ChoiceLexer(AlphabetLexer):
         for x in tree.generate_valid_sequences():
             if x[-1]['right'] == len(self.string):
                 right_length_seq.append(x)
+        if not right_length_seq:
+            raise Exception("No sequence found for input %s alphabet %s" % (self.string,self.alphabet))
         for y in sorted(right_length_seq, key=lambda x:len(x))[0]: #Always gets the match with less tokens
             if include_gd:
                 yield y['content'], y.get('gd')
