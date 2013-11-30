@@ -49,3 +49,16 @@ class TestTrees(unittest.TestCase):
 
     def testBasics(self):
         self.assertTrue(len(self.tree1) == 6)
+
+
+class TestSequence(unittest.TestCase):
+    def testMain(self):
+        from pydsl.Tree import Sequence
+        seq = Sequence()
+        seq.append(0,1,".")
+        seq.append(1,2,".")
+        seq.append(2,3,".")
+        seq.append(3,4,".")
+        seq.append(4,5,".")
+        self.assertEqual(len(seq.generate_valid_sequences()[-1]), 5)
+
