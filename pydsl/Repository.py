@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
-from pydsl.Alphabet import Encoding
+from pydsl.Grammar.Alphabet import Encoding
 from pypository.utils import ImmutableDict
 from pypository.List import ListStorage
 from pypository.Memory import Memory

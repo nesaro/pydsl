@@ -22,12 +22,16 @@ __email__ = "nesaro@gmail.com"
 import unittest
 from pydsl.Lex import EncodingLexer, lexer_factory
 from pydsl.contrib.bnfgrammar import *
+from pydsl.Config import load, load_default_memory
+from pydsl.Grammar.Definition import String
+from pydsl.Grammar.Alphabet import Choice
+from pydsl.Grammar.PEG import Sequence
 
 
-class TestLexer2(unittest.TestCase):
+class TestEncodingLexer(unittest.TestCase):
     def testLexer(self):
         """Lexer call"""
-        lexer = lexer_factory(productionset1.alphabet())
+        lexer = lexer_factory(productionset1.alphabet)
         result = list(lexer(string1))
         self.assertTrue(result)
 
@@ -36,34 +40,31 @@ class TestLexer2(unittest.TestCase):
         result = list(lexer("abcde"))
         print([str(x) for x in result])
 
-class TestLexer(unittest.TestCase):
+class TestChoiceLexer(unittest.TestCase):
     def setUp(self):
-        from pydsl.Config import load_default_memory
         load_default_memory()
 
-    def testListInput(self):
-        pass
-
+    @unittest.skip("Raises an exception")
     def testEmptyInput(self):
-        pass
+        integer = load('integer')
+        date = load('Date')
+        mydef = Choice([integer,date])
+        lexer = lexer_factory(mydef)
+        self.assertFalse(lexer(""))
 
     def testSimpleLexing(self):
         """Test checker instantiation and call"""
-        from pydsl.Config import load
-        from pydsl.Alphabet import AlphabetListDefinition
         integer = load('integer')
         date = load('Date')
-        mydef = AlphabetListDefinition([integer,date])
+        mydef = Choice([integer,date])
         lexer = lexer_factory(mydef)
-        self.assertListEqual(lexer("1234"), ["1234"])
-        self.assertListEqual(lexer("123411/11/2001"), ["1234","11/11/2001"])
+        self.assertListEqual(lexer("1234"), [("1234", integer)])
+        self.assertListEqual(lexer("123411/11/2001"), [("1234", integer),("11/11/2001", date)])
 
     def testLexerGenerator(self):
-        from pydsl.Grammar.Definition import String
-        from pydsl.Alphabet import AlphabetListDefinition
         abc = String("abc")
         numbers = String("123")
-        mydef = AlphabetListDefinition([abc, numbers])
+        mydef = Choice([abc, numbers])
         mylexer = lexer_factory(mydef)
         def text_generator(receiver):
             next(receiver)
@@ -84,20 +85,35 @@ class TestLexer(unittest.TestCase):
         text_generator(mylexer.lexer_generator(collector()))
         self.assertListEqual(result, ["123", "abc","abc", "123"])
 
+    def testSecondLevelGrammar(self):
+        a = String("a")
+        b = String("b")
+        c = String("c")
+        x = String("x")
+        y = String("y")
+        z = String("z")
+        first_level = Choice([a,b,c])
+        first_levelb = Choice([x,y,z])
+        second_level = Sequence([a,b], base_alphabet=first_level)
+        from pydsl.Check import checker_factory
+        checker = checker_factory(second_level)
+        self.assertTrue(checker([a,b]))
+        second_level_alphabet = Choice([first_level, first_levelb], base_alphabet=first_level+first_levelb)
+        lexer = lexer_factory(second_level_alphabet)
+        self.assertListEqual(lexer([a,b]), [(a,first_level),(b,first_level)])
+
 class TestPythonLexer(unittest.TestCase):
     def test_Concept(self):
-        from pydsl.Grammar.Definition import String
-        from pydsl.Alphabet import AlphabetListDefinition
         from pydsl.Lex import PythonLexer
         red = String("red")
         green = String("green")
         blue = String("blue")
-        alphabet = AlphabetListDefinition([red,green,blue])
+        alphabet = Choice([red,green,blue])
         lexer = lexer_factory(alphabet)
 
         def concept_translator_fun(inputtokens):
             result = []
-            for x in inputtokens:
+            for x,_ in inputtokens:
                 if x == "red":
                     result.append("color red")
                 elif x == "green":

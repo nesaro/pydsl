@@ -16,14 +16,14 @@
 # along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 """Base Lexer classes"""
+
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
-from pydsl.Alphabet import Encoding
+from pydsl.Grammar.Alphabet import Encoding
 from pydsl.Check import checker_factory
 from pydsl.Config import load
-
 
 
 class Lexer(object):
@@ -94,15 +94,14 @@ class AlphabetLexer(Lexer):
     def __call__(self, string):  # -> "TokenList":
         """Tokenizes input, generating a list of tokens"""
         self.string = string
-        result = [x for x in self.nextToken()]
-        return result
+        return [x for x in self.nextToken(True)]
 
     def lexer_generator(self):
         """generator version of the lexer, yields a new token as soon as possible"""
         raise NotImplementedError
 
 
-class AlphabetListLexer(AlphabetLexer):
+class ChoiceLexer(AlphabetLexer):
 
     def __init__(self, alphabet):
         AlphabetLexer.__init__(self)
@@ -113,11 +112,11 @@ class AlphabetListLexer(AlphabetLexer):
         """Returns the element under the cursor until the end of the string"""
         return self.string[self.index:]
 
-    def nextToken(self):
+    def nextToken(self, include_gd=False):
         from pydsl.Tree import Sequence
-        tree = Sequence() #This is the extract algorightm
+        tree = Sequence()  # This is the extract algorithm
         valid_alternatives = []
-        for gd in self.alphabet.grammarlist:
+        for gd in self.alphabet:
             checker = checker_factory(gd)
             for left in range(0, len(self.string)):
                 for right in range(left +1, len(self.string) +1 ):
@@ -127,14 +126,22 @@ class AlphabetListLexer(AlphabetLexer):
             raise Exception("Nothing consumed")
         for left, right, gd in valid_alternatives:
             string = self.string[left:right]
-            tree.append(left, right, string, check_position=False)
+            if isinstance(string, list):
+                from pydsl.Grammar import String
+                string = String("".join(str(x) for x in string))
+            tree.append(left, right, string, gd, check_position=False)
 
         right_length_seq = []
-        for x in tree.generate_valid_sequences():
+        for x in tree.valid_sequences():
             if x[-1]['right'] == len(self.string):
                 right_length_seq.append(x)
+        if not right_length_seq:
+            raise Exception("No sequence found for input %s alphabet %s" % (self.string,self.alphabet))
         for y in sorted(right_length_seq, key=lambda x:len(x))[0]: #Always gets the match with less tokens
-            yield y['content']
+            if include_gd:
+                yield y['content'], y.get('gd')
+            else:
+                yield y['content']
 
     def lexer_generator(self, target):
         next(target)
@@ -144,7 +151,7 @@ class AlphabetListLexer(AlphabetLexer):
             buffer += element  # Asumes string
             for x in range(1, len(buffer)):
                 currentstr = buffer[:x]
-                for gd in self.alphabet.grammarlist:
+                for gd in self.alphabet:
                     checker = checker_factory(gd)
                     if checker.check(currentstr):
                         buffer = buffer[x:]
@@ -162,11 +169,11 @@ class PythonLexer(Lexer):
 
 
 def lexer_factory(alphabet):
-    from pydsl.Alphabet import AlphabetListDefinition
+    from pydsl.Grammar.Alphabet import Choice
     if isinstance(alphabet, str):
         alphabet = load(alphabet)
-    if isinstance(alphabet, AlphabetListDefinition):
-        return AlphabetListLexer(alphabet)
+    if isinstance(alphabet, Choice):
+        return ChoiceLexer(alphabet)
     elif isinstance(alphabet, Encoding):
         return EncodingLexer(alphabet)
     else:

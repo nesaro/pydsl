@@ -16,6 +16,7 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
+from pydsl.Grammar.Definition import String
 
 
 class TestBNF(unittest.TestCase):
@@ -23,27 +24,26 @@ class TestBNF(unittest.TestCase):
         from pydsl.contrib.bnfgrammar import productionset0
         self.grammardef = productionset0
 
-    @unittest.skip
+    @unittest.skip("Not implemented")
     def testEnumerate(self):
         self.assertListEqual([x for x in self.grammardef.enum()], ["SR"])
 
     def testFirst(self):
-        from pydsl.Grammar.Definition import String
-        self.assertListEqual(self.grammardef.first, [String("S")])
+        self.assertEqual(self.grammardef.first, String("S"))
 
-    @unittest.skip
+    @unittest.skip("Not implemented")
     def testMin(self):
         self.assertEqual(self.grammardef.minsize,2)
 
-    @unittest.skip
+    @unittest.skip("Not implemented")
     def testMax(self):
         self.assertEqual(self.grammardef.maxsize,2)
 
     def testFirstLookup(self):
         from pydsl.Grammar.Symbol import NonTerminalSymbol, TerminalSymbol
-        from pydsl.Grammar.Definition import String
+        from pydsl.Grammar.Alphabet import Choice
         self.grammardef.first_lookup(NonTerminalSymbol("exp"))[0]
-        self.assertListEqual(self.grammardef.first_lookup(NonTerminalSymbol("exp")),[TerminalSymbol(String("S"))])
+        self.assertEqual(self.grammardef.first_lookup(NonTerminalSymbol("exp")),Choice([String("S")]))
 
     def testNextLookup(self):
         from pydsl.Grammar.Symbol import NonTerminalSymbol, EndSymbol
@@ -51,5 +51,4 @@ class TestBNF(unittest.TestCase):
         self.assertListEqual(self.grammardef.next_lookup(NonTerminalSymbol("exp")),[EndSymbol()])
 
     def testAlphabet(self):
-        from pydsl.Grammar.Definition import String
-        self.assertListEqual(self.grammardef.alphabet().to_list, [String(x) for x in ["S","R"]])
+        self.assertListEqual(self.grammardef.alphabet, [String(x) for x in ["S","R"]])

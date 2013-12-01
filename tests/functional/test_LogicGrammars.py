@@ -7,7 +7,7 @@ __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
-from pydsl.Parser.RecursiveDescent import BacktracingErrorRecursiveDescentParser
+from pydsl.Parser.Backtracing import BacktracingErrorRecursiveDescentParser
 from pydsl.File.BNF import load_bnf_file
 from pydsl.Config import load
 

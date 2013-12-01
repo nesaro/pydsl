@@ -24,7 +24,7 @@ import unittest
 from pydsl.Grammar.Definition import RegularExpression
 import re
 
-class TestGrammarDefinitionRegularExpression(unittest.TestCase):
+class TestRegularExpression(unittest.TestCase):
     """Regular expression method tests"""
     def testInstantiation(self):
         re1 = RegularExpression('^a$')
@@ -50,7 +50,7 @@ class TestGrammarDefinitionRegularExpression(unittest.TestCase):
         re1.maxsize
 
     def testAlphabet(self):
-        from pydsl.Alphabet import Encoding
+        from pydsl.Grammar.Alphabet import Encoding
         re1 = RegularExpression(re.compile('^a$'))
-        self.assertEqual(re1.alphabet(), Encoding('ascii'))
+        self.assertEqual(re1.alphabet, Encoding('ascii'))
 
