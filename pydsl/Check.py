@@ -107,9 +107,6 @@ class BNFChecker(Checker):
         if parser in ("descent", "auto", "default", None):
             from pydsl.Parser.Backtracing import BacktracingErrorRecursiveDescentParser
             self.__parser = BacktracingErrorRecursiveDescentParser(bnf)
-        elif parser == "weighted":
-            from pydsl.Parser.Weighted import WeightedParser
-            self.__parser = WeightedParser(bnf)
         else:
             raise ValueError("Unknown parser : " + parser)
 
