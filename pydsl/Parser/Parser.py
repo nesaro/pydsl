@@ -68,24 +68,20 @@ class TopDownParser(Parser):
 class BottomUpParser(Parser):
     """ leaf to root parser"""
     def __init__(self, bnfgrammar):
-        self._lexer = lexer_factory(bnfgrammar.alphabet())
+        self._lexer = lexer_factory(bnfgrammar.alphabet)
         self._productionset = bnfgrammar
 
 
-def parser_factory(grammar, parser = "auto"):
+def parser_factory(grammar, parser = None):
     if isinstance(grammar, str):
         grammar = load(grammar)
     from pydsl.Grammar.BNF import BNFGrammar
     if isinstance(grammar, BNFGrammar):
-        if parser == "descent":
+        if parser in ("auto" , "default" , "descent", None):
             from pydsl.Parser.Backtracing import BacktracingErrorRecursiveDescentParser
             return BacktracingErrorRecursiveDescentParser(grammar)
-        elif parser in ("auto" , "default" , "weighted"):
-            #TODO Guess best parser
-            from pydsl.Parser.Weighted import WeightedParser
-            return WeightedParser(grammar)
         else:
-            raise Exception("Wrong parser name: " + parser)
+            raise Exception("Wrong parser name: " + str(parser))
     else:
         raise ValueError(grammar)
 

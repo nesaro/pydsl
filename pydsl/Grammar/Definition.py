@@ -19,19 +19,22 @@ __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
+import collections
+
 
 class Grammar(object):
 
-    def __init__(self):
-        pass
+    def __init__(self, base_alphabet = None):
+        self.base_alphabet = base_alphabet
 
     def enum(self):
         """Generates every possible accepted string"""
         raise NotImplementedError
 
     def first(self):# -> set:
-        """Grammar definition that matches every possible first element"""
-        return self.alphabet()
+        """Grammar definition that matches every possible first element.
+        the returned value is a subset of the base_alphabet"""
+        return self.alphabet
 
     @property
     def minsize(self):# -> int:
@@ -43,23 +46,19 @@ class Grammar(object):
         """Returns the max size in alphabet tokens"""
         return None
 
+    @property
     def alphabet(self):
         """Returns the alphabet used by this grammar"""
-        raise NotImplementedError
+        if self.base_alphabet is None:
+            from pydsl.Grammar.Alphabet import Encoding
+            self.base_alphabet = Encoding("ascii")
+        return self.base_alphabet
 
 class PLYGrammar(Grammar):
     """PLY based grammar"""
     def __init__(self, module):
         Grammar.__init__(self)
         self.module = module
-
-    @property
-    def maxsize(self):
-        raise NotImplementedError
-
-    @property
-    def minsize(self):
-        raise NotImplementedError
 
 class RegularExpression(Grammar):
     def __init__(self, regexp, flags = 0):
@@ -101,10 +100,6 @@ class RegularExpression(Grammar):
     def __getattr__(self, attr):
         return getattr(self.regexp, attr)
 
-    def alphabet(self):
-        from pydsl.Grammar.Alphabet import Encoding
-        return Encoding("ascii")
-
 class String(Grammar):
     def __init__(self, string):
         Grammar.__init__(self)
@@ -136,17 +131,10 @@ class String(Grammar):
     def __str__(self):
         return str(self.string)
 
-    def alphabet(self):
-        return [String(x) for x in self.string]
-
 class JsonSchema(Grammar, dict):
     def __init__(self, *args, **kwargs):
         Grammar.__init__(self)
         dict.__init__(self, *args, **kwargs)
-
-    def alphabet(self):
-        from pydsl.Grammar.Alphabet import Encoding
-        return Encoding("ascii")
 
 class MongoGrammar(Grammar, dict):
     def __init__(self, *args, **kwargs):
@@ -156,10 +144,6 @@ class MongoGrammar(Grammar, dict):
     @property
     def first(self):
         return [String("{")]
-
-    def alphabet(self):
-        from pydsl.Grammar.Alphabet import Encoding
-        return Encoding("ascii")
 
 class PythonGrammar(Grammar, dict):
     """
@@ -178,6 +162,7 @@ class PythonGrammar(Grammar, dict):
         from pypository.utils import ImmutableDict #FIXME!
         return hash(ImmutableDict(self))        
 
+    @property
     def alphabet(self):
         if "alphabet" in self:
             return self['alphabet']

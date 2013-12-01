@@ -27,7 +27,7 @@ class TestGuesser(unittest.TestCase):
         from pydsl.Config import load_default_memory
         load_default_memory()
 
-    def testStuff(self):
+    def testGuesser(self):
         from pydsl.Guess import Guesser
         guesser = Guesser()
         expected_result = sorted(['IntegerTree','cstring','hex','unixFilename','integer','calc_ply','ascii', 'test_alphabet', 'australian_postcode','swiss_postcode'])
@@ -37,8 +37,3 @@ class TestGuesser(unittest.TestCase):
         #self.assertListEqual(guesser.guess_grammar('1234'), ['integer','cstring'])
         #self.assertRaises(Exception, guesser, None)
 
-    def testListInput(self):
-        pass
-
-    def testEmptyInput(self):
-        pass

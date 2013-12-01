@@ -23,7 +23,6 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
-from pydsl.Grammar.Symbol import TerminalSymbol
 
 
 class ParseTree(object):
@@ -81,15 +80,18 @@ class Sequence:
             return set([0])
         return set(x['right'] for x in self.possible_items)
 
-    def append(self, left, right, content, check_position=True):
+    def append(self, left, right, content, gd = None, check_position=True):
         if left > right:
             raise Exception
         if check_position == True and left:
             if left not in self.current_right:
                 raise ValueError("Unable to add element")
-        self.possible_items.append({'left':left, 'right':right, 'content':content})
+        result = {'left':left, 'right':right, 'content':content}
+        if gd:
+            result['gd'] = gd
+        self.possible_items.append(result)
 
-    def generate_valid_sequences(self):
+    def valid_sequences(self):
         """Returns list"""
         valid_sets = [[x] for x in self.possible_items if x['left'] == 0]
         change = True
@@ -107,6 +109,6 @@ class Sequence:
     def right_limit_list(self):
         if not self.possible_items:
             return [0]
-        return list(set([x[-1]['right'] for x in self.generate_valid_sequences()]))
+        return list(set([x[-1]['right'] for x in self.valid_sequences()]))
 
 

@@ -38,7 +38,8 @@ class Many(Grammar):
 
 class Sequence(Grammar, list):
     def __init__(self, *args, **kwargs):
-        Grammar.__init__(self)
+        base_alphabet = kwargs.pop('base_alphabet', None)
+        Grammar.__init__(self, base_alphabet)
         list.__init__(self, *args, **kwargs)
 
 class Not(Grammar, list):

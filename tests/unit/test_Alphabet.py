@@ -41,17 +41,10 @@ class TestAlphabet(unittest.TestCase):
 
     def testLexer(self):
         lexer = lexer_factory(self.alphabet)
-        self.assertListEqual(lexer("1234"), ["1234"])
-        self.assertListEqual(lexer("123411/11/2001"), ["1234","11/11/2001"])
+        self.assertListEqual(lexer("1234"), [("1234", self.integer)])
+        self.assertListEqual(lexer("123411/11/2001"), [("1234", self.integer),("11/11/2001", self.date)])
 
-    def testProperties(self):
-        self.alphabet.grammarlist
-
-    def testGenerateSymbol(self):
+    def testEncoding(self):
         alphabet = Encoding('ascii')
-        print(alphabet['a'])
-        print(self.alphabet[0])
-
-class TestLexerExamples:
-    pass
-    #string to ascii
+        self.assertTrue(alphabet['a'])
+        self.assertTrue(self.alphabet[0])
