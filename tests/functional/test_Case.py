@@ -106,7 +106,8 @@ class TestCase(unittest.TestCase):
         self.assertEqual(result, 3)
         from pydsl.Grammar.Alphabet import Choice
         from pydsl.Grammar.Definition import String
-        math_alphabet = Choice(['integer',String('+')])
+        from pydsl.Config import load
+        math_alphabet = Choice([load('integer'),String('+')])
         from pydsl.Lex import lex
         tokens = [x[0] for x in lex(math_alphabet, "11+2")]
         parse_tree = rdp(tokens)

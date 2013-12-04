@@ -139,7 +139,8 @@ class TestChoiceChecker(unittest.TestCase):
     def testCheck(self):
         from pydsl.Check import ChoiceChecker
         from pydsl.Grammar.Alphabet import Choice
-        a = Choice(['integer'])
+        from pydsl.Config import load
+        a = Choice([load('integer')])
         checker = ChoiceChecker(a)
         self.assertTrue(checker.check('1234'))
         self.assertFalse(checker.check('abc'))

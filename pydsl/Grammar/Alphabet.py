@@ -42,12 +42,8 @@ class Choice(Alphabet, list):
         if not grammarlist:
             raise ValueError
         result = []
-        from pydsl.Config import load
         for x in grammarlist:
-            if isinstance(x, str):
-                result.append(load(x))
-            else:
-                result.append(x)
+            result.append(x)
         list.__init__(self, result)
         base_alphabet_list = []
         for x in self:
