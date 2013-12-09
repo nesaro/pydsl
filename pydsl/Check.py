@@ -182,9 +182,6 @@ class PLYChecker(Checker):
 class StringChecker(Checker):
     def __init__(self, gd):
         Checker.__init__(self)
-        if isinstance(gd, str):
-            from pydsl.Grammar.Definition import String
-            gd = String(gd)
         self.gd = gd
 
     def check(self, data):

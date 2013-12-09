@@ -152,7 +152,7 @@ class TestStringChecker(unittest.TestCase):
     def testCheck(self):
         """Test checker instantiation and call"""
         from pydsl.Check import StringChecker
-        grammarchecker = StringChecker("string123")
+        grammarchecker = StringChecker(String("string123"))
         self.assertTrue(grammarchecker("string123"))
         self.assertTrue(grammarchecker(["string123"]))
         self.assertTrue(grammarchecker(("string123",)))

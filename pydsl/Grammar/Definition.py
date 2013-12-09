@@ -134,6 +134,12 @@ class String(Grammar):
     def __str__(self):
         return str(self.string)
 
+    def __len__(self):
+        return len(self.string)
+
+    def __getitem__(self, index):
+        return self.string[index]
+
 class JsonSchema(Grammar, dict):
     def __init__(self, *args, **kwargs):
         Grammar.__init__(self)
