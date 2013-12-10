@@ -146,7 +146,7 @@ class MongoChecker(Checker):
                 operator = list(spec.keys())[0]
                 operand = list(spec.values())[0]
                 if operator == "$type":
-                    if not checker_factory(operand).check(str(value)):
+                    if not check(operand, value):
                         return False
                 elif operator == "$or":
                     if not any([self.__auxcheck({key:x}, data) for x in operand]):
