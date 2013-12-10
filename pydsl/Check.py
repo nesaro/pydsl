@@ -35,9 +35,6 @@ def checker_factory(grammar):
     from pydsl.Grammar.Definition import PLYGrammar, RegularExpression, MongoGrammar, String, PythonGrammar
     from pydsl.Grammar.Alphabet import Choice, Encoding
     from collections import Iterable
-    if isinstance(grammar, str):
-        from pydsl.Config import load
-        grammar = load(grammar)
     if isinstance(grammar, BNFGrammar):
         return BNFChecker(grammar)
     elif isinstance(grammar, RegularExpression):
@@ -146,7 +143,9 @@ class MongoChecker(Checker):
                 operator = list(spec.keys())[0]
                 operand = list(spec.values())[0]
                 if operator == "$type":
-                    if not check(operand, value):
+                    from pydsl.Config import load
+                    gd = load(operand)
+                    if not check(gd, value):
                         return False
                 elif operator == "$or":
                     if not any([self.__auxcheck({key:x}, data) for x in operand]):
@@ -244,6 +243,9 @@ class IterableChecker(Checker):
 
     def check(self,data):
         for definition in self.iterable:
+            from pydsl.Grammar import Grammar
+            if not isinstance(definition, Grammar):
+                raise TypeError("Expected a grammar definition")
             try:
                 if check(definition, data):
                     return True
