@@ -25,11 +25,7 @@ class Alphabet(Grammar):
     """Defines a set of valid elements"""
     @property
     def first(self):
-        return self
-
-    @property
-    def maxsize(self):
-        return None
+        raise NotImplementedError
 
     @property
     def minsize(self):
