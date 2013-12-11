@@ -26,19 +26,7 @@ from pydsl.Check import checker_factory
 from pydsl.Config import load
 
 
-class Lexer(object):
-
-    """Translates an input written in one Alphabet into another Alphabet"""
-    @property
-    def input_alphabet(self):
-        raise NotImplementedError
-
-    @property
-    def output_alphabet(self):
-        raise NotImplementedError
-
-
-class EncodingLexer(Lexer):
+class EncodingLexer(object):
 
     """Special Lexer that encodes from a string a reads a string"""
 
@@ -59,7 +47,7 @@ class EncodingLexer(Lexer):
                 target.send(x)
 
 
-class ChoiceLexer(Lexer):
+class ChoiceLexer(object):
 
     """Lexer receives an Alphabet in the initialization (A1).
     Receives an input that belongs to A1 and generates a list of tokens in a different Alphabet A2
@@ -137,7 +125,7 @@ class ChoiceLexer(Lexer):
                         target.send(currentstr)
 
 
-class PythonLexer(Lexer):
+class PythonLexer(object):
     """A python function based lexer"""
     def __init__(self, function):
         self._function = function
