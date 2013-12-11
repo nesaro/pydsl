@@ -63,7 +63,8 @@ def translator_factory(function):
         result = {}
         for key in originaldic:
             from pydsl.Check import checker_factory
-            result[key] = checker_factory(str(originaldic[key]))
+            from pydsl.Config import load
+            result[key] = checker_factory(load(str(originaldic[key])))
         return result
     if isinstance(function, str):
         function = load(function)

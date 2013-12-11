@@ -17,15 +17,15 @@
 
 from pydsl.Grammar.Alphabet import Encoding
 from pypository.utils import ImmutableDict
-from pypository.List import ListStorage
-from pypository.Memory import Memory
+from pypository.List import ListRepository
+from pypository.Repository import Repository
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 
-class EncodingStorage(ListStorage):
+class EncodingStorage(ListRepository):
 
     @staticmethod
     def _generatekey(element):
@@ -39,9 +39,9 @@ class EncodingStorage(ListStorage):
         return tuple([ImmutableDict({"identifier": x, "value": x, "iclass": "Encoding"}) for x in self._content])
 
 
-class RegexpDictStorage(Memory):
+class RegexpDictStorage(Repository):
     def __init__(self, dictionary):
-        Memory.__init__(self)
+        Repository.__init__(self)
         self._content = dictionary
 
     def generate_all_summaries(self):# -> list:

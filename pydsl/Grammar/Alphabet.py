@@ -25,11 +25,7 @@ class Alphabet(Grammar):
     """Defines a set of valid elements"""
     @property
     def first(self):
-        return self
-
-    @property
-    def maxsize(self):
-        return None
+        raise NotImplementedError
 
     @property
     def minsize(self):
@@ -42,12 +38,8 @@ class Choice(Alphabet, list):
         if not grammarlist:
             raise ValueError
         result = []
-        from pydsl.Config import load
         for x in grammarlist:
-            if isinstance(x, str):
-                result.append(load(x))
-            else:
-                result.append(x)
+            result.append(x)
         list.__init__(self, result)
         base_alphabet_list = []
         for x in self:

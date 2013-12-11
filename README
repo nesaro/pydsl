@@ -39,7 +39,6 @@ INSTALLATION
 REQUIREMENTS
 ============
  * python >= 2.7
- * pypository
  * optional: ply library ( http://www.dabeaz.com/ply/ )
 
 ABOUT

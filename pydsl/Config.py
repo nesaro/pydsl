@@ -30,21 +30,21 @@ import os
 
 
 def load_default_memory():
-    from pypository.Directory import DirStorage
+    from pypository.Directory import DirRepository
     dirname = resource_filename("pydsl.contrib", "")
     GLOBALCONFIG.memorylist.append(
-        DirStorage(
+        DirRepository(
             dirname + "/grammar/",
             GLOBALCONFIG.formatlist))
     GLOBALCONFIG.memorylist.append(
-        DirStorage(
+        DirRepository(
             dirname + "/alphabet/",
             GLOBALCONFIG.formatlist))
     regexpmodule = imp.load_source("regexps", os.path.join(dirname,"regexps.py"))
     GLOBALCONFIG.memorylist.append(RegexpDictStorage(regexpmodule.res))
     GLOBALCONFIG.memorylist.append(EncodingStorage(dirname + "/encoding.py"))
     GLOBALCONFIG.memorylist.append(
-        DirStorage(
+        DirRepository(
             dirname + "/transformer/",
             GLOBALCONFIG.formatlist))
 

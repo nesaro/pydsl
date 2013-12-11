@@ -26,19 +26,7 @@ from pydsl.Check import checker_factory
 from pydsl.Config import load
 
 
-class Lexer(object):
-
-    """Translates an input written in one Alphabet into another Alphabet"""
-    @property
-    def input_alphabet(self):
-        raise NotImplementedError
-
-    @property
-    def output_alphabet(self):
-        raise NotImplementedError
-
-
-class EncodingLexer(Lexer):
+class EncodingLexer(object):
 
     """Special Lexer that encodes from a string a reads a string"""
 
@@ -59,22 +47,15 @@ class EncodingLexer(Lexer):
                 target.send(x)
 
 
-class AlphabetLexer(Lexer):
+class ChoiceLexer(object):
 
     """Lexer receives an Alphabet in the initialization (A1).
     Receives an input that belongs to A1 and generates a list of tokens in a different Alphabet A2
     It is always described with a regular grammar"""
 
-    def __init__(self):
+    def __init__(self, alphabet):
         self.load(None)
-
-    @property
-    def current(self):
-        """Returns the element under the cursor"""
-        try:
-            return self.string[self.index]
-        except IndexError:
-            return None
+        self.alphabet = alphabet
 
     def load(self, string):
         self.string = string
@@ -88,24 +69,10 @@ class AlphabetLexer(Lexer):
             raise Exception("%s doesn't match %s" % (self.current, char))
         self.consume()
 
-    def nextToken(self):
-        raise NotImplementedError
-
     def __call__(self, string):  # -> "TokenList":
         """Tokenizes input, generating a list of tokens"""
         self.string = string
         return [x for x in self.nextToken(True)]
-
-    def lexer_generator(self):
-        """generator version of the lexer, yields a new token as soon as possible"""
-        raise NotImplementedError
-
-
-class ChoiceLexer(AlphabetLexer):
-
-    def __init__(self, alphabet):
-        AlphabetLexer.__init__(self)
-        self.alphabet = alphabet
 
     @property
     def current(self):
@@ -158,7 +125,7 @@ class ChoiceLexer(AlphabetLexer):
                         target.send(currentstr)
 
 
-class PythonLexer(Lexer):
+class PythonLexer(object):
     """A python function based lexer"""
     def __init__(self, function):
         self._function = function

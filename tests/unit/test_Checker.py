@@ -139,7 +139,8 @@ class TestChoiceChecker(unittest.TestCase):
     def testCheck(self):
         from pydsl.Check import ChoiceChecker
         from pydsl.Grammar.Alphabet import Choice
-        a = Choice(['integer'])
+        from pydsl.Config import load
+        a = Choice([load('integer')])
         checker = ChoiceChecker(a)
         self.assertTrue(checker.check('1234'))
         self.assertFalse(checker.check('abc'))
@@ -151,7 +152,7 @@ class TestStringChecker(unittest.TestCase):
     def testCheck(self):
         """Test checker instantiation and call"""
         from pydsl.Check import StringChecker
-        grammarchecker = StringChecker("string123")
+        grammarchecker = StringChecker(String("string123"))
         self.assertTrue(grammarchecker("string123"))
         self.assertTrue(grammarchecker(["string123"]))
         self.assertTrue(grammarchecker(("string123",)))
