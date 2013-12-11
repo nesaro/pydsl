@@ -59,22 +59,15 @@ class EncodingLexer(Lexer):
                 target.send(x)
 
 
-class AlphabetLexer(Lexer):
+class ChoiceLexer(Lexer):
 
     """Lexer receives an Alphabet in the initialization (A1).
     Receives an input that belongs to A1 and generates a list of tokens in a different Alphabet A2
     It is always described with a regular grammar"""
 
-    def __init__(self):
+    def __init__(self, alphabet):
         self.load(None)
-
-    @property
-    def current(self):
-        """Returns the element under the cursor"""
-        try:
-            return self.string[self.index]
-        except IndexError:
-            return None
+        self.alphabet = alphabet
 
     def load(self, string):
         self.string = string
@@ -88,24 +81,10 @@ class AlphabetLexer(Lexer):
             raise Exception("%s doesn't match %s" % (self.current, char))
         self.consume()
 
-    def nextToken(self):
-        raise NotImplementedError
-
     def __call__(self, string):  # -> "TokenList":
         """Tokenizes input, generating a list of tokens"""
         self.string = string
         return [x for x in self.nextToken(True)]
-
-    def lexer_generator(self):
-        """generator version of the lexer, yields a new token as soon as possible"""
-        raise NotImplementedError
-
-
-class ChoiceLexer(AlphabetLexer):
-
-    def __init__(self, alphabet):
-        AlphabetLexer.__init__(self)
-        self.alphabet = alphabet
 
     @property
     def current(self):
