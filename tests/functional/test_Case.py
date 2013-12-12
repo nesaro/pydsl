@@ -72,7 +72,7 @@ class TestCase(unittest.TestCase):
             if tree.symbol == NonTerminalSymbol("S"):
                 return parse_tree_walker(tree.childlist[0])
             if tree.symbol == NonTerminalSymbol("E"):
-                return to_number(tree.childlist[0].symbol.gd.string) + to_number(tree.childlist[2].symbol.gd.string)
+                return to_number(tree.childlist[0].symbol.gd) + to_number(tree.childlist[2].symbol.gd)
             raise Exception
             
         result = parse_tree_walker(parse_tree[0])

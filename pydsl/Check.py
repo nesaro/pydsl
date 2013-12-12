@@ -186,7 +186,7 @@ class StringChecker(Checker):
     def check(self, data):
         if isinstance(data, Iterable):
             data = "".join([str(x) for x in data])
-        return self.gd.string == str(data)
+        return self.gd == str(data)
 
 class JsonSchemaChecker(Checker):
     def __init__(self, gd):
