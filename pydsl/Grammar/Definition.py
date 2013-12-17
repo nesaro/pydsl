@@ -127,15 +127,6 @@ class JsonSchema(Grammar, dict):
         Grammar.__init__(self)
         dict.__init__(self, *args, **kwargs)
 
-class MongoGrammar(Grammar, dict):
-    def __init__(self, *args, **kwargs):
-        Grammar.__init__(self)
-        dict.__init__(self, *args, **kwargs)
-
-    @property
-    def first(self):
-        return [String("{")]
-
 class PythonGrammar(Grammar, dict):
     """
     A Python dictionary that defines a Grammar.

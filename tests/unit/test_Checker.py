@@ -22,26 +22,6 @@ __email__ = "nesaro@gmail.com"
 import unittest
 from pydsl.Grammar.Definition import String
 
-class TestMongoChecker(unittest.TestCase):
-    """Mongo checker"""
-    def testCheck(self):
-        """Test checker instantiation and call"""
-        bad = {"a":1,"b":3}
-        letter = {"a":1,"b":"asd"}
-        from pydsl.Check import MongoChecker
-        from pydsl.contrib.mongogrammar import spec, fullspec
-        checker = MongoChecker(spec)
-        self.assertTrue(checker.check(spec))
-        self.assertFalse(checker.check(bad))
-        fullchecker = MongoChecker(fullspec)
-        self.assertTrue(fullchecker.check(spec))
-        self.assertTrue(fullchecker.check(bad))
-        self.assertFalse(fullchecker.check(letter))
-        #self.assertRaises(TypeError,fullchecker.check, "")
-
-    def testEmptyInput(self):
-        pass
-
 class TestBNFChecker(unittest.TestCase):
     """BNF Checker"""
     def testStringInput(self):
