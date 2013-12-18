@@ -71,17 +71,8 @@ class GlobalConfig(object):
     """Execution time global configuration"""
 
     memorylist = []
-    def __init__(self, debuglevel=40):
+    def __init__(self):
         self.formatlist = default_formats()
-        self.__debuglevel = debuglevel
-
-    @property
-    def debuglevel(self):
-        return self.__debuglevel
-
-    @debuglevel.setter
-    def debuglevel(self, level):
-        self.__debuglevel = level
 
     @classmethod
     def load(cls, identifier, memorylist=None):
