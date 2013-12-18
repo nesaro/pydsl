@@ -1,0 +1,46 @@
+DESCRIPTION
+===========
+
+pydsl is a language library written in python. It provides some verbs for Grammars.
+
+    from pydsl.File.BNF import load_bnf_file
+    grammardefinition = loand_bnf_file('myfile.bnf')
+    grammardefinition.alphabet # Returns the alphabet used by this grammar
+    grammardefinition.minsize
+    grammardefinition.maxsize 
+    grammardefinition.enumerate # Returns a generator that generates every accepted word
+
+    from pydsl.Checker import check
+    check(grammardefinition,'mystring') # returns True or False
+
+    from pydsl.Match import match
+    match(grammardefinition,'mystring') # returns ('my','string')
+
+    from pydsl.Parser import parse
+    parse(grammardefinition,'mystring') # returns a ParseTree
+
+    from pydsl.Extract import extract
+    extract(grammardefinition,'abcmystringabc') # returns ('mystring',3,11)
+
+    from pydsl.Validate import validate
+    validate(grammardefinition,'mystrng') # returns a ParseTree with the missing i and a note
+
+    from pydsl.Guess import guess
+    guess('mystring') # Returns a set that includes grammardefinition
+
+
+INSTALLATION
+============
+ * disttools:
+   * python3 setup.py install
+ * pip:
+   * pip install pydsl
+
+REQUIREMENTS
+============
+ * python >= 2.7
+ * optional: ply library ( http://www.dabeaz.com/ply/ )
+
+ABOUT
+=====
+Copyright (C) 2008-2013 Nestor Arocha (nesaro@gmail.com)

@@ -16,23 +16,52 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 
-"""
-"""
-
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha"
+__copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
-
 
 import logging
 LOG = logging.getLogger(__name__)
+from pydsl.Config import load
+from pydsl.Parser.Parser import parser_factory
 
-def validate(sgrammar:"SymbolGrammar", expression) -> "[AST]":
-    """Returns a list of postTreeNodes"""
-    resulttrees = sgrammar.get_trees(expression, True)
-    treelist = []
-    for tree in resulttrees:
-        from pydsl.Grammar.Tree import parser_to_post_tree
-        treelist.append(parser_to_post_tree(tree))
-    return treelist
 
+class Validator(object):
+    """
+    Receives a grammar and an input that doesn't belong to the grammar,
+    expands the grammar by parsing it, returns a list of what's needed 
+    to become grammar compatible
+    """
+    def __init__(self, grammar):
+        self.gd = grammar
+
+    def __call__(self, inputstring): #-> set
+        raise NotImplementedError
+
+
+class BNFValidator(Validator):
+    def __call__(self, inputstring):
+        parser = parser_factory(self.gd, "descent")
+        resulttrees = parser.get_trees(inputstring, True)
+        return [x for x in resulttrees if not x.valid]
+
+
+def validator_factory(grammar):
+    """
+    Creates a validator instance from a grammar definition
+    """
+    if isinstance(grammar, str):
+        grammar = load(grammar)
+    from pydsl.Grammar.BNF import BNFGrammar
+    if isinstance(grammar, BNFGrammar):
+        return BNFValidator(grammar)
+    else:
+        raise ValueError("Only BNF Grammars allowed, got %s:%s" % (str(grammar.__class__.__name__), grammar))
+
+
+def validate(definition, data):
+    """
+    convenience function
+    instantiates a validator and validates the data
+    """
+    return validator_factory(definition)(data)

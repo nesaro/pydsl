@@ -19,38 +19,31 @@
 """
 guess which types are the input data. 
 """
+from pydsl.Check import check
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha"
+__copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
-#FIXME: Use globalconfig memories
 #TODO: Add Alphabet support
 
 
 import logging
 LOG = logging.getLogger(__name__)
-from pkg_resources import Requirement, resource_filename, DistributionNotFound
-from pydsl.Memory.Loader import load_checker
+from pypository.search.Searcher import Searcher
+from pydsl.Config import GLOBALCONFIG
 
-class Guesser:
-    def __init__(self, memorylist = []):
-        from pydsl.Memory.Search.Searcher import MemorySearcher
-        from pydsl.Memory.Storage.Directory.Grammar import GrammarDirStorage 
+
+class Guesser(object):
+    """Returns every grammar and alphabet definition that matches the input"""
+    def __init__(self, memorylist = None):
         if not memorylist:
-            try:
-                dirname = resource_filename(Requirement.parse("pydsl_contrib"),"")
-            except DistributionNotFound:
-                pass
-            else:
-                memorylist.append(GrammarDirStorage(dirname + "/grammar/"))
+            memorylist = GLOBALCONFIG.memorylist
         self.memorylist = memorylist
-        self.searcher = MemorySearcher([x.indexer() for x in memorylist])
+        self.searcher = Searcher([x.indexer for x in memorylist])
 
-    def __call__(self, inputstring) -> set:
+    def __call__(self, data): #-> set:
         result = set()
         for summary in self.searcher.search():
-            typ = None
-            name = None
             try:
                 for mem in self.memorylist:
                     if summary["identifier"] in mem:
@@ -58,27 +51,16 @@ class Guesser:
                         try:
                             typ = mem.load(name)
                         except:
-                            LOG.exception("Error while loading memory %s" % name)
+                            LOG.warning("Error while loading memory %s" % name)
                             continue
                         break
                 else:
                     continue # not found 
-                checker = load_checker(typ)
-                if checker.check(inputstring):
+                if check(typ, data):
                     result.add(str(name))
-            except TypeError:
+            except (TypeError, ValueError):
                 continue
         return result
 
-#class FileGuesser(Guesser):
-#    """Guesser subclass for files only. Works like file command"""
-#    def __init__(self, memorylist = []):
-#        from pydsl.Memory.Search.Searcher import MemorySearcher
-#        from pydsl.Memory.Storage.Dict import FileTypeDictStorage
-#
-#        if not memorylist:
-#            dirname = resource_filename(Requirement.parse("pydsl_contrib"),"")
-#            memorylist.append(FileTypeDictStorage(dirname + "/dict/filetype.dict"))
-#        Guesser.__init__(self, memorylist)
-
-
+def guess(data):
+    return Guesser()(data)

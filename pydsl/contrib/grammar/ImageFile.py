@@ -1,14 +1,17 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-#copyright (c) 2008-2012 Néstor Arocha Rodríguez
+#copyright (c) 2008-2013 Nestor Arocha
 
 """Image file recognizer"""
 
 def matchFun(input):
-    content = input #FIXME: assuming bytes
+    content = input #assuming bytes
     import imghdr
-    return(bool(imghdr.what(None, content)))
+    try:
+        return bool(imghdr.what(None, content))
+    except:
+        return False
 
 
 iclass = "PythonGrammar"

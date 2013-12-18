@@ -1,2 +1,4 @@
 git+https://github.com/Julian/jsonschema.git
 ply
+nose
+pyparsing

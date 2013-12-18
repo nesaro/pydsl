@@ -1,8 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-#Copyright (c) 2008-2012 Nestor Arocha Rodriguez
-
 """Grammar 2 Recursive Descent Parser Recognizer
 First recipe of the book "Language implementation patterns
 
@@ -33,7 +31,7 @@ def matchFun(inputstr):
     def elements(tl):
         if not element(tl):
             return False
-        while(look_ahead(tl) == ","):
+        while look_ahead(tl) == ",":
             tl.pop(0)
             if not element(tl):
                 return False
@@ -61,5 +59,3 @@ def matchFun(inputstr):
 
 
 iclass = "PythonGrammar"
-
-

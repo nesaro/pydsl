@@ -1,43 +1,44 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-#This file is part of pydsl.
+# This file is part of pydsl.
 #
-#pydsl is free software: you can redistribute it and/or modify
-#it under the terms of the GNU General Public License as published by
-#the Free Software Foundation, either version 3 of the License, or
+# pydsl is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
 #(at your option) any later version.
 #
-#pydsl is distributed in the hope that it will be useful,
-#but WITHOUT ANY WARRANTY; without even the implied warranty of
-#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#GNU General Public License for more details.
+# pydsl is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
 #
-#You should have received a copy of the GNU General Public License
-#along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
+# You should have received a copy of the GNU General Public License
+# along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 """Production rules"""
 
-from pydsl.Grammar.Symbol import Symbol, TerminalSymbol
-from pydsl.Grammar.Definition import GrammarDefinition
+from pydsl.Grammar.Symbol import Symbol, TerminalSymbol, NullSymbol, EndSymbol
+from pydsl.Grammar.Definition import Grammar
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha"
+__copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 
-class Production:
-    def __init__(self, leftside:list, rightside:list):
-        #Left side must have at least one nonterminal symbol
+class Production(object):
+
+    def __init__(self, leftside, rightside):
+        # Left side must have at least one non terminal symbol
         for element in rightside:
             if not isinstance(element, Symbol):
                 raise TypeError
-        self.leftside = leftside
-        self.rightside = rightside
+        self.leftside = tuple(leftside)
+        self.rightside = tuple(rightside)
 
     def __str__(self):
         """Pretty print"""
-        leftstr = " ".join([ x.name for x in self.leftside])
-        rightstr = " ".join([ str(x) for x in self.rightside])
+        leftstr = " ".join([x.name for x in self.leftside])
+        rightstr = " ".join([str(x) for x in self.rightside])
         return leftstr + "::=" + rightstr
 
     def __eq__(self, other):
@@ -62,56 +63,99 @@ class Production:
             raise Exception
         return self.leftside[0].name
 
+    def __hash__(self):
+        return hash(self.leftside) & hash(self.rightside)
 
-class BNFGrammar(GrammarDefinition): #Only stores a ruleset, and methods to ask properties or validity check 
-    def __init__(self, initialsymbol, fulllist:list, options = {}):
+
+#Only stores a ruleset, and methods to ask properties or validity check
+class BNFGrammar(Grammar):
+
+    def __init__(self, initialsymbol, fulllist, options=None):
+        Grammar.__init__(self)
         self._initialsymbol = initialsymbol
         for rule in fulllist:
-            if fulllist.count(rule) >1:
-                raise ValueError
-        self.fulllist = fulllist
+            if fulllist.count(rule) > 1:
+                raise ValueError("Duplicated rule: " + str(rule))
+        self.fulllist = tuple(fulllist)
+        if not options:
+            options = {}
         self.options = options
 
     @property
-    def productionlist(self):
+    def alphabet(self):
+        from pydsl.Grammar.Alphabet import Choice
+        return Choice([x.gd for x in self.terminal_symbols])
+
+    @property
+    def productions(self):
         return [x for x in self.fulllist if isinstance(x, Production)]
 
     @property
-    def terminalsymbollist(self):
-        return [x for x in self.fulllist if isinstance(x,
-            TerminalSymbol)]
+    def terminal_symbols(self):
+        return [x for x in self.fulllist if isinstance(x, TerminalSymbol)]
 
     @property
     def first(self):
-        return [x.first for x in self.terminalsymbollist]
+        """Returns the a grammar definition that includes all first elements of this grammar""" #TODO
+        result = []
+        for x in self.first_lookup(self.initialsymbol):
+            result += x.first
+        if len(result) == 1:
+            return result[0]
+        return Choice(result)
 
-    @property
-    def left_recursive(self) -> bool:
-        """Tests if exists left recursion"""
-        #TODO
-        raise NotImplementedError
+    def first_lookup(self, symbol, size=1):
+        """
+        Returns a Grammar Definition with the first n terminal symbols
+        produced by the input symbol
+        """
+        if isinstance(symbol, (TerminalSymbol, NullSymbol)):
+            return [symbol.gd]
+        result = []
+        for production in self.productions:
+            if production.leftside[0] != symbol:
+                continue
+            for right_symbol in production.rightside:
+                if right_symbol == symbol: #Avoids infinite recursion
+                    break
+                current_symbol_first = self.first_lookup(right_symbol, size)
+                result += current_symbol_first
+                if NullSymbol not in current_symbol_first:
+                    break # This element doesn't have Null in its first set so there is no need to continue
+        if not result:
+            raise KeyError("Symbol doesn't exist in this grammar")
+        from pydsl.Grammar.Alphabet import Choice
+        return Choice(result)
 
-    @property
-    def right_recursive(self) -> bool:
-        """Tests if exists right recursion"""
-        #TODO
-        raise NotImplementedError
+    def next_lookup(self, symbol):
+        """Returns the next TerminalSymbols produced by the input symbol within this grammar definition"""
+        result = []
+        if symbol == self.initialsymbol:
+            result.append(EndSymbol())
+        for production in self.productions:
+            if symbol in production.rightside:
+                nextindex = production.rightside.index(symbol) + 1
+                while nextindex < len(production.rightside):
+                    nextsymbol = production.rightside[nextindex]
+                    firstlist = self.first_lookup(nextsymbol)
+                    cleanfirstlist = [x for x in firstlist if x != NullSymbol()]
+                    result.append(cleanfirstlist)
+                    if NullSymbol() not in firstlist:
+                        break
+                else:
+                    result += self.next_lookup(production.leftside[0]) #reached the end of the rightside
+
+        return result
 
     def __eq__(self, other):
-        if not isinstance(other,BNFGrammar):
+        if not isinstance(other, BNFGrammar):
             return False
         if self._initialsymbol != other.initialsymbol:
             return False
-        for index in range(len(self.productionlist)):
-            if self.productionlist[index] != other.productionlist[index]:
+        for index in range(len(self.productions)):
+            if self.productions[index] != other.productions[index]:
                 return False
         return True
-
-    #def __getitem__(self, index):
-    #    for rule in self.productionlist:
-    #        if rule.name == index:
-    #            return rule
-    #    raise IndexError
 
     @property
     def initialsymbol(self):
@@ -120,187 +164,42 @@ class BNFGrammar(GrammarDefinition): #Only stores a ruleset, and methods to ask 
     @property
     def main_production(self):
         """Returns main rule"""
-        for rule in self.productionlist:
+        for rule in self.productions:
             if rule.leftside[0] == self._initialsymbol:
                 return rule
         raise IndexError
 
-    def getProductionsBySide(self, symbollist:list, side = "left"):
+    def getProductionsBySide(self, symbollist, side = "left"):
         result = []
-        for rule in self.productionlist: #FIXME Is iterating over production only
-            part = None
+        if isinstance(symbollist, Symbol):
+            symbollist = [symbollist]
+        for rule in self.productions: #FIXME Is iterating over production only
             if side == "left":
                 part = rule.leftside
             elif side == "right":
                 part = rule.rightside
             else:
-                raise KeyError
-            valid = True
+                raise ValueError("Unknown side value %s" % (side,))
             if len(part) != len(symbollist):
-                valid = False
+                continue
             for ruleindex in range(len(part)):
                 if part[ruleindex] != symbollist[ruleindex]:
-                    valid = False
                     break
-            if valid:
+            else:
                 result.append(rule)
         if not result:
             raise IndexError("Symbol: %s" % str([str(x) for x in symbollist]))
-
         return result
-
-    def getProductionByBothSides(self, leftsymbollist:list, rightsymbollist:list):
-        for rule in self.productionlist:
-            valid = True
-            if len(rule.leftside) != len(leftsymbollist):
-                continue
-            if len(rule.rightside) != len(rightsymbollist):
-                continue
-            for ruleindex in range(len(rule.leftside)):
-                if leftsymbollist[ruleindex] != rule.leftside[ruleindex]:
-                    valid = False
-                    break
-            if not valid:
-                continue
-            for ruleindex in range(len(rule.rightside)):
-                if rightsymbollist[ruleindex] != rule.rightside[ruleindex]:
-                    valid = False
-                    break
-            if not valid:
-                continue
-            if valid:
-                return rule
-        raise IndexError
 
     def getSymbols(self):
         """Returns every symbol"""
         symbollist = []
-        for rule in self.productionlist:
+        for rule in self.productions:
             for symbol in rule.leftside + rule.rightside:
                 if symbol not in symbollist:
                     symbollist.append(symbol)
-        symbollist += self.terminalsymbollist
+        symbollist += self.terminal_symbols
         return symbollist
 
-    def getProductions(self):
-        return self.productionlist
-
-    def getTerminalSymbols(self):
-        """Returns a list with every terminal symbol """
-        return self.terminalsymbollist
-
-    def getProductionIndex(self, rule):
-        return self.productionlist.index(rule)
-
     def __str__(self):
-        return str(list(map(str,self.productionlist)))
-
-def create_non_terminal_production(productionset:list, terminalsymbol):
-    """Creates a new nonterminalrule for terminalsymbol
-    A -> B,nt 
-    is changed to: 
-    A -> B,C  
-    C -> nt
-    """
-    #walks through all rules looking for our terminalsymbol in rightside
-    from .Symbol import NonTerminalSymbol
-    productionstochange = []
-    for index, production in enumerate(productionset[:]): #copy
-        if terminalsymbol in production.rightside:
-            for symbol in production.rightside:
-                if isinstance(symbol, NonTerminalSymbol):
-                    productionstochange.append(production)
-                    del productionset[index]
-                    break
-    #Inserts new rule
-    newsymbol = NonTerminalSymbol(str(terminalsymbol))
-    newproduction = Production(newsymbol, terminalsymbol)
-    productionset.append(newproduction)
-    #modifies required rules to link with new production
-    for production in productionstochange:
-        newproduction = Production(production.leftside[:], production.rightside[:])
-        for index, element in enumerate(production.rightside):
-            if element == terminalsymbol:
-                del newproduction.rightside[index]
-                newproduction.rightside.insert(index, newsymbol)
-        productionset.append(newproduction)
-    return productionset
-
-def reduce_non_terminal_production(productionset:list, uselesssymbol):
-    """search for production that only have nonterminalsymbol at right, subst nonterminal from rules at right and  remove the rule that have it at left"""
-    production = productionset.getProductionsBySide(uselesssymbol, "right")
-    productionset.remove(production)
-    validterminalsymbol = production.leftside[0] #usefulterminalymbol
-    productionlist = productionset.getProductionsBySide(uselesssymbol)
-    saverule = False
-
-    if len(productionlist) > 1:
-        saverule = True
-        #several rules with uselesssymbol at left
-
-    for production in productionset:    
-        if uselessnonterminal in production.rightside:
-            #adds those who have nonterminal at right 
-            newproduction = production.copy()
-            index = newproduction.index(uselessnonterminal)
-            del newproduction[index]
-            newproduction.insert(index, validterminalsymbol)
-            if not saverule:#Si no habia otra produccion
-                productionset.remove(production)
-
-
-def split_production(productionset:list, production):
-    from .Symbol import NonTerminalSymbol
-    if len(production.rightside) < 2:
-        return productionset
-    index = 0
-    productionset.remove(production)
-    newrightside = []
-    while index < len(production) - 2:
-        firsttwo = production.rightside[index:index+2]
-        newsymbol = NonTerminalSymbol(production.leftside[0].name + "E")
-        newrightside.append(newsymbol)
-        newproduction = Production(newsymbol, firsttwo)
-        productionset.append(newproduction)
-        index += 2
-    newrightside += production.rightside[index:]
-    newproduction = Production(production.leftside, newrightside)
-    productionset.append(newproduction)
-    return productionset
-
-
-def chomsky_normal_form(productionset:BNFGrammar) -> BNFGrammar:
-    """TODO Check is Epsilon free"""
-    ntermslist = []
-    from .Symbol import NonTerminalSymbol
-    #STEP 1: A -> B,c 
-    #Terminal and nonterminal at right side 
-    for production in productionset:
-        termlist = 0
-        ntermlist = 0
-        for element in production.rightside:
-            if isinstance(element, TerminalSymbol):
-                termlist.append(element)
-            elif isinstance(element, NonTerminalSymbol):
-                ntermlist.append(element)
-        if termlist and ntermlist:
-            ntermslist += termlist
-    for terminal in ntermlist:
-        productionset = create_non_terminal_production(productionset, terminal)
-    #STEP 2: useless nonterminal
-    uselessnonterms = []
-    for production in productionset:
-        if len(production.rightside) == 1 and isinstance(production.rightside[0], NonTerminalSymbol):
-            uselessnonterms.append(production.rightside[0])
-    for nonterm in uselessnonterms:
-        productionset = reduce_non_terminal_production(productionset, nonterm)
-
-    #STEP 3:rightside is too long 
-    longproductions = []
-    for production in productionset:
-        if len(production.rightside) > 2:
-            longproductions.append(production)
-    for production in longproductions:
-        productionset = split_production(productionset, nonterm)
-
-    return productionset
+        return str(list(map(str, self.productions)))

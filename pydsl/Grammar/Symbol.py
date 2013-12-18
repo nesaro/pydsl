@@ -1,163 +1,115 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-#This file is part of pydsl.
+# This file is part of pydsl.
 #
-#pydsl is free software: you can redistribute it and/or modify
-#it under the terms of the GNU General Public License as published by
-#the Free Software Foundation, either version 3 of the License, or
+# pydsl is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
 #(at your option) any later version.
 #
-#pydsl is distributed in the hope that it will be useful,
-#but WITHOUT ANY WARRANTY; without even the implied warranty of
-#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#GNU General Public License for more details.
+# pydsl is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
 #
-#You should have received a copy of the GNU General Public License
-#along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
+# You should have received a copy of the GNU General Public License
+# along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 """Symbols"""
+from pydsl.Check import check
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha"
+__copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
-from abc import ABCMeta, abstractmethod
+from pydsl.Grammar.Definition import String
 
-class BoundariesRules:
-    """Rules and policies for symbol conflicts"""
-    def __init__(self, policy, priority:int, size=-1):
-        self.priority = priority
-        if policy == "min":
-            self.policy = policy
-        elif policy == "max":
-            self.policy = policy
-        elif policy == "fixed" and size > 0:
-            self.policy = policy
-            self.size = size
-        else:
-            raise TypeError
-            
-class Symbol(metaclass = ABCMeta):
-    def __init__(self, name, weight): 
-        self.name = name
+class Symbol(object):
+    def __init__(self, weight):
         self._weight = weight
-
-    def __eq__(self, other):
-        if not isinstance(other, Symbol):
-            return False
-        return self.name == other.name
-
-    def __ne__(self, other):
-        """Operator != """
-        return not self.__eq__(other)
 
     @property
     def weight(self):
         return self._weight
 
-    def first(self, length = 1):
-        """Returns the list of possible first elements"""
-        raise NotImplementedError
-
 class NonTerminalSymbol(Symbol):
     def __init__(self, name,  weight = 50):
-        Symbol.__init__(self, name, weight)
+        Symbol.__init__(self, weight)
+        self.name = name
 
     def __str__(self):
         return "<NonTS: " + self.name + ">"
 
+    def __hash__(self):
+        return hash(self.name) ^ hash(self.weight)
+
     def __eq__(self, other):
         if not isinstance(other, NonTerminalSymbol):
             return False
-        return self.name == other.name
+        return self.name == other.name and self.weight == other.weight
 
-class TerminalSymbol(Symbol): 
-    def __init__(self, name, weight, boundariesrules): 
-        Symbol.__init__(self, name, weight)
-        if not isinstance(boundariesrules, BoundariesRules):
-            raise TypeError
+
+class TerminalSymbol(Symbol):
+
+    def __init__(self, gd, weight=None, boundariesrules=None):
+        if isinstance(gd, String):
+            weight = weight or 99
+            boundariesrules = len(gd)
+        else:
+            weight = weight or 49
+        Symbol.__init__(self, weight)
+        if boundariesrules not in ("min", "max", "any") and not isinstance(boundariesrules, int):
+            raise TypeError("Unknown boundaries rules %s" % boundariesrules)
+        if not gd:
+            raise Exception
+        self.gd = gd
         self.boundariesrules = boundariesrules
 
-    @abstractmethod
-    def check(self, data) ->bool:
-        pass
+    def __hash__(self):
+        return hash(self.gd) ^ hash(self.boundariesrules)
 
+    def check(self, data):# ->bool:
+        """Checks if input is recognized as this symbol"""
+        return check(self.gd, data)
 
-class StringTerminalSymbol(TerminalSymbol): #FIXME This class is equivalent to a StaticGrammarDefinition
-    def __init__(self, string):
-        if len(string) < 1:
-            raise TypeError
-        br = BoundariesRules("fixed", 0, len(string))
-        TerminalSymbol.__init__(self, "StrSymbol " + string, 99, br)
-        self.definition = string
-
-    def check(self, tokenlist) -> bool:
-        return tokenlist == self.definition
+    @property
+    def first(self):
+        return self.gd.first
 
     def __eq__(self, other):
         """StringTerminalSymbol are equals if definition and names are equal"""
-        if isinstance(other, str):
-            return self.definition == other
-        if not isinstance(other, StringTerminalSymbol):
+        try:
+            return self.gd == other.gd and self.boundariesrules == other.boundariesrules
+        except AttributeError:
             return False
-        if self.definition != other.definition:
-            return False
-        if self.name != other.name:
-            return False
-        return True
-
-    def __len__(self):
-        return self.definition
-
-    def first(self):
-        return self.definition[0]
 
     def __str__(self):
-        return "<StringTS: " + self.definition + ">"
-
-
-class WordTerminalSymbol(TerminalSymbol):#boundariesrules: priority, [max,min,fixedsize]
-    def __init__(self, name, definitionrequirementsdic, boundariesrules):
-        TerminalSymbol.__init__(self, name, 49, boundariesrules)
-        self.grammarname = definitionrequirementsdic["grammarname"]
-        self.__checker =  None 
-
-    @property
-    def checker(self):
-        if self.__checker is None:
-            from pydsl.Memory.Loader import load_checker
-            self.__checker = load_checker(self.grammarname)
-        return self.__checker
-
-    def __eq__(self, other):
-        if not isinstance(other, WordTerminalSymbol):
-            return False
-        if self.grammarname != other.grammarname:
-            return False
-        if self.name != other.name:
-            return False
-        return True
-
-    def check(self, string):
-        result =  self.checker.check(string)
-        return result
-
-    def __str__(self):
-        return "<WordTS: " + self.grammarname + ">"
-
+        return "<TS: " + str(self.gd) + ">"
 
 class NullSymbol(Symbol):
     def __init__(self):
-        Symbol.__init__(self, "Null", 100)
+        Symbol.__init__(self, 100)
 
     def __eq__(self, other):
         return isinstance(other, NullSymbol)
-    
 
-class BeginSymbol(TerminalSymbol):
-    pass
+    def __bool__(self):
+        return False
 
-class EndSymbol(TerminalSymbol):
-    pass
+class EndSymbol(Symbol):
+    def __init__(self):
+        Symbol.__init__(self, 100)
+
+    def __hash__(self):
+        return hash(str(self))
+
+    def __eq__(self, other):
+        return isinstance(other, EndSymbol)
+
+    def __bool__(self):
+        return False
+
+    def __str__(self):
+        return "$"

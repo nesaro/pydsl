@@ -1,117 +1,117 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-#This file is part of pydsl.
+# This file is part of pydsl.
 #
-#pydsl is free software: you can redistribute it and/or modify
-#it under the terms of the GNU General Public License as published by
-#the Free Software Foundation, either version 3 of the License, or
+# pydsl is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
 #(at your option) any later version.
 #
-#pydsl is distributed in the hope that it will be useful,
-#but WITHOUT ANY WARRANTY; without even the implied warranty of
-#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#GNU General Public License for more details.
+# pydsl is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
 #
-#You should have received a copy of the GNU General Public License
-#along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
+# You should have received a copy of the GNU General Public License
+# along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 """Global (per execution) elements"""
+from pydsl.Repository import EncodingStorage, RegexpDictStorage
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha"
+__copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
-from pydsl.Abstract import Singleton
 import logging
 LOG = logging.getLogger(__name__)
-from pkg_resources import Requirement, resource_filename, DistributionNotFound
+from pkg_resources import resource_filename
+import imp
+import os
 
 
-def generate_memory_list() -> list:
-    """loads default memories"""
-    result = []
-    from pydsl.Memory.Storage.Directory.Grammar import GrammarDirStorage
-    from pydsl.Memory.Storage.Directory.Function import BoardDirStorage, TransformerDirStorage
-    from pydsl.Memory.Storage.Dict import RegexpDictStorage
-    try:
-        dirname = resource_filename("pydsl.contrib", "")
-    except DistributionNotFound:
-        pass
-    else:
-        result.append(GrammarDirStorage(dirname + "/grammar/"))
-        result.append(BoardDirStorage(dirname + "/board/"))
-        result.append(TransformerDirStorage(dirname + "/transformer/"))
-        result.append(RegexpDictStorage(dirname + "/dict/regexp.dict"))
-    return result
+def load_default_memory():
+    from pypository.Directory import DirRepository
+    dirname = resource_filename("pydsl.contrib", "")
+    GLOBALCONFIG.memorylist.append(
+        DirRepository(
+            dirname + "/grammar/",
+            GLOBALCONFIG.formatlist))
+    GLOBALCONFIG.memorylist.append(
+        DirRepository(
+            dirname + "/alphabet/",
+            GLOBALCONFIG.formatlist))
+    regexpmodule = imp.load_source("regexps", os.path.join(dirname,"regexps.py"))
+    GLOBALCONFIG.memorylist.append(RegexpDictStorage(regexpmodule.res))
+    GLOBALCONFIG.memorylist.append(EncodingStorage(dirname + "/encoding.py"))
+    GLOBALCONFIG.memorylist.append(
+        DirRepository(
+            dirname + "/transformer/",
+            GLOBALCONFIG.formatlist))
 
 
-class GlobalConfig(metaclass=Singleton):
+def default_formats():
+    from pydsl.File.Regexp import load_re_from_file, summary_re_from_file
+    from pydsl.File.BNF import load_bnf_file, summary_bnf_file
+    from pydsl.File.Python import summary_python_file, load_python_file
+    return [
+        {"extension": ".py",
+         "summary_from_file": summary_python_file,
+         "load_from_file": load_python_file},
+        {"extension": ".re",
+         "summary_from_file": summary_re_from_file,
+         "load_from_file": load_re_from_file},
+        {"extension": ".bnf",
+         "summary_from_file": summary_bnf_file,
+         "load_from_file": load_bnf_file},
+    ]
+
+
+class GlobalConfig(object):
+
     """Execution time global configuration"""
-    def __init__(self, persistent_dir: str=None, debuglevel=40):
-        self.persistent_dir = persistent_dir
-        self.__memorylist = None  # default memories, sorted by preference
+
+    memorylist = []
+    def __init__(self, debuglevel=40):
+        self.formatlist = default_formats()
         self.__debuglevel = debuglevel
-        self.lang = "es"
-        if self.persistent_dir is None:
-            try:
-                import os
-                if not os.path.exists(os.environ['HOME'] + "/.pydsl/"):
-                    os.mkdir(os.environ['HOME'] + "/.pydsl/")
-                self.persistent_dir = os.environ['HOME'] + "/.pydsl/persistent/"
-                if not os.path.exists(self.persistent_dir):
-                    os.mkdir(self.persistent_dir)
-            except (OSError, KeyError):
-                LOG.exception("Unable to create persistent dir")
-
-    def load(self, filename):
-        """Load config from file"""
-        raise NotImplementedError
-
-    def save(self):
-        """Save config to file"""
-        raise NotImplementedError
-
-    @property
-    def memorylist(self):
-        if self.__memorylist is None:
-            self.__memorylist = generate_memory_list()
-        return self.__memorylist
 
     @property
     def debuglevel(self):
         return self.__debuglevel
 
     @debuglevel.setter
-    def debuglevel(self, level: int):
+    def debuglevel(self, level):
         self.__debuglevel = level
 
-VERSION = "pydsl pre-version\n Copyright (C) 2008-2012 Nestor Arocha"
-GLOBALCONFIG = GlobalConfig()  # The only instance available
-ERRORLIST = ["Grammar", "Timeout", "Transformer"]
+    @classmethod
+    def load(cls, identifier, memorylist=None):
+        if not memorylist:
+            memorylist = cls.memorylist
+        from pypository.Loader import load
+        return load(identifier, memorylist)
 
+    @classmethod
+    def search(cls, query, memorylist=None):
+        if not memorylist:
+            memorylist = cls.memorylist
+        from pypository.Loader import search
+        return search(query, memorylist)
 
-def all_classes(module) -> set:
-    """Returns all classes (introspection)"""
-    import inspect
-    result = set()
-    for name, obj in inspect.getmembers(module):
-        if inspect.isclass(obj):
-            result.add(obj)
-        elif inspect.ismodule(obj):
-            if obj.__name__[:6] == "pydsl":
-                result = result.union(all_classes(obj))
-    return result
+class Singleton(type):
 
+    """singleton pattern metaclass"""
+    # Only problem here is that classes can't have two metaclasses
+    def __init__(cls, name, bases, dct):
+        cls.__instance = None
+        type.__init__(cls, name, bases, dct)
 
-def all_indexable_classes(module) -> set:
-    """Returns all indexable classes (introspection)"""
-    import inspect
-    result = set()
-    for name, obj in inspect.getmembers(module):
-        from pydsl.Abstract import Indexable
-        if inspect.isclass(obj) and issubclass(obj, Indexable):
-            result.add(obj)
-        elif inspect.ismodule(obj):
-            if obj.__name__[:6] == "pydsl":
-                result = result.union(all_indexable_classes(obj))
-    return result
+    def __call__(cls, *args, **kw):
+        if cls.__instance is None:
+            cls.__instance = type.__call__(cls, *args, **kw)
+        return cls.__instance
+
+GlobalConfig2 = Singleton('GlobalConfig2', (GlobalConfig, ), {})
+GLOBALCONFIG = GlobalConfig2()  # The only instance available
+
+load = GLOBALCONFIG.load
+search = GLOBALCONFIG.search
