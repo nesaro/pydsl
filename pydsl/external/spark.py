@@ -425,7 +425,7 @@ class GenericParser:
         #  need to know the entire set of predicted nonterminals
         #  to do this without accidentally duplicating states.
         #
-        core = predicted.keys()
+        core = list(predicted.keys())
         core.sort()
         tcore = tuple(core)
         if tcore in self.cores:

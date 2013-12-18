@@ -28,5 +28,4 @@ if __name__ == '__main__':
     f = open(filename)
     parse(scan(f))
     f.close()
-
     print('ok')

@@ -1,7 +1,33 @@
 DESCRIPTION
 ===========
 
-pydsl is a language library written in python. It provides high level functions for Grammars/Alphabets, hiding the complexity of parsers and similar tools
+pydsl is a language library written in python. It provides some verbs for Grammars.
+
+    from pydsl.File.BNF import load_bnf_file
+    grammardefinition = loand_bnf_file('myfile.bnf')
+    grammardefinition.alphabet # Returns the alphabet used by this grammar
+    grammardefinition.minsize
+    grammardefinition.maxsize 
+    grammardefinition.enumerate # Returns a generator that generates every accepted word
+
+    from pydsl.Checker import check
+    check(grammardefinition,'mystring') # returns True or False
+
+    from pydsl.Match import match
+    match(grammardefinition,'mystring') # returns ('my','string')
+
+    from pydsl.Parser import parse
+    parse(grammardefinition,'mystring') # returns a ParseTree
+
+    from pydsl.Extract import extract
+    extract(grammardefinition,'abcmystringabc') # returns ('mystring',3,11)
+
+    from pydsl.Validate import validate
+    validate(grammardefinition,'mystrng') # returns a ParseTree with the missing i and a note
+
+    from pydsl.Guess import guess
+    guess('mystring') # Returns a set that includes grammardefinition
+
 
 INSTALLATION
 ============
@@ -10,62 +36,11 @@ INSTALLATION
  * pip:
    * pip install pydsl
 
-USAGE
-=====
-To use pydsl as a library for your code, you can:
-
-Loading content from files
---------------------------
-    from pydsl.Memory.File.BNF import load_bnf_file
-    grammardefinition = loand_bnf_file('myfile.bnf')
-    from pydsl.Memory.Loader import *
-    mychecker = load_checker(grammardefinition)
-    mychecker('mystring') # returns True or False
-
-Loading content from a directory
---------------------------------
-First store your grammar definitions in a directory,
-
-    from pydsl.Memory.Storage.Directory import DirStorage
-    from pydsl.Guess import Guesser
-    a = DirStorage("directory/")
-    guess = Guesser([a])
-    guess('string')
-
-Using contrib
--------------------
-    from pydsl.Memory.Loader import *
-    mychecker = load_checker(integer)
-    mychecker.check("1234")
-
-Using Binaries
---------------
-pydsl also provides a command line interface for the main functions:
-
- * manager.py : Searchs and displays information about grammar/alphabets
- * check.py: Checks if input data belongs to a grammar
- * guess:py: Returns a list of the types that match the input element
- * validate.py: Perform a validation routine for user data according to a grammar
- * lexer.py: Generates a token list from an input according to an alphaber
- * extract.py: extract all the slices of the input that are accepted by a definition 
-
-
 REQUIREMENTS
 ============
  * python >= 2.7
  * optional: ply library ( http://www.dabeaz.com/ply/ )
 
-HELP
-====
- * https://github.com/nesaro/pydsl
- * http://pydsl.blogspot.co.uk
- * nesaro@gmail.com
-
-LICENSE
-=======
-GPLv3, see LICENSE file
-
 ABOUT
 =====
-pydsl is a language library written in python
 Copyright (C) 2008-2013 Nestor Arocha (nesaro@gmail.com)
