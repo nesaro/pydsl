@@ -1,44 +1,33 @@
 DESCRIPTION
 ===========
 
-pydsl is a language library written in python
+pydsl is a language library written in python. It provides some verbs for Grammars.
 
-pydsl support several grammar specification formats:
- * regular expressions
- * pydsl BNF format
- * mongo database query dictionaries
- * python ply module (only check support)
+    from pydsl.File.BNF import load_bnf_file
+    grammardefinition = loand_bnf_file('myfile.bnf')
+    grammardefinition.alphabet # Returns the alphabet used by this grammar
+    grammardefinition.minsize
+    grammardefinition.maxsize 
+    grammardefinition.enumerate # Returns a generator that generates every accepted word
 
-each grammar definition has the following properties:
- * enum(gd): yields a list of accepted words
- * first(gd): yields a list of the first accepted subword/char
- * minsize(gd): length of the smaller accepted word
- * maxsize(gd): length of the biggest accepted word
+    from pydsl.Checker import check
+    check(grammardefinition,'mystring') # returns True or False
 
-pydsl offer a set of functions that use _grammar definitions_
- * validate(gd, input): test the input string against the spec. In case of failure, it returns a list of errors
- * partition(gd, input, tag): returns the parts of the input according to a tag
+    from pydsl.Match import match
+    match(grammardefinition,'mystring') # returns ('my','string')
 
-alphabet abstraction is also available. Alphabets are a set of symbols that are recognized using a regular grammar. Properties:
- * symbols(ad): return the list of allowed symbols for this alphabet
+    from pydsl.Parser import parse
+    parse(grammardefinition,'mystring') # returns a ParseTree
 
-functions that use _alphabets_:
- * lexer(ad, input): Generates a tokenlist from a string (it is a special case of translate)
- * mapper(ad, input): Converts a tokenlist from an alphabet into another alphabet
- 
-functions that use both _alphabets_ and _grammar definitions_:
- * guess(input, [gd]): returns a list of _grammar definitions_ that are compatible with the input
- * distance(gd, input1, input2): returns the distance between two inputs according to _grammar definition_. Three modes: 
-   * ignore subgrammars: differences in subgrammars count as 0
-   * once per subgrammar: differences in subgrammars count as 1
-   * include subgrammars: differences in subgrammars adds to the total
+    from pydsl.Extract import extract
+    extract(grammardefinition,'abcmystringabc') # returns ('mystring',3,11)
 
- * check(d, input): test the input string against the spec
- * extract(gd, input): extract all the slices of the input that are accepted by the definition 
+    from pydsl.Validate import validate
+    validate(grammardefinition,'mystrng') # returns a ParseTree with the missing i and a note
 
-pydsl also offers library related functions:
- * manager s query: search for an element within a memory
- * manager i identifier: returns information about the element
+    from pydsl.Guess import guess
+    guess('mystring') # Returns a set that includes grammardefinition
+
 
 INSTALLATION
 ============
@@ -47,76 +36,11 @@ INSTALLATION
  * pip:
    * pip install pydsl
 
-USAGE
-=====
-To use pydsl as a library for your code, you can:
-
-Loading content from files
---------------------------
-    from pydsl.Memory.Storage.File.BNF import load_bnf_file
-    grammardefinition = loand_bnf_file('myfile.bnf')
-    from pydsl.Memory.Loader import *
-    mychecker = load_checker(grammardefinition)
-    mychecker('mystring') # returns True or False
-
-Loading content from a directory
---------------------------------
-First store your grammar definitions in a directory,
-
-    from pydsl.Memory.Storage.Directory import DirStorage
-    from pydsl.Guess import Guesser
-    a = DirStorage("directory/")
-    guess = Guesser([a])
-    guess('string')
-
-Using contrib
--------------------
-    from pydsl.Memory.Loader import *
-    mychecker = load_checker(integer)
-    mychecker.check("1234")
-
-BINARIES
-========
-Memory Management
------------------
- * manager.py : Searchs and displays information about grammar/alphabets
-
-Grammars
---------
- * check.py: Checks if input data belongs to a grammar
- * guess:py: Returns a list of the types that match the input element
- * validate.py: Perform a validation routine for user data according to a grammar
- * lexer.py: Generates a token list from an input according to an alphaber
-
-
-CONTRIB
-=======
-
-contrib directory contains several types of elements. Those elements are either imported by colony or used as a function argument for their binaries.
-
- * grammar: Grammar are Types; they can be used with the following programs:
-   * check: check -e expression grammarname
-   * extract: extract -e expression grammarname
-   * validate: extract -e expression grammarname
- * dict/filetype.dict: A list of filetypes, which are types
- * dict/regexp.dict: A list of Regular expressions, which are types
-
 REQUIREMENTS
 ============
  * python >= 2.7
  * optional: ply library ( http://www.dabeaz.com/ply/ )
 
-HELP
-====
- * https://github.com/nesaro/pydsl
- * http://pydsl.blogspot.co.uk
- * nesaro@gmail.com
-
-LICENSE
-=======
-GPLv3, see LICENSE file
-
 ABOUT
 =====
-pydsl is a formal language framework.
 Copyright (C) 2008-2013 Nestor Arocha (nesaro@gmail.com)

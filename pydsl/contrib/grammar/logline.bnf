@@ -1,0 +1,26 @@
+S ::= ip space hyphen space hyphen space Datetime space quotation Command quotation space int space int space quotation Referer quotation space quotation Useragent quotation
+Datetime ::= opensquare DayOfMonth slash Month slash Year colon Hour colon Minute colon Second space Plusminus int closesquare
+Command ::= get | post | hyphen
+Plusminus ::= plus | hyphen
+Referer ::= string
+Useragent ::= string
+DayOfMonth ::= int
+Month ::= int
+Year ::= int
+Hour ::= int
+Minute ::= int
+Second ::= int
+
+space := Word,space,max
+plus := String,+
+quotation := String,"
+colon := String,:
+hyphen := String,-
+get := String,GET
+slash := String,/
+post := String,POST
+int := Word,integer,max
+ip := Word,ipv4,max
+opensquare := String,[
+closesquare := String,]
+string := Word,characters,max

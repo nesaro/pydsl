@@ -1,4 +1,3 @@
-recursive-include pydsl/contrib/board *.board
 recursive-include pydsl/contrib/dict *.dict
 recursive-include pydsl/contrib/grammar *.bnf *.re
 exclude tests
