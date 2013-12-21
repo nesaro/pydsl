@@ -3,10 +3,8 @@
 from pydsl.Grammar.Symbol import TerminalSymbol, NonTerminalSymbol, NullSymbol
 from pydsl.Grammar.BNF import Production, BNFGrammar
 from pydsl.File.BNF import strlist_to_production_set
-from pydsl.Grammar.Definition import String
-
-from pydsl.Config import load, load_default_memory
-load_default_memory()
+from pydsl.File.Python import load_python_file
+from pydsl.Grammar.Definition import String, RegularExpression
 
 br = "max"
 leftrecursive=["S ::= E","E ::= E dot | dot","dot := String,."]
@@ -28,8 +26,8 @@ p0bad = "SRL"
 symbol1 = TerminalSymbol(String("S"))
 symbol2 = TerminalSymbol(String("R"))
 symbol3 = TerminalSymbol(String(":"))
-symbol4 = TerminalSymbol(load("integer"), None, br)
-symbol5 = TerminalSymbol(load("cstring"), None, br)
+symbol4 = TerminalSymbol(RegularExpression("^[0123456789]*$"), None, br)
+symbol5 = TerminalSymbol(load_python_file('pydsl/contrib/grammar/cstring.py'), None, br)
 final1 = NonTerminalSymbol("storeexp") 
 final2 = NonTerminalSymbol("retrieveexp") 
 final3 = NonTerminalSymbol("exp")

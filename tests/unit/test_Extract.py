@@ -26,8 +26,8 @@ class TestGrammarExtract(unittest.TestCase):
 
     def testGrammarDefinition(self):
         from pydsl.Extract import extract
-        from pydsl.Config import load
-        gd = load('integer')
+        from pydsl.Grammar import RegularExpression
+        gd = RegularExpression('^[0123456789]*$')
         expected_result = [(3, 4, '1'), (3, 5, '12'), (3, 6, '123'), (3, 7, '1234'), (4, 5, '2'), (4, 6, '23'), (4, 7, '234'), (5, 6, '3'), (5, 7, '34'), (6, 7, '4')]
         self.assertListEqual(extract(gd,'abc1234abc'), expected_result)
         self.assertRaises(Exception, extract, None)
@@ -43,8 +43,8 @@ class TestAlphabetExtract(unittest.TestCase):
 
     def testAlphabet(self):
         from pydsl.Extract import extract
-        from pydsl.Config import load
-        ad = load('ascii')
+        from pydsl.Grammar.Alphabet import Encoding
+        ad = Encoding('ascii')
         self.assertListEqual(extract(ad,'a£'), [(0,1,'a')])
         self.assertRaises(Exception, extract, None)
 

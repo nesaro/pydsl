@@ -23,14 +23,15 @@ __email__ = "nesaro@gmail.com"
 
 import unittest
 from pydsl.Grammar.Alphabet import Encoding
-from pydsl.Config import load, load_default_memory
+from pydsl.Grammar import RegularExpression
+from pydsl.Grammar.Alphabet import Choice
+from pydsl.File.BNF import load_bnf_file
+from pydsl.File.Python import load_python_file
 
 class TestAlphabet(unittest.TestCase):
     def setUp(self):
-        load_default_memory()
-        from pydsl.Grammar.Alphabet import Choice
-        self.integer = load("integer")
-        self.date = load("Date")
+        self.integer = RegularExpression("^[0123456789]*$")
+        self.date = load_bnf_file("pydsl/contrib/grammar/Date.bnf", {'integer':self.integer, 'DayOfMonth':load_python_file('pydsl/contrib/grammar/DayOfMonth.py')})
         self.alphabet = Choice([self.integer,self.date])
 
     def testChecker(self):

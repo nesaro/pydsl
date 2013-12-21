@@ -113,14 +113,13 @@ class TestEncodingChecker(unittest.TestCase):
 
 class TestChoiceChecker(unittest.TestCase):
     def setUp(self):
-        from pydsl.Config import load_default_memory
-        load_default_memory()
+        pass
 
     def testCheck(self):
         from pydsl.Check import ChoiceChecker
         from pydsl.Grammar.Alphabet import Choice
-        from pydsl.Config import load
-        a = Choice([load('integer')])
+        from pydsl.Grammar import RegularExpression
+        a = Choice([RegularExpression('^[0123456789]*$')])
         checker = ChoiceChecker(a)
         self.assertTrue(checker.check('1234'))
         self.assertFalse(checker.check('abc'))

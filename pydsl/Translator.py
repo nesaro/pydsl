@@ -21,7 +21,6 @@ __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
-from pydsl.Config import load
 import logging
 LOG = logging.getLogger(__name__)
 
@@ -63,11 +62,8 @@ def translator_factory(function):
         result = {}
         for key in originaldic:
             from pydsl.Check import checker_factory
-            from pydsl.Config import load
             result[key] = checker_factory(load(str(originaldic[key])))
         return result
-    if isinstance(function, str):
-        function = load(function)
     from pydsl.Grammar.Definition import PLYGrammar
     if isinstance(function, PLYGrammar):
         return PLYTranslator(function)

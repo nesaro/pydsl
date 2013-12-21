@@ -23,7 +23,6 @@ __email__ = "nesaro@gmail.com"
 
 from pydsl.Grammar.Alphabet import Encoding
 from pydsl.Check import checker_factory
-from pydsl.Config import load
 
 
 class EncodingLexer(object):
@@ -137,8 +136,6 @@ class PythonLexer(object):
 
 def lexer_factory(alphabet):
     from pydsl.Grammar.Alphabet import Choice
-    if isinstance(alphabet, str):
-        alphabet = load(alphabet)
     if isinstance(alphabet, Choice):
         return ChoiceLexer(alphabet)
     elif isinstance(alphabet, Encoding):

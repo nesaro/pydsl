@@ -22,10 +22,10 @@ __email__ = "nesaro@gmail.com"
 import unittest
 from pydsl.Lex import EncodingLexer, lexer_factory
 from pydsl.contrib.bnfgrammar import *
-from pydsl.Config import load, load_default_memory
 from pydsl.Grammar.Definition import String
 from pydsl.Grammar.Alphabet import Choice
 from pydsl.Grammar.PEG import Sequence
+from pydsl.File.BNF import load_bnf_file
 
 
 class TestEncodingLexer(unittest.TestCase):
@@ -42,20 +42,20 @@ class TestEncodingLexer(unittest.TestCase):
 
 class TestChoiceLexer(unittest.TestCase):
     def setUp(self):
-        load_default_memory()
+        pass
 
     @unittest.skip("Raises an exception")
     def testEmptyInput(self):
-        integer = load('integer')
-        date = load('Date')
+        integer = RegularExpression("^[0123456789]*$")
+        date = load_bnf_file("pydsl/contrib/grammar/Date.bnf", {'integer':self.integer, 'DayOfMonth':load_python_file('pydsl/contrib/grammar/DayOfMonth.py')})
         mydef = Choice([integer,date])
         lexer = lexer_factory(mydef)
         self.assertFalse(lexer(""))
 
     def testSimpleLexing(self):
         """Test checker instantiation and call"""
-        integer = load('integer')
-        date = load('Date')
+        integer = RegularExpression("^[0123456789]*$")
+        date = load_bnf_file("pydsl/contrib/grammar/Date.bnf", {'integer':integer, 'DayOfMonth':load_python_file('pydsl/contrib/grammar/DayOfMonth.py')})
         mydef = Choice([integer,date])
         lexer = lexer_factory(mydef)
         self.assertListEqual(lexer("1234"), [("1234", integer)])
