@@ -63,6 +63,10 @@ class Encoding(Alphabet):
         Alphabet.__init__(self)
         self.encoding = encoding
 
+    @property
+    def alphabet(self):
+        return None
+
     def __eq__(self, other):
         try:
             return self.encoding == other.encoding
