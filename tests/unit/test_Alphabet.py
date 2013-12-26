@@ -47,5 +47,6 @@ class TestAlphabet(unittest.TestCase):
 
     def testEncoding(self):
         alphabet = Encoding('ascii')
-        self.assertTrue(alphabet['a'])
-        self.assertTrue(self.alphabet[0])
+        self.assertTrue(alphabet[0])
+        self.assertEqual(len(alphabet.enum()), 128)
+

@@ -66,14 +66,10 @@ class Encoding(Alphabet):
             return False
 
     def __getitem__(self, item):
-        from pydsl.Check import EncodingChecker
-        if EncodingChecker(self).check(item):
-            from pydsl.Grammar.Definition import String
-            return String(item)
-        raise KeyError
+        from pydsl.Idea import UnicodeCharacter
+        return UnicodeCharacter(chr(item))
 
-    @property
-    def to_list(self):
+    def enum(self):
         #FIXME: Only ascii
-        from pydsl.Grammar.Definition import String
-        return [String(chr(x)) for x in range(128)]
+        from pydsl.Idea import UnicodeCharacter
+        return [UnicodeCharacter(chr(x)) for x in range(128)]
