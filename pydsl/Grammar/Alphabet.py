@@ -31,6 +31,10 @@ class Alphabet(Grammar):
     def minsize(self):
         return 1 #FIXME: In some cases could be 0
 
+    @property
+    def maxsize(self):
+        return 1
+
 class Choice(Alphabet, list):
     """Uses a list of grammar definitions"""
     def __init__(self, grammarlist, base_alphabet = None):
