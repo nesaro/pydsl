@@ -148,11 +148,6 @@ def load_bnf_file(filepath, repository = None):
     return strlist_to_production_set(linelist, repository)
 
 
-def summary_bnf_file(filepath):
-    from pypository.utils import ImmutableDict, getFileTuple
-    (_, _, fileBaseName, _) = getFileTuple(filepath)
-    return ImmutableDict({"iclass":"BNFGrammar","identifier":fileBaseName, "filepath":filepath})
-
 def str_to_productionset(string):
     """Converts a str into a ProductionRuleSet"""
     return strlist_to_production_set(string.split('\n'))
