@@ -66,8 +66,8 @@ class Encoding(Alphabet):
             return False
 
     def __getitem__(self, item):
-        from pydsl.Idea import UnicodeCharacter
-        return UnicodeCharacter(chr(item))
+        from pydsl.Grammar import String
+        return String(chr(item))
 
     def __str__(self):
         return self.encoding
@@ -77,5 +77,5 @@ class Encoding(Alphabet):
             limit = 128
         elif self.encoding == "unicode":
             limit = 9635
-        from pydsl.Idea import UnicodeCharacter
-        return [UnicodeCharacter(chr(x)) for x in range(limit)]
+        from pydsl.Grammar import String
+        return [String(chr(x)) for x in range(limit)]
