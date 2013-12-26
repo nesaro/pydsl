@@ -70,6 +70,9 @@ class Encoding(Alphabet):
         return UnicodeCharacter(chr(item))
 
     def enum(self):
-        #FIXME: Only ascii
+        if self.encoding == "ascii":
+            limit = 128
+        elif self.encoding == "unicode":
+            limit = 9635
         from pydsl.Idea import UnicodeCharacter
-        return [UnicodeCharacter(chr(x)) for x in range(128)]
+        return [UnicodeCharacter(chr(x)) for x in range(limit)]
