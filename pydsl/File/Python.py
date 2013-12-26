@@ -20,8 +20,14 @@
 
 import logging
 LOG = logging.getLogger(__name__)
-from pypository.utils import ImmutableDict, getFileTuple, load_module
+from pypository.utils import ImmutableDict, getFileTuple
 import imp
+
+def load_module(filepath, identifier = None):
+    import imp
+    if identifier is None:
+        (_, _, identifier, _) = getFileTuple(filepath)
+    return imp.load_source(identifier, filepath)
 
 def load_python_file(moduleobject):
     """ Try to create an indexable instance from a module"""
