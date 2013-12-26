@@ -69,6 +69,9 @@ class Encoding(Alphabet):
         from pydsl.Idea import UnicodeCharacter
         return UnicodeCharacter(chr(item))
 
+    def __str__(self):
+        return self.encoding
+
     def enum(self):
         if self.encoding == "ascii":
             limit = 128
