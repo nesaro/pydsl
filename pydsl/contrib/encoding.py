@@ -18,4 +18,4 @@
 """Encoding list"""
 
 
-mylist = ["ascii", "unicode"]
+mylist = ["ascii", "utf-8"]
