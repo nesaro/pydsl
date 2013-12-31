@@ -24,16 +24,18 @@ from pydsl.Grammar.Definition import Grammar
 class Alphabet(Grammar):
     """Defines a set of valid elements"""
     @property
-    def first(self):
-        raise NotImplementedError
-
-    @property
     def minsize(self):
         return 1 #FIXME: In some cases could be 0
 
     @property
     def maxsize(self):
         return 1
+
+class AlphabetChain(Alphabet, list):
+    def __init__(self, alphabet_list):
+        list.__init__(self, alphabet_list)
+        Alphabet.__init__(self, base_alphabet = self[0].alphabet)
+
 
 class Choice(Alphabet, list):
     """Uses a list of grammar definitions"""

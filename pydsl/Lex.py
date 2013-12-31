@@ -45,6 +45,24 @@ class EncodingLexer(object):
             for x in buffer:
                 target.send(x)
 
+class AlphabetChainLexer(object):
+    def __init__(self, alphabetchain):
+        self.alphabetchain = alphabetchain
+
+    def __call__(self, data, include_gd=False):
+        if include_gd:
+            for alphabet in self.alphabetchain:
+                lexer = lexer_factory(alphabet)
+                response = lexer(data, include_gd = True)
+                data, grammars = zip(*response)
+            return zip(data, grammars)
+        else:
+            for alphabet in self.alphabetchain:
+                lexer = lexer_factory(alphabet)
+                data = lexer(data, include_gd = False)
+            return data
+
+
 
 class ChoiceLexer(object):
 
@@ -68,10 +86,10 @@ class ChoiceLexer(object):
             raise Exception("%s doesn't match %s" % (self.current, char))
         self.consume()
 
-    def __call__(self, string):  # -> "TokenList":
+    def __call__(self, string, include_gd=True):  # -> "TokenList":
         """Tokenizes input, generating a list of tokens"""
         self.string = string
-        return [x for x in self.nextToken(True)]
+        return [x for x in self.nextToken(include_gd)]
 
     @property
     def current(self):
@@ -135,11 +153,13 @@ class PythonLexer(object):
 
 
 def lexer_factory(alphabet):
-    from pydsl.Grammar.Alphabet import Choice
+    from pydsl.Grammar.Alphabet import Choice, AlphabetChain
     if isinstance(alphabet, Choice):
         return ChoiceLexer(alphabet)
     elif isinstance(alphabet, Encoding):
         return EncodingLexer(alphabet)
+    elif isinstance(alphabet, AlphabetChain):
+        return AlphabetChainLexer(alphabet)
     else:
         raise ValueError(alphabet)
 
