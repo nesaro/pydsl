@@ -82,7 +82,7 @@ class Sequence:
 
     def append(self, left, right, content, gd = None, check_position=True):
         if left > right:
-            raise Exception
+            raise ValueError('Attempted to add negative length alement')
         if check_position == True and left:
             if left not in self.current_right:
                 raise ValueError("Unable to add element")

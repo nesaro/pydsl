@@ -142,14 +142,6 @@ class ChoiceLexer(object):
                         target.send(currentstr)
 
 
-class PythonLexer(object):
-    """A python function based lexer"""
-    def __init__(self, function):
-        self._function = function
-
-    def __call__(self, *args, **kwargs):
-        result = self._function(*args, **kwargs)
-        return result
 
 
 def lexer_factory(alphabet):

@@ -104,7 +104,6 @@ class TestChoiceLexer(unittest.TestCase):
 
 class TestPythonLexer(unittest.TestCase):
     def test_Concept(self):
-        from pydsl.Lex import PythonLexer
         red = String("red")
         green = String("green")
         blue = String("blue")
@@ -125,6 +124,6 @@ class TestPythonLexer(unittest.TestCase):
 
             return result
 
-        ct = PythonLexer(concept_translator_fun)
+        ct = concept_translator_fun
 
         self.assertListEqual(ct(lexer("red")), ["color red"])
