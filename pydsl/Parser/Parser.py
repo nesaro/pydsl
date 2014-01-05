@@ -17,7 +17,6 @@
 
 """Parser module"""
 from pydsl.Lex import lexer_factory
-from pydsl.Config import load
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
@@ -73,8 +72,6 @@ class BottomUpParser(Parser):
 
 
 def parser_factory(grammar, parser = None):
-    if isinstance(grammar, str):
-        grammar = load(grammar)
     from pydsl.Grammar.BNF import BNFGrammar
     if isinstance(grammar, BNFGrammar):
         if parser in ("auto" , "default" , "descent", None):

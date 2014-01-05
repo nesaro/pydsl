@@ -24,14 +24,15 @@ __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
+from pydsl.File.BNF import load_bnf_file
+from pydsl.Grammar import RegularExpression
+from pydsl.File.Python import load_python_file
 
 class TestValidate(unittest.TestCase):
-    def setUp(self):
-        from pydsl.Config import load_default_memory
-        load_default_memory()
-
     def testBasic(self):
-        parser = parser_factory('Date', 'descent')
+        integer = RegularExpression("^[0123456789]*$")
+        date = load_bnf_file("pydsl/contrib/grammar/Date.bnf", {'integer':integer, 'DayOfMonth':load_python_file('pydsl/contrib/grammar/DayOfMonth.py')})
+        parser = parser_factory(date, 'descent')
         self.assertFalse(parser.get_trees("11/11/ab", True)[0].valid)
         self.assertTrue(parser.get_trees("11/11/2011", True)[0].valid)
 

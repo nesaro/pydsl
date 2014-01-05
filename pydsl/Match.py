@@ -45,8 +45,8 @@ class StringMatcher(Matcher):
         self.definition = definition
 
     def match(self, value):
-        if value.startswith(self.definition.string):
-            return value[:len(self.definition.string)], value[len(self.definition.string):]
+        if value.startswith(self.definition):
+            return value[:len(self.definition)], value[len(self.definition):]
         raise Exception("No match")
 
 class RegularExpressionMatcher(Matcher):

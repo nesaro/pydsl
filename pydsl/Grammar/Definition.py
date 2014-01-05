@@ -100,50 +100,29 @@ class RegularExpression(Grammar):
     def __getattr__(self, attr):
         return getattr(self.regexp, attr)
 
-class String(Grammar):
+class String(Grammar, str):
     def __init__(self, string):
         Grammar.__init__(self)
-        self.string = string
-
-    def __hash__(self):
-        return hash(self.string)
-
-    def __eq__(self, other):
-        try:
-            return self.string == other.string
-        except AttributeError:
-            return False
+        str.__init__(self, string)
 
     def first(self):
-        return [String(self.string[0])]
+        return [String(self[0])]
 
     def enum(self):
-        yield self.string
+        yield self
 
     @property
     def maxsize(self):
-        return len(self.string)
+        return len(self)
 
     @property
     def minsize(self):
-        return len(self.string)
-
-    def __str__(self):
-        return str(self.string)
+        return len(self)
 
 class JsonSchema(Grammar, dict):
     def __init__(self, *args, **kwargs):
         Grammar.__init__(self)
         dict.__init__(self, *args, **kwargs)
-
-class MongoGrammar(Grammar, dict):
-    def __init__(self, *args, **kwargs):
-        Grammar.__init__(self)
-        dict.__init__(self, *args, **kwargs)
-
-    @property
-    def first(self):
-        return [String("{")]
 
 class PythonGrammar(Grammar, dict):
     """

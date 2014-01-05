@@ -9,7 +9,7 @@ __email__ = "nesaro@gmail.com"
 import unittest
 from pydsl.Parser.Backtracing import BacktracingErrorRecursiveDescentParser
 from pydsl.File.BNF import load_bnf_file
-from pydsl.Config import load
+from pydsl.Grammar import RegularExpression
 
 
 class TestLogicGrammars(unittest.TestCase):
@@ -18,9 +18,8 @@ class TestLogicGrammars(unittest.TestCase):
         self.tokelist5 = "True"
 
     def testLogicalExp(self):
-        productionrulesetlogical = load_bnf_file("pydsl/contrib/grammar/LogicalExpression.bnf")
-        #import pdb
-        #pdb.set_trace()
+        repository = {'TrueFalse':load_bnf_file("pydsl/contrib/grammar/TrueFalse.bnf")}
+        productionrulesetlogical = load_bnf_file("pydsl/contrib/grammar/LogicalExpression.bnf", repository)
         parser = BacktracingErrorRecursiveDescentParser(productionrulesetlogical)
         result = parser.get_trees(self.tokelist5)
         self.assertTrue(result)
@@ -32,7 +31,8 @@ class TestLogicGrammars(unittest.TestCase):
         self.assertTrue(result)
 
     def testLogicalExpression(self):
-        productionrulesetlogical = load_bnf_file("pydsl/contrib/grammar/LogicalExpression.bnf")
+        repository = {'TrueFalse':load_bnf_file("pydsl/contrib/grammar/TrueFalse.bnf")}
+        productionrulesetlogical = load_bnf_file("pydsl/contrib/grammar/LogicalExpression.bnf", repository)
         parser = BacktracingErrorRecursiveDescentParser(productionrulesetlogical)
         result = parser.get_trees("True&&False")
         self.assertTrue(result)
@@ -43,7 +43,8 @@ class TestLogicGrammars(unittest.TestCase):
 
 class TestHTMLGrammars(unittest.TestCase):
     def testHTMLTable(self):
-        productionrulesetlogical = load_bnf_file("pydsl/contrib/grammar/TrueHTMLTable.bnf")
+        repository = {'integer':RegularExpression("^[0123456789]*$")}
+        productionrulesetlogical = load_bnf_file("pydsl/contrib/grammar/TrueHTMLTable.bnf", repository)
         parser = BacktracingErrorRecursiveDescentParser(productionrulesetlogical)
         result = parser.get_trees("<table><tr><td>1</td></tr></table>")
         self.assertTrue(result)
@@ -53,7 +54,11 @@ class TestHTMLGrammars(unittest.TestCase):
 
 class TestLogGrammar(unittest.TestCase):
     def testLogLine(self):
-        grammar = load("logline")
+        repository = {'space':RegularExpression("^ $"), 
+                'integer':RegularExpression("^[0123456789]*$"),
+                'ipv4':RegularExpression("^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$"),
+                'characters':RegularExpression("^[A-z]+$")}
+        grammar = load_bnf_file("pydsl/contrib/grammar/logline.bnf", repository)
         checker = checker_factory(grammar)
         self.assertTrue(checker.check("1.2.3.4 - - [1/1/2003:11:11:11 +2] \"GET\" 1 1 \"referer\" \"useragent\""))
         self.assertFalse(checker.check("1.2.3.4 - - [1/1/2003:11:11:11 +2] \"GOT\" 1 1 \"referer\" \"useragent\""))

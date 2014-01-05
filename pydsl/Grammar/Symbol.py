@@ -56,7 +56,7 @@ class TerminalSymbol(Symbol):
     def __init__(self, gd, weight=None, boundariesrules=None):
         if isinstance(gd, String):
             weight = weight or 99
-            boundariesrules = len(gd.string)
+            boundariesrules = len(gd)
         else:
             weight = weight or 49
         Symbol.__init__(self, weight)

@@ -22,26 +22,6 @@ __email__ = "nesaro@gmail.com"
 import unittest
 from pydsl.Grammar.Definition import String
 
-class TestMongoChecker(unittest.TestCase):
-    """Mongo checker"""
-    def testCheck(self):
-        """Test checker instantiation and call"""
-        bad = {"a":1,"b":3}
-        letter = {"a":1,"b":"asd"}
-        from pydsl.Check import MongoChecker
-        from pydsl.contrib.mongogrammar import spec, fullspec
-        checker = MongoChecker(spec)
-        self.assertTrue(checker.check(spec))
-        self.assertFalse(checker.check(bad))
-        fullchecker = MongoChecker(fullspec)
-        self.assertTrue(fullchecker.check(spec))
-        self.assertTrue(fullchecker.check(bad))
-        self.assertFalse(fullchecker.check(letter))
-        #self.assertRaises(TypeError,fullchecker.check, "")
-
-    def testEmptyInput(self):
-        pass
-
 class TestBNFChecker(unittest.TestCase):
     """BNF Checker"""
     def testStringInput(self):
@@ -133,13 +113,13 @@ class TestEncodingChecker(unittest.TestCase):
 
 class TestChoiceChecker(unittest.TestCase):
     def setUp(self):
-        from pydsl.Config import load_default_memory
-        load_default_memory()
+        pass
 
     def testCheck(self):
         from pydsl.Check import ChoiceChecker
         from pydsl.Grammar.Alphabet import Choice
-        a = Choice(['integer'])
+        from pydsl.Grammar import RegularExpression
+        a = Choice([RegularExpression('^[0123456789]*$')])
         checker = ChoiceChecker(a)
         self.assertTrue(checker.check('1234'))
         self.assertFalse(checker.check('abc'))
@@ -151,7 +131,7 @@ class TestStringChecker(unittest.TestCase):
     def testCheck(self):
         """Test checker instantiation and call"""
         from pydsl.Check import StringChecker
-        grammarchecker = StringChecker("string123")
+        grammarchecker = StringChecker(String("string123"))
         self.assertTrue(grammarchecker("string123"))
         self.assertTrue(grammarchecker(["string123"]))
         self.assertTrue(grammarchecker(("string123",)))

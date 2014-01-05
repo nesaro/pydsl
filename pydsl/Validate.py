@@ -22,7 +22,6 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
-from pydsl.Config import load
 from pydsl.Parser.Parser import parser_factory
 
 
@@ -50,8 +49,6 @@ def validator_factory(grammar):
     """
     Creates a validator instance from a grammar definition
     """
-    if isinstance(grammar, str):
-        grammar = load(grammar)
     from pydsl.Grammar.BNF import BNFGrammar
     if isinstance(grammar, BNFGrammar):
         return BNFValidator(grammar)

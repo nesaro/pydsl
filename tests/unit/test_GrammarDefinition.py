@@ -24,29 +24,10 @@ __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
-from pydsl.Grammar.Definition import MongoGrammar, String
+from pydsl.Grammar.Definition import String
 from pydsl.Grammar.Alphabet import Encoding
 from pydsl.Grammar import Alphabet
 
-
-class TestGrammarDefinitionMongoDb(unittest.TestCase):
-    def setUp(self):
-        self.grammardef = MongoGrammar({'id':123})
-
-    def testEnumerate(self):
-        self.assertRaises(NotImplementedError, self.grammardef.enum)
-
-    def testFirst(self):
-        self.assertListEqual(self.grammardef.first, [String("{")])
-
-    def testMin(self):
-        self.grammardef.minsize
-
-    def testMax(self):
-        self.grammardef.maxsize
-
-    def testAlphabet(self):
-        self.assertEqual(self.grammardef.alphabet, Encoding('ascii'))
 
 @unittest.skip
 class TestGrammarDefinitionPLY(unittest.TestCase):

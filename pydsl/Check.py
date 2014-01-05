@@ -32,20 +32,15 @@ def check(definition, data):
 def checker_factory(grammar):
     from pydsl.Grammar.BNF import BNFGrammar
     from pydsl.Grammar.PEG import Sequence
-    from pydsl.Grammar.Definition import PLYGrammar, RegularExpression, MongoGrammar, String, PythonGrammar
+    from pydsl.Grammar.Definition import PLYGrammar, RegularExpression, String, PythonGrammar
     from pydsl.Grammar.Alphabet import Choice, Encoding
     from collections import Iterable
-    if isinstance(grammar, str):
-        from pydsl.Config import load
-        grammar = load(grammar)
     if isinstance(grammar, BNFGrammar):
         return BNFChecker(grammar)
     elif isinstance(grammar, RegularExpression):
         return RegularExpressionChecker(grammar)
     elif isinstance(grammar, PythonGrammar) or isinstance(grammar, dict) and "matchFun" in grammar:
         return PythonChecker(grammar)
-    elif isinstance(grammar, MongoGrammar):
-        return MongoChecker(grammar["spec"])
     elif isinstance(grammar, PLYGrammar):
         return PLYChecker(grammar)
     elif isinstance(grammar, Choice):
@@ -128,39 +123,6 @@ class PythonChecker(Checker):
             return False
 
 
-class MongoChecker(Checker):
-    def __init__(self, dic):
-        Checker.__init__(self)
-        self.mongodic = dic
-
-    def check(self, data):
-        return self.__auxcheck(self.mongodic, data)
-
-    def __auxcheck(self, specdict, data):
-        """Recursive checker implementation"""
-        for key, spec in specdict.items():
-            value = data.get(key)
-            if key == "$or" and len(specdict) == 1:
-                return any([self.__auxcheck(x, data) for x in spec])
-            elif isinstance(spec, dict) and len(spec) == 1:
-                operator = list(spec.keys())[0]
-                operand = list(spec.values())[0]
-                if operator == "$type":
-                    if not checker_factory(operand).check(str(value)):
-                        return False
-                elif operator == "$or":
-                    if not any([self.__auxcheck({key:x}, data) for x in operand]):
-                        return False
-                else: #unknown operator
-                    return spec == value
-            elif isinstance(spec, dict):
-                if not self.__auxcheck(spec, value):
-                    return False
-            else:
-                if spec != value: 
-                    return False
-        return True
-
 class PLYChecker(Checker):
     def __init__(self, gd):
         Checker.__init__(self)
@@ -182,15 +144,12 @@ class PLYChecker(Checker):
 class StringChecker(Checker):
     def __init__(self, gd):
         Checker.__init__(self)
-        if isinstance(gd, str):
-            from pydsl.Grammar.Definition import String
-            gd = String(gd)
         self.gd = gd
 
     def check(self, data):
         if isinstance(data, Iterable):
             data = "".join([str(x) for x in data])
-        return self.gd.string == str(data)
+        return self.gd == str(data)
 
 class JsonSchemaChecker(Checker):
     def __init__(self, gd):
@@ -247,6 +206,9 @@ class IterableChecker(Checker):
 
     def check(self,data):
         for definition in self.iterable:
+            from pydsl.Grammar import Grammar
+            if not isinstance(definition, Grammar):
+                raise TypeError("Expected a grammar definition")
             try:
                 if check(definition, data):
                     return True

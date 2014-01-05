@@ -51,9 +51,7 @@ class TestCase(unittest.TestCase):
             if number == "two":
                 return 2
  
-        from pydsl.Lex import PythonLexer
-        to_concepts = PythonLexer(concept_translator_fun)
-        math_expression_concepts = to_concepts(ascii_tokens)
+        math_expression_concepts = concept_translator_fun(ascii_tokens)
         self.assertListEqual(math_expression_concepts, ['one', 'addition', 'two'])
         grammar_def = [
                 "S ::= E",
@@ -63,7 +61,7 @@ class TestCase(unittest.TestCase):
                 "addition := String,addition",
                 ]
         from pydsl.File.BNF import strlist_to_production_set
-        production_set = strlist_to_production_set(grammar_def)
+        production_set = strlist_to_production_set(grammar_def, {})
         from pydsl.Parser.Backtracing import BacktracingErrorRecursiveDescentParser
         rdp = BacktracingErrorRecursiveDescentParser(production_set)
         parse_tree = rdp(math_expression_concepts)
@@ -72,7 +70,7 @@ class TestCase(unittest.TestCase):
             if tree.symbol == NonTerminalSymbol("S"):
                 return parse_tree_walker(tree.childlist[0])
             if tree.symbol == NonTerminalSymbol("E"):
-                return to_number(tree.childlist[0].symbol.gd.string) + to_number(tree.childlist[2].symbol.gd.string)
+                return to_number(tree.childlist[0].symbol.gd) + to_number(tree.childlist[2].symbol.gd)
             raise Exception
             
         result = parse_tree_walker(parse_tree[0])
@@ -80,8 +78,6 @@ class TestCase(unittest.TestCase):
 
 
     def test_calculator_simple(self):
-        from pydsl.Config import load_default_memory
-        load_default_memory()
         grammar_def = [
                 "S ::= E",
                 "E ::= number operator number",
@@ -89,7 +85,9 @@ class TestCase(unittest.TestCase):
                 "operator := String,+",
                 ]
         from pydsl.File.BNF import strlist_to_production_set
-        production_set = strlist_to_production_set(grammar_def)
+        from pydsl.Grammar import RegularExpression
+        repository = {'integer':RegularExpression("^[0123456789]*$")}
+        production_set = strlist_to_production_set(grammar_def, repository)
         rdp = LL1RecursiveDescentParser(production_set)
         parse_tree = rdp("1+2")
 
@@ -105,8 +103,8 @@ class TestCase(unittest.TestCase):
         result = parse_tree_walker(parse_tree[0])
         self.assertEqual(result, 3)
         from pydsl.Grammar.Alphabet import Choice
-        from pydsl.Grammar.Definition import String
-        math_alphabet = Choice(['integer',String('+')])
+        from pydsl.Grammar.Definition import String, RegularExpression
+        math_alphabet = Choice([RegularExpression("^[0123456789]*$"),String('+')])
         from pydsl.Lex import lex
         tokens = [x[0] for x in lex(math_alphabet, "11+2")]
         parse_tree = rdp(tokens)
