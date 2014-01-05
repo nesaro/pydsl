@@ -93,7 +93,7 @@ class BNFGrammar(Grammar):
         """Returns the a grammar definition that includes all first elements of this grammar""" #TODO
         result = []
         for x in self.first_lookup(self.initialsymbol):
-            result += x.first
+            result += x.first()
         if len(result) == 1:
             return result[0]
         return Choice(result)
