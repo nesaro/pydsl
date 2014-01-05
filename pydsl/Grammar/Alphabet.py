@@ -20,6 +20,8 @@ __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 from pydsl.Grammar.Definition import Grammar
+import logging
+LOG=logging.getLogger(__name__)
 
 class Alphabet(Grammar):
     """Defines a set of valid elements"""

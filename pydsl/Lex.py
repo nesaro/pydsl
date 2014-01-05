@@ -18,7 +18,7 @@
 """Base Lexer classes"""
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2013, Nestor Arocha"
+__copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 from pydsl.Grammar.Alphabet import Encoding
@@ -41,7 +41,7 @@ class EncodingLexer(object):
         buffer = ""
         while True:
             element = (yield)
-            buffer += element  # Asumes string
+            buffer += element
             for x in buffer:
                 target.send(x)
 
