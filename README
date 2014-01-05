@@ -25,9 +25,6 @@ pydsl is a language library written in python. It provides some verbs for Gramma
     from pydsl.Validate import validate
     validate(grammardefinition,'mystrng') # returns a ParseTree with the missing i and a note
 
-    from pydsl.Guess import guess
-    guess('mystring') # Returns a set that includes grammardefinition
-
 
 INSTALLATION
 ============
@@ -43,4 +40,4 @@ REQUIREMENTS
 
 ABOUT
 =====
-Copyright (C) 2008-2013 Nestor Arocha (nesaro@gmail.com)
+Copyright (C) 2008-2014 Nestor Arocha (nesaro@gmail.com)
