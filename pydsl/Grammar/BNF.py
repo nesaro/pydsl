@@ -57,12 +57,6 @@ class Production(object):
             return False
         return True
 
-    @property
-    def name(self):
-        if len(self.leftside) != 1:
-            raise Exception
-        return self.leftside[0].name
-
     def __hash__(self):
         return hash(self.leftside) & hash(self.rightside)
 

@@ -22,15 +22,18 @@ __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
-from pydsl.Grammar.Alphabet import Encoding
-from pydsl.Config import load, load_default_memory
+from pydsl.Grammar import String
+from pydsl.Grammar.PEG import Sequence
+from pydsl.Grammar.Alphabet import Choice, Encoding, AlphabetChain
+from pydsl.Grammar import RegularExpression
+from pydsl.File.BNF import load_bnf_file
+from pydsl.File.Python import load_python_file
+
 
 class TestAlphabet(unittest.TestCase):
     def setUp(self):
-        load_default_memory()
-        from pydsl.Grammar.Alphabet import Choice
-        self.integer = load("integer")
-        self.date = load("Date")
+        self.integer = RegularExpression("^[0123456789]*$")
+        self.date = load_bnf_file("pydsl/contrib/grammar/Date.bnf", {'integer':self.integer, 'DayOfMonth':load_python_file('pydsl/contrib/grammar/DayOfMonth.py')})
         self.alphabet = Choice([self.integer,self.date])
 
     def testChecker(self):
@@ -46,5 +49,18 @@ class TestAlphabet(unittest.TestCase):
 
     def testEncoding(self):
         alphabet = Encoding('ascii')
-        self.assertTrue(alphabet['a'])
-        self.assertTrue(self.alphabet[0])
+        self.assertTrue(alphabet[0])
+        self.assertEqual(len(alphabet.enum()), 128)
+        alphabet = Encoding('unicode')
+        self.assertTrue(alphabet[0])
+        self.assertEqual(len(alphabet.enum()), 9635)
+
+    def testAlphabetChain(self):
+        a1 = Choice([String('a'), String('b'), String('c')])
+        ab_sequence = Sequence([String('a'), String('b')])
+        ac_sequence = Sequence([String('a'), String('c')])
+        a2 = Choice([ ab_sequence, ac_sequence ], base_alphabet = a1)
+        ac = AlphabetChain([a1, a2])
+        self.assertEqual(a1.first, ac.first)
+        lexer = lexer_factory(ac)
+        self.assertListEqual([x[1] for x in lexer("abac", include_gd=True)], [ab_sequence , ac_sequence])

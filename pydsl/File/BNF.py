@@ -40,14 +40,12 @@ def __generateStringSymbol(rightside):
     from pydsl.Grammar.Definition import String
     return TerminalSymbol(String(content))
 
-def __generateWordSymbol(rightside):
+def __generateWordSymbol(rightside, repository):
     args = rightside.split(",")
     if args[0] != "Word":
         raise TypeError
     br = args[2] #Boundary rule policy
-
-    from pydsl.Config import load
-    return TerminalSymbol(load(args[1]), None, br)
+    return TerminalSymbol(repository[args[1]], None, br)
 
 
 def read_nonterminal_production(line, symboldict):
@@ -71,7 +69,7 @@ def read_nonterminal_production(line, symboldict):
         n += 1
     return result
 
-def read_terminal_production(line):
+def read_terminal_production(line, repository):
     leftside, rightside = line.split(":=")
     leftside = leftside.strip()
     symbolnames = leftside.split(" ")
@@ -84,7 +82,7 @@ def read_terminal_production(line):
     if re.search("^String", rightside):
         newsymbol = __generateStringSymbol(rightside)
     elif re.search("^Word", rightside):
-        newsymbol = __generateWordSymbol(rightside)
+        newsymbol = __generateWordSymbol(rightside, repository)
     elif re.search("^Null", rightside):
         newsymbol = NullSymbol()
     else:
@@ -92,7 +90,9 @@ def read_terminal_production(line):
     return symbolnames[0], newsymbol
 
 
-def strlist_to_production_set(linelist):
+def strlist_to_production_set(linelist, repository = None):
+    if repository is None:
+        repository = {}
     nonterminalrulelist = []
     terminalrulelist = []
     rulelist = []
@@ -104,7 +104,7 @@ def strlist_to_production_set(linelist):
         if re.search("::=", cleanline):
             nonterminalrulelist.append(cleanline)
         elif re.search (":=", cleanline):
-            symbolname, symbolinstance = read_terminal_production(cleanline)
+            symbolname, symbolinstance = read_terminal_production(cleanline, repository)
             symboldict[symbolname] = symbolinstance
             terminalrulelist.append(symbolinstance)
         elif re.search ("^#.*$", cleanline):
@@ -139,19 +139,14 @@ def strlist_to_production_set(linelist):
     return BNFGrammar(symboldict["S"], rulelist, macrodict)
 
 
-def load_bnf_file(filepath):
+def load_bnf_file(filepath, repository = None):
     """Converts a bnf file into a BNFGrammar instance"""
     linelist = []
     with open(filepath,'r') as mlfile:
         for line in mlfile:
             linelist.append(line)
-    return strlist_to_production_set(linelist)
+    return strlist_to_production_set(linelist, repository)
 
-
-def summary_bnf_file(filepath):
-    from pypository.utils import ImmutableDict, getFileTuple
-    (_, _, fileBaseName, _) = getFileTuple(filepath)
-    return ImmutableDict({"iclass":"BNFGrammar","identifier":fileBaseName, "filepath":filepath})
 
 def str_to_productionset(string):
     """Converts a str into a ProductionRuleSet"""

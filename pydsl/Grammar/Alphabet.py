@@ -20,16 +20,24 @@ __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 from pydsl.Grammar.Definition import Grammar
+import logging
+LOG=logging.getLogger(__name__)
 
 class Alphabet(Grammar):
     """Defines a set of valid elements"""
     @property
-    def first(self):
-        raise NotImplementedError
-
-    @property
     def minsize(self):
         return 1 #FIXME: In some cases could be 0
+
+    @property
+    def maxsize(self):
+        return 1
+
+class AlphabetChain(Alphabet, list):
+    def __init__(self, alphabet_list):
+        list.__init__(self, alphabet_list)
+        Alphabet.__init__(self, base_alphabet = self[0].alphabet)
+
 
 class Choice(Alphabet, list):
     """Uses a list of grammar definitions"""
@@ -59,6 +67,10 @@ class Encoding(Alphabet):
         Alphabet.__init__(self)
         self.encoding = encoding
 
+    @property
+    def alphabet(self):
+        return None
+
     def __eq__(self, other):
         try:
             return self.encoding == other.encoding
@@ -66,14 +78,16 @@ class Encoding(Alphabet):
             return False
 
     def __getitem__(self, item):
-        from pydsl.Check import EncodingChecker
-        if EncodingChecker(self).check(item):
-            from pydsl.Grammar.Definition import String
-            return String(item)
-        raise KeyError
+        from pydsl.Grammar import String
+        return String(chr(item))
 
-    @property
-    def to_list(self):
-        #FIXME: Only ascii
-        from pydsl.Grammar.Definition import String
-        return [String(chr(x)) for x in range(128)]
+    def __str__(self):
+        return self.encoding
+
+    def enum(self):
+        if self.encoding == "ascii":
+            limit = 128
+        elif self.encoding == "unicode":
+            limit = 9635
+        from pydsl.Grammar import String
+        return [String(chr(x)) for x in range(limit)]

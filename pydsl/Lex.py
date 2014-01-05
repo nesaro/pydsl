@@ -18,12 +18,11 @@
 """Base Lexer classes"""
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2013, Nestor Arocha"
+__copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 from pydsl.Grammar.Alphabet import Encoding
 from pydsl.Check import checker_factory
-from pydsl.Config import load
 
 
 class EncodingLexer(object):
@@ -42,9 +41,27 @@ class EncodingLexer(object):
         buffer = ""
         while True:
             element = (yield)
-            buffer += element  # Asumes string
+            buffer += element
             for x in buffer:
                 target.send(x)
+
+class AlphabetChainLexer(object):
+    def __init__(self, alphabetchain):
+        self.alphabetchain = alphabetchain
+
+    def __call__(self, data, include_gd=False):
+        if include_gd:
+            for alphabet in self.alphabetchain:
+                lexer = lexer_factory(alphabet)
+                response = lexer(data, include_gd = True)
+                data, grammars = zip(*response)
+            return zip(data, grammars)
+        else:
+            for alphabet in self.alphabetchain:
+                lexer = lexer_factory(alphabet)
+                data = lexer(data, include_gd = False)
+            return data
+
 
 
 class ChoiceLexer(object):
@@ -69,10 +86,10 @@ class ChoiceLexer(object):
             raise Exception("%s doesn't match %s" % (self.current, char))
         self.consume()
 
-    def __call__(self, string):  # -> "TokenList":
+    def __call__(self, string, include_gd=True):  # -> "TokenList":
         """Tokenizes input, generating a list of tokens"""
         self.string = string
-        return [x for x in self.nextToken(True)]
+        return [x for x in self.nextToken(include_gd)]
 
     @property
     def current(self):
@@ -125,24 +142,16 @@ class ChoiceLexer(object):
                         target.send(currentstr)
 
 
-class PythonLexer(object):
-    """A python function based lexer"""
-    def __init__(self, function):
-        self._function = function
-
-    def __call__(self, *args, **kwargs):
-        result = self._function(*args, **kwargs)
-        return result
 
 
 def lexer_factory(alphabet):
-    from pydsl.Grammar.Alphabet import Choice
-    if isinstance(alphabet, str):
-        alphabet = load(alphabet)
+    from pydsl.Grammar.Alphabet import Choice, AlphabetChain
     if isinstance(alphabet, Choice):
         return ChoiceLexer(alphabet)
     elif isinstance(alphabet, Encoding):
         return EncodingLexer(alphabet)
+    elif isinstance(alphabet, AlphabetChain):
+        return AlphabetChainLexer(alphabet)
     else:
         raise ValueError(alphabet)
 
