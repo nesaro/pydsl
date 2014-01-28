@@ -17,7 +17,6 @@
 
 from pydsl.Grammar.Definition import Grammar
 from pydsl.Check import checker_factory
-import parsley
 
 __author__ = "Ptolom"
 __copyright__ = "Copyright 2014, Ptolom"
@@ -25,13 +24,12 @@ __email__ = "ptolom@hexifact.co.uk"
 
 class ParsleyGrammar(Grammar):
     def __init__(self, rules, root_rule, repository={}):
+        import parsley
         Grammar.__init__(self)
-        repo=dict(map(lambda (k, v): (k, self._repo_expr(v)), repository.items())) #make checkers from grammar objects
+        repo={}
+        for k, v in repository.items():
+            repo[k]=(v, checker_factory(v))[isinstance(v, Grammar)]
         self.grammar=parsley.makeGrammar(rules, repo)
         self.root_rule=root_rule 
     def match(self, data):
         return getattr(self.grammar(data), self.root_rule)() #call grammar(data).root_rule()
-    def _repo_expr(self, e):
-        if isinstance(e, Grammar):
-            return checker_factory(e)
-        return e
