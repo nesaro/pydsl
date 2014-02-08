@@ -16,19 +16,21 @@
 # along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
-import parsley
-from pydsl.File.Parsley import load_parsley_grammar_file
 from pydsl.Translator import translator_factory
 from pydsl.Check import checker_factory
 from pydsl.File.Python import load_python_file
+import sys
 
 __author__ = "Ptolom"
 __copyright__ = "Copyright 2014, Ptolom"
 __email__ = "ptolom@hexifact.co.uk"
 
+@unittest.skipIf(sys.version_info > (3,0), "parsley not available for python 3")
 class TestParsley(unittest.TestCase):
     """Loading a bnf instance from a .bnf file"""
     def testFileLoader(self):
+        import parsley
+        from pydsl.File.Parsley import load_parsley_grammar_file
         repository = {'DayOfMonth':load_python_file('pydsl/contrib/grammar/DayOfMonth.py')} #DayOfMonth loaded as checker
         G=load_parsley_grammar_file("pydsl/contrib/grammar/Date.parsley", "expr", repository)
         C=checker_factory(G)
