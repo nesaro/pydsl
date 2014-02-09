@@ -56,7 +56,7 @@ class Choice(Alphabet, list):
             if x.base_alphabet not in base_alphabet_list:
                 base_alphabet_list.append(x.base_alphabet)
         if len(base_alphabet_list) != 1:
-            raise ValueError('Different base alphabets from members')
+            raise ValueError('Different base alphabets from members %s' % base_alphabet_list)
 
     def __add__(self, other):
         return Choice(list.__add__(self,other))
