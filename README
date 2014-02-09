@@ -22,9 +22,6 @@ pydsl is a language library written in python. It provides some verbs for Gramma
     from pydsl.Extract import extract
     extract(grammardefinition,'abcmystringabc') # returns ('mystring',3,11)
 
-    from pydsl.Validate import validate
-    validate(grammardefinition,'mystrng') # returns a ParseTree with the missing i and a note
-
 
 INSTALLATION
 ============

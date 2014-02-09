@@ -34,6 +34,7 @@ def checker_factory(grammar):
     from pydsl.Grammar.PEG import Sequence
     from pydsl.Grammar.Definition import PLYGrammar, RegularExpression, String, PythonGrammar
     from pydsl.Grammar.Alphabet import Choice, Encoding
+    from pydsl.Grammar.Parsley import ParsleyGrammar
     from collections import Iterable
     if isinstance(grammar, BNFGrammar):
         return BNFChecker(grammar)
@@ -45,6 +46,8 @@ def checker_factory(grammar):
         return PLYChecker(grammar)
     elif isinstance(grammar, Choice):
         return ChoiceChecker(grammar)
+    elif isinstance(grammar, ParsleyGrammar):
+        return ParsleyChecker(grammar)
     elif isinstance(grammar, String):
         return StringChecker(grammar)
     elif isinstance(grammar, Encoding):
@@ -110,6 +113,19 @@ class BNFChecker(Checker):
             return len(self.__parser.get_trees(data)) > 0
         except IndexError:
             return False 
+
+class ParsleyChecker(Checker):
+    def __init__(self, grammar):
+        Checker.__init__(self)
+        self.g=grammar
+    def check(self, data):
+        from parsley import ParseError
+        try:
+            self.g.match(data)
+            return True
+        except ParseError:
+            return False
+
 
 class PythonChecker(Checker):
     def __init__(self, module):

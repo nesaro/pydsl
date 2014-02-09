@@ -55,6 +55,12 @@ class PyParsingTranslator(object):
     def __call__(self, input):
         return self.root_symbol.parseString(input)
 
+class ParsleyTranslator(object):
+    def __init__(self, grammar):
+        self.g=grammar
+    def __call__(self, input):
+        return self.g.match(input)
+
 
 def translator_factory(function):
     def _load_checker(originaldic):
@@ -65,8 +71,11 @@ def translator_factory(function):
             result[key] = checker_factory(load(str(originaldic[key]))) #FIXME: load is no longer available
         return result
     from pydsl.Grammar.Definition import PLYGrammar
+    from pydsl.Grammar.Parsley import ParsleyGrammar
     if isinstance(function, PLYGrammar):
         return PLYTranslator(function)
+    if isinstance(function, ParsleyGrammar):
+        return ParsleyTranslator(function)
     if isinstance(function, dict):
         function['inputdic'] = _load_checker(function['inputdic'])
         function['outputdic'] = _load_checker(function['outputdic'])
