@@ -36,15 +36,6 @@ class EncodingLexer(object):
         for x in string:
             yield x
 
-    def lexer_generator(self, target):
-        next(target)
-        buffer = ""
-        while True:
-            element = (yield)
-            buffer += element
-            for x in buffer:
-                target.send(x)
-
 class AlphabetChainLexer(object):
     def __init__(self, alphabetchain):
         self.alphabetchain = alphabetchain
@@ -126,23 +117,6 @@ class ChoiceLexer(object):
                 yield y['content'], y.get('gd')
             else:
                 yield y['content']
-
-    def lexer_generator(self, target):
-        next(target)
-        buffer = ""
-        while True:
-            element = (yield)
-            buffer += element  # Asumes string
-            for x in range(1, len(buffer)):
-                currentstr = buffer[:x]
-                for gd in self.alphabet:
-                    checker = checker_factory(gd)
-                    if checker.check(currentstr):
-                        buffer = buffer[x:]
-                        target.send(currentstr)
-
-
-
 
 def lexer_factory(alphabet):
     from pydsl.Grammar.Alphabet import Choice, AlphabetChain

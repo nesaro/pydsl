@@ -61,30 +61,6 @@ class TestChoiceLexer(unittest.TestCase):
         self.assertListEqual(lexer("1234"), [("1234", integer)])
         self.assertListEqual(lexer("123411/11/2001"), [("1234", integer),("11/11/2001", date)])
 
-    def testLexerGenerator(self):
-        abc = String("abc")
-        numbers = String("123")
-        mydef = Choice([abc, numbers])
-        mylexer = lexer_factory(mydef)
-        def text_generator(receiver):
-            next(receiver)
-            receiver.send("123")
-            receiver.send("abc")
-            receiver.send("abc")
-            receiver.send("123")
-            receiver.close()
-
-        result = []
-        def collector():
-            try:
-                while True:
-                    result.append((yield))
-            except GeneratorExit:
-                pass
-
-        text_generator(mylexer.lexer_generator(collector()))
-        self.assertListEqual(result, ["123", "abc","abc", "123"])
-
     def testSecondLevelGrammar(self):
         a = String("a")
         b = String("b")
