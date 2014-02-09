@@ -14,19 +14,19 @@
 #
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
-from pydsl.Lex import lexer_factory
-from pydsl.Parser.LL import LL1RecursiveDescentParser
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
+from pydsl.Grammar.Alphabet import Encoding
+from pydsl.Lex import lexer_factory
+from pydsl.Parser.LL import LL1RecursiveDescentParser
 
 class TestCase(unittest.TestCase):
     def test_main_case(self):
         input_data = "1+2"
-        from pydsl.Grammar.Alphabet import Encoding
         ascii_encoding = Encoding("ascii")
         ascii_lexer = lexer_factory(ascii_encoding)
         ascii_tokens = [x for x in ascii_lexer(input_data)]
