@@ -61,6 +61,6 @@ class TestAlphabet(unittest.TestCase):
         ac_sequence = Sequence([String('a'), String('c')])
         a2 = Choice([ ab_sequence, ac_sequence ], base_alphabet = a1)
         ac = AlphabetChain([a1, a2])
-        self.assertEqual(a1.first, ac.first)
+        self.assertEqual(a1.first(), ac.first())
         lexer = lexer_factory(ac)
         self.assertListEqual([x[1] for x in lexer("abac", include_gd=True)], [ab_sequence , ac_sequence])

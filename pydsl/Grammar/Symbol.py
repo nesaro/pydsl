@@ -74,7 +74,6 @@ class TerminalSymbol(Symbol):
         """Checks if input is recognized as this symbol"""
         return check(self.gd, data)
 
-    @property
     def first(self):
         return self.gd.first
 

@@ -31,7 +31,6 @@ class Grammar(object):
         """Generates every possible accepted string"""
         raise NotImplementedError
 
-    @property
     def first(self):# -> set:
         """Grammar definition that matches every possible first element.
         the returned value is a subset of the base_alphabet"""
@@ -88,7 +87,6 @@ class RegularExpression(Grammar):
     def __str__(self):
         return self.regexpstr
 
-    @property
     def first(self):# -> set:
         i = 0
         while True:
@@ -107,7 +105,6 @@ class String(Grammar, str):
         Grammar.__init__(self)
         str.__init__(self, string)
 
-    @property
     def first(self):
         return [String(self[0])]
 
