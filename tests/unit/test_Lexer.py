@@ -38,12 +38,11 @@ class TestEncodingLexer(unittest.TestCase):
     def testencodingLexer(self):
         lexer = EncodingLexer('utf8')
         result = list(lexer("abcde"))
-        print([str(x) for x in result])
+        self.assertTrue([str(x) for x in result])
+        result = list(lexer([x for x in "abcde"]))
+        self.assertTrue([str(x) for x in result])
 
 class TestChoiceBruteForceLexer(unittest.TestCase):
-    def setUp(self):
-        pass
-
     @unittest.skip("Raises an exception")
     def testEmptyInput(self):
         integer = RegularExpression("^[0123456789]*$")
@@ -59,7 +58,9 @@ class TestChoiceBruteForceLexer(unittest.TestCase):
         mydef = Choice([integer,date])
         lexer = lexer_factory(mydef)
         self.assertListEqual(lexer("1234"), [("1234", integer)])
+        self.assertListEqual(lexer([x for x in "1234"]), [("1234", integer)])
         self.assertListEqual(lexer("123411/11/2001"), [("1234", integer),("11/11/2001", date)])
+        self.assertListEqual(lexer([x for x in "123411/11/2001"]), [("1234", integer),("11/11/2001", date)])
 
     def testSecondLevelGrammar(self):
         a = String("a")
@@ -103,3 +104,4 @@ class TestPythonLexer(unittest.TestCase):
         ct = concept_translator_fun
 
         self.assertListEqual(ct(lexer("red")), ["color red"])
+        self.assertListEqual(ct(lexer([x for x in "red"])), ["color red"])
