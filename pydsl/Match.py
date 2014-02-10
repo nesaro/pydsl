@@ -18,13 +18,12 @@
 
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2013, Nestor Arocha"
+__copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
+from collections import Iterable
 import logging
 LOG = logging.getLogger(__name__)
-
-
 from pydsl.Grammar.Definition import String, RegularExpression
 
 class Matcher(object):
@@ -42,9 +41,13 @@ class StringMatcher(Matcher):
     def __init__(self, definition):
         if isinstance(definition, str):
             definition = String(definition)
+        if not isinstance(definition, String):
+            raise TypeError
         self.definition = definition
 
     def match(self, value):
+        if isinstance(value, Iterable):
+            value = "".join(value)
         if value.startswith(self.definition):
             return value[:len(self.definition)], value[len(self.definition):]
         raise Exception("No match")
@@ -56,6 +59,8 @@ class RegularExpressionMatcher(Matcher):
         self.definition = definition
 
     def match(self, value):
+        if isinstance(value, Iterable):
+            value = "".join(value)
         match_result =  self.definition.regexp.match(value)
         if match_result:
             return value[:match_result.end()], value[match_result.end():]
