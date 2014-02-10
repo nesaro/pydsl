@@ -38,24 +38,6 @@ class EncodingLexer(object):
         for x in string:
             yield Token(x, None)
 
-class AlphabetChainLexer(object):
-    def __init__(self, alphabetchain):
-        self.alphabetchain = alphabetchain
-
-    def __call__(self, data, include_gd=False):
-        if include_gd:
-            for alphabet in self.alphabetchain:
-                lexer = lexer_factory(alphabet)
-                response = lexer(data, include_gd = True)
-                data, grammars = zip(*response)
-            return zip(data, grammars)
-        else:
-            for alphabet in self.alphabetchain:
-                lexer = lexer_factory(alphabet)
-                data = lexer(data, include_gd = False)
-            return data
-
-
 
 class ChoiceBruteForceLexer(object):
 
@@ -121,13 +103,10 @@ class ChoiceBruteForceLexer(object):
                 yield Token(y['content'], None)
 
 def lexer_factory(alphabet):
-    from pydsl.Grammar.Alphabet import Choice, AlphabetChain
     if isinstance(alphabet, Choice):
         return ChoiceBruteForceLexer(alphabet)
     elif isinstance(alphabet, Encoding):
         return EncodingLexer(alphabet)
-    elif isinstance(alphabet, AlphabetChain):
-        return AlphabetChainLexer(alphabet)
     else:
         raise ValueError(alphabet)
 

@@ -24,7 +24,7 @@ __email__ = "nesaro@gmail.com"
 import unittest
 from pydsl.Grammar import String
 from pydsl.Grammar.PEG import Sequence
-from pydsl.Grammar.Alphabet import Choice, Encoding, AlphabetChain
+from pydsl.Grammar.Alphabet import Choice, Encoding
 from pydsl.Grammar import RegularExpression
 from pydsl.File.BNF import load_bnf_file
 from pydsl.File.Python import load_python_file
@@ -54,13 +54,3 @@ class TestAlphabet(unittest.TestCase):
         alphabet = Encoding('unicode')
         self.assertTrue(alphabet[0])
         self.assertEqual(len(alphabet.enum()), 9635)
-
-    def testAlphabetChain(self):
-        a1 = Choice([String('a'), String('b'), String('c')])
-        ab_sequence = Sequence([String('a'), String('b')])
-        ac_sequence = Sequence([String('a'), String('c')])
-        a2 = Choice([ ab_sequence, ac_sequence ], base_alphabet = a1)
-        ac = AlphabetChain([a1, a2])
-        self.assertEqual(a1.first(), ac.first())
-        lexer = lexer_factory(ac)
-        self.assertListEqual([x[1] for x in lexer("abac", include_gd=True)], [ab_sequence , ac_sequence])
