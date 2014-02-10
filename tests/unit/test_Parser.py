@@ -89,7 +89,7 @@ class TestLR0Parser(unittest.TestCase):
 
     def testLR0ParserStore(self):
         parser = LR0Parser(productionset0)
-        tokelist = [x for x in EncodingLexer('utf8')(p0good)]
+        tokelist = [x.content for x in EncodingLexer('utf8')(p0good)]
         result = parser.check(tokelist)
         self.assertTrue(result)
 

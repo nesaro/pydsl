@@ -23,6 +23,8 @@ __email__ = "nesaro@gmail.com"
 
 from pydsl.Grammar.Alphabet import Encoding
 from pydsl.Check import checker_factory
+from pydsl.Token import Token
+
 
 
 class EncodingLexer(object):
@@ -34,7 +36,7 @@ class EncodingLexer(object):
 
     def __call__(self, string):
         for x in string:
-            yield x
+            yield Token(x, None)
 
 class AlphabetChainLexer(object):
     def __init__(self, alphabetchain):
@@ -114,9 +116,9 @@ class ChoiceBruteForceLexer(object):
             raise Exception("No sequence found for input %s alphabet %s" % (self.string,self.alphabet))
         for y in sorted(right_length_seq, key=lambda x:len(x))[0]: #Always gets the match with less tokens
             if include_gd:
-                yield y['content'], y.get('gd')
+                yield Token(y['content'], y.get('gd'))
             else:
-                yield y['content']
+                yield Token(y['content'], None)
 
 def lexer_factory(alphabet):
     from pydsl.Grammar.Alphabet import Choice, AlphabetChain
