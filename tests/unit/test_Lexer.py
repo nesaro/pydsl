@@ -16,7 +16,7 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2013, Nestor Arocha"
+__copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
@@ -40,7 +40,7 @@ class TestEncodingLexer(unittest.TestCase):
         result = list(lexer("abcde"))
         print([str(x) for x in result])
 
-class TestChoiceLexer(unittest.TestCase):
+class TestChoiceBruteForceLexer(unittest.TestCase):
     def setUp(self):
         pass
 

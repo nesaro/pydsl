@@ -55,7 +55,7 @@ class AlphabetChainLexer(object):
 
 
 
-class ChoiceLexer(object):
+class ChoiceBruteForceLexer(object):
 
     """Lexer receives an Alphabet in the initialization (A1).
     Receives an input that belongs to A1 and generates a list of tokens in a different Alphabet A2
@@ -121,7 +121,7 @@ class ChoiceLexer(object):
 def lexer_factory(alphabet):
     from pydsl.Grammar.Alphabet import Choice, AlphabetChain
     if isinstance(alphabet, Choice):
-        return ChoiceLexer(alphabet)
+        return ChoiceBruteForceLexer(alphabet)
     elif isinstance(alphabet, Encoding):
         return EncodingLexer(alphabet)
     elif isinstance(alphabet, AlphabetChain):
