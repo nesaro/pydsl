@@ -43,7 +43,11 @@ def filter_subsets(lst):
 
 
 def extract_alphabet(alphabet, inputdata, fixed_start = False):
-    """Extract every slice of the input data that belongs to the Grammar Definition"""
+    """
+    Receives a sequence and an alphabet, 
+    returns a list of PositionTokens with all of the parts of the sequence that 
+    are a subset of the alphabet
+    """
     lexer = lexer_factory(alphabet, alphabet.alphabet)
     totallen = len(inputdata)
     maxl = totallen
@@ -65,7 +69,11 @@ def extract_alphabet(alphabet, inputdata, fixed_start = False):
     return [PositionToken(content, None, left, right) for (left, right, content) in result]
 
 def extract(grammar, inputdata, fixed_start = False):
-    """Extract every slice of the input data that belongs to the Grammar Definition"""
+    """
+    Receives a sequence and a grammar, 
+    returns a list of PositionTokens with all of the parts of the sequence that 
+    are recognized by the grammar
+    """
     checker = checker_factory(grammar)
     totallen = len(inputdata)
     try:

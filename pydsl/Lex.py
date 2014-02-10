@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Base Lexer classes"""
+"""Lexer classes. Receives and input sequences and returns a list of Tokens"""
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2014, Nestor Arocha"
