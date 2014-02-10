@@ -21,7 +21,7 @@ __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
-from pydsl.Grammar.Alphabet import Encoding
+from pydsl.Grammar.Alphabet import Encoding, Choice
 from pydsl.Check import checker_factory
 from pydsl.Token import Token
 
