@@ -74,6 +74,9 @@ class Encoding(Alphabet):
     def alphabet(self):
         return None
 
+    def __hash__(self):
+        return hash(self.encoding)
+
     def __eq__(self, other):
         try:
             return self.encoding == other.encoding
