@@ -23,7 +23,7 @@ from pydsl.Grammar.Definition import Grammar
 import logging
 LOG=logging.getLogger(__name__)
 
-class Alphabet(Grammar):
+class Alphabet(object):
     """Defines a set of valid elements"""
     @property
     def minsize(self):
@@ -33,22 +33,32 @@ class Alphabet(Grammar):
     def maxsize(self):
         return 1
 
-class AlphabetChain(Alphabet, list):
+class AlphabetChain(Alphabet, Grammar, list):
     def __init__(self, alphabet_list):
         list.__init__(self, alphabet_list)
-        Alphabet.__init__(self, base_alphabet = self[0].alphabet)
+        Alphabet.__init__(self)
+        Grammar.__init__(self, base_alphabet = self[0].alphabet)
 
 
-class Choice(Alphabet, list):
+class GrammarCollection(Alphabet, list):
+    """Uses a list of grammar definitions"""
+    def __init__(self, grammarlist):
+        Alphabet.__init__(self)
+        list.__init__(self, grammarlist)
+        for x in self:
+            if not isinstance(x, Grammar):
+                raise TypeError("Expected Grammar, Got %s:%s" % (x.__class__.__name__,x))
+
+    def __str__(self):
+        return str([str(x) for x in self])
+
+
+
+class Choice(GrammarCollection, Grammar):
     """Uses a list of grammar definitions"""
     def __init__(self, grammarlist, base_alphabet = None):
-        Alphabet.__init__(self, base_alphabet)
-        if not grammarlist:
-            raise ValueError
-        result = []
-        for x in grammarlist:
-            result.append(x)
-        list.__init__(self, result)
+        GrammarCollection.__init__(self, grammarlist)
+        Grammar.__init__(self,base_alphabet)
         base_alphabet_list = []
         for x in self:
             if not isinstance(x, Grammar):
