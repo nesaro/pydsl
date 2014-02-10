@@ -31,6 +31,7 @@ class TestStringMatch(unittest.TestCase):
 
     def testOkMatch(self):
         self.assertEqual(self.matcher("abcd"), ("abc","d"))
+        self.assertEqual(self.matcher([x for x in "abcd"]), ("abc","d"))
 
     def testNoMatch(self):
         self.assertRaises(Exception, self.matcher, "d")
@@ -43,6 +44,7 @@ class TestRegExpMatch(unittest.TestCase):
 
     def testOkMatch(self):
         self.assertEqual(self.matcher("abcd"), ("abc","d"))
+        self.assertEqual(self.matcher([x for x in "abcd"]), ("abc","d"))
 
     def testNoMatch(self):
         self.assertRaises(Exception, self.matcher, "d")

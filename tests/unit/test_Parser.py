@@ -34,35 +34,50 @@ class TestBacktracingRecursiveDescentParser(unittest.TestCase):
         descentparser = BacktracingErrorRecursiveDescentParser(productionsetlr)
         result = descentparser(dots)
         self.assertTrue(result)
+        result = descentparser(list(dots))
+        self.assertTrue(result)
 
     def testRightRecursion(self):
         descentparser = BacktracingErrorRecursiveDescentParser(productionsetrr)
         result = descentparser(dots)
+        self.assertTrue(result)
+        result = descentparser(list(dots))
         self.assertTrue(result)
 
     def testCenterRecursion(self):
         descentparser = BacktracingErrorRecursiveDescentParser(productionsetcr)
         result = descentparser(dots)
         self.assertTrue(result)
+        result = descentparser(list(dots))
+        self.assertTrue(result)
 
     def testRecursiveDescentParserStore(self):
         descentparser = BacktracingErrorRecursiveDescentParser(productionset1)
         result = descentparser(string1)
+        self.assertTrue(result)
+        result = descentparser(list(string1))
         self.assertTrue(result)
 
     def testRecursiveDescentParserBad(self):
         descentparser = BacktracingErrorRecursiveDescentParser(productionset1)
         result = descentparser(string2)
         self.assertFalse(result)
+        result = descentparser(list(string2))
+        self.assertFalse(result)
+
 
     def testRecursiveDescentParserNull(self):
         descentparser = BacktracingErrorRecursiveDescentParser(productionset2)
         result = descentparser(string3)
         self.assertTrue(result)
+        result = descentparser(list(string3))
+        self.assertTrue(result)
 
     def testRecursiveDescentParserNullBad(self):
         descentparser = BacktracingErrorRecursiveDescentParser(productionset2)
         result = descentparser(string4)
+        self.assertFalse(result)
+        result = descentparser(list(string4))
         self.assertFalse(result)
 
 
@@ -98,6 +113,8 @@ class TestLR0Parser(unittest.TestCase):
         parser = LR0Parser(productionset1)
         result = parser(string2)
         self.assertFalse(result)
+        result = parser(list(string2))
+        self.assertFalse(result)
 
 
 class TestLL1RecursiveDescentParser(unittest.TestCase):
@@ -119,10 +136,14 @@ class TestLL1RecursiveDescentParser(unittest.TestCase):
         descentparser = LL1RecursiveDescentParser(productionset1)
         result = descentparser(string1)
         self.assertTrue(result)
+        result = descentparser(list(string1))
+        self.assertTrue(result)
 
     def testLL1RecursiveDescentParserBad(self):
         descentparser = LL1RecursiveDescentParser(productionset1)
         result = descentparser(string2)
+        self.assertFalse(result)
+        result = descentparser(list(string2))
         self.assertFalse(result)
 
 @unittest.skip

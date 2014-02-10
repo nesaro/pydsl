@@ -41,6 +41,18 @@ class TestGrammarExtract(unittest.TestCase):
                 PositionToken(content='34', gd=None, left=5, right=7), 
                 PositionToken(content='4', gd=None, left=6, right=7)]
         self.assertListEqual(extract(gd,'abc1234abc'), expected_result)
+        expected_result = [
+                PositionToken(content=['1'], gd=None, left=3, right=4), 
+                PositionToken(content=['1','2'], gd=None, left=3, right=5), 
+                PositionToken(content=['1','2','3'], gd=None, left=3, right=6), 
+                PositionToken(content=['1','2','3','4'], gd=None, left=3, right=7), 
+                PositionToken(content=['2'], gd=None, left=4, right=5), 
+                PositionToken(content=['2','3'], gd=None, left=4, right=6), 
+                PositionToken(content=['2','3','4'], gd=None, left=4, right=7), 
+                PositionToken(content=['3'], gd=None, left=5, right=6), 
+                PositionToken(content=['3','4'], gd=None, left=5, right=7), 
+                PositionToken(content=['4'], gd=None, left=6, right=7)]
+        self.assertListEqual(extract(gd,[x for x in 'abc1234abc']), expected_result)
         self.assertRaises(Exception, extract, None)
 
 
@@ -51,5 +63,6 @@ class TestAlphabetExtract(unittest.TestCase):
         from pydsl.Grammar.Alphabet import Encoding
         ad = Encoding('ascii')
         self.assertListEqual(extract(ad,'a£'), [PositionToken('a', None, 0,1)])
+        self.assertListEqual(extract(ad,['a','£']), [PositionToken(['a'], None, 0,1)])
         self.assertRaises(Exception, extract, None)
 
