@@ -16,8 +16,6 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 """Recursive descent parser"""
-from pydsl import Tree
-from pydsl.Check import check
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
@@ -26,7 +24,7 @@ __email__ = "nesaro@gmail.com"
 import logging
 LOG = logging.getLogger(__name__)
 from .Parser import TopDownParser, terminal_symbol_reducer
-from pydsl.Tree import ParseTree, Tree, Sequence
+from pydsl.Tree import ParseTree, Sequence
 
 class BacktracingErrorRecursiveDescentParser(TopDownParser):
     """Recursive descent parser implementation. Backtracing. Null support. Error support"""
@@ -48,12 +46,12 @@ class BacktracingErrorRecursiveDescentParser(TopDownParser):
         if isinstance(onlysymbol, TerminalSymbol):
             #Locate every occurrence of word and return a set of results. Follow boundariesrules
             LOG.debug("Iteration: terminalsymbol")
-            result = terminal_symbol_reducer(onlysymbol, data, production, fixed_start=True)
+            result = terminal_symbol_reducer(onlysymbol, data, fixed_start=True)
             if showerrors and not result:
-                return [ParseTree(0,len(data), [onlysymbol] , data, onlysymbol, valid = False)]
+                return [ParseTree(0,len(data), onlysymbol , data, onlysymbol, valid = False)]
             return result
         elif isinstance(onlysymbol, NullSymbol):
-            return [ParseTree(0, 0, [onlysymbol], "", production)]
+            return [ParseTree(0, 0, onlysymbol, "")]
         elif isinstance(onlysymbol, NonTerminalSymbol):
             validstack = []
             invalidstack = []
@@ -95,8 +93,7 @@ class BacktracingErrorRecursiveDescentParser(TopDownParser):
                     nnullresults = 0
                     leftpos = results[0]['left']
                     rightpos = results[-1]['right']
-                    for y in [x['content'].symbollist for x in results]:
-                        nnullresults += y.count(NullSymbol())
+                    nnullresults = len([x for x in results if x['content'].symbol == NullSymbol()])
                     if len(results) - nnullresults != len(alternative.rightside) - nullcount:
                         LOG.debug("Discarded: incorrect number of non null symbols")
                         continue
@@ -110,15 +107,14 @@ class BacktracingErrorRecursiveDescentParser(TopDownParser):
                     childlist = [x['content'] for x in results]
                     allvalid = all([x.valid for x in childlist])
                     if allvalid:
-                        newresult = ParseTree(0, rightpos - leftpos, [onlysymbol],
-                                data[leftpos:rightpos], alternative, childlist)
+                        newresult = ParseTree(0, rightpos - leftpos, onlysymbol,
+                                data[leftpos:rightpos], childlist = childlist)
                         newresult.valid = True
                         result.append(newresult)
             if showerrors and not result:
-                erroresult = ParseTree(0,len(data), [onlysymbol] , data, production, valid = False)
+                erroresult = ParseTree(0,len(data), onlysymbol , data, valid = False)
                 for invalid in invalidstack:
-                    current_symbol = invalid.production if isinstance(invalid.production, (TerminalSymbol, NullSymbol)) else invalid.production.leftside[0]
-                    if current_symbol in production.rightside:
+                    if invalid.content in production.rightside:
                         erroresult.append_child(invalid)
                 return [erroresult]
             return result
@@ -146,7 +142,7 @@ class BacktracingRecursiveDescentParser(TopDownParser):
         if isinstance(onlysymbol, TerminalSymbol):
             #Locate every occurrence of word and return a set of results. Follow boundariesrules
             LOG.debug("Iteration: terminalsymbol")
-            result = terminal_symbol_reducer(onlysymbol, data, production, fixed_start=True)
+            result = terminal_symbol_reducer(onlysymbol, data, fixed_start=True)
             return result
         elif isinstance(onlysymbol, NonTerminalSymbol):
             validstack = []
@@ -186,115 +182,11 @@ class BacktracingRecursiveDescentParser(TopDownParser):
                             LOG.debug("Discarded: rule doesn't match partial result")
                             continue
                     childlist = [x for x in results]
-                    newresult = ParseTree(0, rightpos - leftpos, [onlysymbol],
+                    newresult = ParseTree(0, rightpos - leftpos, onlysymbol,
                             data[leftpos:rightpos], alternative, childlist)
                     newresult.valid = True
                     result.append(newresult)
             return result
         raise Exception("Unknown symbol:" + str(onlysymbol))
 
-class LL1RecursiveDescentParser(TopDownParser):
-    def get_trees(self, data, showerrors = False): # -> list:
-        """ returns a list of trees with valid guesses """
-        if showerrors:
-            raise NotImplementedError("This parser doesn't implement errors")
-        self.data = data
-        self.index = 0
-        try:
-            return [self.__aux_parser(self._productionset.initialsymbol)]
-        except IndexError:
-            return []
-
-    def __aux_parser(self, symbol):
-        from pydsl.Grammar.Symbol import TerminalSymbol
-        if isinstance(symbol, TerminalSymbol):
-            LOG.debug("matching symbol %s, data:%s, index:%s" % (symbol,self.data,self.index ))
-            result= self.match(symbol)
-            LOG.debug("symbol matched %s" % result)
-            return result
-        productions = self._productionset.getProductionsBySide(symbol)
-        first_of_each_production = {}
-        for production in productions:
-            first_of_each_production[production] = [x.gd for x in self._productionset.first_lookup(production.rightside[0])]
-        valid_firsts = [production_instance for (production_instance,first_set) in first_of_each_production.items() if check(first_set, self.current)]
-        if len(valid_firsts) != 1:
-            raise Exception("Expected only one valid production, found %s" % len(valid_firsts))
-        childlist = []
-        for element in valid_firsts[0].rightside:
-            childlist.append(self.__aux_parser(element))
-        left = childlist[0].leftpos
-        right = childlist[-1].rightpos
-        content = [x.content for x in childlist]
-        return ParseTree(left, right, [symbol], content, valid_firsts[0], childlist=childlist)
-
-
-    def consume(self):
-        self.index +=1
-        if self.index > len(self.data):
-            raise IndexError("Attempted to consume index %s of data %s" % (self.index, self.data))
-
-    @property
-    def current(self):
-        result = self.data[self.index]
-        return result
-
-    def match(self, symbol):
-        if symbol.check(self.current):
-            current = self.current
-            self.consume()
-            return ParseTree(self.index-1, self.index, [symbol], current, None)
-        else:
-            raise Exception("Not matched")
-
-
-class LLkRecursiveDescentParser(TopDownParser):
-    def get_trees(self, data, lookahead=1, showerrors = False): # -> list:
-        """ returns a list of trees with valid guesses """
-        if showerrors:
-            raise NotImplementedError("This parser doesn't implement errors")
-        self.data = data
-        self.index = 0
-        self.lookahead=lookahead
-        return [self.__aux_parser(self._productionset.initialsymbol)]
-
-    def __aux_parser(self, symbol):
-        from pydsl.Grammar.Symbol import TerminalSymbol
-        if isinstance(symbol, TerminalSymbol):
-            LOG.debug("matching symbol %s, data:%s, index:%s" % (symbol,self.data,self.index ))
-            result= self.match(symbol)
-            LOG.debug("symbol matched %s" % result)
-            return result
-        productions = self._productionset.getProductionsBySide(symbol)
-        first_of_each_production = {}
-        for production in productions:
-            first_of_each_production[production] = [x for x in self._productionset.first_lookup(production.rightside[0], self.lookahead)]
-        valid_firsts = [production_instance for (production_instance,first_set) in first_of_each_production.items() if check(first_set, self.current)]
-        if len(valid_firsts) != 1:
-            raise Exception("Expected only one valid production, found %s" % len(valid_firsts))
-        childlist = []
-        for element in valid_firsts[0].rightside:
-            childlist.append(self.__aux_parser(element))
-        left = childlist[0].leftpos
-        right = childlist[-1].rightpos
-        content = [x.content for x in childlist]
-        return ParseTree(left, right, [symbol], content, valid_firsts[0], childlist=childlist)
-
-
-    def consume(self):
-        self.index +=1
-        if self.index > len(self.data):
-            raise IndexError("Attempted to consume index %s of data %s" % (self.index, self.data))
-
-    @property
-    def current(self):
-        result = self.data[self.index]
-        return result
-
-    def match(self, symbol):
-        if symbol.check(self.current):
-            current = self.current
-            self.consume()
-            return ParseTree(self.index-1, self.index, [symbol], current, None)
-        else:
-            raise Exception("Not matched")
 

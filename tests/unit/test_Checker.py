@@ -137,7 +137,7 @@ class TestJsonSchemaChecker(unittest.TestCase):
 class TestEncodingChecker(unittest.TestCase):
     def testCheck(self):
         from pydsl.Check import EncodingChecker
-        from pydsl.Alphabet import Encoding
+        from pydsl.Grammar.Alphabet import Encoding
         a = Encoding('ascii')
         checker = EncodingChecker(a)
         self.assertTrue(checker.check('1234'))
@@ -159,10 +159,10 @@ class TestAlphabetListDefinitionChecker(unittest.TestCase):
         load_default_memory()
 
     def testCheck(self):
-        from pydsl.Check import AlphabetListChecker
-        from pydsl.Alphabet import AlphabetListDefinition
-        a = AlphabetListDefinition(['integer'])
-        checker = AlphabetListChecker(a)
+        from pydsl.Check import ChoiceChecker
+        from pydsl.Grammar.Alphabet import Choice
+        a = Choice(['integer'])
+        checker = ChoiceChecker(a)
         self.assertTrue(checker.check('1234'))
         self.assertFalse(checker.check('abc'))
 

@@ -18,7 +18,7 @@
 
 """Tests the Grammar definition instances"""
 
-from pydsl.Alphabet import Alphabet
+from pydsl.Grammar import Alphabet
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
@@ -26,7 +26,7 @@ __email__ = "nesaro@gmail.com"
 
 import unittest
 from pydsl.Grammar.Definition import MongoGrammar, String
-from pydsl.Alphabet import Encoding
+from pydsl.Grammar.Alphabet import Encoding
 
 
 class TestGrammarDefinitionMongoDb(unittest.TestCase):

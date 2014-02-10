@@ -23,30 +23,29 @@ import unittest
 
 class TestTrees(unittest.TestCase):
     def setUp(self):
-        from pydsl.Tree import PositionTree
-        a = PositionTree(0,6,"abcdef")
-        self.firstleaf1 = PositionTree(0,1,"a")
-        a.append_child(self.firstleaf1)
-        b = PositionTree(1,3,"bc")
-        a.append_child(b)
-        b.append_child(PositionTree(1,2,"b"))
-        b.append_child(PositionTree(2,3,"c"))
-        a.append_child(PositionTree(3,4,"d"))
-        a.append_child(PositionTree(4,5,"e"))
-        a.append_child(PositionTree(5,6,"f"))
+        from pydsl.Tree import ParseTree
+        a = ParseTree(0,6, None, "abcdef")
+        self.firstleaf1 = ParseTree(0,1, None, "a")
+        a.append(self.firstleaf1)
+        b = ParseTree(1,3,None, "bc")
+        a.append(b)
+        b.append(ParseTree(1,2,None, "b"))
+        b.append(ParseTree(2,3,None, "c"))
+        a.append(ParseTree(3,4,None, "d"))
+        a.append(ParseTree(4,5,None, "e"))
+        a.append(ParseTree(5,6,None, "f"))
         self.tree1 = a
-        c = PositionTree(0,6,"abcdef")
-        self.firstleaf2 = PositionTree(0,1,"a")
-        c.append_child(self.firstleaf2)
-        b = PositionTree(1,3,"bc")
-        c.append_child(b)
-        b.append_child(PositionTree(1,2,"b"))
-        b.append_child(PositionTree(2,3,"j"))
-        c.append_child(PositionTree(3,4,"d"))
-        c.append_child(PositionTree(4,5,"e"))
-        c.append_child(PositionTree(5,6,"f"))
+        c = ParseTree(0,6, None, "abcdef")
+        self.firstleaf2 = ParseTree(0,1, None, "a")
+        c.append(self.firstleaf2)
+        b = ParseTree(1,3, None, "bc")
+        c.append(b)
+        b.append(ParseTree(1,2, None, "b"))
+        b.append(ParseTree(2,3, None, "j"))
+        c.append(ParseTree(3,4, None, "d"))
+        c.append(ParseTree(4,5, None, "e"))
+        c.append(ParseTree(5,6, None, "f"))
         self.tree2 = c
 
     def testBasics(self):
         self.assertTrue(len(self.tree1) == 6)
-        self.assertTrue(self.tree1.first_leaf() == self.firstleaf1)

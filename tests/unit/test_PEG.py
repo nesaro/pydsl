@@ -24,7 +24,7 @@ __email__ = "nesaro@gmail.com"
 import unittest
 from pydsl.Grammar.Definition import String, Grammar
 from pydsl.Grammar.PEG import Many, Not, Sequence
-from pydsl.Alphabet import AlphabetListDefinition
+from pydsl.Grammar.Alphabet import Choice
 
 class TestPEG(unittest.TestCase):
     def testMany(self):
@@ -32,7 +32,7 @@ class TestPEG(unittest.TestCase):
         self.assertTrue(isinstance(mygrammar, Grammar))
 
     def testChoice(self):
-        mygrammar = AlphabetListDefinition((String("a"), String("b")))
+        mygrammar = Choice((String("a"), String("b")))
         from pydsl.Check import check
         self.assertTrue(check(mygrammar, "a"))
         self.assertTrue(check(mygrammar, "b"))

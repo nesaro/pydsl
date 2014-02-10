@@ -14,6 +14,7 @@
 #
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
+from pydsl.Parser.LL import LL1RecursiveDescentParser
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2013, Nestor Arocha"
@@ -22,7 +23,7 @@ __email__ = "nesaro@gmail.com"
 
 
 from pydsl.contrib.bnfgrammar import *
-from pydsl.Parser.RecursiveDescent import BacktracingErrorRecursiveDescentParser, LL1RecursiveDescentParser
+from pydsl.Parser.Backtracing import BacktracingErrorRecursiveDescentParser
 from pydsl.Parser.Weighted import WeightedParser
 from pydsl.Parser.LR0 import LR0Parser
 from pydsl.Lex import EncodingLexer
@@ -187,3 +188,13 @@ class TestLL1RecursiveDescentParser(unittest.TestCase):
         result = descentparser(string2)
         self.assertFalse(result)
 
+@unittest.skip
+class TestPEGParser(unittest.TestCase):
+    def testBasicChoice(self):
+        from pydsl.Grammar.Alphabet import Choice
+        from pydsl.Tree import ParseTree
+        from pydsl.Parser.PEG import PEGParser
+        gd = Choice([String('a'), String('b')])
+        parser = PEGParser(gd)
+        result = parser('a')
+        self.assertTrue(isinstance(result, ParseTree))

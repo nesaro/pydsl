@@ -40,7 +40,7 @@ class Alphabet(Grammar):
     def minsize(self):
         return 1 #FIXME: In some cases could be 0
 
-class AlphabetListDefinition(Alphabet):
+class Choice(Alphabet):
     """Uses a list of grammar definitions"""
     def __init__(self, grammarlist):
         if not grammarlist:
