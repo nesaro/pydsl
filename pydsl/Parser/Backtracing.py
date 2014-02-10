@@ -18,7 +18,7 @@
 """Recursive descent parser"""
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2013, Nestor Arocha"
+__copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
@@ -31,6 +31,8 @@ class BacktracingErrorRecursiveDescentParser(TopDownParser):
     """Recursive descent parser implementation. Backtracing. Null support. Error support"""
     def get_trees(self, data, showerrors = False): # -> list:
         """ returns a list of trees with valid guesses """
+        if isinstance(data, str):
+            data = [x for x in data]
         result = self.__recursive_parser(self._productionset.initialsymbol, data, self._productionset.main_production, showerrors)
         finalresult = []
         for eresult in result:

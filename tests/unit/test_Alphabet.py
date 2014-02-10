@@ -18,7 +18,7 @@ from pydsl.Check import checker_factory
 from pydsl.Lex import lexer_factory
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2013, Nestor Arocha"
+__copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
@@ -39,13 +39,18 @@ class TestAlphabet(unittest.TestCase):
     def testChecker(self):
         checker = checker_factory(self.alphabet)
         self.assertTrue(checker.check("1234"))
+        self.assertTrue(checker.check([x for x in "1234"]))
         self.assertTrue(checker.check("11/11/1991"))
+        self.assertTrue(checker.check([x for x in "11/11/1991"]))
         self.assertFalse(checker.check("bcdf"))
+        self.assertFalse(checker.check([x for x in "bcdf"]))
 
     def testLexer(self):
         lexer = lexer_factory(self.alphabet)
         self.assertListEqual(lexer("1234"), [("1234", self.integer)])
+        self.assertListEqual(lexer([x for x in "1234"]), [("1234", self.integer)])
         self.assertListEqual(lexer("123411/11/2001"), [("1234", self.integer),("11/11/2001", self.date)])
+        self.assertListEqual(lexer([x for x in "123411/11/2001"]), [("1234", self.integer),("11/11/2001", self.date)])
 
     def testEncoding(self):
         alphabet = Encoding('ascii')
