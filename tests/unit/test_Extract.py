@@ -16,10 +16,11 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2013, Nestor Arocha"
+__copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
+from pydsl.Token import PositionToken
 
 
 class TestGrammarExtract(unittest.TestCase):
@@ -28,7 +29,17 @@ class TestGrammarExtract(unittest.TestCase):
         from pydsl.Extract import extract
         from pydsl.Grammar import RegularExpression
         gd = RegularExpression('^[0123456789]*$')
-        expected_result = [(3, 4, '1'), (3, 5, '12'), (3, 6, '123'), (3, 7, '1234'), (4, 5, '2'), (4, 6, '23'), (4, 7, '234'), (5, 6, '3'), (5, 7, '34'), (6, 7, '4')]
+        expected_result = [
+                PositionToken(content='1', gd=None, left=3, right=4), 
+                PositionToken(content='12', gd=None, left=3, right=5), 
+                PositionToken(content='123', gd=None, left=3, right=6), 
+                PositionToken(content='1234', gd=None, left=3, right=7), 
+                PositionToken(content='2', gd=None, left=4, right=5), 
+                PositionToken(content='23', gd=None, left=4, right=6), 
+                PositionToken(content='234', gd=None, left=4, right=7), 
+                PositionToken(content='3', gd=None, left=5, right=6), 
+                PositionToken(content='34', gd=None, left=5, right=7), 
+                PositionToken(content='4', gd=None, left=6, right=7)]
         self.assertListEqual(extract(gd,'abc1234abc'), expected_result)
         self.assertRaises(Exception, extract, None)
 
@@ -39,6 +50,6 @@ class TestAlphabetExtract(unittest.TestCase):
         from pydsl.Extract import extract
         from pydsl.Grammar.Alphabet import Encoding
         ad = Encoding('ascii')
-        self.assertListEqual(extract(ad,'a£'), [(0,1,'a')])
+        self.assertListEqual(extract(ad,'a£'), [PositionToken('a', None, 0,1)])
         self.assertRaises(Exception, extract, None)
 

@@ -31,7 +31,7 @@ def terminal_symbol_reducer(symbol, data, fixed_start = False):
     from pydsl.Extract import extract
     from pydsl.Tree import ParseTree
     validresults = extract(symbol.gd, data, fixed_start)
-    validresults = sorted(validresults, key=lambda x:x[1]-x[0])
+    validresults = sorted(validresults, key=lambda x:x.right-x.left)
     if symbol.boundariesrules == "min":
         validresults = validresults[:1]
     elif symbol.boundariesrules == "max":
@@ -42,7 +42,7 @@ def terminal_symbol_reducer(symbol, data, fixed_start = False):
         pass
     else:
         raise ValueError("Unknown boundaries rules")
-    return [ParseTree(begin, end, symbol, data[begin:end]) for (begin, end, _) in validresults]
+    return [ParseTree(begin, end, symbol, data[begin:end]) for (_, _, begin, end) in validresults]
 
 class Parser(object):
     """Expands an input based on grammar rules
