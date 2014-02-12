@@ -27,3 +27,8 @@ from collections import namedtuple
 
 Token = namedtuple('Token', ('content','gd'))
 PositionToken = namedtuple('PositionToken', ('content','gd','left','right'))
+
+
+def append_position_to_token_list(token_list):
+    """Converts a list of Token into a list of PositionToken, asuming size == 1"""
+    return [PositionToken(value.content, value.gd, index, index+1) for (index, value) in enumerate(token_list)]

@@ -101,6 +101,7 @@ class BNFChecker(Checker):
     """Calls another program to perform checking. Args are always file names"""
     def __init__(self, bnf, parser = None):
         Checker.__init__(self)
+        self.gd = bnf
         parser = bnf.options.get("parser",parser)
         if parser in ("descent", "auto", "default", None):
             from pydsl.Parser.Backtracing import BacktracingErrorRecursiveDescentParser
@@ -109,6 +110,10 @@ class BNFChecker(Checker):
             raise ValueError("Unknown parser : " + parser)
 
     def check(self, data):
+        for element in data:
+            if not check(self.gd.alphabet, element):
+                LOG.warning("Invalid input: %s,%s" % (self.gd.alphabet, element))
+                return False
         try:
             return len(self.__parser.get_trees(data)) > 0
         except IndexError:
@@ -225,11 +230,8 @@ class IterableChecker(Checker):
             from pydsl.Grammar import Grammar
             if not isinstance(definition, Grammar):
                 raise TypeError("Expected a grammar definition")
-            try:
-                if check(definition, data):
-                    return True
-            except KeyError:
-                pass
+            if check(definition, data):
+                return True
         return False
 
 class SequenceChecker(Checker):

@@ -24,7 +24,8 @@ LOG = logging.getLogger(__name__)
 from pydsl.Check import checker_factory
 from pydsl.Lex import lexer_factory
 from pydsl.Grammar.Alphabet import Alphabet
-from pydsl.Token import PositionToken
+from pydsl.Grammar.Alphabet import Alphabet, Encoding
+from pydsl.Token import PositionToken, Token
 
 
 def filter_subsets(lst):
@@ -48,7 +49,18 @@ def extract_alphabet(alphabet, inputdata, fixed_start = False):
     returns a list of PositionTokens with all of the parts of the sequence that 
     are a subset of the alphabet
     """
-    lexer = lexer_factory(alphabet, alphabet.alphabet)
+    if not inputdata:
+        return []
+    if isinstance(alphabet, Encoding):
+        base_alphabet = None
+    else:
+        base_alphabet = alphabet.alphabet
+
+    if isinstance(inputdata[0], (Token, PositionToken)):
+        inputdata = [x.content for x in inputdata]
+
+
+    lexer = lexer_factory(alphabet, base_alphabet)
     totallen = len(inputdata)
     maxl = totallen
     minl = 1
@@ -74,7 +86,13 @@ def extract(grammar, inputdata, fixed_start = False):
     returns a list of PositionTokens with all of the parts of the sequence that 
     are recognized by the grammar
     """
+    if not inputdata:
+        return []
     checker = checker_factory(grammar)
+
+    if isinstance(inputdata[0], (Token, PositionToken)):
+        inputdata = [x.content for x in inputdata]
+
     totallen = len(inputdata)
     try:
         maxl = grammar.maxsize or totallen

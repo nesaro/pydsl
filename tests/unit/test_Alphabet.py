@@ -24,7 +24,7 @@ __email__ = "nesaro@gmail.com"
 import unittest
 from pydsl.Grammar import String
 from pydsl.Grammar.PEG import Sequence
-from pydsl.Grammar.Alphabet import Choice, Encoding
+from pydsl.Grammar.Alphabet import Choice, Encoding, GrammarCollection
 from pydsl.Grammar import RegularExpression
 from pydsl.File.BNF import load_bnf_file
 from pydsl.File.Python import load_python_file
@@ -34,23 +34,17 @@ class TestAlphabet(unittest.TestCase):
     def setUp(self):
         self.integer = RegularExpression("^[0123456789]*$")
         self.date = load_bnf_file("pydsl/contrib/grammar/Date.bnf", {'integer':self.integer, 'DayOfMonth':load_python_file('pydsl/contrib/grammar/DayOfMonth.py')})
-        self.alphabet = Choice([self.integer,self.date])
 
     def testChecker(self):
-        checker = checker_factory(self.alphabet)
+        alphabet = GrammarCollection([self.integer,self.date])
+        checker = checker_factory(alphabet)
         self.assertTrue(checker.check("1234"))
         self.assertTrue(checker.check([x for x in "1234"]))
-        self.assertTrue(checker.check("11/11/1991"))
-        self.assertTrue(checker.check([x for x in "11/11/1991"]))
+        self.assertFalse(checker.check("11/11/1991")) #Non tokenized input
+        self.assertFalse(checker.check([x for x in "11/11/1991"])) #Non tokenized input
+        self.assertTrue(checker.check(["11","/","11","/","1991"])) #tokenized input
         self.assertFalse(checker.check("bcdf"))
         self.assertFalse(checker.check([x for x in "bcdf"]))
-
-    def testLexer(self):
-        lexer = lexer_factory(self.alphabet)
-        self.assertListEqual(lexer("1234"), [("1234", self.integer)])
-        self.assertListEqual(lexer([x for x in "1234"]), [("1234", self.integer)])
-        self.assertListEqual(lexer("123411/11/2001"), [("1234", self.integer),("11/11/2001", self.date)])
-        self.assertListEqual(lexer([x for x in "123411/11/2001"]), [("1234", self.integer),("11/11/2001", self.date)])
 
     def testEncoding(self):
         alphabet = Encoding('ascii')
@@ -59,3 +53,6 @@ class TestAlphabet(unittest.TestCase):
         alphabet = Encoding('unicode')
         self.assertTrue(alphabet[0])
         self.assertEqual(len(alphabet.enum()), 9635)
+        self.assertRaises(KeyError, alphabet.__getitem__, 'a')
+        self.assertRaises(KeyError, alphabet.__getitem__, 5.5)
+        self.assertTrue(alphabet[100])
