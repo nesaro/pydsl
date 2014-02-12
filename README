@@ -13,9 +13,6 @@ pydsl is a language library written in python. It provides some verbs for Gramma
     from pydsl.Checker import check
     check(grammardefinition,'mystring') # returns True or False
 
-    from pydsl.Match import match
-    match(grammardefinition,'mystring') # returns ('my','string')
-
     from pydsl.Parser import parse
     parse(grammardefinition,'mystring') # returns a ParseTree
 
