@@ -30,6 +30,13 @@ INSTALLATION
  * pip:
    * pip install pydsl
 
+CONTRIBUTIONS
+=============
+ * check existing issues: https://github.com/nesaro/pydsl
+ * read the project's blog: http://pydsl.blogspot.co.uk
+ * pull requests :)
+
+
 REQUIREMENTS
 ============
  * python >= 2.7
