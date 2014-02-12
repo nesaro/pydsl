@@ -33,49 +33,46 @@ class Alphabet(object):
     def maxsize(self):
         return 1
 
-class GrammarCollection(Alphabet, list):
+class GrammarCollection(Alphabet, tuple):
     """Uses a list of grammar definitions"""
     def __init__(self, grammarlist):
         Alphabet.__init__(self)
-        list.__init__(self, grammarlist)
+        tuple.__init__(self, grammarlist)
         for x in self:
             if not isinstance(x, Grammar):
                 raise TypeError("Expected Grammar, Got %s:%s" % (x.__class__.__name__,x))
-
-    def __str__(self):
-        return str([str(x) for x in self])
-
-
-
-class Choice(GrammarCollection, Grammar):
-    """Uses a list of grammar definitions"""
-    def __init__(self, grammarlist, base_alphabet = None):
-        GrammarCollection.__init__(self, grammarlist)
-        Grammar.__init__(self,base_alphabet)
-        base_alphabet_list = []
-        for x in self:
-            if not isinstance(x, Grammar):
-                raise TypeError("Expected Grammar, Got %s:%s" % (x.__class__.__name__,x))
-            if x.base_alphabet not in base_alphabet_list:
-                base_alphabet_list.append(x.base_alphabet)
-        if len(base_alphabet_list) != 1:
-            raise ValueError('Different base alphabets from members %s' % base_alphabet_list)
 
     def __str__(self):
         return str([str(x) for x in self])
 
     def __add__(self, other):
-        return Choice(list.__add__(self,other))
+        return GrammarCollection(tuple.__add__(self,other))
+
+class Choice(GrammarCollection, Grammar):
+    """Uses a list of grammar definitions with common base alphabets"""
+    def __init__(self, grammarlist):
+        GrammarCollection.__init__(self, grammarlist)
+        base_alphabet_list = []
+        for x in self:
+            if not isinstance(x, Grammar):
+                raise TypeError("Expected Grammar, Got %s:%s" % (x.__class__.__name__,x))
+            if x.alphabet not in base_alphabet_list:
+                base_alphabet_list.append(x.alphabet)
+        if len(base_alphabet_list) != 1:
+            raise ValueError('Different base alphabets from members %s' % base_alphabet_list)
+        Grammar.__init__(self, base_alphabet_list[0])
+
+    def __str__(self):
+        return str([str(x) for x in self])
+
+    def __add__(self, other):
+        return Choice(GrammarCollection.__add__(self,other))
 
 class Encoding(Alphabet):
     """Defines an alphabet using an encoding string"""
     def __init__(self, encoding):
         Alphabet.__init__(self)
         self.encoding = encoding
-
-    @property
-    def alphabet(self):
-        return None
 
     def __hash__(self):
         return hash(self.encoding)
@@ -88,7 +85,18 @@ class Encoding(Alphabet):
 
     def __getitem__(self, item):
         from pydsl.Grammar import String
-        return String(chr(item))
+        try:
+            return String(chr(item))
+        except (ValueError, TypeError):
+            raise KeyError
+
+    def __contains__(self, item):
+        try:
+            self[item]
+        except KeyError:
+            return False
+        else:
+            return True
 
     def __str__(self):
         return self.encoding

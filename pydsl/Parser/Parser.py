@@ -26,24 +26,6 @@ import logging
 LOG = logging.getLogger(__name__)
 
 
-def terminal_symbol_reducer(symbol, data, fixed_start = False):
-    """ Reduces a terminal symbol """
-    from pydsl.Extract import extract
-    from pydsl.Tree import ParseTree
-    validresults = extract(symbol.gd, data, fixed_start)
-    validresults = sorted(validresults, key=lambda x:x.right-x.left)
-    if symbol.boundariesrules == "min":
-        validresults = validresults[:1]
-    elif symbol.boundariesrules == "max":
-        validresults = validresults[-1:]
-    elif symbol.boundariesrules == "any":
-        pass
-    elif isinstance(symbol.boundariesrules , int):
-        pass
-    else:
-        raise ValueError("Unknown boundaries rules")
-    return [ParseTree(begin, end, symbol, data[begin:end]) for (_, _, begin, end) in validresults]
-
 class Parser(object):
     """Expands an input based on grammar rules
     At this time, all parsers are tree based"""
@@ -63,6 +45,16 @@ class TopDownParser(Parser):
     """Top down parser like descent parser"""
     def __init__(self, bnfgrammar):
         self._productionset = bnfgrammar
+
+    def _reduce_terminal(self, symbol, data, showerrors = False):
+        from pydsl.Check import check
+        from pydsl.Tree import ParseTree
+        result = check(symbol.gd, data)
+        if result:
+            return [ParseTree(0,1, symbol , data)]
+        if showerrors and not result:
+            return [ParseTree(0,1, symbol , data, valid = False)]
+        return []
 
 class BottomUpParser(Parser):
     """ leaf to root parser"""

@@ -51,4 +51,4 @@ class TestBNF(unittest.TestCase):
         self.assertListEqual(self.grammardef.next_lookup(NonTerminalSymbol("exp")),[EndSymbol()])
 
     def testAlphabet(self):
-        self.assertListEqual(self.grammardef.alphabet, [String(x) for x in ["S","R"]])
+        self.assertListEqual(list(self.grammardef.alphabet), [String(x) for x in ["S","R"]])
