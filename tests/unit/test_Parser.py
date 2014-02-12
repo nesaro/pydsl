@@ -83,8 +83,6 @@ class TestBacktracingRecursiveDescentParser(unittest.TestCase):
         self.assertFalse(result)
         result = descentparser(list(string4))
         self.assertFalse(result)
-        result = descentparser(list(string4))
-        self.assertFalse(result)
 
 
 class TestLR0Parser(unittest.TestCase):
