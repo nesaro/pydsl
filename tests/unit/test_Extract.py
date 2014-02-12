@@ -24,6 +24,7 @@ from pydsl.Extract import extract, extract_alphabet
 from pydsl.Grammar import RegularExpression, String
 from pydsl.Grammar.Alphabet import Encoding, Choice
 from pydsl.Token import PositionToken, Token
+import sys
 
 
 class TestGrammarExtract(unittest.TestCase):
@@ -61,6 +62,7 @@ class TestGrammarExtract(unittest.TestCase):
 
 class TestAlphabetExtract(unittest.TestCase):
 
+    @unittest.skipIf(sys.version_info < (3,0), "Full encoding support not available for python 2")
     def testEncoding(self):
         ad = Encoding('ascii')
         self.assertListEqual(extract(ad,''), [])

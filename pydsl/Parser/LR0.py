@@ -232,6 +232,9 @@ class LR0ItemSet(object):
     def __bool__(self):
         return bool(self.itemlist)
 
+    def __nonzero__(self):
+        return self.__bool__()
+
     def __eq__(self, anotherset):
         """Tests on itemlist equality"""
         if not isinstance(anotherset, LR0ItemSet):

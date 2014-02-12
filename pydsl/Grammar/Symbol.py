@@ -19,7 +19,7 @@
 from pydsl.Check import check
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2013, Nestor Arocha"
+__copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
@@ -49,6 +49,9 @@ class NonTerminalSymbol(Symbol):
         if not isinstance(other, NonTerminalSymbol):
             return False
         return self.name == other.name and self.weight == other.weight
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
 
 
 class TerminalSymbol(Symbol):
@@ -94,6 +97,9 @@ class NullSymbol(Symbol):
     def __eq__(self, other):
         return isinstance(other, NullSymbol)
 
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
     def __bool__(self):
         return False
 
@@ -106,6 +112,9 @@ class EndSymbol(Symbol):
 
     def __eq__(self, other):
         return isinstance(other, EndSymbol)
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
 
     def __bool__(self):
         return False

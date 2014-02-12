@@ -21,6 +21,7 @@ __email__ = "nesaro@gmail.com"
 
 import unittest
 from pydsl.Grammar.Definition import String
+import sys
 
 class TestBNFChecker(unittest.TestCase):
     """BNF Checker"""
@@ -94,6 +95,7 @@ class TestJsonSchemaChecker(unittest.TestCase):
 
 
 class TestEncodingChecker(unittest.TestCase):
+    @unittest.skipIf(sys.version_info < (3,0), "Full encoding support not available for python 2")
     def testCheck(self):
         from pydsl.Check import EncodingChecker
         from pydsl.Grammar.Alphabet import Encoding

@@ -28,6 +28,7 @@ from pydsl.Grammar.Alphabet import Choice, Encoding, GrammarCollection
 from pydsl.Grammar import RegularExpression
 from pydsl.File.BNF import load_bnf_file
 from pydsl.File.Python import load_python_file
+import sys
 
 
 class TestAlphabet(unittest.TestCase):
@@ -46,6 +47,7 @@ class TestAlphabet(unittest.TestCase):
         self.assertFalse(checker.check("bcdf"))
         self.assertFalse(checker.check([x for x in "bcdf"]))
 
+    @unittest.skipIf(sys.version_info < (3,0), "Full encoding support not available for python 2")
     def testEncoding(self):
         alphabet = Encoding('ascii')
         self.assertTrue(alphabet[0])

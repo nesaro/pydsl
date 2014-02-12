@@ -53,6 +53,9 @@ class ParseTree(object):
         """checks if it is a null result"""
         return self.valid
 
+    def __nonzero__(self):
+        return self.__bool__()
+
     def shift(self, amount):
         """ shifts position """
         if self.leftpos is not None:
@@ -70,7 +73,7 @@ class ParseTree(object):
         self.childlist.append(dpr)
 
 
-class Sequence:
+class Sequence(object):
     def __init__(self):
         self.possible_items = []
 
