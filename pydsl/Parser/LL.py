@@ -58,8 +58,8 @@ class LL1RecursiveDescentParser(TopDownParser):
         childlist = []
         for element in valid_firsts[0].rightside:
             childlist.append(self.__aux_parser(element))
-        left = childlist[0].leftpos
-        right = childlist[-1].rightpos
+        left = childlist[0].left
+        right = childlist[-1].right
         content = [x.content for x in childlist]
         return ParseTree(left, right, symbol, content, childlist=childlist)
 

@@ -40,7 +40,7 @@ class BacktracingErrorRecursiveDescentParser(TopDownParser):
         result = self.__recursive_parser(self._productionset.initialsymbol, data, self._productionset.main_production, showerrors)
         finalresult = []
         for eresult in result:
-            if eresult.leftpos == 0 and eresult.rightpos == len(data) and eresult not in finalresult:
+            if eresult.left == 0 and eresult.right == len(data) and eresult not in finalresult:
                 finalresult.append(eresult)        
         return finalresult
 
@@ -72,7 +72,7 @@ class BacktracingErrorRecursiveDescentParser(TopDownParser):
                             symbol_success = True
                             for x in thisresult:
                                 x.shift(totalpos)
-                                success = alternativetree.append(x.leftpos, x.rightpos, x)
+                                success = alternativetree.append(x.left, x.right, x)
                                 if not success:
                                     #TODO: Add as an error to the tree or to another place
                                     LOG.debug("Discarded symbol :" + str(symbol) + " position:" + str(totalpos))
@@ -95,13 +95,13 @@ class BacktracingErrorRecursiveDescentParser(TopDownParser):
                 nullcount = alternative.rightside.count(NullSymbol())
                 for results in validstack:
                     nnullresults = 0
-                    leftpos = results[0]['left']
-                    rightpos = results[-1]['right']
+                    left = results[0]['left']
+                    right = results[-1]['right']
                     nnullresults = len([x for x in results if x['content'].symbol == NullSymbol()])
                     if len(results) - nnullresults != len(alternative.rightside) - nullcount:
                         LOG.debug("Discarded: incorrect number of non null symbols")
                         continue
-                    if rightpos > len(data):
+                    if right > len(data):
                         LOG.debug("Discarded: length mismatch")
                         continue
                     for x in range(min(len(alternative.rightside), len(results))):
@@ -111,8 +111,8 @@ class BacktracingErrorRecursiveDescentParser(TopDownParser):
                     childlist = [x['content'] for x in results]
                     allvalid = all([x.valid for x in childlist])
                     if allvalid:
-                        newresult = ParseTree(0, rightpos - leftpos, onlysymbol,
-                                data[leftpos:rightpos], childlist = childlist)
+                        newresult = ParseTree(0, right - left, onlysymbol,
+                                data[left:right], childlist = childlist)
                         newresult.valid = True
                         result.append(newresult)
             if showerrors and not result:
@@ -133,7 +133,7 @@ class BacktracingRecursiveDescentParser(TopDownParser):
         result = self.__recursive_parser(self._productionset.initialsymbol, data, self._productionset.main_production)
         finalresult = []
         for eresult in result:
-            if eresult.leftpos == 0 and eresult.rightpos == len(data) and eresult not in finalresult:
+            if eresult.left == 0 and eresult.right == len(data) and eresult not in finalresult:
                 finalresult.append(eresult)        
         return finalresult
 
@@ -161,7 +161,7 @@ class BacktracingRecursiveDescentParser(TopDownParser):
                             symbol_success = True
                             for x in thisresult:
                                 x.shift(totalpos)
-                                alternativetree.append(x.leftpos, x.rightpos, x)
+                                alternativetree.append(x.left, x.right, x)
                     if not symbol_success:
                         LOG.debug("Symbol doesn't work" + str(symbol))
                         break #Try next alternative
@@ -172,12 +172,12 @@ class BacktracingRecursiveDescentParser(TopDownParser):
             LOG.debug("iteration result collection finished:" + str(validstack))
             for alternative in self._productionset.getProductionsBySide([onlysymbol]):
                 for results in validstack:
-                    leftpos = results[0]['left']
-                    rightpos = results[-1]['right']
+                    left = results[0]['left']
+                    right = results[-1]['right']
                     if len(results) != len(alternative.rightside): 
                         LOG.debug("Discarded: incorrect number of non null symbols")
                         continue
-                    if rightpos > len(data):
+                    if right > len(data):
                         LOG.debug("Discarded: length mismatch")
                         continue
                     for x in range(min(len(alternative.rightside), len(results))):
@@ -185,8 +185,8 @@ class BacktracingRecursiveDescentParser(TopDownParser):
                             LOG.debug("Discarded: rule doesn't match partial result")
                             continue
                     childlist = [x for x in results]
-                    newresult = ParseTree(0, rightpos - leftpos, onlysymbol,
-                            data[leftpos:rightpos], alternative, childlist)
+                    newresult = ParseTree(0, right - left, onlysymbol,
+                            data[left:right], alternative, childlist)
                     newresult.valid = True
                     result.append(newresult)
             return result

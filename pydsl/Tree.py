@@ -18,7 +18,7 @@
 """Tree class for tree based parsers"""
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2013, Nestor Arocha"
+__copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
@@ -29,23 +29,23 @@ class ParseTree(object):
 
     """Stores the position of the original tree"""
 
-    def __init__(self, leftpos, rightpos, symbol, content, childlist=None, valid=True):
+    def __init__(self, left, right, symbol, content, childlist=None, valid=True):
         self.symbol = symbol
-        if not isinstance(leftpos, int) and leftpos is not None:
+        if not isinstance(left, int) and left is not None:
             raise TypeError
-        if not isinstance(rightpos, int) and rightpos is not None:
+        if not isinstance(right, int) and right is not None:
             raise TypeError
         if not childlist:
             childlist = []
         self.childlist = childlist
-        self.leftpos = leftpos
-        self.rightpos = rightpos
+        self.left = left
+        self.right = right
         self.content = content
         self.valid = valid
 
     def __eq__(self, other):
         try:
-            return self.leftpos == other.leftpos and self.rightpos == other.rightpos and self.valid == other.valid and self.content == other.content 
+            return self.left == other.left and self.right == other.right and self.valid == other.valid and self.content == other.content 
         except AttributeError:
             return False
 
@@ -58,15 +58,15 @@ class ParseTree(object):
 
     def shift(self, amount):
         """ shifts position """
-        if self.leftpos is not None:
-            self.leftpos += amount
-        if self.leftpos is not None:
-            self.rightpos += amount
+        if self.left is not None:
+            self.left += amount
+        if self.left is not None:
+            self.right += amount
 
     def __len__(self):
-        if self.rightpos is None and self.leftpos is None:
+        if self.right is None and self.left is None:
             return 0
-        return self.rightpos - self.leftpos
+        return self.right - self.left
 
     def append(self, dpr):
         """appends dpr to childlist"""
