@@ -16,7 +16,7 @@
 # along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2013, Nestor Arocha"
+__copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import collections
@@ -50,7 +50,7 @@ class Grammar(object):
     def alphabet(self):
         """Returns the alphabet used by this grammar"""
         if self.__base_alphabet is None:
-            from pydsl.Grammar.Alphabet import Encoding
+            from pydsl.Alphabet import Encoding
             self.__base_alphabet = Encoding("ascii")
         return self.__base_alphabet
 
@@ -145,7 +145,7 @@ class PythonGrammar(Grammar, dict):
     def alphabet(self):
         if "alphabet" in self:
             return self['alphabet']
-        from pydsl.Grammar.Alphabet import Encoding
+        from pydsl.Alphabet import Encoding
         return Encoding("ascii")
 
 def grammar_factory(input_definition):

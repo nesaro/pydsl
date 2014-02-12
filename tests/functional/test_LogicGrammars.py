@@ -11,7 +11,7 @@ from pydsl.Parser.Backtracing import BacktracingErrorRecursiveDescentParser
 from pydsl.File.BNF import load_bnf_file
 from pydsl.Lex import lex
 from pydsl.Grammar import RegularExpression
-from pydsl.Grammar.Alphabet import Encoding
+from pydsl.Alphabet import Encoding
 ascii_encoding = Encoding("ascii")
 
 

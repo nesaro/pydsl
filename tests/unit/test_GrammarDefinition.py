@@ -25,8 +25,8 @@ __email__ = "nesaro@gmail.com"
 
 import unittest
 from pydsl.Grammar.Definition import String
-from pydsl.Grammar.Alphabet import Encoding
-from pydsl.Grammar import Alphabet
+from pydsl.Alphabet import Encoding
+from pydsl.Alphabet import Alphabet
 
 
 @unittest.skip

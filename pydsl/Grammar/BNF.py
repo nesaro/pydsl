@@ -21,7 +21,7 @@ from pydsl.Grammar.Symbol import Symbol, TerminalSymbol, NullSymbol, EndSymbol
 from pydsl.Grammar.Definition import Grammar
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2013, Nestor Arocha"
+__copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 
@@ -80,7 +80,7 @@ class BNFGrammar(Grammar):
 
     @property
     def alphabet(self):
-        from pydsl.Grammar.Alphabet import GrammarCollection
+        from pydsl.Alphabet import GrammarCollection
         return GrammarCollection([x.gd for x in self.terminal_symbols])
 
     @property
@@ -121,7 +121,7 @@ class BNFGrammar(Grammar):
                     break # This element doesn't have Null in its first set so there is no need to continue
         if not result:
             raise KeyError("Symbol doesn't exist in this grammar")
-        from pydsl.Grammar.Alphabet import Choice
+        from pydsl.Grammar.PEG import Choice
         return Choice(result)
 
     def next_lookup(self, symbol):

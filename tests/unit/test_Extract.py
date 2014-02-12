@@ -22,7 +22,8 @@ __email__ = "nesaro@gmail.com"
 import unittest
 from pydsl.Extract import extract, extract_alphabet
 from pydsl.Grammar import RegularExpression, String
-from pydsl.Grammar.Alphabet import Encoding, Choice
+from pydsl.Grammar.PEG import Choice
+from pydsl.Alphabet import Encoding
 from pydsl.Token import PositionToken, Token
 import sys
 

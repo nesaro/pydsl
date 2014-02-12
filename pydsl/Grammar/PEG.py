@@ -46,3 +46,26 @@ class Not(Grammar, list):
     def __init__(self, element):
         Grammar.__init__(self)
         self.element = element
+
+from pydsl.Alphabet import GrammarCollection
+
+class Choice(GrammarCollection, Grammar):
+    """Uses a list of grammar definitions with common base alphabets"""
+    def __init__(self, grammarlist):
+        GrammarCollection.__init__(self, grammarlist)
+        base_alphabet_list = []
+        for x in self:
+            if not isinstance(x, Grammar):
+                raise TypeError("Expected Grammar, Got %s:%s" % (x.__class__.__name__,x))
+            if x.alphabet not in base_alphabet_list:
+                base_alphabet_list.append(x.alphabet)
+        if len(base_alphabet_list) != 1:
+            raise ValueError('Different base alphabets from members %s' % base_alphabet_list)
+        Grammar.__init__(self, base_alphabet_list[0])
+
+    def __str__(self):
+        return str([str(x) for x in self])
+
+    def __add__(self, other):
+        return Choice(GrammarCollection.__add__(self,other))
+

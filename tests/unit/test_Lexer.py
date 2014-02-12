@@ -23,8 +23,8 @@ import unittest
 from pydsl.Lex import EncodingLexer, lexer_factory
 from pydsl.contrib.bnfgrammar import *
 from pydsl.Grammar.Definition import String
-from pydsl.Grammar.Alphabet import Choice, GrammarCollection
-from pydsl.Grammar.PEG import Sequence
+from pydsl.Alphabet import GrammarCollection
+from pydsl.Grammar.PEG import Sequence, Choice
 from pydsl.File.BNF import load_bnf_file
 
 

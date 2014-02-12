@@ -21,9 +21,9 @@ __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
-from pydsl.Grammar.Alphabet import Encoding, Choice
+from pydsl.Grammar.PEG import Choice
+from pydsl.Alphabet import Encoding, GrammarCollection
 from pydsl.Check import checker_factory
-from pydsl.Grammar.Alphabet import Choice, GrammarCollection
 from pydsl.Token import Token, PositionToken
 
 
@@ -59,7 +59,7 @@ class EncodingLexer(object):
 def graph_from_alphabet(alphabet, base):
     """Creates a graph that connects the base with the target through alphabets
     If every target is connected to any inputs, create the independent paths"""
-    from pydsl.Grammar.Alphabet import Alphabet
+    from pydsl.Alphabet import Alphabet
     if not isinstance(alphabet, Alphabet):
         raise TypeError(alphabet.__class__.__name__)
     if not isinstance(base, Alphabet):
@@ -99,7 +99,7 @@ def print_graph(result):
 class GeneralLexer(object):
     """Multi level lexer"""
     def __init__(self, alphabet, base):
-        from pydsl.Grammar.Alphabet import Alphabet
+        from pydsl.Alphabet import Alphabet
         if not isinstance(alphabet, Alphabet):
             raise TypeError
         if not alphabet:
@@ -308,7 +308,7 @@ def common_ancestor(alphabet):
     expanded_alphabet_list = []
     for gd in alphabet:
         expanded_alphabet_list_entry = []
-        from pydsl.Grammar.Alphabet import Alphabet
+        from pydsl.Alphabet import Alphabet
         if isinstance(gd, Alphabet):
             expanded_alphabet_list_entry.append(gd)
         current_alphabet = gd.alphabet

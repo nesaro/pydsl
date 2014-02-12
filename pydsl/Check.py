@@ -31,9 +31,9 @@ def check(definition, data):
 
 def checker_factory(grammar):
     from pydsl.Grammar.BNF import BNFGrammar
-    from pydsl.Grammar.PEG import Sequence
+    from pydsl.Grammar.PEG import Sequence, Choice
     from pydsl.Grammar.Definition import PLYGrammar, RegularExpression, String, PythonGrammar
-    from pydsl.Grammar.Alphabet import Choice, Encoding
+    from pydsl.Alphabet import Encoding
     from pydsl.Grammar.Parsley import ParsleyGrammar
     from collections import Iterable
     if isinstance(grammar, BNFGrammar):
@@ -188,7 +188,7 @@ class JsonSchemaChecker(Checker):
 class ChoiceChecker(Checker):
     def __init__(self, gd):
         Checker.__init__(self)
-        from pydsl.Grammar.Alphabet import Choice
+        from pydsl.Grammar.PEG import Choice
         if not isinstance(gd, Choice):
             raise TypeError
         self.gd = gd
