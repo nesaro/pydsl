@@ -59,7 +59,7 @@ class BacktracingErrorRecursiveDescentParser(TopDownParser):
         elif isinstance(onlysymbol, NonTerminalSymbol):
             validstack = []
             invalidstack = []
-            for alternative in self._productionset.getProductionsBySide([onlysymbol]): #Alternative
+            for alternative in self._productionset.getProductionsBySide(onlysymbol): #Alternative
                 alternativetree = Sequence()
                 alternativeinvalidstack = []
                 for symbol in alternative.rightside: # Symbol
@@ -91,7 +91,7 @@ class BacktracingErrorRecursiveDescentParser(TopDownParser):
             result = []
 
             LOG.debug("iteration result collection finished:" + str(validstack))
-            for alternative in self._productionset.getProductionsBySide([onlysymbol]):
+            for alternative in self._productionset.getProductionsBySide(onlysymbol):
                 nullcount = alternative.rightside.count(NullSymbol())
                 for results in validstack:
                     nnullresults = 0

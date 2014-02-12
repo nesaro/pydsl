@@ -166,26 +166,15 @@ class BNFGrammar(Grammar):
                 return rule
         raise IndexError
 
-    def getProductionsBySide(self, symbollist, side = "left"):
+    def getProductionsBySide(self, symbol):
         result = []
-        if isinstance(symbollist, Symbol):
-            symbollist = [symbollist]
         for rule in self.productions: #FIXME Is iterating over production only
-            if side == "left":
-                part = rule.leftside
-            elif side == "right":
-                part = rule.rightside
-            else:
-                raise ValueError("Unknown side value %s" % (side,))
-            if len(part) != len(symbollist):
+            if len(rule.leftside) != 1:
                 continue
-            for ruleindex in range(len(part)):
-                if part[ruleindex] != symbollist[ruleindex]:
-                    break
-            else:
+            if rule.leftside[0] == symbol:
                 result.append(rule)
         if not result:
-            raise IndexError("Symbol: %s" % str([str(x) for x in symbollist]))
+            raise IndexError("Symbol: %s" % str(symbol))
         return result
 
     def getSymbols(self):
