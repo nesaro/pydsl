@@ -21,6 +21,20 @@ __email__ = "nesaro@gmail.com"
 
 import collections
 
+class ImmutableDict(dict):
+    """A dict with a hash method"""
+    def __hash__(self):
+        if not self:
+            return 0
+        items = tuple(self.items())
+        res = hash(items[0])
+        for item in items[1:]:
+            res ^= hash(item)
+        return res
+
+    def __setitem__(self, key, value):
+        raise Exception
+
 
 class Grammar(object):
 
@@ -138,7 +152,6 @@ class PythonGrammar(Grammar, dict):
         dict.__init__(self, *args, **kwargs)
 
     def __hash__(self):
-        from pypository.utils import ImmutableDict #FIXME!
         return hash(ImmutableDict(self))        
 
     @property
