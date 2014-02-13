@@ -24,7 +24,7 @@ __email__ = "nesaro@gmail.com"
 import logging
 LOG = logging.getLogger(__name__)
 from .Parser import TopDownParser
-from pydsl.Tree import ParseTree, Sequence
+from pydsl.Tree import ParseTree, PositionResultList
 from pydsl.Check import check
 
 
@@ -60,7 +60,7 @@ class BacktracingErrorRecursiveDescentParser(TopDownParser):
             validstack = []
             invalidstack = []
             for alternative in self._productionset.getProductionsBySide(onlysymbol): #Alternative
-                alternativetree = Sequence()
+                alternativetree = PositionResultList()
                 alternativeinvalidstack = []
                 for symbol in alternative.rightside: # Symbol
                     symbol_success = False
@@ -150,7 +150,7 @@ class BacktracingRecursiveDescentParser(TopDownParser):
         elif isinstance(onlysymbol, NonTerminalSymbol):
             validstack = []
             for alternative in self._productionset.getProductionsBySide([onlysymbol]): #Alternative
-                alternativetree = Sequence()
+                alternativetree = PositionResultList()
                 for symbol in alternative.rightside: # Symbol
                     symbol_success = False
                     for totalpos in alternativetree.right_limit_list(): # Right limit

@@ -25,6 +25,7 @@ from pydsl.Grammar.PEG import Choice
 from pydsl.Alphabet import Encoding, GrammarCollection
 from pydsl.Check import checker_factory
 from pydsl.Token import Token, PositionToken
+from pydsl.Tree import PositionResultList
 
 
 class EncodingLexer(object):
@@ -222,7 +223,6 @@ class ChoiceLexer(object):
         return result
 
     def nextToken(self, include_gd=False):
-        from pydsl.Tree import Sequence
         best_right = 0
         best_gd = None
         for gd in self.alphabet:
@@ -261,8 +261,7 @@ class ChoiceBruteForceLexer(object):
         return [x for x in self.nextToken(include_gd)]
 
     def nextToken(self, include_gd=False):
-        from pydsl.Tree import Sequence
-        tree = Sequence()  # This is the extract algorithm
+        tree = PositionResultList()  # This is the extract algorithm
         valid_alternatives = []
         for gd in self.alphabet:
             checker = checker_factory(gd)

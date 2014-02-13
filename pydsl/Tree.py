@@ -73,7 +73,8 @@ class ParseTree(object):
         self.childlist.append(dpr)
 
 
-class Sequence(object):
+class PositionResultList(object):
+    """Contains a list of results"""
     def __init__(self):
         self.possible_items = []
 
