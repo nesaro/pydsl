@@ -86,7 +86,7 @@ def graph_from_alphabet(alphabet, base):
         else: #A Grammar
             result.add_edge(current_alphabet, current_alphabet.alphabet)
             pending_stack.append(current_alphabet.alphabet)
-    print_graph(result)
+    #print_graph(result)
     return result
 
 def print_graph(result):
@@ -192,7 +192,6 @@ def digraph_walker_backwards(graph, element, call_back):
     for predecessor in graph.predecessors(element):
         call_back(graph, predecessor)
     for predecessor in graph.predecessors(element):
-        print(element, "->" , predecessor)
         digraph_walker_backwards(graph, predecessor, call_back)
 
 
