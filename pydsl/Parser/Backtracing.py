@@ -49,7 +49,6 @@ class BacktracingErrorRecursiveDescentParser(TopDownParser):
             return []
         from pydsl.Grammar.Symbol import TerminalSymbol, NullSymbol, NonTerminalSymbol
         if isinstance(onlysymbol, TerminalSymbol):
-            #Locate every occurrence of word and return a set of results. Follow boundariesrules
             LOG.debug("Iteration: terminalsymbol")
             return self._reduce_terminal(onlysymbol,data[0], showerrors)
         elif isinstance(onlysymbol, NullSymbol):

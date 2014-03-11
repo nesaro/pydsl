@@ -16,7 +16,7 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2013, Nestor Arocha"
+__copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 
@@ -29,13 +29,9 @@ from pydsl.Parser.LL import LL1RecursiveDescentParser
 import unittest
 
 class TestBacktracingRecursiveDescentParser(unittest.TestCase):
-    @unittest.skip
     def testRecursiveLeftRecursion(self):
         descentparser = BacktracingErrorRecursiveDescentParser(productionsetlr)
-        result = descentparser(dots)
-        self.assertTrue(result)
-        result = descentparser(list(dots))
-        self.assertTrue(result)
+        self.assertRaises(RuntimeError, descentparser, dots)
 
     def testRightRecursion(self):
         descentparser = BacktracingErrorRecursiveDescentParser(productionsetrr)
