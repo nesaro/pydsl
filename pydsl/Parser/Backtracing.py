@@ -32,8 +32,6 @@ class BacktracingErrorRecursiveDescentParser(TopDownParser):
     """Recursive descent parser implementation. Backtracing. Null support. Error support"""
     def get_trees(self, data, showerrors = False): # -> list:
         """ returns a list of trees with valid guesses """
-        if isinstance(data, str):
-            data = [x for x in data]
         for element in data:
             if not check(self._productionset.alphabet,element):
                 raise ValueError("Unknown element %s" % str(element))
