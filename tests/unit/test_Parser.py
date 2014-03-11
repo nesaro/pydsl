@@ -115,6 +115,9 @@ class TestLR0Parser(unittest.TestCase):
         result = parser(list(string2))
         self.assertFalse(result)
 
+    def testCenterRecursion(self):
+        self.assertRaises(Exception, LR0Parser, productionsetcr)
+
 
 class TestLL1RecursiveDescentParser(unittest.TestCase):
     @unittest.skip

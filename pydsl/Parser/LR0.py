@@ -81,7 +81,7 @@ def build_states_sets(productionset):
                 if itemset.has_transition(symbol): #FIXME a symbol in a LR0item list?
                     continue
                 newitemset = item_set_goto(itemset, symbol, productionset)
-                if newitemset in result and itemset.get_transition(symbol) != newitemset: # TODO Check if the transition is already there
+                if newitemset in result and itemset.has_transition(symbol) and itemset.get_transition(symbol) != newitemset:
                     changed = True
                     itemset.append_transition(symbol, newitemset)
                 elif newitemset and newitemset not in result: #avoid adding a duplicated entry
