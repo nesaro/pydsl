@@ -105,10 +105,9 @@ class TestLR0Parser(unittest.TestCase):
     def testLR0ParserStore(self):
         parser = LR0Parser(productionset0)
         tokelist = [x.content for x in EncodingLexer('utf8')(p0good)]
-        result = parser.check(tokelist)
+        result = parser(tokelist)
         self.assertTrue(result)
 
-    @unittest.skip
     def testLR0ParserBad(self):
         parser = LR0Parser(productionset1)
         result = parser(string2)

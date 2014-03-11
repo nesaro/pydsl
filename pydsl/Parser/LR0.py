@@ -15,10 +15,10 @@
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
-"""SLR0 unfinished implementation"""
+"""SLR0 implementation"""
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2013, Nestor Arocha"
+__copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
@@ -133,9 +133,6 @@ class ParserTable(object):
     def __len__(self):
         return len(self.__table)
 
-    #def __str__(self):
-    #    return "<ParserTable - State:" + str(self.state) + " Table: " + str([str(key) + "," + str([str(x) for x in value]) for (key,value) in self.__table.items()]) + ">"
-
     def __str__(self):
         return str([str(key) + str([str(x) for x in value]) for (key,value) in self.__table.items()])
 
@@ -163,7 +160,8 @@ class ParserTable(object):
     def insert(self, state, token):
         """change internal state, return action"""
         for symbol in self.__table[state]:
-            if symbol == EndSymbol() or symbol.check(token):
+            from pydsl.Check import check
+            if symbol == EndSymbol() or isinstance(symbol, TerminalSymbol) and check(symbol.gd,token):
                 break
         else:
             if token != EndSymbol():
@@ -274,14 +272,21 @@ class LR0Parser(BottomUpParser):
         self.__parsertable = _slr_build_parser_table(productionset)
         #build GoTo and Action Table from ProductionRuleSet
 
-    def check(self, tokenlist):
+    def get_trees(self, tokenlist):
+        try:
+            return self.__parse(tokenlist)
+        except IndexError:
+            return False
+
+    def __parse(self, tokenlist):
         """see parent docstring"""
-        LOG.debug("check_word: Begin")
         #empty stack
         #iterate over symbollist
-        LOG.debug("check_word: checking list: " + str(tokenlist))
+        if isinstance(tokenlist, str):
+            tokenlist = [x for x in tokenlist]
         if not isinstance(tokenlist, list):
-            raise TypeError
+            raise TypeError("Expected list, got %s" % tokenlist.__class__.__name__)
+        LOG.debug("get_trees: checking list: " + str(tokenlist))
         stack = [(0, Extended_S)]
         while True:
             state = stack[-1][0]
