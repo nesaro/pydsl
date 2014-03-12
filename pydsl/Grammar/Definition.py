@@ -116,6 +116,8 @@ class RegularExpression(Grammar):
 
 class String(Grammar, str):
     def __init__(self, string):
+        if isinstance(string, list):
+            raise TypeError('Attempted to initialize a String with a list')
         Grammar.__init__(self)
         str.__init__(self, string)
 

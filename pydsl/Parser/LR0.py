@@ -24,7 +24,7 @@ __email__ = "nesaro@gmail.com"
 import logging
 LOG = logging.getLogger(__name__)
 from pydsl.Parser.Parser import BottomUpParser
-from pydsl.Grammar.Symbol import NonTerminalSymbol, TerminalSymbol, EndSymbol
+from pydsl.Grammar.Symbol import NonTerminalSymbol, TerminalSymbol, EndSymbol, Symbol
 from pydsl.Grammar.BNF import Production
 
 Extended_S = NonTerminalSymbol("EI")
@@ -33,7 +33,6 @@ def _build_item_closure(itemset, productionset):
     """Build input itemset closure """
     #For every item inside current itemset, if we have the following rule:
     #  xxx <cursor><nonterminalSymbol> xxx  append every rule from self._productionruleset that begins with that NonTerminalSymbol
-    LOG.debug("_build_item_closure: Begin")
     if not isinstance(itemset, LR0ItemSet):
         raise TypeError
     import copy
@@ -110,7 +109,11 @@ def _slr_build_parser_table(productionset):
                 #if cursor is at the end of the rule, then append reduce rule and go transition
                 if lritem.previous_symbol() == symbol and lritem.is_last_position() and symbol != Extended_S:
                     for x in productionset.next_lookup(symbol):
-                        result.append(itemindex, x, "Reduce", None, lritem.rule)
+                        from pydsl.Grammar.Definition import String
+                        if isinstance(x, list):
+                            result.append(itemindex, TerminalSymbol(String(x[0])), "Reduce", None, lritem.rule)
+                        else:
+                            result.append(itemindex, TerminalSymbol(String(x)), "Reduce", None, lritem.rule)
                     numberoptions += 1
                 #if cursor is at the end of main rule, and current symbol is end, then append accept rule
                 if isinstance(symbol, EndSymbol) and lritem.previous_symbol() == productionset.initialsymbol:
@@ -147,6 +150,10 @@ class ParserTable(object):
             if rule is None:
                 raise TypeError("Expected production parameter")
             rule["rule"] = production
+        if isinstance(symbol, list) and len(symbol) == 1:
+            symbol = symbol[0]
+        if not isinstance(symbol, Symbol):
+            raise TypeError("Expected symbol, got %s" % symbol)
         self.__table[state][symbol] = rule
 
     def append_goto(self, state, symbol, destinationstate):
