@@ -87,19 +87,20 @@ class TestLR0Parser(unittest.TestCase):
         from pydsl.Parser.LR0 import _slr_build_parser_table, build_states_sets
         state_sets = build_states_sets(productionset0)
         self.assertEqual(len(state_sets), 5)
-        #1 . EI: : . exp $ , 
+        #0 . EI: : . exp $ , 
         #   exp : .SR
-        #       transitions: S -> 3,
-        #2 EI:  exp . $ ,
-        #       transitions: $ -> 4
-        #3 exp:  S . R,
-        #       transitions: R -> 5
-        #4 EI: exp $ .
-        #5 exp:  S R .
+        #       transitions: S -> 2,
+        #       goto: exp -> 1
+        #1 EI:  exp . $ ,
+        #       transitions: $ -> 3
+        #2 exp:  S . R,
+        #       transitions: R -> 4
+        #3 EI: exp $ .
+        #4 exp:  S R .
+        #       reduce
 
         parsetable = _slr_build_parser_table(productionset0)
-        print(parsetable)
-        #self.assertEqual(len(parsetable), 3)
+        self.assertEqual(len(parsetable), 4)
 
 
     def testLR0ParserStore(self):

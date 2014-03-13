@@ -127,24 +127,16 @@ def _slr_build_parser_table(productionset):
                 raise Exception("LR Conflict")
     return result
     
-class ParserTable(object):
+class ParserTable(dict):
     """ Stores a state/symbol/action/new state relation """
-    def __init__(self):
-        #Default for every state: Fail state #FIXME use default_dict
-        self.__table = {}
-
-    def __len__(self):
-        return len(self.__table)
-
-    def __str__(self):
-        return str([str(key) + str([str(x) for x in value]) for (key,value) in self.__table.items()])
+    #Default for every state: Fail state #FIXME use default_dict
 
     def append(self, state, symbol, action, destinationstate, production = None):
         """Appends a new rule"""
         if action not in (None, "Accept", "Shift", "Reduce"):
             raise TypeError
-        if not state in self.__table:
-            self.__table[state] = {}
+        if not state in self:
+            self[state] = {}
         rule = {"action":action, "dest":destinationstate}
         if action == "Reduce":
             if rule is None:
@@ -154,19 +146,19 @@ class ParserTable(object):
             symbol = symbol[0]
         if not isinstance(symbol, Symbol):
             raise TypeError("Expected symbol, got %s" % symbol)
-        self.__table[state][symbol] = rule
+        self[state][symbol] = rule
 
     def append_goto(self, state, symbol, destinationstate):
-        if not state in self.__table:
-            self.__table[state] = {}
-        self.__table[state][symbol] = destinationstate
+        if not state in self:
+            self[state] = {}
+        self[state][symbol] = destinationstate
 
     def goto(self, state, symbol):
-        return self.__table[state][symbol]
+        return self[state][symbol]
 
     def insert(self, state, token):
         """change internal state, return action"""
-        for symbol in self.__table[state]:
+        for symbol in self[state]:
             from pydsl.Check import check
             if symbol == EndSymbol() or isinstance(symbol, TerminalSymbol) and check(symbol.gd,token):
                 break
@@ -176,7 +168,7 @@ class ParserTable(object):
             else:
                 symbol = EndSymbol()
         try:
-            return self.__table[state][symbol]
+            return self[state][symbol]
         except KeyError:
             return {"action":"Fail"}
 
