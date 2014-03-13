@@ -119,6 +119,15 @@ class TestLR0Parser(unittest.TestCase):
     def testCenterRecursion(self):
         self.assertRaises(Exception, LR0Parser, productionsetcr)
 
+    def testArithmetic(self):
+        parser = LR0Parser(productionset_arithmetic)
+        self.assertFalse(parser('1'))
+        self.assertTrue(parser(['123']))
+        self.assertTrue(parser(['123','+','123']))
+        self.assertTrue(parser(['123','*','123']))
+        self.assertFalse(parser(['123a','+','123']))
+        self.assertFalse(parser(['123','+','+']))
+
 
 class TestLL1RecursiveDescentParser(unittest.TestCase):
     @unittest.skip

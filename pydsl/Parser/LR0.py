@@ -83,6 +83,9 @@ def build_states_sets(productionset):
                 if newitemset in result and itemset.has_transition(symbol) and itemset.get_transition(symbol) != newitemset:
                     changed = True
                     itemset.append_transition(symbol, newitemset)
+                elif newitemset in result and not itemset.has_transition(symbol):
+                    changed = True
+                    itemset.append_transition(symbol, newitemset)
                 elif newitemset and newitemset not in result: #avoid adding a duplicated entry
                     changed = True
                     result.append(newitemset)
@@ -116,7 +119,7 @@ def _slr_build_parser_table(productionset):
                             result.append(itemindex, TerminalSymbol(String(x)), "Reduce", None, lritem.rule)
                     numberoptions += 1
                 #if cursor is at the end of main rule, and current symbol is end, then append accept rule
-                if isinstance(symbol, EndSymbol) and lritem.previous_symbol() == productionset.initialsymbol:
+                if isinstance(symbol, EndSymbol) and lritem.previous_symbol() == productionset.initialsymbol and lritem.next_symbol() == EndSymbol():
                     result.append(itemindex, symbol, "Accept", None)
                     numberoptions += 1
             if not numberoptions:
@@ -124,7 +127,7 @@ def _slr_build_parser_table(productionset):
                 LOG.debug("symbol: " + str(symbol))
                 LOG.debug("itemset: " + str(itemset))
             elif numberoptions > 1: #FIXME can it count duplicated entries?
-                raise Exception("LR Conflict")
+                raise Exception("LR Conflict %s" % symbol)
     return result
     
 class ParserTable(dict):
@@ -151,6 +154,8 @@ class ParserTable(dict):
     def append_goto(self, state, symbol, destinationstate):
         if not state in self:
             self[state] = {}
+        if symbol in self[state] and self[state][symbol] != destinationstate:
+            raise Exception
         self[state][symbol] = destinationstate
 
     def goto(self, state, symbol):

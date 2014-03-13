@@ -19,7 +19,7 @@
 """BNF format functions"""
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2013, Nestor Arocha"
+__copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
@@ -90,7 +90,7 @@ def read_terminal_production(line, repository):
     return symbolnames[0], newsymbol
 
 
-def strlist_to_production_set(linelist, repository = None):
+def strlist_to_production_set(linelist, repository = None, start_symbol = "S"):
     if repository is None:
         repository = {}
     nonterminalrulelist = []
@@ -136,7 +136,7 @@ def strlist_to_production_set(linelist, repository = None):
     from pydsl.Grammar.BNF import BNFGrammar
     for terminal in terminalrulelist:
         rulelist.append(terminal)
-    return BNFGrammar(symboldict["S"], rulelist, macrodict)
+    return BNFGrammar(symboldict[start_symbol], rulelist, macrodict)
 
 
 def load_bnf_file(filepath, repository = None):
