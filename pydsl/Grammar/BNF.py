@@ -168,7 +168,7 @@ class BNFGrammar(Grammar):
 
     def getProductionsBySide(self, symbol):
         result = []
-        for rule in self.productions: #FIXME Is iterating over production only
+        for rule in self.productions:
             if len(rule.leftside) != 1:
                 continue
             if rule.leftside[0] == symbol:

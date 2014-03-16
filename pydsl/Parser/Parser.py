@@ -69,6 +69,12 @@ def parser_factory(grammar, parser = None):
         if parser in ("auto" , "default" , "descent", None):
             from pydsl.Parser.Backtracing import BacktracingErrorRecursiveDescentParser
             return BacktracingErrorRecursiveDescentParser(grammar)
+        elif parser == "lr0":
+            from pydsl.Parser.LR0 import LR0Parser
+            return LR0Parser(grammar)
+        elif parser == "ll1":
+            from pydsl.Parser.LL import LL1RecursiveDescentParser
+            return LL1RecursiveDescentParser(grammar)
         else:
             raise Exception("Wrong parser name: " + str(parser))
     else:

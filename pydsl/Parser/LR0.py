@@ -286,8 +286,7 @@ class LR0Parser(BottomUpParser):
         """see parent docstring"""
         #empty stack
         #iterate over symbollist
-        if isinstance(tokenlist, str):
-            tokenlist = [x for x in tokenlist]
+        tokenlist = [x for x in tokenlist]
         if not isinstance(tokenlist, list):
             raise TypeError("Expected list, got %s" % tokenlist.__class__.__name__)
         LOG.debug("get_trees: checking list: " + str(tokenlist))

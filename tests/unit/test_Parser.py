@@ -138,11 +138,11 @@ class TestLL1RecursiveDescentParser(unittest.TestCase):
 
     def testRightRecursion(self):
         descentparser = LL1RecursiveDescentParser(productionsetrr)
-        self.assertRaises(Exception, descentparser,dots) #Ambiguous grammar
+        self.assertFalse(descentparser(dots)) #Ambiguous grammar
 
     def testCenterRecursion(self):
         descentparser = LL1RecursiveDescentParser(productionsetcr)
-        self.assertRaises(Exception, descentparser,dots) #Ambiguous grammar
+        self.assertFalse(descentparser(dots)) #Ambiguous grammar
 
     def testLL1RecursiveDescentParserStore(self):
         descentparser = LL1RecursiveDescentParser(productionset1)
@@ -168,3 +168,18 @@ class TestPEGParser(unittest.TestCase):
         parser = PEGParser(gd)
         result = parser('a')
         self.assertTrue(isinstance(result, ParseTree))
+
+
+
+class TestParse(unittest.TestCase):
+    def testverb(self):
+        """Tests the lr0 table generation"""
+        from pydsl.Parser.Parser import parse, parser_factory
+        tokelist = [x.content for x in EncodingLexer('utf8')(p0good)]
+        self.assertTrue(parse(productionset0, tokelist , "default"))
+        self.assertTrue(parse(productionset0, tokelist , "lr0"))
+        self.assertTrue(parse(productionset0, tokelist , "ll1"))
+        tokelist = [x.content for x in EncodingLexer('utf8')(p0bad)]
+        self.assertFalse(parse(productionset0, tokelist , "default"))
+        self.assertFalse(parse(productionset0, tokelist , "lr0"))
+        self.assertFalse(parse(productionset0, tokelist , "ll1"))

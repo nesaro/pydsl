@@ -18,11 +18,12 @@
 """LL family parsers"""
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2013, Nestor Arocha"
+__copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 from pydsl.Check import check
 from pydsl.Parser.Parser import TopDownParser
 from pydsl.Tree import ParseTree
+from pydsl.Exceptions import ParseError
 import logging
 LOG = logging.getLogger(__name__)
 
@@ -37,7 +38,7 @@ class LL1RecursiveDescentParser(TopDownParser):
         self.index = 0
         try:
             return [self.__aux_parser(self._productionset.initialsymbol)]
-        except IndexError:
+        except (IndexError, ParseError):
             return []
 
     def __aux_parser(self, symbol):
@@ -54,7 +55,7 @@ class LL1RecursiveDescentParser(TopDownParser):
             if check(first_of_production, self.current):
                 valid_firsts.append(production)
         if len(valid_firsts) != 1:
-            raise Exception("Expected only one valid production, found %s" % len(valid_firsts))
+            raise ParseError("Expected only one valid production, found %s" % len(valid_firsts), 0)
         childlist = []
         for element in valid_firsts[0].rightside:
             childlist.append(self.__aux_parser(element))
