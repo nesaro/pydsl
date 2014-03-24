@@ -18,13 +18,12 @@
 """Tests PEG grammars"""
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2013, Nestor Arocha"
+__copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
 from pydsl.Grammar.Definition import String, Grammar
-from pydsl.Grammar.PEG import Many, Not, Sequence
-from pydsl.Grammar.Alphabet import Choice
+from pydsl.Grammar.PEG import Many, Not, Sequence, Choice
 
 class TestPEG(unittest.TestCase):
     def testMany(self):

@@ -16,14 +16,14 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2013, Nestor Arocha"
+__copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 from pydsl.Grammar.Definition import Grammar
 import logging
 LOG=logging.getLogger(__name__)
 
-class Alphabet(Grammar):
+class Alphabet(object):
     """Defines a set of valid elements"""
     @property
     def minsize(self):
@@ -33,33 +33,20 @@ class Alphabet(Grammar):
     def maxsize(self):
         return 1
 
-class AlphabetChain(Alphabet, list):
-    def __init__(self, alphabet_list):
-        list.__init__(self, alphabet_list)
-        Alphabet.__init__(self, base_alphabet = self[0].alphabet)
-
-
-class Choice(Alphabet, list):
+class GrammarCollection(Alphabet, tuple):
     """Uses a list of grammar definitions"""
-    def __init__(self, grammarlist, base_alphabet = None):
-        Alphabet.__init__(self, base_alphabet)
-        if not grammarlist:
-            raise ValueError
-        result = []
-        for x in grammarlist:
-            result.append(x)
-        list.__init__(self, result)
-        base_alphabet_list = []
+    def __init__(self, grammarlist):
+        Alphabet.__init__(self)
+        tuple.__init__(self, grammarlist)
         for x in self:
             if not isinstance(x, Grammar):
                 raise TypeError("Expected Grammar, Got %s:%s" % (x.__class__.__name__,x))
-            if x.base_alphabet not in base_alphabet_list:
-                base_alphabet_list.append(x.base_alphabet)
-        if len(base_alphabet_list) != 1:
-            raise ValueError('Different base alphabets from members')
+
+    def __str__(self):
+        return str([str(x) for x in self])
 
     def __add__(self, other):
-        return Choice(list.__add__(self,other))
+        return GrammarCollection(tuple.__add__(self,other))
 
 class Encoding(Alphabet):
     """Defines an alphabet using an encoding string"""
@@ -67,9 +54,8 @@ class Encoding(Alphabet):
         Alphabet.__init__(self)
         self.encoding = encoding
 
-    @property
-    def alphabet(self):
-        return None
+    def __hash__(self):
+        return hash(self.encoding)
 
     def __eq__(self, other):
         try:
@@ -79,7 +65,18 @@ class Encoding(Alphabet):
 
     def __getitem__(self, item):
         from pydsl.Grammar import String
-        return String(chr(item))
+        try:
+            return String(chr(item))
+        except (ValueError, TypeError):
+            raise KeyError
+
+    def __contains__(self, item):
+        try:
+            self[item]
+        except KeyError:
+            return False
+        else:
+            return True
 
     def __str__(self):
         return self.encoding

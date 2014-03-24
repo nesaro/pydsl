@@ -17,7 +17,7 @@
 
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2013, Nestor Arocha"
+__copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
@@ -31,9 +31,9 @@ def check(definition, data):
 
 def checker_factory(grammar):
     from pydsl.Grammar.BNF import BNFGrammar
-    from pydsl.Grammar.PEG import Sequence
+    from pydsl.Grammar.PEG import Sequence, Choice
     from pydsl.Grammar.Definition import PLYGrammar, RegularExpression, String, PythonGrammar
-    from pydsl.Grammar.Alphabet import Choice, Encoding
+    from pydsl.Alphabet import Encoding
     from pydsl.Grammar.Parsley import ParsleyGrammar
     from collections import Iterable
     if isinstance(grammar, BNFGrammar):
@@ -101,6 +101,7 @@ class BNFChecker(Checker):
     """Calls another program to perform checking. Args are always file names"""
     def __init__(self, bnf, parser = None):
         Checker.__init__(self)
+        self.gd = bnf
         parser = bnf.options.get("parser",parser)
         if parser in ("descent", "auto", "default", None):
             from pydsl.Parser.Backtracing import BacktracingErrorRecursiveDescentParser
@@ -109,6 +110,10 @@ class BNFChecker(Checker):
             raise ValueError("Unknown parser : " + parser)
 
     def check(self, data):
+        for element in data:
+            if not check(self.gd.alphabet, element):
+                LOG.warning("Invalid input: %s,%s" % (self.gd.alphabet, element))
+                return False
         try:
             return len(self.__parser.get_trees(data)) > 0
         except IndexError:
@@ -183,7 +188,7 @@ class JsonSchemaChecker(Checker):
 class ChoiceChecker(Checker):
     def __init__(self, gd):
         Checker.__init__(self)
-        from pydsl.Grammar.Alphabet import Choice
+        from pydsl.Grammar.PEG import Choice
         if not isinstance(gd, Choice):
             raise TypeError
         self.gd = gd
@@ -225,11 +230,8 @@ class IterableChecker(Checker):
             from pydsl.Grammar import Grammar
             if not isinstance(definition, Grammar):
                 raise TypeError("Expected a grammar definition")
-            try:
-                if check(definition, data):
-                    return True
-            except KeyError:
-                pass
+            if check(definition, data):
+                return True
         return False
 
 class SequenceChecker(Checker):

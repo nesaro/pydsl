@@ -14,22 +14,22 @@
 #
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
-from pydsl.Lex import lexer_factory
-from pydsl.Parser.LL import LL1RecursiveDescentParser
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2013, Nestor Arocha"
+__copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
+from pydsl.Alphabet import Encoding
+from pydsl.Lex import lexer_factory
+from pydsl.Parser.LL import LL1RecursiveDescentParser
 
 class TestCase(unittest.TestCase):
     def test_main_case(self):
         input_data = "1+2"
-        from pydsl.Grammar.Alphabet import Encoding
         ascii_encoding = Encoding("ascii")
         ascii_lexer = lexer_factory(ascii_encoding)
-        ascii_tokens = [x for x in ascii_lexer(input_data)]
+        ascii_tokens = [x.content for x in ascii_lexer(input_data)]
         self.assertListEqual([str(x) for x in ascii_tokens], ['1', '+', '2'])
 
         def concept_translator_fun(inputtokens):
@@ -102,11 +102,12 @@ class TestCase(unittest.TestCase):
             
         result = parse_tree_walker(parse_tree[0])
         self.assertEqual(result, 3)
-        from pydsl.Grammar.Alphabet import Choice
+        from pydsl.Grammar.PEG import Choice
         from pydsl.Grammar.Definition import String, RegularExpression
         math_alphabet = Choice([RegularExpression("^[0123456789]*$"),String('+')])
+        ascii_encoding = Encoding("ascii")
         from pydsl.Lex import lex
-        tokens = [x[0] for x in lex(math_alphabet, "11+2")]
+        tokens = [x[0] for x in lex(math_alphabet, ascii_encoding, "11+2")]
         parse_tree = rdp(tokens)
         result = parse_tree_walker(parse_tree[0])
         self.assertEqual(result, 13)
