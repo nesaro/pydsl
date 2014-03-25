@@ -17,6 +17,7 @@
 
 import unittest
 from pydsl.Grammar.Definition import String
+from pydsl.Alphabet import GrammarCollection
 
 
 class TestBNF(unittest.TestCase):
@@ -29,7 +30,7 @@ class TestBNF(unittest.TestCase):
         self.assertListEqual([x for x in self.grammardef.enum()], ["SR"])
 
     def testFirst(self):
-        self.assertEqual(self.grammardef.first, String("S"))
+        self.assertEqual(self.grammardef.first, GrammarCollection([String("S")]))
 
     @unittest.skip("Not implemented")
     def testMin(self):

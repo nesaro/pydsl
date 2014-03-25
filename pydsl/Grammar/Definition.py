@@ -45,8 +45,8 @@ class Grammar(object):
         """Generates every possible accepted string"""
         raise NotImplementedError
 
-    def first(self):# -> set:
-        """Grammar definition that matches every possible first element.
+    def first(self):
+        """Alphabet that matches every possible first element.
         the returned value is a subset of the base_alphabet"""
         return self.alphabet
 
@@ -102,14 +102,15 @@ class RegularExpression(Grammar):
         return self.regexpstr
 
     def first(self):# -> set:
+        from pydsl.Alphabet import GrammarCollection
         i = 0
         while True:
             if self.regexpstr[i] == "^":
                 i+=1
                 continue
             if self.regexpstr[i] == "[":
-                return [String(x) for x in self.regexpstr[i+1:self.regexpstr.find("]")]]
-            return [String(self.regexpstr[i])]
+                return GrammarCollection([String(x) for x in self.regexpstr[i+1:self.regexpstr.find("]")]])
+            return GrammarCollection([String(self.regexpstr[i])])
 
     def __getattr__(self, attr):
         return getattr(self.regexp, attr)
@@ -122,7 +123,8 @@ class String(Grammar, str):
         str.__init__(self, string)
 
     def first(self):
-        return [String(self[0])]
+        from pydsl.Alphabet import GrammarCollection
+        return GrammarCollection([String(self[0])])
 
     def enum(self):
         yield self

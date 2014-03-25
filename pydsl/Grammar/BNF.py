@@ -93,13 +93,8 @@ class BNFGrammar(Grammar):
 
     @property
     def first(self):
-        """Returns the a grammar definition that includes all first elements of this grammar""" #TODO
-        result = []
-        for x in self.first_lookup(self.initialsymbol):
-            result += x.first()
-        if len(result) == 1:
-            return result[0]
-        return Choice(result)
+        """Returns the a grammar definition that includes all first elements of this grammar"""
+        return self.first_lookup(self.initialsymbol)
 
     def first_lookup(self, symbol, size=1):
         """
@@ -121,8 +116,8 @@ class BNFGrammar(Grammar):
                     break # This element doesn't have Null in its first set so there is no need to continue
         if not result:
             raise KeyError("Symbol doesn't exist in this grammar")
-        from pydsl.Grammar.PEG import Choice
-        return Choice(result)
+        from pydsl.Alphabet import GrammarCollection
+        return GrammarCollection(result)
 
     def next_lookup(self, symbol):
         """Returns the next TerminalSymbols produced by the input symbol within this grammar definition"""
