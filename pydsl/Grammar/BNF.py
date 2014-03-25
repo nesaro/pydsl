@@ -91,7 +91,6 @@ class BNFGrammar(Grammar):
     def terminal_symbols(self):
         return [x for x in self.fulllist if isinstance(x, TerminalSymbol)]
 
-    @property
     def first(self):
         """Returns the a grammar definition that includes all first elements of this grammar"""
         return self.first_lookup(self.initialsymbol)

@@ -25,8 +25,7 @@ __email__ = "nesaro@gmail.com"
 
 import unittest
 from pydsl.Grammar.Definition import String
-from pydsl.Alphabet import Encoding
-from pydsl.Alphabet import Alphabet
+from pydsl.Alphabet import Encoding, Alphabet, GrammarCollection
 
 
 @unittest.skip
@@ -42,7 +41,7 @@ class TestGrammarDefinitionPLY(unittest.TestCase):
 
     @unittest.skip
     def testFirst(self):
-        self.grammardef.first
+        self.grammardef.first()
 
     @unittest.skip
     def testMin(self):
@@ -55,6 +54,26 @@ class TestGrammarDefinitionPLY(unittest.TestCase):
     def testAlphabet(self):
         self.assertListEqual(self.grammardef.alphabet, Alphabet)
 
+class TestGrammarDefinitionString(unittest.TestCase):
+    def setUp(self):
+        self.grammardef = String('abc')
+
+    def testEnumerate(self):
+        self.assertListEqual(['abc'], [x for x in self.grammardef.enum()])
+
+    def testFirst(self):
+        self.assertEqual(self.grammardef.first(), GrammarCollection([String('a')]))
+
+    def testMin(self):
+        self.assertEqual(self.grammardef.minsize, 3)
+
+    def testMax(self):
+        self.assertEqual(self.grammardef.maxsize, 3)
+
+    def testAlphabet(self):
+        self.assertEqual(self.grammardef.alphabet, Encoding('ascii'))
+
+
 class TestGrammarDefinitionJson(unittest.TestCase):
     def setUp(self):
         from pydsl.Grammar.Definition import JsonSchema
@@ -64,7 +83,7 @@ class TestGrammarDefinitionJson(unittest.TestCase):
         self.assertRaises(NotImplementedError, self.grammardef.enum)
 
     def testFirst(self):
-        self.grammardef.first
+        self.assertEqual(self.grammardef.first(), Encoding('ascii'))
 
     def testMin(self):
         self.grammardef.minsize
