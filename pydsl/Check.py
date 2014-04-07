@@ -55,7 +55,7 @@ def checker_factory(grammar):
     elif isinstance(grammar, Sequence):
         return SequenceChecker(grammar)
     elif isinstance(grammar, Iterable):
-        return IterableChecker(grammar)
+        return ChoiceChecker(grammar)
     else:
         raise ValueError(grammar)
 
@@ -188,9 +188,6 @@ class JsonSchemaChecker(Checker):
 class ChoiceChecker(Checker):
     def __init__(self, gd):
         Checker.__init__(self)
-        from pydsl.Grammar.PEG import Choice
-        if not isinstance(gd, Choice):
-            raise TypeError
         self.gd = gd
         self.checkerinstances = [checker_factory(x) for x in self.gd]
 
@@ -218,20 +215,6 @@ class EncodingChecker(Checker):
             except UnicodeDecodeError:
                 return False
             return True
-        return False
-
-class IterableChecker(Checker):
-    def __init__(self, iterable):
-        Checker.__init__(self)
-        self.iterable = iterable
-
-    def check(self,data):
-        for definition in self.iterable:
-            from pydsl.Grammar import Grammar
-            if not isinstance(definition, Grammar):
-                raise TypeError("Expected a grammar definition")
-            if check(definition, data):
-                return True
         return False
 
 class SequenceChecker(Checker):
