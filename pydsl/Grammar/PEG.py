@@ -84,7 +84,6 @@ class Optional(object):
 
 class Not(object):
     def __init__(self, element):
-        Grammar.__init__(self)
         self.element = element
 
 class And(object):
