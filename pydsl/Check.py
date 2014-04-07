@@ -31,7 +31,7 @@ def check(definition, data):
 
 def checker_factory(grammar):
     from pydsl.Grammar.BNF import BNFGrammar
-    from pydsl.Grammar.PEG import Sequence, Choice
+    from pydsl.Grammar.PEG import Sequence, Choice, OneOrMore
     from pydsl.Grammar.Definition import PLYGrammar, RegularExpression, String, PythonGrammar
     from pydsl.Alphabet import Encoding
     from pydsl.Grammar.Parsley import ParsleyGrammar
@@ -54,6 +54,8 @@ def checker_factory(grammar):
         return EncodingChecker(grammar)
     elif isinstance(grammar, Sequence):
         return SequenceChecker(grammar)
+    elif isinstance(grammar, OneOrMore):
+        return OneOrMoreChecker(grammar)
     elif isinstance(grammar, Iterable):
         return ChoiceChecker(grammar)
     else:
@@ -227,5 +229,19 @@ class SequenceChecker(Checker):
             return False
         for index in range(len(self.sequence)):
             if not check(self.sequence[index], data[index]):
+                return False
+        return True
+
+
+class OneOrMoreChecker(Checker):
+    def __init__(self, element):
+        Checker.__init__(self)
+        self.element = element
+
+    def check(self, data):
+        if not data:
+            return False
+        for element in data:
+            if not check(self.element.element, element):
                 return False
         return True
