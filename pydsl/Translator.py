@@ -32,11 +32,7 @@ class PythonTranslator(object):
         self.outputchanneldic = outputdic
 
     def __call__(self, *args, **kwargs):
-        for dickey in kwargs.keys():
-            if not self.inputchanneldic[dickey].check(kwargs[dickey]):
-                raise ValueError("Invalid value %s for input %s (%s)" % (kwargs[dickey], dickey, self))
-        result = self._function(*args, **kwargs)
-        return result
+        return self._function(*args, **kwargs)
 
 class PLYTranslator(object):
     def __init__(self, grammardefinition):
@@ -63,13 +59,6 @@ class ParsleyTranslator(object):
 
 
 def translator_factory(function):
-    def _load_checker(originaldic):
-        """Converts {"channelname","type"} into {"channelname",instance}"""
-        result = {}
-        for key in originaldic:
-            from pydsl.Check import checker_factory
-            result[key] = checker_factory(load(str(originaldic[key]))) #FIXME: load is no longer available
-        return result
     from pydsl.Grammar.Definition import PLYGrammar
     from pydsl.Grammar.Parsley import ParsleyGrammar
     if isinstance(function, PLYGrammar):
@@ -77,8 +66,6 @@ def translator_factory(function):
     if isinstance(function, ParsleyGrammar):
         return ParsleyTranslator(function)
     if isinstance(function, dict):
-        function['inputdic'] = _load_checker(function['inputdic'])
-        function['outputdic'] = _load_checker(function['outputdic'])
         return PythonTranslator(**function)
     from pyparsing import OneOrMore
     if isinstance(function, OneOrMore):

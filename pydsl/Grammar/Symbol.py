@@ -19,12 +19,12 @@
 from pydsl.Check import check
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2013, Nestor Arocha"
+__copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
-from pydsl.Grammar.Definition import String
+from pydsl.Grammar.Definition import Grammar, String
 
 class Symbol(object):
     def __init__(self, weight):
@@ -50,10 +50,15 @@ class NonTerminalSymbol(Symbol):
             return False
         return self.name == other.name and self.weight == other.weight
 
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
 
 class TerminalSymbol(Symbol):
 
     def __init__(self, gd, weight=None, boundariesrules=None):
+        if not isinstance(gd, Grammar):
+            raise TypeError
         if isinstance(gd, String):
             weight = weight or 99
             boundariesrules = len(gd)
@@ -94,6 +99,9 @@ class NullSymbol(Symbol):
     def __eq__(self, other):
         return isinstance(other, NullSymbol)
 
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
     def __bool__(self):
         return False
 
@@ -106,6 +114,9 @@ class EndSymbol(Symbol):
 
     def __eq__(self, other):
         return isinstance(other, EndSymbol)
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
 
     def __bool__(self):
         return False

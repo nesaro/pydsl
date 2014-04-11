@@ -23,8 +23,7 @@ import logging
 LOG = logging.getLogger(__name__)
 from pydsl.Check import checker_factory
 from pydsl.Lex import lexer_factory
-from pydsl.Grammar.Alphabet import Alphabet
-from pydsl.Grammar.Alphabet import Alphabet, Encoding
+from pydsl.Alphabet import Alphabet, Encoding
 from pydsl.Token import PositionToken, Token
 
 

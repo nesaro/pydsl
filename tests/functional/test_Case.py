@@ -20,7 +20,7 @@ __copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
-from pydsl.Grammar.Alphabet import Encoding
+from pydsl.Alphabet import Encoding
 from pydsl.Lex import lexer_factory
 from pydsl.Parser.LL import LL1RecursiveDescentParser
 
@@ -102,7 +102,7 @@ class TestCase(unittest.TestCase):
             
         result = parse_tree_walker(parse_tree[0])
         self.assertEqual(result, 3)
-        from pydsl.Grammar.Alphabet import Choice
+        from pydsl.Grammar.PEG import Choice
         from pydsl.Grammar.Definition import String, RegularExpression
         math_alphabet = Choice([RegularExpression("^[0123456789]*$"),String('+')])
         ascii_encoding = Encoding("ascii")

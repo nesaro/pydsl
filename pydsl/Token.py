@@ -21,7 +21,6 @@ __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
-from pydsl.Grammar.Alphabet import Encoding
 from pydsl.Check import checker_factory
 from collections import namedtuple
 

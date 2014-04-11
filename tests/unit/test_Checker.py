@@ -21,6 +21,7 @@ __email__ = "nesaro@gmail.com"
 
 import unittest
 from pydsl.Grammar.Definition import String
+import sys
 
 class TestBNFChecker(unittest.TestCase):
     """BNF Checker"""
@@ -94,9 +95,10 @@ class TestJsonSchemaChecker(unittest.TestCase):
 
 
 class TestEncodingChecker(unittest.TestCase):
+    @unittest.skipIf(sys.version_info < (3,0), "Full encoding support not available for python 2")
     def testCheck(self):
         from pydsl.Check import EncodingChecker
-        from pydsl.Grammar.Alphabet import Encoding
+        from pydsl.Alphabet import Encoding
         a = Encoding('ascii')
         checker = EncodingChecker(a)
         self.assertTrue(checker.check('1234'))
@@ -109,7 +111,7 @@ class TestEncodingChecker(unittest.TestCase):
 class TestChoiceChecker(unittest.TestCase):
     def testCheck(self):
         from pydsl.Check import ChoiceChecker
-        from pydsl.Grammar.Alphabet import Choice
+        from pydsl.Grammar.PEG import Choice
         from pydsl.Grammar import RegularExpression
         a = Choice([RegularExpression('^[0123456789]*$')])
         checker = ChoiceChecker(a)

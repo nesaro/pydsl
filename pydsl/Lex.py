@@ -21,10 +21,11 @@ __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
-from pydsl.Grammar.Alphabet import Encoding, Choice
+from pydsl.Grammar.PEG import Choice
+from pydsl.Alphabet import Encoding, GrammarCollection
 from pydsl.Check import checker_factory
-from pydsl.Grammar.Alphabet import Choice, GrammarCollection
 from pydsl.Token import Token, PositionToken
+from pydsl.Tree import PositionResultList
 
 
 class EncodingLexer(object):
@@ -59,7 +60,7 @@ class EncodingLexer(object):
 def graph_from_alphabet(alphabet, base):
     """Creates a graph that connects the base with the target through alphabets
     If every target is connected to any inputs, create the independent paths"""
-    from pydsl.Grammar.Alphabet import Alphabet
+    from pydsl.Alphabet import Alphabet
     if not isinstance(alphabet, Alphabet):
         raise TypeError(alphabet.__class__.__name__)
     if not isinstance(base, Alphabet):
@@ -85,7 +86,7 @@ def graph_from_alphabet(alphabet, base):
         else: #A Grammar
             result.add_edge(current_alphabet, current_alphabet.alphabet)
             pending_stack.append(current_alphabet.alphabet)
-    print_graph(result)
+    #print_graph(result)
     return result
 
 def print_graph(result):
@@ -99,7 +100,7 @@ def print_graph(result):
 class GeneralLexer(object):
     """Multi level lexer"""
     def __init__(self, alphabet, base):
-        from pydsl.Grammar.Alphabet import Alphabet
+        from pydsl.Alphabet import Alphabet
         if not isinstance(alphabet, Alphabet):
             raise TypeError
         if not alphabet:
@@ -191,7 +192,6 @@ def digraph_walker_backwards(graph, element, call_back):
     for predecessor in graph.predecessors(element):
         call_back(graph, predecessor)
     for predecessor in graph.predecessors(element):
-        print(element, "->" , predecessor)
         digraph_walker_backwards(graph, predecessor, call_back)
 
 
@@ -222,7 +222,6 @@ class ChoiceLexer(object):
         return result
 
     def nextToken(self, include_gd=False):
-        from pydsl.Tree import Sequence
         best_right = 0
         best_gd = None
         for gd in self.alphabet:
@@ -261,8 +260,7 @@ class ChoiceBruteForceLexer(object):
         return [x for x in self.nextToken(include_gd)]
 
     def nextToken(self, include_gd=False):
-        from pydsl.Tree import Sequence
-        tree = Sequence()  # This is the extract algorithm
+        tree = PositionResultList()  # This is the extract algorithm
         valid_alternatives = []
         for gd in self.alphabet:
             checker = checker_factory(gd)
@@ -308,7 +306,7 @@ def common_ancestor(alphabet):
     expanded_alphabet_list = []
     for gd in alphabet:
         expanded_alphabet_list_entry = []
-        from pydsl.Grammar.Alphabet import Alphabet
+        from pydsl.Alphabet import Alphabet
         if isinstance(gd, Alphabet):
             expanded_alphabet_list_entry.append(gd)
         current_alphabet = gd.alphabet

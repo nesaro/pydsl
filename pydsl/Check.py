@@ -31,9 +31,9 @@ def check(definition, data):
 
 def checker_factory(grammar):
     from pydsl.Grammar.BNF import BNFGrammar
-    from pydsl.Grammar.PEG import Sequence
+    from pydsl.Grammar.PEG import Sequence, Choice, OneOrMore
     from pydsl.Grammar.Definition import PLYGrammar, RegularExpression, String, PythonGrammar
-    from pydsl.Grammar.Alphabet import Choice, Encoding
+    from pydsl.Alphabet import Encoding
     from pydsl.Grammar.Parsley import ParsleyGrammar
     from collections import Iterable
     if isinstance(grammar, BNFGrammar):
@@ -54,8 +54,10 @@ def checker_factory(grammar):
         return EncodingChecker(grammar)
     elif isinstance(grammar, Sequence):
         return SequenceChecker(grammar)
+    elif isinstance(grammar, OneOrMore):
+        return OneOrMoreChecker(grammar)
     elif isinstance(grammar, Iterable):
-        return IterableChecker(grammar)
+        return ChoiceChecker(grammar)
     else:
         raise ValueError(grammar)
 
@@ -188,9 +190,6 @@ class JsonSchemaChecker(Checker):
 class ChoiceChecker(Checker):
     def __init__(self, gd):
         Checker.__init__(self)
-        from pydsl.Grammar.Alphabet import Choice
-        if not isinstance(gd, Choice):
-            raise TypeError
         self.gd = gd
         self.checkerinstances = [checker_factory(x) for x in self.gd]
 
@@ -220,20 +219,6 @@ class EncodingChecker(Checker):
             return True
         return False
 
-class IterableChecker(Checker):
-    def __init__(self, iterable):
-        Checker.__init__(self)
-        self.iterable = iterable
-
-    def check(self,data):
-        for definition in self.iterable:
-            from pydsl.Grammar import Grammar
-            if not isinstance(definition, Grammar):
-                raise TypeError("Expected a grammar definition")
-            if check(definition, data):
-                return True
-        return False
-
 class SequenceChecker(Checker):
     def __init__(self, sequence):
         Checker.__init__(self)
@@ -244,5 +229,19 @@ class SequenceChecker(Checker):
             return False
         for index in range(len(self.sequence)):
             if not check(self.sequence[index], data[index]):
+                return False
+        return True
+
+
+class OneOrMoreChecker(Checker):
+    def __init__(self, element):
+        Checker.__init__(self)
+        self.element = element
+
+    def check(self, data):
+        if not data:
+            return False
+        for element in data:
+            if not check(self.element.element, element):
                 return False
         return True

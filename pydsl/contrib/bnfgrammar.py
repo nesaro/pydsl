@@ -19,7 +19,7 @@ final1 = NonTerminalSymbol("exp")
 rule1 = Production([final1], (symbol1, symbol2))
 productionset0 = BNFGrammar(final1, (rule1,symbol1,symbol2))
 p0good = "SR"
-p0bad = "SRL"
+p0bad = "RS"
 
 
 #productionset1 definition
@@ -48,7 +48,14 @@ productionsetlr = strlist_to_production_set(leftrecursive)
 productionsetrr = strlist_to_production_set(rightrecursive)
 productionsetcr = strlist_to_production_set(centerrecursive)
 
+#arithmetic
 
+
+arithmetic=["E ::= E plus T | T", "T ::= T times F | F" ,"F ::= open_parenthesis E close_parenthesis | id", "id := String,123" , "plus := String,+", "times := String,*", "open_parenthesis := String,(","close_parenthesis := String,)"]
+productionset_arithmetic = strlist_to_production_set(arithmetic, start_symbol= "E")
+
+addition=["S ::= E","E ::= E plus F | F" ,"F ::= open_parenthesis E close_parenthesis | id", "id := String,123" , "plus := String,+", "open_parenthesis := String,(","close_parenthesis := String,)"]
+productionset_addition = strlist_to_production_set(addition)
 #tokenlist definition
 string1 = "S:a"
 string2 = "S:"
