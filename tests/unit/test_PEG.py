@@ -23,7 +23,7 @@ __email__ = "nesaro@gmail.com"
 
 import unittest
 from pydsl.Grammar.Definition import String, Grammar
-from pydsl.Grammar.PEG import OneOrMore, Not, Sequence, Choice
+from pydsl.Grammar.PEG import ZeroOrMore, OneOrMore, Not, Sequence, Choice
 
 class TestPEG(unittest.TestCase):
     def testOneOrMore(self):
@@ -35,6 +35,17 @@ class TestPEG(unittest.TestCase):
         self.assertTrue(check(mygrammar, "aa"))
         self.assertTrue(check(mygrammar, "aaaa"))
         self.assertFalse(check(mygrammar, ""))
+        self.assertFalse(check(mygrammar, "b"))
+
+    def testZeroOrMore(self):
+        mygrammar = ZeroOrMore(String("a"))
+        self.assertTrue(isinstance(mygrammar, Grammar))
+        self.assertEqual(mygrammar.first(), Choice([String("a")]))
+        from pydsl.Check import check
+        self.assertTrue(check(mygrammar, "a"))
+        self.assertTrue(check(mygrammar, "aa"))
+        self.assertTrue(check(mygrammar, "aaaa"))
+        self.assertTrue(check(mygrammar, ""))
         self.assertFalse(check(mygrammar, "b"))
 
     def testChoice(self):
