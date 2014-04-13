@@ -19,6 +19,31 @@ pydsl is a language library written in python. It provides some verbs for Gramma
     from pydsl.Extract import extract
     extract(grammardefinition,'abcmystringabc') # returns ('mystring',3,11)
 
+FORMATS
+=======
+
+Functions
+---------
+
+| Format  |Check|Match|Search|Split|Extract|Translate|Validate|Diff|
+| ------- |:---:|-----|------|-----|:-----:|:-------:|:------:|----|
+| BNF     | V   |     |      |     |V      | Parse   | V      |    |
+| regexp  | V   |     |      |     |V      | X       |        |    |
+| ply     | V   |     |      |     |V      | V       |        |    |
+| parsley | V   |     |      |     |V      | V       |        |    |
+|pyparsing| V   |     |      |     |V      |         |        |    |
+
+Properties
+----------
+
+| Format  |First|Min|Max|Enumerate|
+| ------- |:---:|---|---|---------|
+| BNF     | V   |   |   |         |
+| regexp  |     |   |   |         |
+| ply     |     |   |   |         |
+| parsley |     |   |   |         |
+|pyparsing|     |   |   |         |
+
 
 INSTALLATION
 ============
