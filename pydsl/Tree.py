@@ -18,80 +18,34 @@
 """Tree class for tree based parsers"""
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2013, Nestor Arocha"
+__copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
-from pydsl.Grammar.Symbol import TerminalSymbol
 
 
-def traversePreOrder(item):
-    result = [item]
-    for child in item.childlist:
-        result += traversePreOrder(child)
-    return result
-
-
-def traverseInOrder(item):
-    result = [traverseInOrder(item.childlist[0]), item]
-    for child in item.childlist[1:]:
-        result += traverseInOrder(child)
-    return result
-
-
-def traversePostOrder(item):
-    result = []
-    for child in item.childlist:
-        result += traversePostOrder(child)
-    result.append(item)
-    return result
-
-
-class Tree(object):
-
-    def __init__(self, childlist=None):
-        if not childlist:
-            childlist = []
-        self.childlist = childlist
-
-    def append_child(self, dpr):
-        """appends dpr to childlist"""
-        self.childlist.append(dpr)
-
-    def to_list(self, order="preorder"):
-        if order == "preorder":
-            return traversePreOrder(self)
-        elif order == "inorder":
-            return traverseInOrder(self)
-        elif order == "postorder":
-            return traversePostOrder(self)
-        else:
-            raise ValueError("Unknown order %s" % order)
-
-    def first_leaf(self):
-        """Returns the first lead node"""
-        if self.childlist:
-            return self.childlist[0].first_leaf()
-        else:
-            return self
-
-
-class PositionTree(Tree):
+class ParseTree(object):
 
     """Stores the position of the original tree"""
 
-    def __init__(self, leftpos, rightpos, content, production=None, valid=True, childlist=None):
-        Tree.__init__(self, childlist)
-        self.leftpos = leftpos
-        self.rightpos = rightpos
+    def __init__(self, left, right, symbol, content, childlist=None, valid=True):
+        self.symbol = symbol
+        if not isinstance(left, int) and left is not None:
+            raise TypeError
+        if not isinstance(right, int) and right is not None:
+            raise TypeError
+        if not childlist:
+            childlist = []
+        self.childlist = childlist
+        self.left = left
+        self.right = right
         self.content = content
         self.valid = valid
-        self.production = production
 
     def __eq__(self, other):
         try:
-            return self.production == other.production and self.content == other.content and self.leftpos == other.leftpos and self.rightpos == other.rightpos and self.valid == other.valid
+            return self.left == other.left and self.right == other.right and self.valid == other.valid and self.content == other.content 
         except AttributeError:
             return False
 
@@ -99,110 +53,28 @@ class PositionTree(Tree):
         """checks if it is a null result"""
         return self.valid
 
-    def __getitem__(self, key):
-        result = []
-        mylist = self.to_list()
-        for element in mylist:
-            if element.content == key:
-                result.append(element)
-        if not result:
-            raise KeyError("Element not found %s" % key)
-        return result
+    def __nonzero__(self):
+        return self.__bool__()
 
     def shift(self, amount):
         """ shifts position """
-        if self.leftpos is not None:
-            self.leftpos += amount
-        if self.leftpos is not None:
-            self.rightpos += amount
+        if self.left is not None:
+            self.left += amount
+        if self.left is not None:
+            self.right += amount
 
     def __len__(self):
-        if self.rightpos is None and self.leftpos is None:
+        if self.right is None and self.left is None:
             return 0
-        return self.rightpos - self.leftpos
+        return self.right - self.left
 
-    def coverage(self):
-        if not self:
-            return 0, len(self)
-        if self.childlist:
-            childtotal = 0
-            childcoverage = 0
-            for child in self.childlist:
-                newcoverage, newtotal = child.coverage()
-                childcoverage += newcoverage
-                childtotal += newtotal
-            assert(childtotal == len(self))
-            return childcoverage, childtotal
-        else:
-            return len(self), len(self)
-
-    def get_by_symbol(self, index):
-        if isinstance(self.production, TerminalSymbol):
-            # FIXME quick hack for terminal rules
-            return [(self.leftpos, self.rightpos)]
-        result = []
-        if self.production.leftside[0].name == index:
-            result.append((self.leftpos, self.rightpos))
-        else:
-            LOG.debug(
-                "Not equal: " + str(self.production.leftside[0].name) + " and :" + str(index))
-        for child in self.childlist:
-            result += child.get_by_symbol(index)
-        return result
-
-    def __contains__(self, index):
-        if isinstance(self.production, TerminalSymbol):
-            # FIXME quick hack for terminal rules
-            return index == self.production.name
-        if not self.production.leftside:
-            return False
-        if self.production.leftside[0].name == index:
-            return True
-        for child in self.childlist:
-            if child.get_by_symbol(index):
-                return True
-        return False
+    def append(self, dpr):
+        """appends dpr to childlist"""
+        self.childlist.append(dpr)
 
 
-class ParseTree(PositionTree):
-
-    """ Stores a descent parser iteration result """
-
-    def __init__(self, leftpos, rightpos, symbollist, content, production, childlist=None, valid=True):
-        if not isinstance(leftpos, int) and leftpos is not None:
-            raise TypeError
-        if not isinstance(rightpos, int) and rightpos is not None:
-            raise TypeError
-        if not isinstance(symbollist, list):
-            raise TypeError
-        from pydsl.Grammar.BNF import Production
-        if production is not None and not (isinstance(production, (Production, TerminalSymbol))):
-            raise TypeError(production)
-        PositionTree.__init__(
-            self, leftpos, rightpos, content, production, valid, childlist)
-        self.symbollist = symbollist
-
-    def __add__(self, other):
-        """ Adds two results. Only if self.rightpos = other.leftpos and parents are the same """
-        if not isinstance(other, ParseTree):
-            raise TypeError
-        if other == []:
-            return ParseTree(self.leftpos, self.rightpos, self.symbollist,
-                             self.content, self.production, self.childlist)  # FIXME: Must return a childlist copy
-        if self.rightpos == other.leftpos and self.production == other.production:
-            leftpos = self.leftpos
-            rightpos = other.rightpos
-            production = self.production
-            content = self.content + other.content
-            symbollist = self.symbollist + other.symbollist
-            childlist = self.childlist + other.childlist
-            return ParseTree(leftpos, rightpos, symbollist, content, production, childlist)
-        else:
-            LOG.warning("Unable to add parser results")
-            raise Exception
-
-
-class Sequence:
+class PositionResultList(object):
+    """Contains a list of results"""
     def __init__(self):
         self.possible_items = []
 
@@ -212,28 +84,39 @@ class Sequence:
             return set([0])
         return set(x['right'] for x in self.possible_items)
 
-    def append(self, left, right, content, check_position=True):
+    def append(self, left, right, content, gd = None, check_position=True):
         if left > right:
-            raise Exception
+            raise ValueError('Attempted to add negative length alement')
         if check_position == True and left:
             if left not in self.current_right:
                 raise ValueError("Unable to add element")
-        self.possible_items.append({'left':left, 'right':right, 'content':content})
+        result = {'left':left, 'right':right, 'content':content}
+        if gd:
+            result['gd'] = gd
+        self.possible_items.append(result)
 
-    def generate_valid_sequences(self):
+    def valid_sequences(self):
         """Returns list"""
         valid_sets = [[x] for x in self.possible_items if x['left'] == 0]
         change = True
-        while change:
+        niter = 200
+        while change and niter > 0:
             change = False
+            niter -=1
             for possible in self.possible_items:
                 for current_valid in valid_sets[:]:
                     if possible['left'] == current_valid[-1]['right']:
                         if current_valid + [possible] not in valid_sets:
-                            valid_sets.append(current_valid + [possible])
-                            change = True
+                            if current_valid[-1]['left'] != current_valid[-1]['right'] or possible['left'] != possible['right']: #avoids Null insertion twice
+                                valid_sets.append(current_valid + [possible])
+                                change = True
+        if not niter:
+            raise Exception('too many iterations')
         return valid_sets
 
-
+    def right_limit_list(self):
+        if not self.possible_items:
+            return [0]
+        return list(set([x[-1]['right'] for x in self.valid_sequences()]))
 
 

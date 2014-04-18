@@ -15,28 +15,21 @@
 # You should have received a copy of the GNU General Public License
 # along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
-"""ListLibrary"""
-from pypository.utils import ImmutableDict
-import logging
-LOG = logging.getLogger(__name__)
-from pypository.List import ListStorage
-from pydsl.Alphabet.Definition import Encoding
+from pydsl.Grammar.Definition import Grammar
+from pydsl.Check import checker_factory
 
+__author__ = "Ptolom"
+__copyright__ = "Copyright 2014, Ptolom"
+__email__ = "ptolom@hexifact.co.uk"
 
-__author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2013, Nestor Arocha"
-__email__ = "nesaro@gmail.com"
-
-
-class EncodingStorage(ListStorage):
-
-    @staticmethod
-    def _generatekey(element):
-        return element
-
-    @staticmethod
-    def load(index):
-        return Encoding(index)
-
-    def generate_all_summaries(self):
-        return tuple([ImmutableDict({"identifier": x, "value": x, "iclass": "Encoding"}) for x in self._content])
+class ParsleyGrammar(Grammar):
+    def __init__(self, rules, root_rule, repository={}):
+        import parsley
+        Grammar.__init__(self)
+        repo={}
+        for k, v in repository.items():
+            repo[k]=(v, checker_factory(v))[isinstance(v, Grammar)]
+        self.grammar=parsley.makeGrammar(rules, repo)
+        self.root_rule=root_rule 
+    def match(self, data):
+        return getattr(self.grammar(data), self.root_rule)() #call grammar(data).root_rule()

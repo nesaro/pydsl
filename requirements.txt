@@ -1,7 +1,7 @@
-git+https://github.com/Julian/jsonschema.git
-git+https://github.com/nesaro/regexps.git
-git+https://github.com/nesaro/pypository.git
+jsonschema
 ply
 nose
 pyparsing
 git+https://github.com/nltk/nltk.git
+networkx
+parsley

@@ -15,26 +15,21 @@
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Tests spark integration"""
-
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2012, Nestor Arocha"
+__copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
+from pydsl.Grammar import RegularExpression
 
-class TestSpark(unittest.TestCase):
-    def testLoadFile(self):
-        pass
+class TestGuesser(unittest.TestCase):
+    def testGuesser(self):
+        cstring = RegularExpression('.*')
+        g1234 = RegularExpression('1234')
+        memorylist = [cstring, g1234 ]
+        from pydsl.Guess import Guesser
+        guesser = Guesser(memorylist)
+        self.assertListEqual(guesser('1234'), [cstring, g1234])
+        self.assertListEqual(guesser([x for x in '1234']), [cstring, g1234])
+        self.assertListEqual(guesser('134'), [cstring])
 
-    def testChecker(self):
-        pass
-
-    def testLexer(self):
-        pass
-
-    def testParser(self):
-        pass
-
-    def testTranslator(self):
-        pass

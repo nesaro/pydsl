@@ -16,145 +16,173 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2013, Nestor Arocha"
+__copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 
 
 from pydsl.contrib.bnfgrammar import *
-from pydsl.Parser.RecursiveDescent import BacktracingErrorRecursiveDescentParser
-from pydsl.Parser.Weighted import WeightedParser
+from pydsl.Parser.Backtracing import BacktracingErrorRecursiveDescentParser
 from pydsl.Parser.LR0 import LR0Parser
 from pydsl.Lex import EncodingLexer
+from pydsl.Parser.LL import LL1RecursiveDescentParser
 import unittest
 
-class TestParsers(unittest.TestCase):
-    @unittest.skip
+class TestBacktracingRecursiveDescentParser(unittest.TestCase):
     def testRecursiveLeftRecursion(self):
         descentparser = BacktracingErrorRecursiveDescentParser(productionsetlr)
-        result = descentparser(dots)
-        self.assertTrue(result)
-
-    @unittest.skip
-    def testWeightedLeftRecursion(self):
-        parser = WeightedParser(productionsetlr)
-        result = parser(dots)
-        self.assertTrue(result)
+        self.assertRaises(RuntimeError, descentparser, dots)
 
     def testRightRecursion(self):
         descentparser = BacktracingErrorRecursiveDescentParser(productionsetrr)
         result = descentparser(dots)
+        self.assertTrue(result)
+        result = descentparser(list(dots))
         self.assertTrue(result)
 
     def testCenterRecursion(self):
         descentparser = BacktracingErrorRecursiveDescentParser(productionsetcr)
         result = descentparser(dots)
         self.assertTrue(result)
+        result = descentparser(list(dots))
+        self.assertTrue(result)
 
     def testRecursiveDescentParserStore(self):
         descentparser = BacktracingErrorRecursiveDescentParser(productionset1)
         result = descentparser(string1)
+        self.assertTrue(result)
+        result = descentparser(list(string1))
         self.assertTrue(result)
 
     def testRecursiveDescentParserBad(self):
         descentparser = BacktracingErrorRecursiveDescentParser(productionset1)
         result = descentparser(string2)
         self.assertFalse(result)
+        result = descentparser(list(string2))
+        self.assertFalse(result)
+
 
     def testRecursiveDescentParserNull(self):
         descentparser = BacktracingErrorRecursiveDescentParser(productionset2)
         result = descentparser(string3)
         self.assertTrue(result)
+        result = descentparser(list(string3))
+        self.assertTrue(result)
 
     def testRecursiveDescentParserNullBad(self):
         descentparser = BacktracingErrorRecursiveDescentParser(productionset2)
-        result = descentparser(string4)
+        from pydsl.Lex import lex
+        from pydsl.Alphabet import Encoding
+        ascii_encoding = Encoding('ascii')
+        lexed_string4 = [x[0] for x in lex(productionset2.alphabet, ascii_encoding, string4)]
+        result = descentparser(lexed_string4)
+        self.assertFalse(result)
+        result = descentparser(list(string4))
         self.assertFalse(result)
 
+
+class TestLR0Parser(unittest.TestCase):
     def testLR0ParseTable(self):
         """Tests the lr0 table generation"""
         from pydsl.Parser.LR0 import _slr_build_parser_table, build_states_sets
         state_sets = build_states_sets(productionset0)
         self.assertEqual(len(state_sets), 5)
-        #1 . EI: : . exp $ , 
+        #0 . EI: : . exp $ , 
         #   exp : .SR
-        #       transitions: S -> 3,
-        #2 EI:  exp . $ ,
-        #       transitions: $ -> 4
-        #3 exp:  S . R,
-        #       transitions: R -> 5
-        #4 EI: exp $ .
-        #5 exp:  S R .
+        #       transitions: S -> 2,
+        #       goto: exp -> 1
+        #1 EI:  exp . $ ,
+        #       transitions: $ -> 3
+        #2 exp:  S . R,
+        #       transitions: R -> 4
+        #3 EI: exp $ .
+        #4 exp:  S R .
+        #       reduce
 
         parsetable = _slr_build_parser_table(productionset0)
-        print(parsetable)
-        #self.assertEqual(len(parsetable), 3)
+        self.assertEqual(len(parsetable), 4)
 
 
     def testLR0ParserStore(self):
         parser = LR0Parser(productionset0)
-        tokelist = [x for x in EncodingLexer('utf8')(p0good)]
-        result = parser.check(tokelist)
+        tokelist = [x.content for x in EncodingLexer('utf8')(p0good)]
+        result = parser(tokelist)
         self.assertTrue(result)
 
-    @unittest.skip
     def testLR0ParserBad(self):
         parser = LR0Parser(productionset1)
         result = parser(string2)
         self.assertFalse(result)
+        result = parser(list(string2))
+        self.assertFalse(result)
 
-    def testWeightedRightRecursion(self):
-        parser = WeightedParser(productionsetrr)
-        result = parser(dots)
-        self.assertTrue(result)
+    def testCenterRecursion(self):
+        self.assertRaises(Exception, LR0Parser, productionsetcr)
 
-    def testWeightedCenterRecursion(self):
-        descentparser = BacktracingErrorRecursiveDescentParser(productionsetcr)
+    def testArithmetic(self):
+        parser = LR0Parser(productionset_arithmetic)
+        self.assertFalse(parser('1'))
+        self.assertTrue(parser(['123']))
+        self.assertTrue(parser(['123','+','123']))
+        self.assertTrue(parser(['123','*','123']))
+        self.assertFalse(parser(['123a','+','123']))
+        self.assertFalse(parser(['123','+','+']))
+
+
+class TestLL1RecursiveDescentParser(unittest.TestCase):
+    @unittest.skip
+    def testRecursiveLeftRecursion(self):
+        descentparser = LL1RecursiveDescentParser(productionsetlr)
         result = descentparser(dots)
         self.assertTrue(result)
 
-    def testWeightedParserStore(self):
-        parser = WeightedParser(productionset1)
-        result = parser(string1)
+    def testRightRecursion(self):
+        descentparser = LL1RecursiveDescentParser(productionsetrr)
+        self.assertFalse(descentparser(dots)) #Ambiguous grammar
+
+    def testCenterRecursion(self):
+        descentparser = LL1RecursiveDescentParser(productionsetcr)
+        self.assertFalse(descentparser(dots)) #Ambiguous grammar
+
+    def testLL1RecursiveDescentParserStore(self):
+        descentparser = LL1RecursiveDescentParser(productionset1)
+        result = descentparser(string1)
         self.assertTrue(result)
-        self.assertTrue(parser([x for x in string1]))
-        self.assertTrue(parser([Token(x) for x in string1]))
-
-    def testWeightedParserBad(self):
-        parser = WeightedParser(productionset1)
-        result = parser(string2)
-        self.assertFalse(result)
-
-    def testWeightedParserNull(self):
-        parser = WeightedParser(productionset2)
-        result = parser(string3)
+        result = descentparser(list(string1))
         self.assertTrue(result)
 
-    def testWeightedParserNullBad(self):
-        parser = WeightedParser(productionset2)
-        result = parser(string4)
+    def testLL1RecursiveDescentParserBad(self):
+        descentparser = LL1RecursiveDescentParser(productionset1)
+        result = descentparser(string2)
+        self.assertFalse(result)
+        result = descentparser(list(string2))
         self.assertFalse(result)
 
-class TestWeightedParser(unittest.TestCase):
-    @unittest.skip
-    def testMixResults(self):
-        from pydsl.Grammar.Parser.Weighted import mix_results
+@unittest.skip
+class TestPEGParser(unittest.TestCase):
+    def testBasicChoice(self):
+        from pydsl.Grammar.Alphabet import Choice
         from pydsl.Tree import ParseTree
-        from pydsl.Grammar.Symbol import NullSymbol
-        result1 = ParseTree(0, 3, [NullSymbol()], "", None)
-        result2 = ParseTree(0, 5, [NullSymbol()], "", None)
-        result3 = ParseTree(3, 6, [NullSymbol()], "", None)
-        result4 = ParseTree(6, 8, [NullSymbol()], "", None)
-        result5 = ParseTree(7, 8, [NullSymbol()], "", None)
-        set1 = [result1, result2]
-        set1b = [set1]
-        set2 = [result3]
-        set2b = [set2]
-        set3 = [result4, result5]
-        set3b = [set3]
-        result = mix_results([set1b, set2b, set3b], None)
-        #TODO: check result
-        self.assertTrue(len(result) == 1)
+        from pydsl.Parser.PEG import PEGParser
+        gd = Choice([String('a'), String('b')])
+        parser = PEGParser(gd)
+        result = parser('a')
+        self.assertTrue(isinstance(result, ParseTree))
+
+
+
+class TestParse(unittest.TestCase):
+    def testverb(self):
+        """Tests the lr0 table generation"""
+        from pydsl.Parser.Parser import parse, parser_factory
+        tokelist = [x.content for x in EncodingLexer('utf8')(p0good)]
+        self.assertTrue(parse(productionset0, tokelist , "default"))
+        self.assertTrue(parse(productionset0, tokelist , "lr0"))
+        self.assertTrue(parse(productionset0, tokelist , "ll1"))
+        tokelist = [x.content for x in EncodingLexer('utf8')(p0bad)]
+        self.assertFalse(parse(productionset0, tokelist , "default"))
+        self.assertFalse(parse(productionset0, tokelist , "lr0"))
+        self.assertFalse(parse(productionset0, tokelist , "ll1"))
 
 class TestNLTKParser(unittest.TestCase):
     def testParsing(self):

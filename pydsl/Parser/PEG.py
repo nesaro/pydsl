@@ -1,6 +1,6 @@
+
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-
 #This file is part of pydsl.
 #
 #pydsl is free software: you can redistribute it and/or modify
@@ -16,28 +16,11 @@
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
+from pydsl.Parser.Parser import Parser
 
-""" guess which types are the input data.  """
+class PEGParser(Parser):
+    def __init__(self, gd):
+        self.gd = gd
 
-__author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2014, Nestor Arocha"
-__email__ = "nesaro@gmail.com"
-
-import logging
-LOG = logging.getLogger(__name__)
-from pydsl.Check import check
-
-class Guesser(object):
-    """Returns every grammar and alphabet definition that matches the input"""
-    def __init__(self, grammarlist):
-        self.grammarlist = grammarlist
-
-    def __call__(self, data):
-        result = []
-        for gd in self.grammarlist:
-            if check(gd, data):
-                result.append(gd)
-        return result
-
-def guess(grammarlist, data):
-    return Guesser(grammarlist)(data)
+    def get_trees(self, data):
+        pass

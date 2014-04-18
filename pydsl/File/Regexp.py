@@ -24,10 +24,6 @@ __email__ = "nesaro@gmail.com"
 
 
 import re
-import logging
-LOG = logging.getLogger(__name__)
-
-from pypository.utils import ImmutableDict, getFileTuple
 
 def load_re_from_file(filepath):
     """Converts a re file to Regular Grammar instance"""
@@ -48,10 +44,5 @@ def load_re_from_file(filepath):
     flags = 0
     if "i" in flagstr:
         flags |= re.I
-    from pydsl.Grammar.Definition import RegularExpressionDefinition
-    return RegularExpressionDefinition(regexp, flags)
-
-def summary_re_from_file(filepath):
-    (_, _, fileBaseName, _) = getFileTuple(filepath)
-    return ImmutableDict({"iclass":"RegularExpression","identifier":fileBaseName, "filepath":filepath})
-
+    from pydsl.Grammar.Definition import RegularExpression
+    return RegularExpression(regexp, flags)

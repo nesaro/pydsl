@@ -14,21 +14,22 @@
 #
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
-from pydsl.Lex import lexer_factory
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2013, Nestor Arocha"
+__copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
+from pydsl.Alphabet import Encoding
+from pydsl.Lex import lexer_factory
+from pydsl.Parser.LL import LL1RecursiveDescentParser
 
 class TestCase(unittest.TestCase):
     def test_main_case(self):
         input_data = "1+2"
-        from pydsl.Alphabet.Definition import Encoding
         ascii_encoding = Encoding("ascii")
         ascii_lexer = lexer_factory(ascii_encoding)
-        ascii_tokens = [x for x in ascii_lexer(input_data)]
+        ascii_tokens = [x.content for x in ascii_lexer(input_data)]
         self.assertListEqual([str(x) for x in ascii_tokens], ['1', '+', '2'])
 
         def concept_translator_fun(inputtokens):
@@ -50,9 +51,7 @@ class TestCase(unittest.TestCase):
             if number == "two":
                 return 2
  
-        from pydsl.Lex import ConceptLexer
-        to_concepts = ConceptLexer(concept_translator_fun)
-        math_expression_concepts = to_concepts(ascii_tokens)
+        math_expression_concepts = concept_translator_fun(ascii_tokens)
         self.assertListEqual(math_expression_concepts, ['one', 'addition', 'two'])
         grammar_def = [
                 "S ::= E",
@@ -61,105 +60,55 @@ class TestCase(unittest.TestCase):
                 "two := String,two",
                 "addition := String,addition",
                 ]
-        from pydsl.Memory.File.BNF import strlist_to_production_set
-        production_set = strlist_to_production_set(grammar_def)
-        from pydsl.Parser.RecursiveDescent import BacktracingErrorRecursiveDescentParser
+        from pydsl.File.BNF import strlist_to_production_set
+        production_set = strlist_to_production_set(grammar_def, {})
+        from pydsl.Parser.Backtracing import BacktracingErrorRecursiveDescentParser
         rdp = BacktracingErrorRecursiveDescentParser(production_set)
         parse_tree = rdp(math_expression_concepts)
         from pydsl.Grammar.Symbol import NonTerminalSymbol
         def parse_tree_walker(tree):
-            if tree.production.leftside[0] == NonTerminalSymbol("S"):
+            if tree.symbol == NonTerminalSymbol("S"):
                 return parse_tree_walker(tree.childlist[0])
-            if tree.production.leftside[0] == NonTerminalSymbol("E"):
-                return to_number(tree.production.rightside[0].gd.string) + to_number(tree.production.rightside[2].gd.string)
-            else:
-                raise Exception
+            if tree.symbol == NonTerminalSymbol("E"):
+                return to_number(tree.childlist[0].symbol.gd) + to_number(tree.childlist[2].symbol.gd)
+            raise Exception
             
         result = parse_tree_walker(parse_tree[0])
         self.assertEqual(result, 3)
 
 
     def test_calculator_simple(self):
-        from pydsl.Config import load_default_memory
-        load_default_memory()
         grammar_def = [
                 "S ::= E",
                 "E ::= number operator number",
                 "number := Word,integer,max",
                 "operator := String,+",
                 ]
-        from pydsl.Memory.File.BNF import strlist_to_production_set
-        production_set = strlist_to_production_set(grammar_def)
-        from pydsl.Parser.RecursiveDescent import LL1RecursiveDescentParser
+        from pydsl.File.BNF import strlist_to_production_set
+        from pydsl.Grammar import RegularExpression
+        repository = {'integer':RegularExpression("^[0123456789]*$")}
+        production_set = strlist_to_production_set(grammar_def, repository)
         rdp = LL1RecursiveDescentParser(production_set)
         parse_tree = rdp("1+2")
 
         def parse_tree_walker(tree):
             from pydsl.Grammar.Symbol import NonTerminalSymbol
-            if tree.production.leftside[0] == NonTerminalSymbol("S"):
+            if tree.symbol == NonTerminalSymbol("S"):
                 return parse_tree_walker(tree.childlist[0])
-            if tree.production.leftside[0] == NonTerminalSymbol("E"):
+            if tree.symbol == NonTerminalSymbol("E"):
                 return int(str(tree.childlist[0].content)) + int(str(tree.childlist[2].content))
             else:
                 raise Exception
             
         result = parse_tree_walker(parse_tree[0])
         self.assertEqual(result, 3)
-        from pydsl.Alphabet.Definition import AlphabetListDefinition
-        from pydsl.Grammar.Definition import StringGrammarDefinition
-        math_alphabet = AlphabetListDefinition(['integer',StringGrammarDefinition('+')])
+        from pydsl.Grammar.PEG import Choice
+        from pydsl.Grammar.Definition import String, RegularExpression
+        math_alphabet = Choice([RegularExpression("^[0123456789]*$"),String('+')])
+        ascii_encoding = Encoding("ascii")
         from pydsl.Lex import lex
-        tokens = lex(math_alphabet, "11+2")
+        tokens = [x[0] for x in lex(math_alphabet, ascii_encoding, "11+2")]
         parse_tree = rdp(tokens)
         result = parse_tree_walker(parse_tree[0])
         self.assertEqual(result, 13)
 
-    def test_calculator(self):
-        from pydsl.Config import load_default_memory
-        load_default_memory()
-        grammar_def = [
-                "S ::= E",
-                "E ::= E operator E | number",
-                "number := Word,integer,max",
-                "operator := String,+",
-                ]
-        from pydsl.Memory.File.BNF import strlist_to_production_set
-        production_set = strlist_to_production_set(grammar_def)
-        from pydsl.Parser.RecursiveDescent import LLkRecursiveDescentParser
-        rdp = LLkRecursiveDescentParser(production_set)
-        parse_tree = rdp("1+2")
-
-        def parse_tree_walker(tree):
-            from pydsl.Grammar.Symbol import NonTerminalSymbol
-            if tree.production.leftside[0] == NonTerminalSymbol("S"):
-                return parse_tree_walker(tree.childlist[0])
-            if tree.production.leftside[0] == NonTerminalSymbol("E"):
-                return int(str(tree.childlist[0].content)) + int(str(tree.childlist[2].content))
-            else:
-                raise Exception
-            
-        result = parse_tree_walker(parse_tree[0])
-        self.assertEqual(result, 3)
-        from pydsl.Alphabet.Definition import AlphabetListDefinition
-        from pydsl.Grammar.Definition import StringGrammarDefinition
-        math_alphabet = AlphabetListDefinition(['integer',StringGrammarDefinition('+')])
-        from pydsl.Lex import lex
-        tokens = lex(math_alphabet, "11+2")
-        parse_tree = rdp(tokens)
-        result = parse_tree_walker(parse_tree[0])
-        self.assertEqual(result, 13)
-        tokens = lex(math_alphabet, "11+2+2")
-        parse_tree = rdp(tokens)
-        result = parse_tree_walker(parse_tree[0])
-        self.assertEqual(result, 15)
-        tokens = lex(math_alphabet, "11+2*2")
-        parse_tree = rdp(tokens)
-        result = parse_tree_walker(parse_tree[0])
-        self.assertEqual(result, 15)
-        tokens = lex(math_alphabet, "11*2*2")
-        parse_tree = rdp(tokens)
-        result = parse_tree_walker(parse_tree[0])
-        self.assertEqual(result, 44)
-        tokens = lex(math_alphabet, "11*2*2")
-        result = alphabet_int_to_hex(tokens)
-        self.assertEqual(result, "b*2*2")

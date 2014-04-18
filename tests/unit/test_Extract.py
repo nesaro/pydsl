@@ -1,4 +1,3 @@
-
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 #This file is part of pydsl.
@@ -17,48 +16,66 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2013, Nestor Arocha"
+__copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
+from pydsl.Extract import extract, extract_alphabet
+from pydsl.Grammar import RegularExpression, String
+from pydsl.Grammar.PEG import Choice
+from pydsl.Alphabet import Encoding
+from pydsl.Token import PositionToken, Token
+import sys
 
 
 class TestGrammarExtract(unittest.TestCase):
 
-    def testGrammarDefinition(self):
-        from pydsl.Extract import extract
-        from pydsl.Config import load
-        gd = load('integer')
-        expected_result = [(3, 4, '1'), (3, 5, '12'), (3, 6, '123'), (3, 7, '1234'), (4, 5, '2'), (4, 6, '23'), (4, 7, '234'), (5, 6, '3'), (5, 7, '34'), (6, 7, '4')]
+    def testRegularExpression(self):
+        gd = RegularExpression('^[0123456789]*$')
+        expected_result = [
+                PositionToken(content='1', gd=None, left=3, right=4), 
+                PositionToken(content='12', gd=None, left=3, right=5), 
+                PositionToken(content='123', gd=None, left=3, right=6), 
+                PositionToken(content='1234', gd=None, left=3, right=7), 
+                PositionToken(content='2', gd=None, left=4, right=5), 
+                PositionToken(content='23', gd=None, left=4, right=6), 
+                PositionToken(content='234', gd=None, left=4, right=7), 
+                PositionToken(content='3', gd=None, left=5, right=6), 
+                PositionToken(content='34', gd=None, left=5, right=7), 
+                PositionToken(content='4', gd=None, left=6, right=7)]
         self.assertListEqual(extract(gd,'abc1234abc'), expected_result)
+        expected_result = [
+                PositionToken(content=['1'], gd=None, left=3, right=4), 
+                PositionToken(content=['1','2'], gd=None, left=3, right=5), 
+                PositionToken(content=['1','2','3'], gd=None, left=3, right=6), 
+                PositionToken(content=['1','2','3','4'], gd=None, left=3, right=7), 
+                PositionToken(content=['2'], gd=None, left=4, right=5), 
+                PositionToken(content=['2','3'], gd=None, left=4, right=6), 
+                PositionToken(content=['2','3','4'], gd=None, left=4, right=7), 
+                PositionToken(content=['3'], gd=None, left=5, right=6), 
+                PositionToken(content=['3','4'], gd=None, left=5, right=7), 
+                PositionToken(content=['4'], gd=None, left=6, right=7)]
+        self.assertListEqual(extract(gd,[Token(x, None) for x in 'abc1234abc']), expected_result)
+        self.assertListEqual(extract(gd,[x for x in 'abc1234abc']), expected_result)
         self.assertRaises(Exception, extract, None)
-
-    def testTokenInput(self):
-        pass
-
-    def testListInput(self):
-        pass
-
-    def testEmptyInput(self):
-        pass
+        self.assertListEqual(extract(gd,''), []) #Empty input
 
 
 class TestAlphabetExtract(unittest.TestCase):
 
-    def testAlphabet(self):
-        from pydsl.Extract import extract
-        from pydsl.Config import load
-        ad = load('ascii')
-        self.assertListEqual(extract(ad,'a£'), [(0,1,'a')])
+    @unittest.skipIf(sys.version_info < (3,0), "Full encoding support not available for python 2")
+    def testEncoding(self):
+        ad = Encoding('ascii')
+        self.assertListEqual(extract(ad,''), [])
+        self.assertListEqual(extract(ad,'a£'), [PositionToken('a', None, 0,1)])
+        self.assertListEqual(extract(ad,['a','£']), [PositionToken(['a'], None, 0,1)])
         self.assertRaises(Exception, extract, None)
 
-    def testTokenInput(self):
-        pass
-
-    def testListInput(self):
-        pass
-
-    def testEmptyInput(self):
-        pass
-
-
+    def testChoices(self):
+        gd = Choice([String('a'), String('b'), String('c')])
+        self.assertListEqual(extract_alphabet(gd,'axbycz'), [PositionToken('a', None,0,1), PositionToken('b', None, 2,3), PositionToken('c', None, 4,5)])
+        self.assertListEqual(extract_alphabet(gd,'xyzabcxyz'), [PositionToken('abc', None, 3,6)])
+        self.assertListEqual(extract_alphabet(gd,'abcxyz'), [PositionToken('abc', None, 0,3)])
+        self.assertListEqual(extract_alphabet(gd,[Token(x, None) for x in 'abcxyz']), [PositionToken(['a','b','c'], None, 0,3)])
+        self.assertListEqual(extract_alphabet(gd,'abc'), [PositionToken('abc', None, 0,3)])
+        self.assertListEqual(extract_alphabet(gd,''), [])
