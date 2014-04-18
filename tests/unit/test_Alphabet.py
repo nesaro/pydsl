@@ -18,35 +18,36 @@ from pydsl.Check import checker_factory
 from pydsl.Lex import lexer_factory
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2013, Nestor Arocha"
+__copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
 from pydsl.Grammar import String
-from pydsl.Grammar.PEG import Sequence
-from pydsl.Grammar.Alphabet import Choice, Encoding, AlphabetChain
+from pydsl.Grammar.PEG import Sequence, Choice
+from pydsl.Alphabet import Encoding, GrammarCollection
 from pydsl.Grammar import RegularExpression
 from pydsl.File.BNF import load_bnf_file
 from pydsl.File.Python import load_python_file
+import sys
 
 
 class TestAlphabet(unittest.TestCase):
     def setUp(self):
         self.integer = RegularExpression("^[0123456789]*$")
         self.date = load_bnf_file("pydsl/contrib/grammar/Date.bnf", {'integer':self.integer, 'DayOfMonth':load_python_file('pydsl/contrib/grammar/DayOfMonth.py')})
-        self.alphabet = Choice([self.integer,self.date])
 
     def testChecker(self):
-        checker = checker_factory(self.alphabet)
+        alphabet = GrammarCollection([self.integer,self.date])
+        checker = checker_factory(alphabet)
         self.assertTrue(checker.check("1234"))
-        self.assertTrue(checker.check("11/11/1991"))
+        self.assertTrue(checker.check([x for x in "1234"]))
+        self.assertFalse(checker.check("11/11/1991")) #Non tokenized input
+        self.assertFalse(checker.check([x for x in "11/11/1991"])) #Non tokenized input
+        self.assertTrue(checker.check(["11","/","11","/","1991"])) #tokenized input
         self.assertFalse(checker.check("bcdf"))
+        self.assertFalse(checker.check([x for x in "bcdf"]))
 
-    def testLexer(self):
-        lexer = lexer_factory(self.alphabet)
-        self.assertListEqual(lexer("1234"), [("1234", self.integer)])
-        self.assertListEqual(lexer("123411/11/2001"), [("1234", self.integer),("11/11/2001", self.date)])
-
+    @unittest.skipIf(sys.version_info < (3,0), "Full encoding support not available for python 2")
     def testEncoding(self):
         alphabet = Encoding('ascii')
         self.assertTrue(alphabet[0])
@@ -54,13 +55,6 @@ class TestAlphabet(unittest.TestCase):
         alphabet = Encoding('unicode')
         self.assertTrue(alphabet[0])
         self.assertEqual(len(alphabet.enum()), 9635)
-
-    def testAlphabetChain(self):
-        a1 = Choice([String('a'), String('b'), String('c')])
-        ab_sequence = Sequence([String('a'), String('b')])
-        ac_sequence = Sequence([String('a'), String('c')])
-        a2 = Choice([ ab_sequence, ac_sequence ], base_alphabet = a1)
-        ac = AlphabetChain([a1, a2])
-        self.assertEqual(a1.first, ac.first)
-        lexer = lexer_factory(ac)
-        self.assertListEqual([x[1] for x in lexer("abac", include_gd=True)], [ab_sequence , ac_sequence])
+        self.assertRaises(KeyError, alphabet.__getitem__, 'a')
+        self.assertRaises(KeyError, alphabet.__getitem__, 5.5)
+        self.assertTrue(alphabet[100])

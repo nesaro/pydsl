@@ -21,6 +21,7 @@ __email__ = "nesaro@gmail.com"
 
 import unittest
 from pydsl.Grammar.Definition import String
+import sys
 
 class TestBNFChecker(unittest.TestCase):
     """BNF Checker"""
@@ -31,11 +32,11 @@ class TestBNFChecker(unittest.TestCase):
         grammardef = productionset0
         checker = BNFChecker(grammardef)
         self.assertTrue(checker.check("SR"))
+        self.assertTrue(checker.check("SR"))
         self.assertTrue(checker.check(("S","R")))
         self.assertFalse(checker.check("SL"))
-
-    def testEmptyInput(self):
-        pass
+        self.assertFalse(checker.check(("S","L")))
+        self.assertFalse(checker.check(""))
 
 class TestRegularExpressionChecker(unittest.TestCase):
     """BNF Checker"""
@@ -49,10 +50,7 @@ class TestRegularExpressionChecker(unittest.TestCase):
         self.assertTrue(checker.check([x for x in input_str]))
         self.assertTrue(checker.check(input_str))
         self.assertFalse(checker.check("abd"))
-
-    def testEmptyInput(self):
-        pass
-
+        self.assertFalse(checker.check(""))
 
 class TestPLYChecker(unittest.TestCase):
     def testCheck(self):
@@ -63,10 +61,9 @@ class TestPLYChecker(unittest.TestCase):
         grammardef = PLYGrammar(example_ply)
         checker = PLYChecker(grammardef)
         self.assertTrue(checker.check("O"))
+        self.assertTrue(checker.check(["O"]))
         self.assertFalse(checker.check("FALSE"))
-
-    def testEmptyInput(self):
-        pass
+        #self.assertFalse(checker.check("")) #FIXME
 
 
 
@@ -98,34 +95,30 @@ class TestJsonSchemaChecker(unittest.TestCase):
 
 
 class TestEncodingChecker(unittest.TestCase):
+    @unittest.skipIf(sys.version_info < (3,0), "Full encoding support not available for python 2")
     def testCheck(self):
         from pydsl.Check import EncodingChecker
-        from pydsl.Grammar.Alphabet import Encoding
+        from pydsl.Alphabet import Encoding
         a = Encoding('ascii')
         checker = EncodingChecker(a)
         self.assertTrue(checker.check('1234'))
+        self.assertTrue(checker.check([x for x in '1234']))
         self.assertTrue(checker.check('asdf'))
         self.assertFalse(checker.check('£'))
-
-    def testEmptyInput(self):
-        pass
+        #self.assertFalse(checker.check('')) #FIXME
 
 
 class TestChoiceChecker(unittest.TestCase):
-    def setUp(self):
-        pass
-
     def testCheck(self):
         from pydsl.Check import ChoiceChecker
-        from pydsl.Grammar.Alphabet import Choice
+        from pydsl.Grammar.PEG import Choice
         from pydsl.Grammar import RegularExpression
         a = Choice([RegularExpression('^[0123456789]*$')])
         checker = ChoiceChecker(a)
+        self.assertTrue(checker.check([x for x in '1234']))
         self.assertTrue(checker.check('1234'))
         self.assertFalse(checker.check('abc'))
-
-    def testEmptyInput(self):
-        pass
+        self.assertFalse(checker.check(''))
 
 class TestStringChecker(unittest.TestCase):
     def testCheck(self):
@@ -140,10 +133,7 @@ class TestStringChecker(unittest.TestCase):
         self.assertTrue(grammarchecker(list_version))
         self.assertTrue(grammarchecker([String(x) for x in list_version]))
         self.assertTrue(grammarchecker([x for x in list_version]))
-
-    def testEmptyInput(self):
-        pass
-
+        self.assertFalse(grammarchecker(''))
 
 class TestSequenceChecker(unittest.TestCase):
     def testCheck(self):
@@ -152,4 +142,6 @@ class TestSequenceChecker(unittest.TestCase):
         sequence = Sequence((String("a"), String("b"), String("c")))
         checker = SequenceChecker(sequence)
         self.assertTrue(checker.check("abc"))
+        self.assertTrue(checker.check([x for x in "abc"]))
         self.assertFalse(checker.check("abd"))
+        self.assertFalse(checker.check(""))

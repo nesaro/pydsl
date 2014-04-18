@@ -21,7 +21,7 @@ from pydsl.Grammar.Symbol import Symbol, TerminalSymbol, NullSymbol, EndSymbol
 from pydsl.Grammar.Definition import Grammar
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2013, Nestor Arocha"
+__copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 
@@ -75,10 +75,13 @@ class BNFGrammar(Grammar):
             options = {}
         self.options = options
 
+    def __hash__(self):
+        return hash(self.fulllist)
+
     @property
     def alphabet(self):
-        from pydsl.Grammar.Alphabet import Choice
-        return Choice([x.gd for x in self.terminal_symbols])
+        from pydsl.Alphabet import GrammarCollection
+        return GrammarCollection([x.gd for x in self.terminal_symbols])
 
     @property
     def productions(self):
@@ -93,7 +96,7 @@ class BNFGrammar(Grammar):
         """Returns the a grammar definition that includes all first elements of this grammar""" #TODO
         result = []
         for x in self.first_lookup(self.initialsymbol):
-            result += x.first
+            result += x.first()
         if len(result) == 1:
             return result[0]
         return Choice(result)
@@ -118,7 +121,7 @@ class BNFGrammar(Grammar):
                     break # This element doesn't have Null in its first set so there is no need to continue
         if not result:
             raise KeyError("Symbol doesn't exist in this grammar")
-        from pydsl.Grammar.Alphabet import Choice
+        from pydsl.Grammar.PEG import Choice
         return Choice(result)
 
     def next_lookup(self, symbol):
@@ -163,26 +166,15 @@ class BNFGrammar(Grammar):
                 return rule
         raise IndexError
 
-    def getProductionsBySide(self, symbollist, side = "left"):
+    def getProductionsBySide(self, symbol):
         result = []
-        if isinstance(symbollist, Symbol):
-            symbollist = [symbollist]
-        for rule in self.productions: #FIXME Is iterating over production only
-            if side == "left":
-                part = rule.leftside
-            elif side == "right":
-                part = rule.rightside
-            else:
-                raise ValueError("Unknown side value %s" % (side,))
-            if len(part) != len(symbollist):
+        for rule in self.productions:
+            if len(rule.leftside) != 1:
                 continue
-            for ruleindex in range(len(part)):
-                if part[ruleindex] != symbollist[ruleindex]:
-                    break
-            else:
+            if rule.leftside[0] == symbol:
                 result.append(rule)
         if not result:
-            raise IndexError("Symbol: %s" % str([str(x) for x in symbollist]))
+            raise IndexError("Symbol: %s" % str(symbol))
         return result
 
     def getSymbols(self):

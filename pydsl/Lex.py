@@ -15,14 +15,17 @@
 # You should have received a copy of the GNU General Public License
 # along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Base Lexer classes"""
+"""Lexer classes. Receives and input sequences and returns a list of Tokens"""
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
-from pydsl.Grammar.Alphabet import Encoding
+from pydsl.Grammar.PEG import Choice
+from pydsl.Alphabet import Encoding, GrammarCollection
 from pydsl.Check import checker_factory
+from pydsl.Token import Token, PositionToken
+from pydsl.Tree import PositionResultList
 
 
 class EncodingLexer(object):
@@ -32,35 +35,164 @@ class EncodingLexer(object):
     def __init__(self, encoding):
         self.encoding = encoding
 
-    def __call__(self, string):
+    def __call__(self, string): #TODO! make all the lexers work the same
         for x in string:
-            yield x
+            yield Token(x, None)
 
-    def lexer_generator(self, target):
-        next(target)
-        buffer = ""
-        while True:
-            element = (yield)
-            buffer += element
-            for x in buffer:
-                target.send(x)
 
-class AlphabetChainLexer(object):
-    def __init__(self, alphabetchain):
-        self.alphabetchain = alphabetchain
+#A1 A2
+#|  |
+#A3 A4
+#|  |
+#A5 |
+#\  /
+# A6
+
+#Order is not always unique, as in the previous example A4 could be extracter after or before A3. At the moment the algorithm is to compute elements of the longest path first (extract elements from longest path every single time)
+
+
+#Check that every element in the input belongs to base
+
+#Call the lexers following the graph
+
+
+#TODO: test
+def graph_from_alphabet(alphabet, base):
+    """Creates a graph that connects the base with the target through alphabets
+    If every target is connected to any inputs, create the independent paths"""
+    from pydsl.Alphabet import Alphabet
+    if not isinstance(alphabet, Alphabet):
+        raise TypeError(alphabet.__class__.__name__)
+    if not isinstance(base, Alphabet):
+        raise TypeError(base.__class__.__name__)
+            
+    import networkx
+    result = networkx.DiGraph()
+    current_alphabet = alphabet
+    if isinstance(current_alphabet, GrammarCollection):
+        pending_stack = list(current_alphabet)
+    else:
+        pending_stack = [current_alphabet]
+    while pending_stack:
+        current_alphabet = pending_stack.pop()
+        if isinstance(current_alphabet, Encoding) or \
+                (isinstance(current_alphabet, GrammarCollection) and current_alphabet in base):
+            continue
+        if isinstance(current_alphabet, GrammarCollection):
+            for element in current_alphabet:
+                result.add_edge(current_alphabet, element)
+                result.add_edge(element, element.alphabet)
+                pending_stack.append(element.alphabet)
+        else: #A Grammar
+            result.add_edge(current_alphabet, current_alphabet.alphabet)
+            pending_stack.append(current_alphabet.alphabet)
+    #print_graph(result)
+    return result
+
+def print_graph(result):
+    import networkx
+    import matplotlib.pyplot as plt
+    plt.figure(figsize=(8,8))
+    # with nodes colored by degree sized by population
+    networkx.draw(result, with_labels=True)
+    plt.savefig("knuth_miles.png")
+
+class GeneralLexer(object):
+    """Multi level lexer"""
+    def __init__(self, alphabet, base):
+        from pydsl.Alphabet import Alphabet
+        if not isinstance(alphabet, Alphabet):
+            raise TypeError
+        if not alphabet:
+            raise ValueError
+        if not base:
+            raise ValueError
+        self.alphabet = alphabet
+        self.base = base
+
 
     def __call__(self, data, include_gd=False):
-        if include_gd:
-            for alphabet in self.alphabetchain:
-                lexer = lexer_factory(alphabet)
-                response = lexer(data, include_gd = True)
-                data, grammars = zip(*response)
-            return zip(data, grammars)
+        if isinstance(self.base, Encoding):
+            data = [x for x in EncodingLexer(self.base)(data)]
+            from pydsl.Token import append_position_to_token_list
+            data = append_position_to_token_list(data)
+        for element in data:
+            from pydsl.Check import check
+            if not check(self.base, element):
+                raise ValueError('Unexpected input grammar')
+        graph = graph_from_alphabet(self.alphabet, self.base)
+        solved_elements = {}
+        graph.node[self.base]['parsed'] = data #Attach data to every element in the graph
+        digraph_walker_backwards(graph, self.base, my_call_back)
+        result = []
+        for output_alphabet in self.alphabet:
+            if output_alphabet not in graph.node or 'parsed' not in graph.node[output_alphabet]:
+                raise Exception("alphabet not initialized:%s" % output_alphabet)
+            for token in graph.node[output_alphabet]['parsed']:
+                #This step needs to flat the token so it matches the signature of the function (base -> alphabet)
+                def flat_token(token):
+                    while hasattr(token, 'content'):
+                        token = token.content
+                    return token
+                result.append(PositionToken(flat_token(token), output_alphabet, token.left, token.right))
+        result = sorted(result, key=lambda x: x.left)
+        result = remove_subsets(result)
+        result = remove_duplicates(result)
+        return [Token(x.content, x.gd) for x in result]
+
+
+def is_subset(a, b):
+    """Excluding same size"""
+    return b.left <= a.left and b.right > a.right or b.left < a.left and b.right >= a.right 
+
+def remove_subsets(ptoken_list):
+    result = []
+    for ptoken in ptoken_list:
+        if not any((is_subset(ptoken, x) for x in ptoken_list)):
+            result.append(ptoken)
+    return result
+
+def remove_duplicates(ptoken_list):
+    result = []
+    for x in ptoken_list:
+        for y in result:
+            if x.content == y.content and x.left == y.left and x.right == y.right: #ignores GD
+                break
         else:
-            for alphabet in self.alphabetchain:
-                lexer = lexer_factory(alphabet)
-                data = lexer(data, include_gd = False)
-            return data
+            result.append(x)
+    return result
+
+def my_call_back(graph, element):
+    gne = graph.node[element]
+    if 'parsed' in gne:
+        return  # Already parsed
+    flat_list = []
+    for successor in graph.successors(element):
+        if successor not in graph.node or 'parsed' not in graph.node[successor]:
+            raise Exception("Uninitialized graph %s" % successor)
+        for string, gd, left, right in graph.node[successor]['parsed']:
+            flat_list.append(PositionToken(string, gd, left, right))
+    sorted_flat_list = sorted(flat_list, key=lambda x: x.left) #Orders elements from all sucessors
+    sorted_flat_list = remove_subsets(sorted_flat_list)
+    lexed_list = []
+    prev_right = 0
+    for string, gd, left, right in sorted_flat_list:
+        if prev_right != left:
+            raise Exception("Non contiguous parsing from sucessors")
+        prev_right = right
+        lexed_list.append(Token(string, gd))
+    from pydsl.Extract import extract
+    gne['parsed'] = extract(element, lexed_list)
+
+
+
+def digraph_walker_backwards(graph, element, call_back):
+    """Visits every element guaranteeing that the previous elements have been visited before"""
+    call_back(graph, element)
+    for predecessor in graph.predecessors(element):
+        call_back(graph, predecessor)
+    for predecessor in graph.predecessors(element):
+        digraph_walker_backwards(graph, predecessor, call_back)
 
 
 
@@ -78,27 +210,57 @@ class ChoiceLexer(object):
         self.string = string
         self.index = 0
 
-    def consume(self):
-        self.index += 1
-
-    def match(self, char):
-        if self.current != char:
-            raise Exception("%s doesn't match %s" % (self.current, char))
-        self.consume()
-
     def __call__(self, string, include_gd=True):  # -> "TokenList":
         """Tokenizes input, generating a list of tokens"""
-        self.string = string
-        return [x for x in self.nextToken(include_gd)]
+        self.load(string)
+        result = []
+        while True:
+            try:
+                result.append(self.nextToken(include_gd))
+            except:
+                break
+        return result
+
+    def nextToken(self, include_gd=False):
+        best_right = 0
+        best_gd = None
+        for gd in self.alphabet:
+            checker = checker_factory(gd)
+            left = self.index
+            for right in range(left +1, len(self.string) +1):
+                if checker.check(self.string[left:right]): #TODO: Use match
+                    if right > best_right:
+                        best_right = right
+                        best_gd = gd
+        if not best_gd:
+            raise Exception("Nothing consumed")
+        if include_gd:
+            result = self.string[self.index:best_right], best_gd
+        else:
+            result = self.string[self.index:best_right]
+        self.index = right
+        return result
+
+
+class ChoiceBruteForceLexer(object):
+
+    """Attempts to generate the smallest token sequence by evaluating every accepted sequence"""
+
+    def __init__(self, alphabet):
+        self.alphabet = alphabet
 
     @property
     def current(self):
         """Returns the element under the cursor until the end of the string"""
         return self.string[self.index:]
 
+    def __call__(self, string, include_gd=True):  # -> "TokenList":
+        """Tokenizes input, generating a list of tokens"""
+        self.string = string
+        return [x for x in self.nextToken(include_gd)]
+
     def nextToken(self, include_gd=False):
-        from pydsl.Tree import Sequence
-        tree = Sequence()  # This is the extract algorithm
+        tree = PositionResultList()  # This is the extract algorithm
         valid_alternatives = []
         for gd in self.alphabet:
             checker = checker_factory(gd)
@@ -110,9 +272,6 @@ class ChoiceLexer(object):
             raise Exception("Nothing consumed")
         for left, right, gd in valid_alternatives:
             string = self.string[left:right]
-            if isinstance(string, list):
-                from pydsl.Grammar import String
-                string = String("".join(str(x) for x in string))
             tree.append(left, right, string, gd, check_position=False)
 
         right_length_seq = []
@@ -123,37 +282,55 @@ class ChoiceLexer(object):
             raise Exception("No sequence found for input %s alphabet %s" % (self.string,self.alphabet))
         for y in sorted(right_length_seq, key=lambda x:len(x))[0]: #Always gets the match with less tokens
             if include_gd:
-                yield y['content'], y.get('gd')
+                yield Token(y['content'], y.get('gd'))
             else:
-                yield y['content']
+                yield Token(y['content'], None)
 
-    def lexer_generator(self, target):
-        next(target)
-        buffer = ""
-        while True:
-            element = (yield)
-            buffer += element  # Asumes string
-            for x in range(1, len(buffer)):
-                currentstr = buffer[:x]
-                for gd in self.alphabet:
-                    checker = checker_factory(gd)
-                    if checker.check(currentstr):
-                        buffer = buffer[x:]
-                        target.send(currentstr)
-
-
-
-
-def lexer_factory(alphabet):
-    from pydsl.Grammar.Alphabet import Choice, AlphabetChain
-    if isinstance(alphabet, Choice):
-        return ChoiceLexer(alphabet)
+def lexer_factory(alphabet, base = None):
+    if isinstance(alphabet, Choice) and alphabet.alphabet == base:
+        return ChoiceBruteForceLexer(alphabet)
     elif isinstance(alphabet, Encoding):
+        if base is not None:
+            raise ValueError
         return EncodingLexer(alphabet)
-    elif isinstance(alphabet, AlphabetChain):
-        return AlphabetChainLexer(alphabet)
     else:
-        raise ValueError(alphabet)
+        if base is None:
+            base = Encoding('ascii')
+        return GeneralLexer(alphabet, base)
 
-def lex(definition, data):
-    return lexer_factory(definition)(data)
+def lex(alphabet, base, data):
+    return lexer_factory(alphabet, base)(data)
+
+def common_ancestor(alphabet):
+    """Discovers the alphabet common to every element in the input"""
+    expanded_alphabet_list = []
+    for gd in alphabet:
+        expanded_alphabet_list_entry = []
+        from pydsl.Alphabet import Alphabet
+        if isinstance(gd, Alphabet):
+            expanded_alphabet_list_entry.append(gd)
+        current_alphabet = gd.alphabet
+        while current_alphabet is not None:
+            expanded_alphabet_list_entry.append(current_alphabet)
+            current_alphabet = getattr(current_alphabet,"alphabet", None)
+        expanded_alphabet_list.append(expanded_alphabet_list_entry)
+    flat_alphabet_list = []
+    for entry in expanded_alphabet_list:
+        for alphabet in entry:
+            if alphabet not in flat_alphabet_list:
+                flat_alphabet_list.append(alphabet)
+    common_alphabets = [x for x in flat_alphabet_list if all((x in y for y in expanded_alphabet_list))]
+    if not common_alphabets:
+        return None
+    if len(common_alphabets) != 1:
+        raise NotImplementedError("Expected only one common ancestor, got %s " % str(common_alphabets))
+    return common_alphabets[0]
+
+def is_ancestor(parent_alphabet, child_alphabet):
+    """Tests if parent_alphabet is an ancestor of the child_alphabet"""
+    alphabet = parent_alphabet
+    while alphabet:
+        if child_alphabet == alphabet:
+            return True
+        alphabet = alphabet.alphabet
+    return False

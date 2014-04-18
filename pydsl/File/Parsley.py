@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 # This file is part of pydsl.
 #
@@ -16,21 +16,17 @@
 # along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 
-"""Exceptions definitions"""
+from pydsl.Grammar.Parsley import ParsleyGrammar
 
-__author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2014, Nestor Arocha"
-__email__ = "nesaro@gmail.com"
+__author__ = "Ptolom"
+__copyright__ = "Copyright 2014, Ptolom"
+__email__ = "ptolom@hexifact.co.uk"
+
+#!/usr/bin/python
+def load_parsley_grammar_file(filepath, root_rule, repository={}):
+    with open(filepath,'r') as file:
+        return ParsleyGrammar(file.read(), root_rule, repository)
 
 
-class ParseError(Exception):
 
-    def __init__(self, msg, offset):
-        self.msg = msg
-        self.offset = offset
 
-    def __repr__(self):
-        return "ParseError(%r, %r)" % (self.msg, self.offset)
-
-    def __str__(self):
-        return "%s at position %s" % (self.msg, self.offset + 1)

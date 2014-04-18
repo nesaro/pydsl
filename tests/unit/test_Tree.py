@@ -16,7 +16,7 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2013, Nestor Arocha"
+__copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
@@ -51,11 +51,10 @@ class TestTrees(unittest.TestCase):
         self.assertTrue(len(self.tree1) == 6)
 
 
-class TestSequence(unittest.TestCase):
-    @unittest.skip
+class TestPositionResultList(unittest.TestCase):
     def testMain(self):
-        from pydsl.Tree import Sequence
-        seq = Sequence()
+        from pydsl.Tree import PositionResultList
+        seq = PositionResultList()
         seq.append(0,1,".")
         seq.append(1,2,".")
         seq.append(2,3,".")

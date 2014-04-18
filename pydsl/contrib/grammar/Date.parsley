@@ -1,0 +1,5 @@
+separator = '/'
+number = digit{1, 2}:n -> int(''.join(n))
+dayofmonth = number:n ?(DayOfMonth(n)) ->n
+expr=dayofmonth:d separator number:m separator number:y ->(d,m,y)
+

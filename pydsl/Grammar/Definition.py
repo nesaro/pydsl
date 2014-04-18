@@ -16,22 +16,35 @@
 # along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2013, Nestor Arocha"
+__copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import collections
+
+class ImmutableDict(dict):
+    """A dict with a hash method"""
+    def __hash__(self):
+        if not self:
+            return 0
+        items = tuple(self.items())
+        res = hash(items[0])
+        for item in items[1:]:
+            res ^= hash(item)
+        return res
+
+    def __setitem__(self, key, value):
+        raise Exception
 
 
 class Grammar(object):
 
     def __init__(self, base_alphabet = None):
-        self.base_alphabet = base_alphabet
+        self.__base_alphabet = base_alphabet
 
     def enum(self):
         """Generates every possible accepted string"""
         raise NotImplementedError
 
-    @property
     def first(self):# -> set:
         """Grammar definition that matches every possible first element.
         the returned value is a subset of the base_alphabet"""
@@ -50,10 +63,10 @@ class Grammar(object):
     @property
     def alphabet(self):
         """Returns the alphabet used by this grammar"""
-        if self.base_alphabet is None:
-            from pydsl.Grammar.Alphabet import Encoding
-            self.base_alphabet = Encoding("ascii")
-        return self.base_alphabet
+        if self.__base_alphabet is None:
+            from pydsl.Alphabet import Encoding
+            self.__base_alphabet = Encoding("ascii")
+        return self.__base_alphabet
 
 class PLYGrammar(Grammar):
     """PLY based grammar"""
@@ -88,7 +101,6 @@ class RegularExpression(Grammar):
     def __str__(self):
         return self.regexpstr
 
-    @property
     def first(self):# -> set:
         i = 0
         while True:
@@ -104,10 +116,11 @@ class RegularExpression(Grammar):
 
 class String(Grammar, str):
     def __init__(self, string):
+        if isinstance(string, list):
+            raise TypeError('Attempted to initialize a String with a list')
         Grammar.__init__(self)
         str.__init__(self, string)
 
-    @property
     def first(self):
         return [String(self[0])]
 
@@ -141,14 +154,13 @@ class PythonGrammar(Grammar, dict):
         dict.__init__(self, *args, **kwargs)
 
     def __hash__(self):
-        from pypository.utils import ImmutableDict #FIXME!
         return hash(ImmutableDict(self))        
 
     @property
     def alphabet(self):
         if "alphabet" in self:
             return self['alphabet']
-        from pydsl.Grammar.Alphabet import Encoding
+        from pydsl.Alphabet import Encoding
         return Encoding("ascii")
 
 def grammar_factory(input_definition):

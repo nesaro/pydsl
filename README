@@ -13,17 +13,36 @@ pydsl is a language library written in python. It provides some verbs for Gramma
     from pydsl.Checker import check
     check(grammardefinition,'mystring') # returns True or False
 
-    from pydsl.Match import match
-    match(grammardefinition,'mystring') # returns ('my','string')
-
     from pydsl.Parser import parse
     parse(grammardefinition,'mystring') # returns a ParseTree
 
     from pydsl.Extract import extract
     extract(grammardefinition,'abcmystringabc') # returns ('mystring',3,11)
 
-    from pydsl.Validate import validate
-    validate(grammardefinition,'mystrng') # returns a ParseTree with the missing i and a note
+FORMATS
+=======
+
+Functions
+---------
+
+| Format  |Check|Match|Search|Split|Extract|Translate|Validate|Diff|
+| ------- |:---:|-----|------|-----|:-----:|:-------:|:------:|----|
+| BNF     | V   |     |      |     |V      | Parse   | V      |    |
+| regexp  | V   |     |      |     |V      | X       |        |    |
+| ply     | V   |     |      |     |V      | V       |        |    |
+| parsley | V   |     |      |     |V      | V       |        |    |
+|pyparsing| V   |     |      |     |V      |         |        |    |
+
+Properties
+----------
+
+| Format  |First|Min|Max|Enumerate|
+| ------- |:---:|---|---|---------|
+| BNF     | V   |   |   |         |
+| regexp  |     |   |   |         |
+| ply     |     |   |   |         |
+| parsley |     |   |   |         |
+|pyparsing|     |   |   |         |
 
 
 INSTALLATION
@@ -32,6 +51,13 @@ INSTALLATION
    * python3 setup.py install
  * pip:
    * pip install pydsl
+
+CONTRIBUTIONS
+=============
+ * check existing issues: https://github.com/nesaro/pydsl
+ * read the project's blog: http://pydsl.blogspot.co.uk
+ * pull requests :)
+
 
 REQUIREMENTS
 ============

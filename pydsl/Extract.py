@@ -16,16 +16,82 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2013, Nestor Arocha"
+__copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
 from pydsl.Check import checker_factory
+from pydsl.Lex import lexer_factory
+from pydsl.Alphabet import Alphabet, Encoding
+from pydsl.Token import PositionToken, Token
+
+
+def filter_subsets(lst):
+    to_remove = []
+    for i, j, _ in lst:
+        for x,y, _ in lst:
+            if (x < i and y >= j) or (x <= i and y > j):
+                to_remove.append((i,j))
+                break
+    result = list(lst)
+
+    for element in lst:
+        if (element[0], element[1]) in to_remove:
+            result.remove(element)
+    return result
+
+
+def extract_alphabet(alphabet, inputdata, fixed_start = False):
+    """
+    Receives a sequence and an alphabet, 
+    returns a list of PositionTokens with all of the parts of the sequence that 
+    are a subset of the alphabet
+    """
+    if not inputdata:
+        return []
+    if isinstance(alphabet, Encoding):
+        base_alphabet = None
+    else:
+        base_alphabet = alphabet.alphabet
+
+    if isinstance(inputdata[0], (Token, PositionToken)):
+        inputdata = [x.content for x in inputdata]
+
+
+    lexer = lexer_factory(alphabet, base_alphabet)
+    totallen = len(inputdata)
+    maxl = totallen
+    minl = 1
+    if fixed_start:
+        max_start = 1
+    else:
+        max_start = totallen
+    result = []
+    for i in range(max_start):
+        for j in range(i+minl, min(i+maxl, totallen) + 1):
+            try:
+                lexed = lexer(inputdata[i:j])
+                if lexed:
+                    result.append((i,j, inputdata[i:j]))
+            except:
+                continue
+    result = filter_subsets(result)
+    return [PositionToken(content, None, left, right) for (left, right, content) in result]
 
 def extract(grammar, inputdata, fixed_start = False):
-    """Extract every slice of the input data that belongs to the Grammar Definition"""
+    """
+    Receives a sequence and a grammar, 
+    returns a list of PositionTokens with all of the parts of the sequence that 
+    are recognized by the grammar
+    """
+    if not inputdata:
+        return []
     checker = checker_factory(grammar)
+
+    if isinstance(inputdata[0], (Token, PositionToken)):
+        inputdata = [x.content for x in inputdata]
+
     totallen = len(inputdata)
     try:
         maxl = grammar.maxsize or totallen
@@ -45,6 +111,6 @@ def extract(grammar, inputdata, fixed_start = False):
         for j in range(i+minl, min(i+maxl, totallen) + 1):
             check = checker.check(inputdata[i:j])
             if check:
-                result.append((i,j, inputdata[i:j]))
+                result.append(PositionToken(inputdata[i:j], None, i, j))
     return result
 
