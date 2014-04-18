@@ -18,35 +18,34 @@
 """Tree class for tree based parsers"""
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2013, Nestor Arocha"
+__copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
-from pydsl.Grammar.Symbol import TerminalSymbol
 
 
 class ParseTree(object):
 
     """Stores the position of the original tree"""
 
-    def __init__(self, leftpos, rightpos, symbol, content, childlist=None, valid=True):
+    def __init__(self, left, right, symbol, content, childlist=None, valid=True):
         self.symbol = symbol
-        if not isinstance(leftpos, int) and leftpos is not None:
+        if not isinstance(left, int) and left is not None:
             raise TypeError
-        if not isinstance(rightpos, int) and rightpos is not None:
+        if not isinstance(right, int) and right is not None:
             raise TypeError
         if not childlist:
             childlist = []
         self.childlist = childlist
-        self.leftpos = leftpos
-        self.rightpos = rightpos
+        self.left = left
+        self.right = right
         self.content = content
         self.valid = valid
 
     def __eq__(self, other):
         try:
-            return self.leftpos == other.leftpos and self.rightpos == other.rightpos and self.valid == other.valid and self.content == other.content #FIXME comparing production can cause infinite recursion
+            return self.left == other.left and self.right == other.right and self.valid == other.valid and self.content == other.content 
         except AttributeError:
             return False
 
@@ -54,24 +53,28 @@ class ParseTree(object):
         """checks if it is a null result"""
         return self.valid
 
+    def __nonzero__(self):
+        return self.__bool__()
+
     def shift(self, amount):
         """ shifts position """
-        if self.leftpos is not None:
-            self.leftpos += amount
-        if self.leftpos is not None:
-            self.rightpos += amount
+        if self.left is not None:
+            self.left += amount
+        if self.left is not None:
+            self.right += amount
 
     def __len__(self):
-        if self.rightpos is None and self.leftpos is None:
+        if self.right is None and self.left is None:
             return 0
-        return self.rightpos - self.leftpos
+        return self.right - self.left
 
     def append(self, dpr):
         """appends dpr to childlist"""
         self.childlist.append(dpr)
 
 
-class Sequence:
+class PositionResultList(object):
+    """Contains a list of results"""
     def __init__(self):
         self.possible_items = []
 
@@ -81,32 +84,39 @@ class Sequence:
             return set([0])
         return set(x['right'] for x in self.possible_items)
 
-    def append(self, left, right, content, check_position=True):
+    def append(self, left, right, content, gd = None, check_position=True):
         if left > right:
-            raise Exception
+            raise ValueError('Attempted to add negative length alement')
         if check_position == True and left:
             if left not in self.current_right:
                 raise ValueError("Unable to add element")
-        self.possible_items.append({'left':left, 'right':right, 'content':content})
+        result = {'left':left, 'right':right, 'content':content}
+        if gd:
+            result['gd'] = gd
+        self.possible_items.append(result)
 
-    def generate_valid_sequences(self):
+    def valid_sequences(self):
         """Returns list"""
         valid_sets = [[x] for x in self.possible_items if x['left'] == 0]
         change = True
-        while change:
+        niter = 200
+        while change and niter > 0:
             change = False
+            niter -=1
             for possible in self.possible_items:
                 for current_valid in valid_sets[:]:
                     if possible['left'] == current_valid[-1]['right']:
                         if current_valid + [possible] not in valid_sets:
-                            if possible['content'] != current_valid[-1]['content']:
+                            if current_valid[-1]['left'] != current_valid[-1]['right'] or possible['left'] != possible['right']: #avoids Null insertion twice
                                 valid_sets.append(current_valid + [possible])
                                 change = True
+        if not niter:
+            raise Exception('too many iterations')
         return valid_sets
 
     def right_limit_list(self):
         if not self.possible_items:
             return [0]
-        return list(set([x[-1]['right'] for x in self.generate_valid_sequences()]))
+        return list(set([x[-1]['right'] for x in self.valid_sequences()]))
 
 

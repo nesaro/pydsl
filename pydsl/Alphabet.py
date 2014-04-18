@@ -16,60 +16,46 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2013, Nestor Arocha"
+__copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 from pydsl.Grammar.Definition import Grammar
+import logging
+LOG=logging.getLogger(__name__)
 
-class Alphabet(Grammar):
+class Alphabet(object):
     """Defines a set of valid elements"""
-    @property
-    def first(self):
-        return self
-
-    @property
-    def to_list(self):
-        """Returns a list of allowed grammars"""
-        raise NotImplementedError
-
-    def __contains__(self, token):
-        """Returns true if the alphabet contains the token"""
-        raise NotImplementedError
-
     @property
     def minsize(self):
         return 1 #FIXME: In some cases could be 0
 
-class Choice(Alphabet):
+    @property
+    def maxsize(self):
+        return 1
+
+class GrammarCollection(Alphabet, tuple):
     """Uses a list of grammar definitions"""
     def __init__(self, grammarlist):
-        if not grammarlist:
-            raise ValueError
-        from pydsl.Config import load
-        self.grammarlist = []
-        for x in grammarlist:
-            if isinstance(x, str):
-                self.grammarlist.append(load(x))
-            else:
-                self.grammarlist.append(x)
-        from pydsl.Grammar.Definition import Grammar
-        for x in self.grammarlist:
+        Alphabet.__init__(self)
+        tuple.__init__(self, grammarlist)
+        for x in self:
             if not isinstance(x, Grammar):
                 raise TypeError("Expected Grammar, Got %s:%s" % (x.__class__.__name__,x))
 
-    def __getitem__(self, index):
-        """Retrieves token by index"""
-        return self.grammarlist[index]
+    def __str__(self):
+        return str([str(x) for x in self])
 
-    @property
-    def to_list(self):
-        return self.grammarlist
-
+    def __add__(self, other):
+        return GrammarCollection(tuple.__add__(self,other))
 
 class Encoding(Alphabet):
     """Defines an alphabet using an encoding string"""
     def __init__(self, encoding):
+        Alphabet.__init__(self)
         self.encoding = encoding
+
+    def __hash__(self):
+        return hash(self.encoding)
 
     def __eq__(self, other):
         try:
@@ -78,14 +64,27 @@ class Encoding(Alphabet):
             return False
 
     def __getitem__(self, item):
-        from pydsl.Check import EncodingChecker
-        if EncodingChecker(self).check(item):
-            from pydsl.Grammar.Definition import String
-            return String(item)
-        raise KeyError
+        from pydsl.Grammar import String
+        try:
+            return String(chr(item))
+        except (ValueError, TypeError):
+            raise KeyError
 
-    @property
-    def to_list(self):
-        #FIXME: Only ascii
-        from pydsl.Grammar.Definition import String
-        return [String(chr(x)) for x in range(128)]
+    def __contains__(self, item):
+        try:
+            self[item]
+        except KeyError:
+            return False
+        else:
+            return True
+
+    def __str__(self):
+        return self.encoding
+
+    def enum(self):
+        if self.encoding == "ascii":
+            limit = 128
+        elif self.encoding == "unicode":
+            limit = 9635
+        from pydsl.Grammar import String
+        return [String(chr(x)) for x in range(limit)]

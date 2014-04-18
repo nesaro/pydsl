@@ -18,35 +18,16 @@
 
 """Tests the Grammar definition instances"""
 
-from pydsl.Grammar import Alphabet
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2013, Nestor Arocha"
+__copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
-from pydsl.Grammar.Definition import MongoGrammar, String
-from pydsl.Grammar.Alphabet import Encoding
+from pydsl.Grammar.Definition import String
+from pydsl.Alphabet import Encoding
+from pydsl.Alphabet import Alphabet
 
-
-class TestGrammarDefinitionMongoDb(unittest.TestCase):
-    def setUp(self):
-        self.grammardef = MongoGrammar({'id':123})
-
-    def testEnumerate(self):
-        self.assertRaises(NotImplementedError, self.grammardef.enum)
-
-    def testFirst(self):
-        self.assertListEqual(self.grammardef.first, [String("{")])
-
-    def testMin(self):
-        self.grammardef.minsize
-
-    def testMax(self):
-        self.grammardef.maxsize
-
-    def testAlphabet(self):
-        self.assertEqual(self.grammardef.alphabet(), Encoding('ascii'))
 
 @unittest.skip
 class TestGrammarDefinitionPLY(unittest.TestCase):
@@ -72,7 +53,7 @@ class TestGrammarDefinitionPLY(unittest.TestCase):
         self.grammardef.maxsize
 
     def testAlphabet(self):
-        self.assertListEqual(self.grammardef.alphabet(), Alphabet)
+        self.assertListEqual(self.grammardef.alphabet, Alphabet)
 
 class TestGrammarDefinitionJson(unittest.TestCase):
     def setUp(self):
@@ -92,5 +73,5 @@ class TestGrammarDefinitionJson(unittest.TestCase):
         self.grammardef.maxsize
 
     def testAlphabet(self):
-        self.assertEqual(self.grammardef.alphabet(), Encoding('ascii'))
+        self.assertEqual(self.grammardef.alphabet, Encoding('ascii'))
 

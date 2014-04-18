@@ -13,20 +13,36 @@ pydsl is a language library written in python. It provides some verbs for Gramma
     from pydsl.Checker import check
     check(grammardefinition,'mystring') # returns True or False
 
-    from pydsl.Match import match
-    match(grammardefinition,'mystring') # returns ('my','string')
-
     from pydsl.Parser import parse
     parse(grammardefinition,'mystring') # returns a ParseTree
 
     from pydsl.Extract import extract
     extract(grammardefinition,'abcmystringabc') # returns ('mystring',3,11)
 
-    from pydsl.Validate import validate
-    validate(grammardefinition,'mystrng') # returns a ParseTree with the missing i and a note
+FORMATS
+=======
 
-    from pydsl.Guess import guess
-    guess('mystring') # Returns a set that includes grammardefinition
+Functions
+---------
+
+| Format  |Check|Match|Search|Split|Extract|Translate|Validate|Diff|
+| ------- |:---:|-----|------|-----|:-----:|:-------:|:------:|----|
+| BNF     | V   |     |      |     |V      | Parse   | V      |    |
+| regexp  | V   |     |      |     |V      | X       |        |    |
+| ply     | V   |     |      |     |V      | V       |        |    |
+| parsley | V   |     |      |     |V      | V       |        |    |
+|pyparsing| V   |     |      |     |V      |         |        |    |
+
+Properties
+----------
+
+| Format  |First|Min|Max|Enumerate|
+| ------- |:---:|---|---|---------|
+| BNF     | V   |   |   |         |
+| regexp  |     |   |   |         |
+| ply     |     |   |   |         |
+| parsley |     |   |   |         |
+|pyparsing|     |   |   |         |
 
 
 INSTALLATION
@@ -36,12 +52,18 @@ INSTALLATION
  * pip:
    * pip install pydsl
 
+CONTRIBUTIONS
+=============
+ * check existing issues: https://github.com/nesaro/pydsl
+ * read the project's blog: http://pydsl.blogspot.co.uk
+ * pull requests :)
+
+
 REQUIREMENTS
 ============
  * python >= 2.7
- * pypository
  * optional: ply library ( http://www.dabeaz.com/ply/ )
 
 ABOUT
 =====
-Copyright (C) 2008-2013 Nestor Arocha (nesaro@gmail.com)
+Copyright (C) 2008-2014 Nestor Arocha (nesaro@gmail.com)

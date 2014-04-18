@@ -20,26 +20,8 @@ __copyright__ = "Copyright 2008-2013, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
-
-class TestMongoChecker(unittest.TestCase):
-    """Mongo checker"""
-    def testEmptyInput(self):
-        pass
-
-    def testCheck(self):
-        """Test checker instantiation and call"""
-        bad = {"a":1,"b":3}
-        letter = {"a":1,"b":"asd"}
-        from pydsl.Check import MongoChecker
-        from pydsl.contrib.mongogrammar import spec, fullspec
-        checker = MongoChecker(spec)
-        self.assertTrue(checker.check(spec))
-        self.assertFalse(checker.check(bad))
-        fullchecker = MongoChecker(fullspec)
-        self.assertTrue(fullchecker.check(spec))
-        self.assertTrue(fullchecker.check(bad))
-        self.assertFalse(fullchecker.check(letter))
-        #self.assertRaises(TypeError,fullchecker.check, "")
+from pydsl.Grammar.Definition import String
+import sys
 
 class TestBNFChecker(unittest.TestCase):
     """BNF Checker"""
@@ -50,17 +32,11 @@ class TestBNFChecker(unittest.TestCase):
         grammardef = productionset0
         checker = BNFChecker(grammardef)
         self.assertTrue(checker.check("SR"))
+        self.assertTrue(checker.check("SR"))
         self.assertTrue(checker.check(("S","R")))
         self.assertFalse(checker.check("SL"))
-
-    def testListInput(self):
-        pass
-
-    def testBinaryInput(self):
-        pass
-
-    def testEmptyInput(self):
-        pass
+        self.assertFalse(checker.check(("S","L")))
+        self.assertFalse(checker.check(""))
 
 class TestRegularExpressionChecker(unittest.TestCase):
     """BNF Checker"""
@@ -74,16 +50,7 @@ class TestRegularExpressionChecker(unittest.TestCase):
         self.assertTrue(checker.check([x for x in input_str]))
         self.assertTrue(checker.check(input_str))
         self.assertFalse(checker.check("abd"))
-
-    def testListInput(self):
-        pass
-
-    def testBinaryInput(self):
-        pass
-
-    def testEmptyInput(self):
-        pass
-
+        self.assertFalse(checker.check(""))
 
 class TestPLYChecker(unittest.TestCase):
     def testCheck(self):
@@ -94,16 +61,9 @@ class TestPLYChecker(unittest.TestCase):
         grammardef = PLYGrammar(example_ply)
         checker = PLYChecker(grammardef)
         self.assertTrue(checker.check("O"))
+        self.assertTrue(checker.check(["O"]))
         self.assertFalse(checker.check("FALSE"))
-
-    def testListInput(self):
-        pass
-
-    def testBinaryInput(self):
-        pass
-
-    def testEmptyInput(self):
-        pass
+        #self.assertFalse(checker.check("")) #FIXME
 
 
 
@@ -135,52 +95,36 @@ class TestJsonSchemaChecker(unittest.TestCase):
 
 
 class TestEncodingChecker(unittest.TestCase):
+    @unittest.skipIf(sys.version_info < (3,0), "Full encoding support not available for python 2")
     def testCheck(self):
         from pydsl.Check import EncodingChecker
-        from pydsl.Grammar.Alphabet import Encoding
+        from pydsl.Alphabet import Encoding
         a = Encoding('ascii')
         checker = EncodingChecker(a)
         self.assertTrue(checker.check('1234'))
+        self.assertTrue(checker.check([x for x in '1234']))
         self.assertTrue(checker.check('asdf'))
         self.assertFalse(checker.check('£'))
+        #self.assertFalse(checker.check('')) #FIXME
 
-    def testListInput(self):
-        pass
 
-    def testBinaryInput(self):
-        pass
-
-    def testEmptyInput(self):
-        pass
-
-class TestAlphabetListDefinitionChecker(unittest.TestCase):
-    def setUp(self):
-        from pydsl.Config import load_default_memory
-        load_default_memory()
-
+class TestChoiceChecker(unittest.TestCase):
     def testCheck(self):
         from pydsl.Check import ChoiceChecker
-        from pydsl.Grammar.Alphabet import Choice
-        a = Choice(['integer'])
+        from pydsl.Grammar.PEG import Choice
+        from pydsl.Grammar import RegularExpression
+        a = Choice([RegularExpression('^[0123456789]*$')])
         checker = ChoiceChecker(a)
+        self.assertTrue(checker.check([x for x in '1234']))
         self.assertTrue(checker.check('1234'))
         self.assertFalse(checker.check('abc'))
-
-    def testListInput(self):
-        pass
-
-    def testBinaryInput(self):
-        pass
-
-    def testEmptyInput(self):
-        pass
+        self.assertFalse(checker.check(''))
 
 class TestStringChecker(unittest.TestCase):
     def testCheck(self):
         """Test checker instantiation and call"""
         from pydsl.Check import StringChecker
-        from pydsl.Grammar.Definition import String
-        grammarchecker = StringChecker("string123")
+        grammarchecker = StringChecker(String("string123"))
         self.assertTrue(grammarchecker("string123"))
         self.assertTrue(grammarchecker(["string123"]))
         self.assertTrue(grammarchecker(("string123",)))
@@ -189,23 +133,15 @@ class TestStringChecker(unittest.TestCase):
         self.assertTrue(grammarchecker(list_version))
         self.assertTrue(grammarchecker([String(x) for x in list_version]))
         self.assertTrue(grammarchecker([x for x in list_version]))
-
-    def testListInput(self):
-        pass
-
-    def testBinaryInput(self):
-        pass
-
-    def testEmptyInput(self):
-        pass
-
+        self.assertFalse(grammarchecker(''))
 
 class TestSequenceChecker(unittest.TestCase):
     def testCheck(self):
         from pydsl.Grammar.PEG import Sequence
         from pydsl.Check import SequenceChecker
-        from pydsl.Grammar.Definition import String
         sequence = Sequence((String("a"), String("b"), String("c")))
         checker = SequenceChecker(sequence)
         self.assertTrue(checker.check("abc"))
+        self.assertTrue(checker.check([x for x in "abc"]))
         self.assertFalse(checker.check("abd"))
+        self.assertFalse(checker.check(""))

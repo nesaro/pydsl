@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 # This file is part of pydsl.
 #
@@ -15,22 +15,19 @@
 # You should have received a copy of the GNU General Public License
 # along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
-
-"""Exceptions definitions"""
+"""Token classes"""
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
+from pydsl.Check import checker_factory
+from collections import namedtuple
 
-class ParseError(Exception):
+Token = namedtuple('Token', ('content','gd'))
+PositionToken = namedtuple('PositionToken', ('content','gd','left','right'))
 
-    def __init__(self, msg, offset):
-        self.msg = msg
-        self.offset = offset
 
-    def __repr__(self):
-        return "ParseError(%r, %r)" % (self.msg, self.offset)
-
-    def __str__(self):
-        return "%s at position %s" % (self.msg, self.offset + 1)
+def append_position_to_token_list(token_list):
+    """Converts a list of Token into a list of PositionToken, asuming size == 1"""
+    return [PositionToken(value.content, value.gd, index, index+1) for (index, value) in enumerate(token_list)]

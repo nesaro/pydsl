@@ -17,33 +17,14 @@
 
 """Parser module"""
 from pydsl.Lex import lexer_factory
-from pydsl.Config import load
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2013, Nestor Arocha"
+__copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
 
-
-def terminal_symbol_reducer(symbol, data, fixed_start = False):
-    """ Reduces a terminal symbol """
-    from pydsl.Extract import extract
-    from pydsl.Tree import ParseTree
-    validresults = extract(symbol.gd, data, fixed_start)
-    validresults = sorted(validresults, key=lambda x:x[1]-x[0])
-    if symbol.boundariesrules == "min":
-        validresults = validresults[:1]
-    elif symbol.boundariesrules == "max":
-        validresults = validresults[-1:]
-    elif symbol.boundariesrules == "any":
-        pass
-    elif isinstance(symbol.boundariesrules , int):
-        pass
-    else:
-        raise ValueError("Unknown boundaries rules")
-    return [ParseTree(begin, end, symbol, data[begin:end]) for (begin, end, _) in validresults]
 
 class Parser(object):
     """Expands an input based on grammar rules
@@ -65,27 +46,37 @@ class TopDownParser(Parser):
     def __init__(self, bnfgrammar):
         self._productionset = bnfgrammar
 
+    def _reduce_terminal(self, symbol, data, showerrors = False):
+        from pydsl.Check import check
+        from pydsl.Tree import ParseTree
+        result = check(symbol.gd, data)
+        if result:
+            return [ParseTree(0,1, symbol , data)]
+        if showerrors and not result:
+            return [ParseTree(0,1, symbol , data, valid = False)]
+        return []
+
 class BottomUpParser(Parser):
     """ leaf to root parser"""
     def __init__(self, bnfgrammar):
-        self._lexer = lexer_factory(bnfgrammar.alphabet())
+        self._lexer = lexer_factory(bnfgrammar.alphabet)
         self._productionset = bnfgrammar
 
 
-def parser_factory(grammar, parser = "auto"):
-    if isinstance(grammar, str):
-        grammar = load(grammar)
+def parser_factory(grammar, parser = None):
     from pydsl.Grammar.BNF import BNFGrammar
     if isinstance(grammar, BNFGrammar):
-        if parser == "descent":
+        if parser in ("auto" , "default" , "descent", None):
             from pydsl.Parser.Backtracing import BacktracingErrorRecursiveDescentParser
             return BacktracingErrorRecursiveDescentParser(grammar)
-        elif parser in ("auto" , "default" , "weighted"):
-            #TODO Guess best parser
-            from pydsl.Parser.Weighted import WeightedParser
-            return WeightedParser(grammar)
+        elif parser == "lr0":
+            from pydsl.Parser.LR0 import LR0Parser
+            return LR0Parser(grammar)
+        elif parser == "ll1":
+            from pydsl.Parser.LL import LL1RecursiveDescentParser
+            return LL1RecursiveDescentParser(grammar)
         else:
-            raise Exception("Wrong parser name: " + parser)
+            raise Exception("Wrong parser name: " + str(parser))
     else:
         raise ValueError(grammar)
 
