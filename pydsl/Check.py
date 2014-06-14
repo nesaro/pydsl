@@ -126,15 +126,15 @@ class BNFChecker(Checker):
 class ParsleyChecker(Checker):
     def __init__(self, grammar):
         Checker.__init__(self)
-        self.g=grammar
+        self.gd=grammar
+
     def check(self, data):
         from parsley import ParseError
         try:
-            self.g.match(data)
+            getattr(self.gd.grammar(data), self.gd.root_rule)() #call grammar(data).root_rule()
             return True
         except ParseError:
             return False
-
 
 class PythonChecker(Checker):
     def __init__(self, module):
