@@ -25,7 +25,6 @@ __author__ = "Ptolom"
 __copyright__ = "Copyright 2014, Ptolom"
 __email__ = "ptolom@hexifact.co.uk"
 
-@unittest.skipIf(sys.version_info > (3,0), "parsley not available for python 3")
 class TestParsley(unittest.TestCase):
     """Loading a bnf instance from a .bnf file"""
     def testFileLoader(self):
