@@ -1,4 +1,0 @@
-digit = anything:x ?(x in '0123456789')
-number = <digit+>:ds -> int(ds)
-expr = number:left ( '+' number:right -> left + right
-                   | -> left)
