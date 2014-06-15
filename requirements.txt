@@ -3,4 +3,4 @@ ply
 nose
 pyparsing
 networkx
-parsley
+git+https://github.com/python-parsley/parsley.git
