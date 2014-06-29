@@ -23,12 +23,30 @@ __email__ = "nesaro@gmail.com"
 
 import unittest
 from pydsl.Grammar.Definition import String, Grammar
-from pydsl.Grammar.PEG import Many, Not, Sequence, Choice
+from pydsl.Grammar.PEG import ZeroOrMore, OneOrMore, Not, Sequence, Choice
 
 class TestPEG(unittest.TestCase):
-    def testMany(self):
-        mygrammar = Many(String("a"))
+    def testOneOrMore(self):
+        mygrammar = OneOrMore(String("a"))
         self.assertTrue(isinstance(mygrammar, Grammar))
+        self.assertEqual(mygrammar.first(), Choice([String("a")]))
+        from pydsl.Check import check
+        self.assertTrue(check(mygrammar, "a"))
+        self.assertTrue(check(mygrammar, "aa"))
+        self.assertTrue(check(mygrammar, "aaaa"))
+        self.assertFalse(check(mygrammar, ""))
+        self.assertFalse(check(mygrammar, "b"))
+
+    def testZeroOrMore(self):
+        mygrammar = ZeroOrMore(String("a"))
+        self.assertTrue(isinstance(mygrammar, Grammar))
+        self.assertEqual(mygrammar.first(), Choice([String("a")]))
+        from pydsl.Check import check
+        self.assertTrue(check(mygrammar, "a"))
+        self.assertTrue(check(mygrammar, "aa"))
+        self.assertTrue(check(mygrammar, "aaaa"))
+        self.assertTrue(check(mygrammar, ""))
+        self.assertFalse(check(mygrammar, "b"))
 
     def testChoice(self):
         mygrammar = Choice((String("a"), String("b")))
@@ -39,7 +57,7 @@ class TestPEG(unittest.TestCase):
 
     def testNot(self):
         mygrammar = Not(String("a"))
-        self.assertTrue(isinstance(mygrammar, Grammar))
+        self.assertTrue(isinstance(mygrammar, Not))
 
     def testSequence(self):
         mygrammar = Sequence((String("a"), String("b")))

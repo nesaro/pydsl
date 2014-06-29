@@ -53,9 +53,10 @@ class PyParsingTranslator(object):
 
 class ParsleyTranslator(object):
     def __init__(self, grammar):
-        self.g=grammar
+        self.gd=grammar
+
     def __call__(self, input):
-        return self.g.match(input)
+        return getattr(self.gd.grammar(input), self.gd.root_rule)() #call grammar(data).root_rule()
 
 
 def translator_factory(function):
