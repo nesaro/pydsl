@@ -29,4 +29,6 @@ class TestDiff(unittest.TestCase):
         elem1 = "abcde"
         elem2 = "abcd1"
         from pydsl.Diff import diff
-        self.assertTrue(diff(alphabet, elem1, elem2))
+        self.assertEqual(diff(alphabet, elem1, elem2)[0].a, 0)
+        self.assertEqual(diff(alphabet, elem1, elem2)[0].b, 0)
+        self.assertEqual(diff(alphabet, elem1, elem2)[0].size, 4)

@@ -25,7 +25,7 @@ LOG = logging.getLogger(__name__)
 def lcs(list1, list2):
     import difflib
     differences = difflib.SequenceMatcher(None, list1, list2)
-    return differences.get_matching_blocks()
+    return [x for x in differences.get_matching_blocks()]
 
 def diff_factory(definition):
     from pydsl.Alphabet import GrammarCollection
