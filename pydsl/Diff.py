@@ -16,7 +16,7 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2013, Nestor Arocha"
+__copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
@@ -28,8 +28,8 @@ def lcs(list1, list2):
     return differences.get_matching_blocks()
 
 def diff_factory(definition):
-    from pydsl.Alphabet import AlphabetListDefinition
-    if isinstance(definition, AlphabetListDefinition):
+    from pydsl.Alphabet import GrammarCollection
+    if isinstance(definition, GrammarCollection):
         return lcs
     raise ValueError
 
