@@ -20,7 +20,7 @@ __copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
-from pydsl.Extract import extract, extract_alphabet
+from pydsl.Extract import extract, extract_alphabet, match, search
 from pydsl.Grammar import RegularExpression, String
 from pydsl.Grammar.PEG import Choice
 from pydsl.Alphabet import Encoding
@@ -30,7 +30,7 @@ import sys
 
 class TestGrammarExtract(unittest.TestCase):
 
-    def testRegularExpression(self):
+    def testRegularExpressionExtract(self):
         gd = RegularExpression('^[0123456789]*$')
         expected_result = [
                 PositionToken(content='1', gd=None, left=3, right=4), 
@@ -59,6 +59,26 @@ class TestGrammarExtract(unittest.TestCase):
         self.assertListEqual(extract(gd,[x for x in 'abc1234abc']), expected_result)
         self.assertRaises(Exception, extract, None)
         self.assertListEqual(extract(gd,''), []) #Empty input
+
+    def testRegularExpressionSearch(self):
+        gd = RegularExpression('^[0123456789]*$')
+        expected_result = PositionToken(content='1', gd=None, left=3, right=4)
+        self.assertEqual(search(gd,'abc1234abc'), expected_result)
+        expected_result = PositionToken(content=['1'], gd=None, left=3, right=4)
+        self.assertEqual(search(gd,[Token(x, None) for x in 'abc1234abc']), expected_result)
+        self.assertEqual(search(gd,[x for x in 'abc1234abc']), expected_result)
+        self.assertRaises(Exception, search, None)
+        self.assertListEqual(search(gd,''), []) #Empty input
+
+    def testRegularExpressionMatch(self):
+        gd = RegularExpression('^[0123456789]*$')
+        expected_result = []
+        self.assertEqual(match(gd,'abc1234abc'), expected_result)
+        self.assertEqual(match(gd,[Token(x, None) for x in 'abc1234abc']), expected_result)
+        self.assertEqual(match(gd,[x for x in 'abc1234abc']), expected_result)
+        self.assertRaises(Exception, match, None)
+        self.assertListEqual(match(gd,''), []) #Empty input
+
 
 
 class TestAlphabetExtract(unittest.TestCase):
