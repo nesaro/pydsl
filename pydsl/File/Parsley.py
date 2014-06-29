@@ -22,11 +22,6 @@ __author__ = "Ptolom"
 __copyright__ = "Copyright 2014, Ptolom"
 __email__ = "ptolom@hexifact.co.uk"
 
-#!/usr/bin/python
-def load_parsley_grammar_file(filepath, root_rule, repository={}):
+def load_parsley_grammar_file(filepath, root_rule="expr", repository=None):
     with open(filepath,'r') as file:
         return ParsleyGrammar(file.read(), root_rule, repository)
-
-
-
-
