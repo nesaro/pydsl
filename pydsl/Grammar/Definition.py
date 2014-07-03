@@ -119,7 +119,6 @@ class String(Grammar, str):
         if isinstance(string, list):
             raise TypeError('Attempted to initialize a String with a list')
         Grammar.__init__(self)
-        str.__init__(self, string)
 
     def first(self):
         return [String(self[0])]

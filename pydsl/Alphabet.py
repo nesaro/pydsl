@@ -37,7 +37,6 @@ class GrammarCollection(Alphabet, tuple):
     """Uses a list of grammar definitions"""
     def __init__(self, grammarlist):
         Alphabet.__init__(self)
-        tuple.__init__(self, grammarlist)
         for x in self:
             if not isinstance(x, Grammar):
                 raise TypeError("Expected Grammar, Got %s:%s" % (x.__class__.__name__,x))
