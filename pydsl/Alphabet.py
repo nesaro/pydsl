@@ -33,10 +33,12 @@ class Alphabet(object):
     def maxsize(self):
         return 1
 
-class GrammarCollection(Alphabet, tuple):
+class GrammarCollection(Alphabet, set):
     """Uses a list of grammar definitions"""
     def __init__(self, grammarlist):
         Alphabet.__init__(self)
+        set.__init__(self, grammarlist)
+        self.original = grammarlist
         for x in self:
             if not isinstance(x, Grammar):
                 raise TypeError("Expected Grammar, Got %s:%s" % (x.__class__.__name__,x))
@@ -45,7 +47,10 @@ class GrammarCollection(Alphabet, tuple):
         return str([str(x) for x in self])
 
     def __add__(self, other):
-        return GrammarCollection(tuple.__add__(self,other))
+        return GrammarCollection(set.__add__(self,other))
+
+    def __hash__(self):
+        return hash(tuple(self.original))
 
 class Encoding(Alphabet):
     """Defines an alphabet using an encoding string"""
