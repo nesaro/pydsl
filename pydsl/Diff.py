@@ -28,8 +28,8 @@ def lcs(list1, list2):
     return [x for x in differences.get_matching_blocks()]
 
 def diff_factory(definition):
-    from pydsl.Alphabet import GrammarCollection
-    if isinstance(definition, GrammarCollection):
+    from pydsl.Alphabet import Alphabet
+    if isinstance(definition, Alphabet):
         return lcs
     raise ValueError
 

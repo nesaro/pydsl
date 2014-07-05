@@ -112,11 +112,13 @@ def _slr_build_parser_table(productionset):
                 #if cursor is at the end of the rule, then append reduce rule and go transition
                 if lritem.previous_symbol() == symbol and lritem.is_last_position() and symbol != Extended_S:
                     for x in productionset.next_lookup(symbol):
-                        from pydsl.Grammar.Definition import String
-                        if isinstance(x, list):
-                            result.append(itemindex, TerminalSymbol(String(x[0])), "Reduce", None, lritem.rule)
+                        from pydsl.Grammar.Definition import Grammar, String
+                        if isinstance(x, Grammar):
+                            result.append(itemindex, TerminalSymbol(x), "Reduce", None, lritem.rule)
+                        elif isinstance(x, Symbol):
+                            result.append(itemindex, x, "Reduce", None, lritem.rule)
                         else:
-                            result.append(itemindex, TerminalSymbol(String(x)), "Reduce", None, lritem.rule)
+                            raise TypeError(x)
                     numberoptions += 1
                 #if cursor is at the end of main rule, and current symbol is end, then append accept rule
                 if isinstance(symbol, EndSymbol) and lritem.previous_symbol() == productionset.initialsymbol and lritem.next_symbol() == EndSymbol():
@@ -165,7 +167,7 @@ class ParserTable(dict):
         """change internal state, return action"""
         for symbol in self[state]:
             from pydsl.Check import check
-            if symbol == EndSymbol() or isinstance(symbol, TerminalSymbol) and check(symbol.gd,token):
+            if symbol == EndSymbol() or (token != EndSymbol() and isinstance(symbol, TerminalSymbol) and check(symbol.gd,token)):
                 break
         else:
             if token != EndSymbol():

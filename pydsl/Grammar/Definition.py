@@ -64,8 +64,8 @@ class Grammar(object):
     def alphabet(self):
         """Returns the alphabet used by this grammar"""
         if self.__base_alphabet is None:
-            from pydsl.Alphabet import Encoding
-            self.__base_alphabet = Encoding("ascii")
+            from pydsl.Encoding import ascii_encoding
+            self.__base_alphabet = ascii_encoding
         return self.__base_alphabet
 
 class PLYGrammar(Grammar):
@@ -117,7 +117,9 @@ class RegularExpression(Grammar):
 class String(Grammar, str):
     def __init__(self, string):
         if isinstance(string, list):
-            raise TypeError('Attempted to initialize a String with a list')
+            raise TypeError('Attempted to initialize a String with a list %s' % (string, ) )
+        if len(string) > 1:
+            raise ValueError("Use Sequence!")
         Grammar.__init__(self)
 
     def first(self):
@@ -133,6 +135,11 @@ class String(Grammar, str):
     @property
     def minsize(self):
         return len(self)
+
+    @property
+    def alphabet(self):
+        #Dead end :)
+        return None
 
 class JsonSchema(Grammar, dict):
     def __init__(self, *args, **kwargs):
@@ -159,8 +166,8 @@ class PythonGrammar(Grammar, dict):
     def alphabet(self):
         if "alphabet" in self:
             return self['alphabet']
-        from pydsl.Alphabet import Encoding
-        return Encoding("ascii")
+        from pydsl.Encoding import ascii_encoding
+        return ascii_encoding
 
 def grammar_factory(input_definition):
     if isinstance(input_definition, str):

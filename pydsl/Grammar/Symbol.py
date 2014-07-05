@@ -58,15 +58,13 @@ class TerminalSymbol(Symbol):
 
     def __init__(self, gd, weight=None, boundariesrules=None):
         if not isinstance(gd, Grammar):
-            raise TypeError
+            raise TypeError("Expected Grammar, got %s" % (gd,))
         if isinstance(gd, String):
             weight = weight or 99
             boundariesrules = len(gd)
         else:
             weight = weight or 49
         Symbol.__init__(self, weight)
-        if boundariesrules not in ("min", "max", "any") and not isinstance(boundariesrules, int):
-            raise TypeError("Unknown boundaries rules %s" % boundariesrules)
         if not gd:
             raise Exception
         self.gd = gd
@@ -113,7 +111,7 @@ class EndSymbol(Symbol):
         return hash(str(self))
 
     def __eq__(self, other):
-        return isinstance(other, EndSymbol)
+        return isinstance(other, EndSymbol) or EndSymbol == other
 
     def __ne__(self, other):
         return not self.__eq__(other)

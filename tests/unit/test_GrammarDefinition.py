@@ -25,7 +25,7 @@ __email__ = "nesaro@gmail.com"
 
 import unittest
 from pydsl.Grammar.Definition import String
-from pydsl.Alphabet import Encoding
+from pydsl.Encoding import ascii_encoding
 from pydsl.Alphabet import Alphabet
 
 
@@ -73,5 +73,5 @@ class TestGrammarDefinitionJson(unittest.TestCase):
         self.grammardef.maxsize
 
     def testAlphabet(self):
-        self.assertEqual(self.grammardef.alphabet, Encoding('ascii'))
+        self.assertEqual(self.grammardef.alphabet, ascii_encoding)
 

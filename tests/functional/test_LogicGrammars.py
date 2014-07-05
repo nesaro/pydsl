@@ -11,8 +11,7 @@ from pydsl.Parser.Backtracing import BacktracingErrorRecursiveDescentParser
 from pydsl.File.BNF import load_bnf_file
 from pydsl.Lex import lex
 from pydsl.Grammar import RegularExpression
-from pydsl.Alphabet import Encoding
-ascii_encoding = Encoding("ascii")
+from pydsl.Encoding import ascii_encoding
 
 
 class TestLogicGrammars(unittest.TestCase):

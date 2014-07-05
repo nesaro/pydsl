@@ -37,8 +37,9 @@ def __generateStringSymbol(rightside):
     content = tail
     if len(tail) > 2 and tail[1][0] == "'" and tail[1][-1] == "'":
         content = tail[1][1:-1]
+    from pydsl.Grammar.PEG import Sequence
     from pydsl.Grammar.Definition import String
-    return TerminalSymbol(String(content))
+    return TerminalSymbol(Sequence.from_string(content), boundariesrules = len(content))
 
 def __generateWordSymbol(rightside, repository):
     args = rightside.split(",")
@@ -117,7 +118,7 @@ def strlist_to_production_set(linelist, repository = None, start_symbol = "S"):
             raise ValueError("Unknown line at bnf input file")
 
     #then read nonterminalsymbols
-    while len(nonterminalrulelist) > 0:
+    while nonterminalrulelist:
         linestodrop = []
         for myindex in range(len(nonterminalrulelist)):
             try:
