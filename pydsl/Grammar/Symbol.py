@@ -27,28 +27,23 @@ LOG = logging.getLogger(__name__)
 from pydsl.Grammar.Definition import Grammar, String
 
 class Symbol(object):
-    def __init__(self, weight):
-        self._weight = weight
-
-    @property
-    def weight(self):
-        return self._weight
+    pass
 
 class NonTerminalSymbol(Symbol):
-    def __init__(self, name,  weight = 50):
-        Symbol.__init__(self, weight)
+    def __init__(self, name):
+        Symbol.__init__(self)
         self.name = name
 
     def __str__(self):
         return "<NonTS: " + self.name + ">"
 
     def __hash__(self):
-        return hash(self.name) ^ hash(self.weight)
+        return hash(self.name)
 
     def __eq__(self, other):
         if not isinstance(other, NonTerminalSymbol):
             return False
-        return self.name == other.name and self.weight == other.weight
+        return self.name == other.name
 
     def __ne__(self, other):
         return not self.__eq__(other)
@@ -56,14 +51,10 @@ class NonTerminalSymbol(Symbol):
 
 class TerminalSymbol(Symbol):
 
-    def __init__(self, gd, weight=None):
+    def __init__(self, gd):
         if not isinstance(gd, Grammar):
             raise TypeError("Expected Grammar, got %s" % (gd,))
-        if isinstance(gd, String):
-            weight = weight or 99
-        else:
-            weight = weight or 49
-        Symbol.__init__(self, weight)
+        Symbol.__init__(self)
         if not gd:
             raise Exception
         self.gd = gd
@@ -89,8 +80,11 @@ class TerminalSymbol(Symbol):
         return "<TS: " + str(self.gd) + ">"
 
 class NullSymbol(Symbol):
-    def __init__(self):
-        Symbol.__init__(self, 100)
+    _instance = None
+    def __new__(cls):
+        if not cls._instance:
+            cls._instance = super(NullSymbol, cls).__new__(cls)
+        return cls._instance
 
     def __eq__(self, other):
         return isinstance(other, NullSymbol)
@@ -102,11 +96,14 @@ class NullSymbol(Symbol):
         return False
 
 class EndSymbol(Symbol):
-    def __init__(self):
-        Symbol.__init__(self, 100)
+    _instance = None
+    def __new__(cls):
+        if not cls._instance:
+            cls._instance = super(EndSymbol, cls).__new__(cls)
+        return cls._instance
 
     def __hash__(self):
-        return hash(str(self))
+        return hash(id(self))
 
     def __eq__(self, other):
         return isinstance(other, EndSymbol) or EndSymbol == other

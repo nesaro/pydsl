@@ -45,7 +45,7 @@ def __generateWordSymbol(rightside, repository):
     args = rightside.split(",")
     if args[0] != "Word":
         raise TypeError
-    return TerminalSymbol(repository[args[1]], None)
+    return TerminalSymbol(repository[args[1]])
 
 
 def read_nonterminal_production(line, symboldict):
