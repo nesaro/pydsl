@@ -26,6 +26,7 @@ LOG = logging.getLogger(__name__)
 from pydsl.Parser.Parser import BottomUpParser
 from pydsl.Grammar.Symbol import NonTerminalSymbol, TerminalSymbol, EndSymbol, Symbol
 from pydsl.Grammar.BNF import Production
+from collections import Iterable
 
 Extended_S = NonTerminalSymbol("EI")
 
@@ -147,8 +148,9 @@ class ParserTable(dict):
             if rule is None:
                 raise TypeError("Expected production parameter")
             rule["rule"] = production
-        if isinstance(symbol, list) and len(symbol) == 1:
-            symbol = symbol[0]
+        from pydsl.Grammar.Definition import Grammar
+        while isinstance(symbol, TerminalSymbol) and isinstance(symbol.gd, Iterable) and len(symbol.gd) == 1 and isinstance(list(symbol.gd)[0], Grammar):
+            symbol = TerminalSymbol(list(symbol.gd)[0]) #Reduces symbol if its gd is a Sequence/Choice of 1 element
         if not isinstance(symbol, Symbol):
             raise TypeError("Expected symbol, got %s" % symbol)
         self[state][symbol] = rule
