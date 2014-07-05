@@ -37,7 +37,7 @@ class Production(object):
 
     def __str__(self):
         """Pretty print"""
-        leftstr = " ".join([x.name for x in self.leftside])
+        leftstr = " ".join([x for x in self.leftside])
         rightstr = " ".join([str(x) for x in self.rightside])
         return leftstr + "::=" + rightstr
 

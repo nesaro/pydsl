@@ -29,24 +29,20 @@ from pydsl.Grammar.Definition import Grammar, String
 class Symbol(object):
     pass
 
-class NonTerminalSymbol(Symbol):
+class NonTerminalSymbol(str, Symbol):
     def __init__(self, name):
         Symbol.__init__(self)
-        self.name = name
 
     def __str__(self):
-        return "<NonTS: " + self.name + ">"
+        return "<NonTS: " + self + ">"
 
     def __hash__(self):
-        return hash(self.name)
+        return str.__hash__(self)
 
     def __eq__(self, other):
         if not isinstance(other, NonTerminalSymbol):
             return False
-        return self.name == other.name
-
-    def __ne__(self, other):
-        return not self.__eq__(other)
+        return str.__eq__(self,other)
 
 
 class TerminalSymbol(Symbol):
@@ -98,18 +94,17 @@ class NullSymbol(Symbol):
 class EndSymbol(Symbol):
     _instance = None
     def __new__(cls):
-        if not cls._instance:
+        if cls._instance is None:
             cls._instance = super(EndSymbol, cls).__new__(cls)
         return cls._instance
 
     def __hash__(self):
-        return hash(id(self))
+        assert(EndSymbol._instance is not None)
+        return hash(id(self._instance))
 
     def __eq__(self, other):
-        return isinstance(other, EndSymbol) or EndSymbol == other
-
-    def __ne__(self, other):
-        return not self.__eq__(other)
+        result = isinstance(other, EndSymbol) or EndSymbol == other
+        return result
 
     def __bool__(self):
         return False
