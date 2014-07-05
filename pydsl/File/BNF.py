@@ -39,14 +39,13 @@ def __generateStringSymbol(rightside):
         content = tail[1][1:-1]
     from pydsl.Grammar.PEG import Sequence
     from pydsl.Grammar.Definition import String
-    return TerminalSymbol(Sequence.from_string(content), boundariesrules = len(content))
+    return TerminalSymbol(Sequence.from_string(content))
 
 def __generateWordSymbol(rightside, repository):
     args = rightside.split(",")
     if args[0] != "Word":
         raise TypeError
-    br = args[2] #Boundary rule policy
-    return TerminalSymbol(repository[args[1]], None, br)
+    return TerminalSymbol(repository[args[1]], None)
 
 
 def read_nonterminal_production(line, symboldict):

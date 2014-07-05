@@ -56,22 +56,20 @@ class NonTerminalSymbol(Symbol):
 
 class TerminalSymbol(Symbol):
 
-    def __init__(self, gd, weight=None, boundariesrules=None):
+    def __init__(self, gd, weight=None):
         if not isinstance(gd, Grammar):
             raise TypeError("Expected Grammar, got %s" % (gd,))
         if isinstance(gd, String):
             weight = weight or 99
-            boundariesrules = len(gd)
         else:
             weight = weight or 49
         Symbol.__init__(self, weight)
         if not gd:
             raise Exception
         self.gd = gd
-        self.boundariesrules = boundariesrules
 
     def __hash__(self):
-        return hash(self.gd) ^ hash(self.boundariesrules)
+        return hash(self.gd)
 
     def check(self, data):# ->bool:
         """Checks if input is recognized as this symbol"""
@@ -83,7 +81,7 @@ class TerminalSymbol(Symbol):
     def __eq__(self, other):
         """StringTerminalSymbol are equals if definition and names are equal"""
         try:
-            return self.gd == other.gd and self.boundariesrules == other.boundariesrules
+            return self.gd == other.gd
         except AttributeError:
             return False
 

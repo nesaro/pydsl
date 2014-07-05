@@ -6,7 +6,6 @@ from pydsl.File.BNF import strlist_to_production_set
 from pydsl.File.Python import load_python_file
 from pydsl.Grammar.Definition import String, RegularExpression
 
-br = "max"
 leftrecursive=["S ::= E","E ::= E dot | dot","dot := String,."]
 rightrecursive=["S ::= E","E ::= dot E | dot","dot := String,."]
 centerrecursive=["S ::= E","E ::= dot E dot | dot","dot := String,."]
@@ -26,8 +25,8 @@ p0bad = "RS"
 symbol1 = TerminalSymbol(String("S"))
 symbol2 = TerminalSymbol(String("R"))
 symbol3 = TerminalSymbol(String(":"))
-symbol4 = TerminalSymbol(RegularExpression("^[0123456789]*$"), None, br)
-symbol5 = TerminalSymbol(load_python_file('pydsl/contrib/grammar/cstring.py'), None, br)
+symbol4 = TerminalSymbol(RegularExpression("^[0123456789]*$"), None)
+symbol5 = TerminalSymbol(load_python_file('pydsl/contrib/grammar/cstring.py'), None)
 final1 = NonTerminalSymbol("storeexp") 
 final2 = NonTerminalSymbol("retrieveexp") 
 final3 = NonTerminalSymbol("exp")
