@@ -121,7 +121,7 @@ def _slr_build_parser_table(productionset):
                             raise TypeError(x)
                     numberoptions += 1
                 #if cursor is at the end of main rule, and current symbol is end, then append accept rule
-                if isinstance(symbol, EndSymbol) and lritem.previous_symbol() == productionset.initialsymbol and lritem.next_symbol() == EndSymbol():
+                if symbol == EndSymbol() and lritem.previous_symbol() == productionset.initialsymbol and lritem.next_symbol() == EndSymbol():
                     result.append(itemindex, symbol, "Accept", None)
                     numberoptions += 1
             if not numberoptions:
@@ -167,7 +167,7 @@ class ParserTable(dict):
         """change internal state, return action"""
         for symbol in self[state]:
             from pydsl.Check import check
-            if symbol == EndSymbol() or (token != EndSymbol() and isinstance(symbol, TerminalSymbol) and check(symbol.gd,token)):
+            if token != EndSymbol() and isinstance(symbol, TerminalSymbol) and check(symbol.gd,token):
                 break
         else:
             if token != EndSymbol():
