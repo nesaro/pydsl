@@ -104,9 +104,7 @@ class RegularExpressionChecker(Checker):
             data = str(data)
         except UnicodeDecodeError:
             return False
-        if not data:
-            return False
-        return bool(self.__regexp.match(data))
+        return bool(data and self.__regexp.match(data))
 
 
 class BNFChecker(Checker):
@@ -217,10 +215,7 @@ class SequenceChecker(Checker):
         if len(self.sequence) != len(data):
             return False
         data = self._normalize_input(data)
-        for index in range(len(self.sequence)):
-            if not check(self.sequence[index], data[index]):
-                return False
-        return True
+        return all(check(self.sequence[x], data[x]) for x in range(len(self.sequence)))
 
 
 class OneOrMoreChecker(Checker):
@@ -229,12 +224,7 @@ class OneOrMoreChecker(Checker):
         self.element = element
 
     def check(self, data):
-        if not data:
-            return False
-        for element in data:
-            if not check(self.element.element, element):
-                return False
-        return True
+        return bool(data) and all(check(self.element.element, x) for x in data)
 
 class ZeroOrMoreChecker(Checker):
     def __init__(self, element):
@@ -242,9 +232,4 @@ class ZeroOrMoreChecker(Checker):
         self.element = element
 
     def check(self, data):
-        if not data:
-            return True
-        for element in data:
-            if not check(self.element.element, element):
-                return False
-        return True
+        return all(check(self.element.element, x) for x in data)

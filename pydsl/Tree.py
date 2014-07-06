@@ -85,9 +85,8 @@ class PositionResultList(object):
     def append(self, left, right, content, gd = None, check_position=True):
         if left > right:
             raise ValueError('Attempted to add negative length alement')
-        if check_position == True and left:
-            if left not in self.current_right:
-                raise ValueError("Unable to add element")
+        if check_position and left and left not in self.current_right:
+            raise ValueError("Unable to add element")
         result = {'left':left, 'right':right, 'content':content}
         if gd:
             result['gd'] = gd
