@@ -64,8 +64,8 @@ class Grammar(object):
     def alphabet(self):
         """Returns the alphabet used by this grammar"""
         if self.__base_alphabet is None:
-            from pydsl.Alphabet import Encoding
-            self.__base_alphabet = Encoding("ascii")
+            from pydsl.Encoding import ascii_encoding
+            self.__base_alphabet = ascii_encoding
         return self.__base_alphabet
 
 class PLYGrammar(Grammar):
@@ -102,15 +102,15 @@ class RegularExpression(Grammar):
         return self.regexpstr
 
     def first(self):# -> set:
-        from pydsl.Alphabet import GrammarCollection
+        from pydsl.Alphabet import Alphabet
         i = 0
         while True:
             if self.regexpstr[i] == "^":
                 i+=1
                 continue
             if self.regexpstr[i] == "[":
-                return GrammarCollection([String(x) for x in self.regexpstr[i+1:self.regexpstr.find("]")]])
-            return GrammarCollection([String(self.regexpstr[i])])
+                return Alphabet([String(x) for x in self.regexpstr[i+1:self.regexpstr.find("]")]])
+            return Alphabet([String(self.regexpstr[i])])
 
     def __getattr__(self, attr):
         return getattr(self.regexp, attr)
@@ -118,13 +118,14 @@ class RegularExpression(Grammar):
 class String(Grammar, str):
     def __init__(self, string):
         if isinstance(string, list):
-            raise TypeError('Attempted to initialize a String with a list')
+            raise TypeError('Attempted to initialize a String with a list %s' % (string, ) )
+        if len(string) > 1:
+            raise ValueError("Use Sequence!")
         Grammar.__init__(self)
-        str.__init__(self, string)
 
     def first(self):
-        from pydsl.Alphabet import GrammarCollection
-        return GrammarCollection([String(self[0])])
+        from pydsl.Alphabet import Alphabet
+        return Alphabet([String(self[0])])
 
     def enum(self):
         yield self
@@ -136,6 +137,11 @@ class String(Grammar, str):
     @property
     def minsize(self):
         return len(self)
+
+    @property
+    def alphabet(self):
+        #Dead end :)
+        return None
 
 class JsonSchema(Grammar, dict):
     def __init__(self, *args, **kwargs):
@@ -162,8 +168,8 @@ class PythonGrammar(Grammar, dict):
     def alphabet(self):
         if "alphabet" in self:
             return self['alphabet']
-        from pydsl.Alphabet import Encoding
-        return Encoding("ascii")
+        from pydsl.Encoding import ascii_encoding
+        return ascii_encoding
 
 def grammar_factory(input_definition):
     if isinstance(input_definition, str):

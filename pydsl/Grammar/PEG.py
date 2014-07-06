@@ -16,43 +16,61 @@
 # along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2013, Nestor Arocha"
+__copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
-"""Parser expression grammars
+"""
+
+Parser expression grammars
 
 Loosely based on pymeta
 
 https://launchpad.net/pymeta
 
+See also http://en.wikipedia.org/wiki/Parsing_expression_grammar
+
 """
 
-from .Definition import Grammar
+from .Definition import Grammar, String
+from pydsl.Alphabet import Alphabet
 
-class Many(Grammar):
+class ZeroOrMore(Grammar):
     def __init__(self, element):
         Grammar.__init__(self)
         self.element = element
 
-#Choice is equivalent to Alphabet 
+    def first(self):
+        return Choice([self.element])
+
+
+class OneOrMore(Grammar):
+    def __init__(self, element):
+        Grammar.__init__(self)
+        self.element = element
+
+    def first(self):
+        return Choice([self.element])
 
 class Sequence(Grammar, list):
     def __init__(self, *args, **kwargs):
         base_alphabet = kwargs.pop('base_alphabet', None)
         Grammar.__init__(self, base_alphabet)
         list.__init__(self, *args, **kwargs)
+        for x in self:
+            if not isinstance(x, Grammar):
+                raise TypeError(x)
 
-class Not(Grammar, list):
-    def __init__(self, element):
-        Grammar.__init__(self)
-        self.element = element
+    def __hash__(self):
+        return hash(tuple(self))
 
-from pydsl.Alphabet import GrammarCollection
+    @classmethod
+    def from_string(cls, string):
+        return cls([String(x) for x in string])
 
-class Choice(GrammarCollection, Grammar):
+class Choice(Alphabet, Grammar):
     """Uses a list of grammar definitions with common base alphabets"""
     def __init__(self, grammarlist):
-        GrammarCollection.__init__(self, grammarlist)
+        Alphabet.__init__(self, grammarlist)
         base_alphabet_list = []
         for x in self:
             if not isinstance(x, Grammar):
@@ -68,4 +86,18 @@ class Choice(GrammarCollection, Grammar):
 
     def __add__(self, other):
         return Choice(GrammarCollection.__add__(self,other))
+
+class Optional(object):
+    def __init__(self, element):
+        Grammar.__init__(self)
+        self.element = element
+
+class Not(object):
+    def __init__(self, element):
+        self.element = element
+
+class And(object):
+    def __init__(self, element):
+        Grammar.__init__(self)
+        self.element = element
 

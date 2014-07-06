@@ -25,7 +25,8 @@ __email__ = "nesaro@gmail.com"
 
 import unittest
 from pydsl.Grammar.Definition import String
-from pydsl.Alphabet import Encoding, Alphabet, GrammarCollection
+from pydsl.Encoding import ascii_encoding
+from pydsl.Alphabet import Alphabet
 
 
 @unittest.skip
@@ -62,7 +63,7 @@ class TestGrammarDefinitionString(unittest.TestCase):
         self.assertListEqual(['abc'], [x for x in self.grammardef.enum()])
 
     def testFirst(self):
-        self.assertEqual(self.grammardef.first(), GrammarCollection([String('a')]))
+        self.assertEqual(self.grammardef.first(), Alphabet([String('a')]))
 
     def testMin(self):
         self.assertEqual(self.grammardef.minsize, 3)
@@ -71,7 +72,7 @@ class TestGrammarDefinitionString(unittest.TestCase):
         self.assertEqual(self.grammardef.maxsize, 3)
 
     def testAlphabet(self):
-        self.assertEqual(self.grammardef.alphabet, Encoding('ascii'))
+        self.assertEqual(self.grammardef.alphabet, ascii_encoding)
 
 
 class TestGrammarDefinitionJson(unittest.TestCase):
@@ -92,5 +93,5 @@ class TestGrammarDefinitionJson(unittest.TestCase):
         self.grammardef.maxsize
 
     def testAlphabet(self):
-        self.assertEqual(self.grammardef.alphabet, Encoding('ascii'))
+        self.assertEqual(self.grammardef.alphabet, ascii_encoding)
 

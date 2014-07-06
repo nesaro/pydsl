@@ -31,11 +31,12 @@ def check(definition, data):
 
 def checker_factory(grammar):
     from pydsl.Grammar.BNF import BNFGrammar
-    from pydsl.Grammar.PEG import Sequence, Choice
+    from pydsl.Grammar.PEG import Sequence, Choice, OneOrMore, ZeroOrMore
     from pydsl.Grammar.Definition import PLYGrammar, RegularExpression, String, PythonGrammar
-    from pydsl.Alphabet import Encoding
     from pydsl.Grammar.Parsley import ParsleyGrammar
     from collections import Iterable
+    if isinstance(grammar, str) and not isinstance(grammar, String):
+        raise TypeError(grammar)
     if isinstance(grammar, BNFGrammar):
         return BNFChecker(grammar)
     elif isinstance(grammar, RegularExpression):
@@ -50,12 +51,14 @@ def checker_factory(grammar):
         return ParsleyChecker(grammar)
     elif isinstance(grammar, String):
         return StringChecker(grammar)
-    elif isinstance(grammar, Encoding):
-        return EncodingChecker(grammar)
     elif isinstance(grammar, Sequence):
         return SequenceChecker(grammar)
+    elif isinstance(grammar, OneOrMore):
+        return OneOrMoreChecker(grammar)
+    elif isinstance(grammar, ZeroOrMore):
+        return ZeroOrMoreChecker(grammar)
     elif isinstance(grammar, Iterable):
-        return IterableChecker(grammar)
+        return ChoiceChecker(grammar)
     else:
         raise ValueError(grammar)
 
@@ -70,6 +73,16 @@ class Checker(object):
 
     def check(self, value):# -> bool:
         raise NotImplementedError
+
+    def _normalize_input(self, data):
+        result = []
+        for x in data:
+            from pydsl.Token import Token, PositionToken
+            if isinstance(x, (Token, PositionToken)):
+                result.append(x.content)
+            else:
+                result.append(x)
+        return result
 
 class RegularExpressionChecker(Checker):
     def __init__(self, regexp, flags = ""):
@@ -122,15 +135,15 @@ class BNFChecker(Checker):
 class ParsleyChecker(Checker):
     def __init__(self, grammar):
         Checker.__init__(self)
-        self.g=grammar
+        self.gd=grammar
+
     def check(self, data):
         from parsley import ParseError
         try:
-            self.g.match(data)
+            getattr(self.gd.grammar(data), self.gd.root_rule)() #call grammar(data).root_rule()
             return True
         except ParseError:
             return False
-
 
 class PythonChecker(Checker):
     def __init__(self, module):
@@ -188,61 +201,54 @@ class JsonSchemaChecker(Checker):
 class ChoiceChecker(Checker):
     def __init__(self, gd):
         Checker.__init__(self)
-        from pydsl.Grammar.PEG import Choice
-        if not isinstance(gd, Choice):
-            raise TypeError
         self.gd = gd
         self.checkerinstances = [checker_factory(x) for x in self.gd]
 
     def check(self, data):
+        data = self._normalize_input(data)
         return any((x.check(data) for x in self.checkerinstances))
-
-class EncodingChecker(Checker):
-    def __init__(self, gd):
-        Checker.__init__(self)
-        self.gd = gd
-
-    def check(self,data):
-        encoding = self.gd.encoding
-        if isinstance(data, Iterable):
-            data = "".join([str(x) for x in data])
-        if isinstance(data, str):
-            try:
-                data.encode(encoding)
-            except UnicodeEncodeError:
-                return False
-            return True
-        if isinstance(data, bytes):
-            try:
-                data.decode(encoding)
-            except UnicodeDecodeError:
-                return False
-            return True
-        return False
-
-class IterableChecker(Checker):
-    def __init__(self, iterable):
-        Checker.__init__(self)
-        self.iterable = iterable
-
-    def check(self,data):
-        for definition in self.iterable:
-            from pydsl.Grammar import Grammar
-            if not isinstance(definition, Grammar):
-                raise TypeError("Expected a grammar definition")
-            if check(definition, data):
-                return True
-        return False
 
 class SequenceChecker(Checker):
     def __init__(self, sequence):
         Checker.__init__(self)
+        from pydsl.Grammar import Grammar
+        for x in sequence:
+            if not isinstance(x, Grammar):
+                raise TypeError("Expected grammar, got %s" % (x.__class__.__name__,))
         self.sequence = sequence
 
     def check(self,data):
         if len(self.sequence) != len(data):
             return False
+        data = self._normalize_input(data)
         for index in range(len(self.sequence)):
             if not check(self.sequence[index], data[index]):
+                return False
+        return True
+
+
+class OneOrMoreChecker(Checker):
+    def __init__(self, element):
+        Checker.__init__(self)
+        self.element = element
+
+    def check(self, data):
+        if not data:
+            return False
+        for element in data:
+            if not check(self.element.element, element):
+                return False
+        return True
+
+class ZeroOrMoreChecker(Checker):
+    def __init__(self, element):
+        Checker.__init__(self)
+        self.element = element
+
+    def check(self, data):
+        if not data:
+            return True
+        for element in data:
+            if not check(self.element.element, element):
                 return False
         return True

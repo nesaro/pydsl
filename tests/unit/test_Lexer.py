@@ -20,10 +20,10 @@ __copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
-from pydsl.Lex import EncodingLexer, lexer_factory
+from pydsl.Lex import DummyLexer, lexer_factory
 from pydsl.contrib.bnfgrammar import *
 from pydsl.Grammar.Definition import String
-from pydsl.Alphabet import GrammarCollection
+from pydsl.Alphabet import Alphabet
 from pydsl.Grammar.PEG import Sequence, Choice
 from pydsl.File.BNF import load_bnf_file
 
@@ -36,7 +36,7 @@ class TestEncodingLexer(unittest.TestCase):
         self.assertTrue(result)
 
     def testencodingLexer(self):
-        lexer = EncodingLexer('utf8')
+        lexer = DummyLexer()
         result = list(lexer("abcde"))
         self.assertTrue([str(x) for x in result])
         result = list(lexer([x for x in "abcde"]))
@@ -46,7 +46,7 @@ class TestChoiceBruteForceLexer(unittest.TestCase):
     def testEmptyInput(self):
         integer = RegularExpression("^[0123456789]*$")
         date = load_bnf_file("pydsl/contrib/grammar/Date.bnf", {'integer':integer, 'DayOfMonth':load_python_file('pydsl/contrib/grammar/DayOfMonth.py')})
-        mydef = GrammarCollection([integer,date])
+        mydef = Alphabet([integer,date])
         lexer = lexer_factory(mydef)
         self.assertFalse(lexer(""))
 
@@ -54,7 +54,7 @@ class TestChoiceBruteForceLexer(unittest.TestCase):
         """Test checker instantiation and call"""
         integer = RegularExpression("^[0123456789]*$")
         date = load_bnf_file("pydsl/contrib/grammar/Date.bnf", {'integer':integer, 'DayOfMonth':load_python_file('pydsl/contrib/grammar/DayOfMonth.py')})
-        mydef = GrammarCollection([integer,date])
+        mydef = Alphabet([integer,date])
         lexer = lexer_factory(mydef)
         self.assertListEqual(lexer("1234"), [(["1","2","3","4"], integer)])
         self.assertListEqual(lexer([x for x in "1234"]), [(["1","2","3","4"], integer)])
@@ -63,7 +63,7 @@ class TestChoiceBruteForceLexer(unittest.TestCase):
     def testOverlappingLexing(self):
         integer = RegularExpression("^[0123456789]*$")
         date = load_bnf_file("pydsl/contrib/grammar/Date.bnf", {'integer':integer, 'DayOfMonth':load_python_file('pydsl/contrib/grammar/DayOfMonth.py')})
-        mydef = GrammarCollection([integer,date])
+        mydef = Alphabet([integer,date])
         lexer = lexer_factory(mydef)
         self.assertListEqual(lexer("123411/11/2001"), [("1234", integer),("11/11/2001", date)])
         self.assertListEqual(lexer([x for x in "123411/11/2001"]), [("1234", integer),("11/11/2001", date)])
@@ -99,9 +99,9 @@ class TestChoiceLexer(unittest.TestCase):
 
 class TestPythonLexer(unittest.TestCase):
     def test_Concept(self):
-        red = String("red")
-        green = String("green")
-        blue = String("blue")
+        red = Sequence.from_string("red")
+        green = Sequence.from_string("green")
+        blue = Sequence.from_string("blue")
         alphabet = Choice([red,green,blue])
         lexer = lexer_factory(alphabet)
 

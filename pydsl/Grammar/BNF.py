@@ -37,7 +37,7 @@ class Production(object):
 
     def __str__(self):
         """Pretty print"""
-        leftstr = " ".join([x.name for x in self.leftside])
+        leftstr = " ".join([x for x in self.leftside])
         rightstr = " ".join([str(x) for x in self.rightside])
         return leftstr + "::=" + rightstr
 
@@ -80,8 +80,8 @@ class BNFGrammar(Grammar):
 
     @property
     def alphabet(self):
-        from pydsl.Alphabet import GrammarCollection
-        return GrammarCollection([x.gd for x in self.terminal_symbols])
+        from pydsl.Alphabet import Alphabet
+        return Alphabet([x.gd for x in self.terminal_symbols])
 
     @property
     def productions(self):
@@ -101,7 +101,7 @@ class BNFGrammar(Grammar):
         produced by the input symbol
         """
         if isinstance(symbol, (TerminalSymbol, NullSymbol)):
-            return [symbol.gd]
+            return symbol.gd
         result = []
         for production in self.productions:
             if production.leftside[0] != symbol:
@@ -110,13 +110,20 @@ class BNFGrammar(Grammar):
                 if right_symbol == symbol: #Avoids infinite recursion
                     break
                 current_symbol_first = self.first_lookup(right_symbol, size)
-                result += current_symbol_first
-                if NullSymbol not in current_symbol_first:
+                import collections
+                from pydsl.Grammar.Definition import String
+                if isinstance(current_symbol_first, collections.Iterable) and not isinstance(current_symbol_first, String):
+                    result += current_symbol_first
+                else:
+                    result.append(current_symbol_first)
+                if isinstance(current_symbol_first, String) or \
+                        not isinstance(current_symbol_first, collections.Iterable) or \
+                        (NullSymbol not in current_symbol_first):
                     break # This element doesn't have Null in its first set so there is no need to continue
         if not result:
             raise KeyError("Symbol doesn't exist in this grammar")
-        from pydsl.Alphabet import GrammarCollection
-        return GrammarCollection(result)
+        from pydsl.Alphabet import Alphabet
+        return Alphabet(result)
 
     def next_lookup(self, symbol):
         """Returns the next TerminalSymbols produced by the input symbol within this grammar definition"""
@@ -129,13 +136,13 @@ class BNFGrammar(Grammar):
                 while nextindex < len(production.rightside):
                     nextsymbol = production.rightside[nextindex]
                     firstlist = self.first_lookup(nextsymbol)
-                    cleanfirstlist = [x for x in firstlist if x != NullSymbol()]
+                    from pydsl.Grammar.PEG import Choice
+                    cleanfirstlist = Choice([x for x in firstlist if x != NullSymbol()])
                     result.append(cleanfirstlist)
                     if NullSymbol() not in firstlist:
                         break
                 else:
                     result += self.next_lookup(production.leftside[0]) #reached the end of the rightside
-
         return result
 
     def __eq__(self, other):
