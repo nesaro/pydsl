@@ -34,7 +34,6 @@ def checker_factory(grammar):
     from pydsl.Grammar.PEG import Sequence, Choice, OneOrMore, ZeroOrMore
     from pydsl.Grammar.Definition import PLYGrammar, RegularExpression, String, PythonGrammar
     from pydsl.Grammar.Parsley import ParsleyGrammar
-    from collections import Iterable
     if isinstance(grammar, str) and not isinstance(grammar, String):
         raise TypeError(grammar)
     if isinstance(grammar, BNFGrammar):
@@ -151,10 +150,7 @@ class PythonChecker(Checker):
         self._matchFun = module["matchFun"]
 
     def check(self, data):
-        try:
-            return self._matchFun(data)
-        except UnicodeDecodeError:
-            return False
+        return self._matchFun(data)
 
 
 class PLYChecker(Checker):

@@ -35,9 +35,7 @@ class ParseTree(object):
             raise TypeError
         if not isinstance(right, int) and right is not None:
             raise TypeError
-        if not childlist:
-            childlist = []
-        self.childlist = childlist
+        self.childlist = childlist or []
         self.left = left
         self.right = right
         self.content = content

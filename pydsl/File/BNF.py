@@ -38,7 +38,6 @@ def __generateStringSymbol(rightside):
     if len(tail) > 2 and tail[1][0] == "'" and tail[1][-1] == "'":
         content = tail[1][1:-1]
     from pydsl.Grammar.PEG import Sequence
-    from pydsl.Grammar.Definition import String
     return TerminalSymbol(Sequence.from_string(content))
 
 def __generateWordSymbol(rightside, repository):
@@ -128,14 +127,14 @@ def strlist_to_production_set(linelist, repository = None, start_symbol = "S"):
                 pass
             else:
                 linestodrop.append(myindex)
-        linestodrop.reverse()
-        if len(linestodrop) == 0:
+        if not linestodrop:
             raise Exception("No rule found: ")
+        linestodrop.reverse()
         for myindex in linestodrop:
             del nonterminalrulelist[myindex]
-    from pydsl.Grammar.BNF import BNFGrammar
     for terminal in terminalrulelist:
         rulelist.append(terminal)
+    from pydsl.Grammar.BNF import BNFGrammar
     return BNFGrammar(symboldict[start_symbol], rulelist, macrodict)
 
 
