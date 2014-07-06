@@ -26,7 +26,8 @@ LOG = logging.getLogger(__name__)
 from pydsl.Parser.Parser import BottomUpParser
 from pydsl.Grammar.Symbol import NonTerminalSymbol, TerminalSymbol, EndSymbol, Symbol
 from pydsl.Grammar.BNF import Production
-from collections import Iterable
+from pydsl.Grammar.Definition import Grammar, String
+from collections import Iterable, defaultdict
 
 Extended_S = NonTerminalSymbol("EI")
 
@@ -113,7 +114,6 @@ def _slr_build_parser_table(productionset):
                 #if cursor is at the end of the rule, then append reduce rule and go transition
                 if lritem.previous_symbol() == symbol and lritem.is_last_position() and symbol != Extended_S:
                     for x in productionset.next_lookup(symbol):
-                        from pydsl.Grammar.Definition import Grammar, String
                         if isinstance(x, Grammar):
                             result.append(itemindex, TerminalSymbol(x), "Reduce", None, lritem.rule)
                         elif isinstance(x, Symbol):
@@ -133,22 +133,20 @@ def _slr_build_parser_table(productionset):
                 raise Exception("LR Conflict %s" % symbol)
     return result
     
-class ParserTable(dict):
+class ParserTable(defaultdict):
     """ Stores a state/symbol/action/new state relation """
-    #Default for every state: Fail state #FIXME use default_dict
+    def __init__(self):
+        defaultdict.__init__(self, lambda: defaultdict(lambda:{"action":"Fail"}))
 
     def append(self, state, symbol, action, destinationstate, production = None):
         """Appends a new rule"""
         if action not in (None, "Accept", "Shift", "Reduce"):
             raise TypeError
-        if not state in self:
-            self[state] = {}
         rule = {"action":action, "dest":destinationstate}
         if action == "Reduce":
             if rule is None:
                 raise TypeError("Expected production parameter")
             rule["rule"] = production
-        from pydsl.Grammar.Definition import Grammar
         while isinstance(symbol, TerminalSymbol) and isinstance(symbol.gd, Iterable) and len(symbol.gd) == 1 and isinstance(list(symbol.gd)[0], Grammar):
             symbol = TerminalSymbol(list(symbol.gd)[0]) #Reduces symbol if its gd is a Sequence/Choice of 1 element
         if not isinstance(symbol, Symbol):
@@ -156,8 +154,6 @@ class ParserTable(dict):
         self[state][symbol] = rule
 
     def append_goto(self, state, symbol, destinationstate):
-        if not state in self:
-            self[state] = {}
         if symbol in self[state] and self[state][symbol] != destinationstate:
             raise Exception
         self[state][symbol] = destinationstate
@@ -167,19 +163,16 @@ class ParserTable(dict):
 
     def insert(self, state, token):
         """change internal state, return action"""
-        for symbol in self[state]:
-            from pydsl.Check import check
-            if token != EndSymbol() and isinstance(symbol, TerminalSymbol) and check(symbol.gd,token):
-                break
-        else:
-            if token != EndSymbol():
-                return {"action":"Fail"}
-            else:
-                symbol = EndSymbol()
-        try:
-            return self[state][symbol]
-        except KeyError:
+        if token == EndSymbol():
+            return self[state][EndSymbol()]
+        from pydsl.Check import check
+        symbol_list = [x for x in self[state] if isinstance(x, TerminalSymbol) and check(x.gd,token)]
+        if not symbol_list:
             return {"action":"Fail"}
+        if len(symbol_list) > 1:
+            raise Exception("Multiple symbols matches input")
+        symbol = symbol_list[0]
+        return self[state][symbol]
 
 
 
@@ -281,10 +274,7 @@ class LR0Parser(BottomUpParser):
         #build GoTo and Action Table from ProductionRuleSet
 
     def get_trees(self, tokenlist):
-        try:
-            return self.__parse(tokenlist)
-        except IndexError:
-            return False
+        return self.__parse(tokenlist)
 
     def __parse(self, tokenlist):
         """see parent docstring"""
