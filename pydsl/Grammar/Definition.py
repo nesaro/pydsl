@@ -106,19 +106,16 @@ class String(Grammar, str):
             raise TypeError('Attempted to initialize a String with a list %s' % (string, ) )
         Grammar.__init__(self)
 
-    def first(self):
-        return [String(self[0])]
-
     def enum(self):
         yield self
 
     @property
     def maxsize(self):
-        return len(self)
+        return 1
 
     @property
     def minsize(self):
-        return len(self)
+        return 1
 
     @property
     def alphabet(self):
