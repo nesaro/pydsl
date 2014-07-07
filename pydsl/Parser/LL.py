@@ -56,9 +56,7 @@ class LL1RecursiveDescentParser(TopDownParser):
                 valid_firsts.append(production)
         if len(valid_firsts) != 1:
             raise ParseError("Expected only one valid production, found %s" % len(valid_firsts), 0)
-        childlist = []
-        for element in valid_firsts[0].rightside:
-            childlist.append(self.__aux_parser(element))
+        childlist = [self.__aux_parser(x) for x in valid_firsts[0].rightside]
         left = childlist[0].left
         right = childlist[-1].right
         content = [x.content for x in childlist]
@@ -72,13 +70,11 @@ class LL1RecursiveDescentParser(TopDownParser):
 
     @property
     def current(self):
-        result = self.data[self.index]
-        return result
+        return self.data[self.index]
 
     def match(self, symbol):
         if symbol.check(self.current):
             current = self.current
             self.consume()
             return ParseTree(self.index-1, self.index, symbol, current)
-        else:
-            raise Exception("Not matched")
+        raise Exception("Not matched")

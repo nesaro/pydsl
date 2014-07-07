@@ -23,13 +23,12 @@ __copyright__ = "Copyright 2014, Ptolom"
 __email__ = "ptolom@hexifact.co.uk"
 
 class ParsleyGrammar(Grammar):
-    def __init__(self, rules, root_rule, repository={}):
+    def __init__(self, rules, root_rule="expr", repository=None):
         import parsley
         Grammar.__init__(self)
-        repo={}
-        for k, v in repository.items():
-            repo[k]=(v, checker_factory(v))[isinstance(v, Grammar)]
+        repo=dict(repository or {})
+        for key in repo:
+            if isinstance(repo[key], Grammar):
+                repo[key] = checker_factory(repo[key])
         self.grammar=parsley.makeGrammar(rules, repo)
         self.root_rule=root_rule 
-    def match(self, data):
-        return getattr(self.grammar(data), self.root_rule)() #call grammar(data).root_rule()
