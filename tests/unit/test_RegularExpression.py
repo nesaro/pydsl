@@ -17,7 +17,7 @@
 
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2013, Nestor Arocha"
+__copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
@@ -50,7 +50,7 @@ class TestRegularExpression(unittest.TestCase):
         re1.maxsize
 
     def testAlphabet(self):
-        from pydsl.Alphabet import Encoding
+        from pydsl.Encoding import ascii_encoding
         re1 = RegularExpression(re.compile('^a$'))
-        self.assertEqual(re1.alphabet, Encoding('ascii'))
+        self.assertEqual(re1.alphabet, ascii_encoding)
 

@@ -20,7 +20,7 @@ __copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
-from pydsl.Alphabet import Encoding
+from pydsl.Encoding import ascii_encoding
 from pydsl.Lex import lexer_factory
 from pydsl.Parser.LL import LLkRecursiveDescentParser
 from pydsl.Parser.LL import LL1RecursiveDescentParser
@@ -28,7 +28,6 @@ from pydsl.Parser.LL import LL1RecursiveDescentParser
 class TestCase(unittest.TestCase):
     def test_main_case(self):
         input_data = "1+2"
-        ascii_encoding = Encoding("ascii")
         ascii_lexer = lexer_factory(ascii_encoding)
         ascii_tokens = [x.content for x in ascii_lexer(input_data)]
         self.assertListEqual([str(x) for x in ascii_tokens], ['1', '+', '2'])
@@ -47,9 +46,9 @@ class TestCase(unittest.TestCase):
 
             return result
         def to_number(number):
-            if number == "one":
+            if number == [x for x in "one"]:
                 return 1
-            if number == "two":
+            if number == [x for x in "two"]:
                 return 2
  
         math_expression_concepts = concept_translator_fun(ascii_tokens)
@@ -105,8 +104,8 @@ class TestCase(unittest.TestCase):
         self.assertEqual(result, 3)
         from pydsl.Grammar.PEG import Choice
         from pydsl.Grammar.Definition import String, RegularExpression
-        math_alphabet = Choice([RegularExpression("^[0123456789]*$"),String('+')])
-        ascii_encoding = Encoding("ascii")
+        from pydsl.Encoding import ascii_encoding
+        math_alphabet = Choice([RegularExpression("^[0123456789]*$"),Choice([String('+')])])
         from pydsl.Lex import lex
         tokens = [x[0] for x in lex(math_alphabet, ascii_encoding, "11+2")]
         parse_tree = rdp(tokens)
