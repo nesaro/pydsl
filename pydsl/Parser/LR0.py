@@ -26,7 +26,7 @@ LOG = logging.getLogger(__name__)
 from pydsl.Parser.Parser import BottomUpParser
 from pydsl.Grammar.Symbol import NonTerminalSymbol, TerminalSymbol, EndSymbol, Symbol
 from pydsl.Grammar.BNF import Production
-from pydsl.Grammar.Definition import Grammar, String
+from pydsl.Grammar.Definition import Grammar
 from collections import Iterable, defaultdict
 
 Extended_S = NonTerminalSymbol("EI")

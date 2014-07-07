@@ -25,8 +25,6 @@ class TestLogicGrammars(unittest.TestCase):
         parser = BacktracingErrorRecursiveDescentParser(productionrulesetlogical)
         tokens = [x[0] for x in lex(repository['TrueFalse'].alphabet, ascii_encoding, self.tokelist5)]
         self.assertEqual(len(tokens), 1)
-        from pydsl.Lex import common_ancestor
-        self.assertEqual(common_ancestor(productionrulesetlogical.alphabet), None)
         #tokens = [x[0] for x in lex(productionrulesetlogical.alphabet, Encoding('ascii'), tokens)] #FIXME
         tokens = [['True']]
         result = parser.get_trees(tokens)

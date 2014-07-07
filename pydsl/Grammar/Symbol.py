@@ -15,9 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Symbols"""
-from pydsl.Check import check
-
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
@@ -25,6 +22,7 @@ __email__ = "nesaro@gmail.com"
 import logging
 LOG = logging.getLogger(__name__)
 from pydsl.Grammar.Definition import Grammar, String
+from pydsl.Check import check
 
 class Symbol(object):
     pass
