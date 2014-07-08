@@ -20,15 +20,21 @@ __copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
-from pydsl.Alphabet import Encoding
+from pydsl.Alphabet import Alphabet
+from pydsl.Grammar import String
+from pydsl.Grammar.Parsley import ParsleyGrammar
+from pydsl.Grammar.PEG import OneOrMore
+from pydsl.Translator import ParsleyTranslator
+
 
 class TestBinaryAlphabet(unittest.TestCase):
     def test_binaryAlphabet(self):
         binary_alphabet = GrammarCollection([String('0'), String('1')])
-        lexed = Lexer(binary_alphabet, '010')
-        self.assertListEqual(lexed, Token...)
-        diff('0101', '0110')
-        extract('a010', base_alphabet=ascii)
-        ascii_subset = GrammarCollection([String('0000'), String('0001'), ...])
-        ascii_binary = encode('000000010010', ascii_subset)
-        characters = encode(ascii_binary, ascii_subset, base_alphabet = binary_alphabet)
+        binary_number = OneOrMore(binary_alphabet)
+        binary_addition = ParsleyTranslator(ParsleyGrammar("""digit = anything:x ?(x in '01')
+        number = <digit+>:ds -> int(ds)
+        expr = number:left ( '+' number:right -> left + right
+                           | -> left)""", "expr"))
+
+        print(binary_addition('01+10'))
+
