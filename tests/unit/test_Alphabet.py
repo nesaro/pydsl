@@ -24,7 +24,8 @@ __email__ = "nesaro@gmail.com"
 import unittest
 from pydsl.Grammar import String
 from pydsl.Grammar.PEG import Sequence, Choice
-from pydsl.Alphabet import Encoding, GrammarCollection
+from pydsl.Alphabet import Alphabet
+from pydsl.Encoding import ascii_encoding
 from pydsl.Grammar import RegularExpression
 from pydsl.File.BNF import load_bnf_file
 from pydsl.File.Python import load_python_file
@@ -37,7 +38,7 @@ class TestAlphabet(unittest.TestCase):
         self.date = load_bnf_file("pydsl/contrib/grammar/Date.bnf", {'integer':self.integer, 'DayOfMonth':load_python_file('pydsl/contrib/grammar/DayOfMonth.py')})
 
     def testChecker(self):
-        alphabet = GrammarCollection([self.integer,self.date])
+        alphabet = Alphabet([self.integer,self.date])
         checker = checker_factory(alphabet)
         self.assertTrue(checker.check("1234"))
         self.assertTrue(checker.check([x for x in "1234"]))
@@ -47,14 +48,6 @@ class TestAlphabet(unittest.TestCase):
         self.assertFalse(checker.check("bcdf"))
         self.assertFalse(checker.check([x for x in "bcdf"]))
 
-    @unittest.skipIf(sys.version_info < (3,0), "Full encoding support not available for python 2")
     def testEncoding(self):
-        alphabet = Encoding('ascii')
-        self.assertTrue(alphabet[0])
-        self.assertEqual(len(alphabet.enum()), 128)
-        alphabet = Encoding('unicode')
-        self.assertTrue(alphabet[0])
-        self.assertEqual(len(alphabet.enum()), 9635)
-        self.assertRaises(KeyError, alphabet.__getitem__, 'a')
-        self.assertRaises(KeyError, alphabet.__getitem__, 5.5)
-        self.assertTrue(alphabet[100])
+        alphabet = ascii_encoding
+        self.assertEqual(len(alphabet), 128)

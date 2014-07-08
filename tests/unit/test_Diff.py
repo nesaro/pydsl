@@ -23,9 +23,9 @@ import unittest
 
 class TestDiff(unittest.TestCase):
     def testDiffSimple(self):
-        from pydsl.Alphabet import GrammarCollection
+        from pydsl.Alphabet import Alphabet
         from pydsl.Grammar.Definition import String
-        alphabet = GrammarCollection([String(x) for x in "abcde1"])
+        alphabet = Alphabet([String(x) for x in "abcde1"])
         elem1 = "abcde"
         elem2 = "abcd1"
         from pydsl.Diff import diff

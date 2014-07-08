@@ -31,8 +31,8 @@ See also http://en.wikipedia.org/wiki/Parsing_expression_grammar
 
 """
 
-from .Definition import Grammar
-from pydsl.Alphabet import GrammarCollection
+from .Definition import Grammar, String
+from pydsl.Alphabet import Alphabet
 
 class ZeroOrMore(Grammar):
     def __init__(self, element):
@@ -56,11 +56,21 @@ class Sequence(Grammar, list):
         base_alphabet = kwargs.pop('base_alphabet', None)
         Grammar.__init__(self, base_alphabet)
         list.__init__(self, *args, **kwargs)
+        for x in self:
+            if not isinstance(x, Grammar):
+                raise TypeError(x)
 
-class Choice(GrammarCollection, Grammar):
+    def __hash__(self):
+        return hash(tuple(self))
+
+    @classmethod
+    def from_string(cls, string):
+        return cls([String(x) for x in string])
+
+class Choice(Alphabet, Grammar):
     """Uses a list of grammar definitions with common base alphabets"""
     def __init__(self, grammarlist):
-        GrammarCollection.__init__(self, grammarlist)
+        Alphabet.__init__(self, grammarlist)
         base_alphabet_list = []
         for x in self:
             if not isinstance(x, Grammar):
