@@ -29,12 +29,12 @@ from pydsl.Translator import ParsleyTranslator
 
 class TestBinaryAlphabet(unittest.TestCase):
     def test_binaryAlphabet(self):
-        binary_alphabet = GrammarCollection([String('0'), String('1')])
+        binary_alphabet = Alphabet([String('0'), String('1')])
         binary_number = OneOrMore(binary_alphabet)
-        binary_addition = ParsleyTranslator(ParsleyGrammar("""digit = anything:x ?(x in '01')
-        number = <digit+>:ds -> int(ds)
-        expr = number:left ( '+' number:right -> left + right
-                           | -> left)""", "expr"))
-
-        print(binary_addition('01+10'))
+        parsley_grammar = ParsleyGrammar("""digit = anything:x ?(x in '01')
+number = <digit+>:ds -> int(ds)
+expr = number:left ( '+' number:right -> left + right 
+                   | -> left)""", "expr")
+        binary_addition = ParsleyTranslator(parsley_grammar)
+        self.assertEqual(binary_addition('01+10'), 11)
 
