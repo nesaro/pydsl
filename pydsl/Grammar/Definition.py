@@ -21,21 +21,6 @@ __email__ = "nesaro@gmail.com"
 
 import collections
 
-class ImmutableDict(dict):
-    """A dict with a hash method"""
-    def __hash__(self):
-        if not self:
-            return 0
-        items = tuple(self.items())
-        res = hash(items[0])
-        for item in items[1:]:
-            res ^= hash(item)
-        return res
-
-    def __setitem__(self, key, value):
-        raise Exception
-
-
 class Grammar(object):
 
     def __init__(self, base_alphabet = None):
@@ -64,8 +49,8 @@ class Grammar(object):
     def alphabet(self):
         """Returns the alphabet used by this grammar"""
         if self.__base_alphabet is None:
-            from pydsl.Alphabet import Encoding
-            self.__base_alphabet = Encoding("ascii")
+            from pydsl.Encoding import ascii_encoding
+            self.__base_alphabet = ascii_encoding
         return self.__base_alphabet
 
 class PLYGrammar(Grammar):
@@ -94,23 +79,24 @@ class RegularExpression(Grammar):
         return hash(self.regexpstr)
 
     def __eq__(self, other):
-        if not isinstance(other, RegularExpression):
+        try:
+            return self.regexpstr == other.regexpstr and self.flags == other.flags
+        except AttributeError:
             return False
-        return self.regexpstr == other.regexpstr and self.flags == other.flags
 
     def __str__(self):
         return self.regexpstr
 
     def first(self):# -> set:
-        from pydsl.Alphabet import GrammarCollection
+        from pydsl.Alphabet import Alphabet
         i = 0
         while True:
             if self.regexpstr[i] == "^":
                 i+=1
                 continue
             if self.regexpstr[i] == "[":
-                return GrammarCollection([String(x) for x in self.regexpstr[i+1:self.regexpstr.find("]")]])
-            return GrammarCollection([String(self.regexpstr[i])])
+                return Alphabet([String(x) for x in self.regexpstr[i+1:self.regexpstr.find("]")]])
+            return Alphabet([String(self.regexpstr[i])])
 
     def __getattr__(self, attr):
         return getattr(self.regexp, attr)
@@ -118,13 +104,12 @@ class RegularExpression(Grammar):
 class String(Grammar, str):
     def __init__(self, string):
         if isinstance(string, list):
-            raise TypeError('Attempted to initialize a String with a list')
+            raise TypeError('Attempted to initialize a String with a list %s' % (string, ) )
         Grammar.__init__(self)
-        str.__init__(self, string)
 
     def first(self):
-        from pydsl.Alphabet import GrammarCollection
-        return GrammarCollection([String(self[0])])
+        from pydsl.Alphabet import Alphabet
+        return Alphabet([String(self[0])])
 
     def enum(self):
         yield self
@@ -136,6 +121,11 @@ class String(Grammar, str):
     @property
     def minsize(self):
         return len(self)
+
+    @property
+    def alphabet(self):
+        #Dead end :)
+        return None
 
 class JsonSchema(Grammar, dict):
     def __init__(self, *args, **kwargs):
@@ -156,14 +146,23 @@ class PythonGrammar(Grammar, dict):
         dict.__init__(self, *args, **kwargs)
 
     def __hash__(self):
-        return hash(ImmutableDict(self))        
+        if not self:
+            raise Exception
+        items = tuple(self.items())
+        res = hash(items[0])
+        for item in items[1:]:
+            res ^= hash(item)
+        return res
+
+    def __setitem__(self, key, value):
+        raise Exception
 
     @property
     def alphabet(self):
         if "alphabet" in self:
             return self['alphabet']
-        from pydsl.Alphabet import Encoding
-        return Encoding("ascii")
+        from pydsl.Encoding import ascii_encoding
+        return ascii_encoding
 
 def grammar_factory(input_definition):
     if isinstance(input_definition, str):

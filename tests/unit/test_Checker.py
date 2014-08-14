@@ -16,11 +16,12 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2013, Nestor Arocha"
+__copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
 from pydsl.Grammar.Definition import String
+from pydsl.Grammar.PEG import Sequence
 import sys
 
 class TestBNFChecker(unittest.TestCase):
@@ -94,20 +95,6 @@ class TestJsonSchemaChecker(unittest.TestCase):
         self.assertFalse(checker.check([1, {"foo" : 2, "bar" : {"baz" : [1]}}, "quux"]))
 
 
-class TestEncodingChecker(unittest.TestCase):
-    @unittest.skipIf(sys.version_info < (3,0), "Full encoding support not available for python 2")
-    def testCheck(self):
-        from pydsl.Check import EncodingChecker
-        from pydsl.Alphabet import Encoding
-        a = Encoding('ascii')
-        checker = EncodingChecker(a)
-        self.assertTrue(checker.check('1234'))
-        self.assertTrue(checker.check([x for x in '1234']))
-        self.assertTrue(checker.check('asdf'))
-        self.assertFalse(checker.check('£'))
-        #self.assertFalse(checker.check('')) #FIXME
-
-
 class TestChoiceChecker(unittest.TestCase):
     def testCheck(self):
         from pydsl.Check import ChoiceChecker
@@ -124,15 +111,10 @@ class TestStringChecker(unittest.TestCase):
     def testCheck(self):
         """Test checker instantiation and call"""
         from pydsl.Check import StringChecker
-        grammarchecker = StringChecker(String("string123"))
-        self.assertTrue(grammarchecker("string123"))
-        self.assertTrue(grammarchecker(["string123"]))
-        self.assertTrue(grammarchecker(("string123",)))
-        list_version = ["s","t","r","i","n","g","1","2","3"]
-        self.assertTrue(grammarchecker(("s","t","r","i","n","g","1","2","3",)))
-        self.assertTrue(grammarchecker(list_version))
-        self.assertTrue(grammarchecker([String(x) for x in list_version]))
-        self.assertTrue(grammarchecker([x for x in list_version]))
+        grammarchecker = StringChecker(String("3"))
+        self.assertTrue(grammarchecker("3"))
+        self.assertTrue(grammarchecker(["3"]))
+        self.assertTrue(grammarchecker(("3",)))
         self.assertFalse(grammarchecker(''))
 
 class TestSequenceChecker(unittest.TestCase):

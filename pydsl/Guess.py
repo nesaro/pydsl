@@ -33,11 +33,7 @@ class Guesser(object):
         self.grammarlist = grammarlist
 
     def __call__(self, data):
-        result = []
-        for gd in self.grammarlist:
-            if check(gd, data):
-                result.append(gd)
-        return result
+        return [x for x in self.grammarlist if check(x,data)]
 
 def guess(grammarlist, data):
     return Guesser(grammarlist)(data)

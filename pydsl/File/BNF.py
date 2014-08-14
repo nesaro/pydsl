@@ -37,15 +37,14 @@ def __generateStringSymbol(rightside):
     content = tail
     if len(tail) > 2 and tail[1][0] == "'" and tail[1][-1] == "'":
         content = tail[1][1:-1]
-    from pydsl.Grammar.Definition import String
-    return TerminalSymbol(String(content))
+    from pydsl.Grammar.PEG import Sequence
+    return TerminalSymbol(Sequence.from_string(content))
 
 def __generateWordSymbol(rightside, repository):
     args = rightside.split(",")
     if args[0] != "Word":
         raise TypeError
-    br = args[2] #Boundary rule policy
-    return TerminalSymbol(repository[args[1]], None, br)
+    return TerminalSymbol(repository[args[1]])
 
 
 def read_nonterminal_production(line, symboldict):
@@ -117,7 +116,7 @@ def strlist_to_production_set(linelist, repository = None, start_symbol = "S"):
             raise ValueError("Unknown line at bnf input file")
 
     #then read nonterminalsymbols
-    while len(nonterminalrulelist) > 0:
+    while nonterminalrulelist:
         linestodrop = []
         for myindex in range(len(nonterminalrulelist)):
             try:
@@ -128,14 +127,14 @@ def strlist_to_production_set(linelist, repository = None, start_symbol = "S"):
                 pass
             else:
                 linestodrop.append(myindex)
-        linestodrop.reverse()
-        if len(linestodrop) == 0:
+        if not linestodrop:
             raise Exception("No rule found: ")
+        linestodrop.reverse()
         for myindex in linestodrop:
             del nonterminalrulelist[myindex]
-    from pydsl.Grammar.BNF import BNFGrammar
     for terminal in terminalrulelist:
         rulelist.append(terminal)
+    from pydsl.Grammar.BNF import BNFGrammar
     return BNFGrammar(symboldict[start_symbol], rulelist, macrodict)
 
 

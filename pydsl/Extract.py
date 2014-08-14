@@ -23,7 +23,7 @@ import logging
 LOG = logging.getLogger(__name__)
 from pydsl.Check import checker_factory
 from pydsl.Lex import lexer_factory
-from pydsl.Alphabet import Alphabet, Encoding
+from pydsl.Alphabet import Alphabet
 from pydsl.Token import PositionToken, Token
 
 
@@ -50,10 +50,7 @@ def extract_alphabet(alphabet, inputdata, fixed_start = False):
     """
     if not inputdata:
         return []
-    if isinstance(alphabet, Encoding):
-        base_alphabet = None
-    else:
-        base_alphabet = alphabet.alphabet
+    base_alphabet = alphabet.alphabet
 
     if isinstance(inputdata[0], (Token, PositionToken)):
         inputdata = [x.content for x in inputdata]
