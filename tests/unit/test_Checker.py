@@ -74,24 +74,18 @@ class TestJsonSchemaChecker(unittest.TestCase):
         from pydsl.Grammar.Definition import JsonSchema
         from pydsl.Check import JsonSchemaChecker
         schema = {
-            "type" : "string",
-            "items" : {
-                "type" : ["string", "object"],
+                "type" : "object",
+                "required":["foo"],
                 "properties" : {
                     "foo" : {"enum" : [1, 3]},
-                    #"bar" : { #See https://github.com/Julian/jsonschema/issues/89
-                    #    "type" : "array",
-                    #    "properties" : {
-                    #        "bar" : {"required" : True},
-                    #        "baz" : {"minItems" : 2},
-                    #    }
-                    #}
                 }
-            }
         }
         grammardef = JsonSchema(schema)
         checker = JsonSchemaChecker(grammardef)
-        self.assertTrue(checker.check("a"))
+        self.assertFalse(checker.check("a"))
+        self.assertTrue(checker.check({"foo":1}))
+        self.assertFalse(checker.check({"foo":2}))
+        self.assertTrue(checker.check({"foo":3}))
         self.assertFalse(checker.check([1, {"foo" : 2, "bar" : {"baz" : [1]}}, "quux"]))
 
 
