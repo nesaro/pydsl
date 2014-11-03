@@ -2,6 +2,6 @@ def function(input):
     return input
 
 
-iclass = "PythonTransformer"
+iclass = "PythonTranslator"
 inputdic = {"input":"cstring"}
 outputdic = {"output":"cstring"}
