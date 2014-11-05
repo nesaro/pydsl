@@ -32,12 +32,14 @@ def check(definition, data):
 def checker_factory(grammar):
     from pydsl.Grammar.BNF import BNFGrammar
     from pydsl.Grammar.PEG import Sequence, Choice, OneOrMore, ZeroOrMore
-    from pydsl.Grammar.Definition import PLYGrammar, RegularExpression, String, PythonGrammar
+    from pydsl.Grammar.Definition import PLYGrammar, RegularExpression, String, PythonGrammar, JsonSchema
     from pydsl.Grammar.Parsley import ParsleyGrammar
     if isinstance(grammar, str) and not isinstance(grammar, String):
         raise TypeError(grammar)
     if isinstance(grammar, BNFGrammar):
         return BNFChecker(grammar)
+    elif isinstance(grammar, JsonSchema):
+        return JsonSchemaChecker(grammar)
     elif isinstance(grammar, RegularExpression):
         return RegularExpressionChecker(grammar)
     elif isinstance(grammar, PythonGrammar) or isinstance(grammar, dict) and "matchFun" in grammar:
