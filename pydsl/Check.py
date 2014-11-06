@@ -186,11 +186,13 @@ class JsonSchemaChecker(Checker):
         Checker.__init__(self)
         self.gd = gd
 
-    def check(self, data):
+    def check(self, data, raise_exceptions = False):
         from jsonschema import validate, ValidationError
         try:
             validate(data, self.gd)
         except ValidationError:
+            if raise_exceptions:
+                raise
             return False
         return True
 

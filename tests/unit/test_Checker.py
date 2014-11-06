@@ -87,6 +87,7 @@ class TestJsonSchemaChecker(unittest.TestCase):
         self.assertFalse(checker.check({"foo":2}))
         self.assertTrue(checker.check({"foo":3}))
         self.assertFalse(checker.check([1, {"foo" : 2, "bar" : {"baz" : [1]}}, "quux"]))
+        self.assertRaises(Exception, checker.check, [1, {"foo" : 2, "bar" : {"baz" : [1]}}, "quux"], raise_exceptions=True)
 
 
 class TestChoiceChecker(unittest.TestCase):
