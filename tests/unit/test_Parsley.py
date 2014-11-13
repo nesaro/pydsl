@@ -39,7 +39,7 @@ class TestParsley(unittest.TestCase):
         
     def testCalculator(self):
         import parsley
-        G=load_python_file("pydsl/contrib/transformer/calculator.py")
+        G=load_python_file("pydsl/contrib/translator/calculator.py")
         T=translator_factory(G)
         self.assertEqual(T("1+1"),2)
         
