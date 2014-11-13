@@ -22,6 +22,7 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 from collections import Iterable
+from jsonschema import FormatChecker
 LOG = logging.getLogger(__name__)
 
 
@@ -181,15 +182,25 @@ class StringChecker(Checker):
             data = "".join([str(x) for x in data])
         return self.gd == str(data)
 
+def formatchecker_factory(**checkerdict):
+    """Converts a dictionary of strings:checkers into a formatchecker object"""
+    fc = FormatChecker()
+    for format_name, checker in checkerdict.items():
+        fc.checks(format_name)(checker)
+    return fc
+
+
 class JsonSchemaChecker(Checker):
-    def __init__(self, gd):
+    def __init__(self, gd, formatdict = None):
         Checker.__init__(self)
         self.gd = gd
+        formatdict = formatdict or {}
+        self.formatchecker = formatchecker_factory(**formatdict)
 
     def check(self, data, raise_exceptions = False):
         from jsonschema import validate, ValidationError
         try:
-            validate(data, self.gd)
+            validate(data, self.gd, format_checker = self.formatchecker)
         except ValidationError:
             if raise_exceptions:
                 raise
