@@ -28,7 +28,7 @@ class Alphabet(set):
         set.__init__(self, grammarlist)
         self.original = grammarlist
         for x in self:
-            from pydsl.Grammar.Definition import Grammar
+            from pydsl.grammar.definition import Grammar
             if not isinstance(x, Grammar):
                 raise TypeError("Expected Grammar, Got %s:%s" % (x.__class__.__name__,x))
 

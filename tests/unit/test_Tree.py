@@ -23,7 +23,7 @@ import unittest
 
 class TestTrees(unittest.TestCase):
     def setUp(self):
-        from pydsl.Tree import ParseTree
+        from pydsl.tree import ParseTree
         a = ParseTree(0,6, None, "abcdef")
         self.firstleaf1 = ParseTree(0,1, None, "a")
         a.append(self.firstleaf1)
@@ -53,7 +53,7 @@ class TestTrees(unittest.TestCase):
 
 class TestPositionResultList(unittest.TestCase):
     def testMain(self):
-        from pydsl.Tree import PositionResultList
+        from pydsl.tree import PositionResultList
         seq = PositionResultList()
         seq.append(0,1,".")
         seq.append(1,2,".")

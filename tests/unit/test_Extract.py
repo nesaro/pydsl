@@ -20,11 +20,11 @@ __copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
-from pydsl.Extract import extract, extract_alphabet, match, search
-from pydsl.Grammar import RegularExpression, String
-from pydsl.Grammar.PEG import Choice
-from pydsl.Encoding import ascii_encoding
-from pydsl.Token import PositionToken, Token
+from pydsl.extract import extract, extract_alphabet, match, search
+from pydsl.grammar import RegularExpression, String
+from pydsl.grammar.PEG import Choice
+from pydsl.encoding import ascii_encoding
+from pydsl.token import PositionToken, Token
 import sys
 
 

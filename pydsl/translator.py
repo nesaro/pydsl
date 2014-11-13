@@ -60,8 +60,8 @@ class ParsleyTranslator(object):
 
 
 def translator_factory(function):
-    from pydsl.Grammar.Definition import PLYGrammar
-    from pydsl.Grammar.Parsley import ParsleyGrammar
+    from pydsl.grammar.definition import PLYGrammar
+    from pydsl.grammar.parsley import ParsleyGrammar
     if isinstance(function, PLYGrammar):
         return PLYTranslator(function)
     if isinstance(function, ParsleyGrammar):

@@ -16,7 +16,7 @@
 # along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from pydsl.Grammar.Parsley import ParsleyGrammar
+from pydsl.grammar.parsley import ParsleyGrammar
 
 __author__ = "Ptolom"
 __copyright__ = "Copyright 2014, Ptolom"

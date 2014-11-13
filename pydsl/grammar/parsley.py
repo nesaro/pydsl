@@ -15,8 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
-from pydsl.Grammar.Definition import Grammar
-from pydsl.Check import checker_factory
+from pydsl.grammar.definition import Grammar
+from pydsl.check import checker_factory
 
 __author__ = "Ptolom"
 __copyright__ = "Copyright 2014, Ptolom"
