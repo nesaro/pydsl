@@ -19,11 +19,14 @@
 
 from pydsl.Grammar.Symbol import Symbol, TerminalSymbol, NullSymbol, EndSymbol
 from pydsl.Grammar.Definition import Grammar
+from pydsl.Grammar.PEG import Choice
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
+def list_eq(list1, list2):
+    return len(list1) == len(list2) and all(list1[x] == list2[x] for x in range(len(list1)))
 
 class Production(object):
 
@@ -37,7 +40,7 @@ class Production(object):
 
     def __str__(self):
         """Pretty print"""
-        leftstr = " ".join([x.name for x in self.leftside])
+        leftstr = " ".join([x for x in self.leftside])
         rightstr = " ".join([str(x) for x in self.rightside])
         return leftstr + "::=" + rightstr
 
@@ -47,12 +50,10 @@ class Production(object):
                 return False
             if len(self.rightside) != len(other.rightside):
                 return False
-            for index in range(len(self.leftside)):
-                if self.leftside[index] != other.leftside[index]:
-                    return False
-            for index in range(len(self.rightside)):
-                if self.rightside[index] != other.rightside[index]:
-                    return False
+            if not list_eq(self.leftside, other.leftside):
+                return False
+            if not list_eq(self.rightside, other.rightside):
+                return False
         except AttributeError:
             return False
         return True
@@ -71,17 +72,15 @@ class BNFGrammar(Grammar):
             if fulllist.count(rule) > 1:
                 raise ValueError("Duplicated rule: " + str(rule))
         self.fulllist = tuple(fulllist)
-        if not options:
-            options = {}
-        self.options = options
+        self.options = options or {}
 
     def __hash__(self):
         return hash(self.fulllist)
 
     @property
     def alphabet(self):
-        from pydsl.Alphabet import GrammarCollection
-        return GrammarCollection([x.gd for x in self.terminal_symbols])
+        from pydsl.Alphabet import Alphabet
+        return Alphabet([x.gd for x in self.terminal_symbols])
 
     @property
     def productions(self):
@@ -107,7 +106,7 @@ class BNFGrammar(Grammar):
         produced by the input symbol
         """
         if isinstance(symbol, (TerminalSymbol, NullSymbol)):
-            return [symbol.gd]
+            return symbol.gd
         result = []
         for production in self.productions:
             if production.leftside[0] != symbol:
@@ -116,12 +115,18 @@ class BNFGrammar(Grammar):
                 if right_symbol == symbol: #Avoids infinite recursion
                     break
                 current_symbol_first = self.first_lookup(right_symbol, size)
-                result += current_symbol_first
-                if NullSymbol not in current_symbol_first:
+                import collections
+                from pydsl.Grammar.Definition import String
+                if isinstance(current_symbol_first, collections.Iterable) and not isinstance(current_symbol_first, String):
+                    result += current_symbol_first
+                else:
+                    result.append(current_symbol_first)
+                if isinstance(current_symbol_first, String) or \
+                        not isinstance(current_symbol_first, collections.Iterable) or \
+                        (NullSymbol not in current_symbol_first):
                     break # This element doesn't have Null in its first set so there is no need to continue
         if not result:
             raise KeyError("Symbol doesn't exist in this grammar")
-        from pydsl.Grammar.PEG import Choice
         return Choice(result)
 
     def next_lookup(self, symbol):
@@ -135,24 +140,19 @@ class BNFGrammar(Grammar):
                 while nextindex < len(production.rightside):
                     nextsymbol = production.rightside[nextindex]
                     firstlist = self.first_lookup(nextsymbol)
-                    cleanfirstlist = [x for x in firstlist if x != NullSymbol()]
+                    cleanfirstlist = Choice([x for x in firstlist if x != NullSymbol()])
                     result.append(cleanfirstlist)
                     if NullSymbol() not in firstlist:
                         break
                 else:
                     result += self.next_lookup(production.leftside[0]) #reached the end of the rightside
-
         return result
 
     def __eq__(self, other):
-        if not isinstance(other, BNFGrammar):
+        try:
+            return self._initialsymbol == other.initialsymbol and list_eq(self.productions, other.productions)
+        except AttributeError:
             return False
-        if self._initialsymbol != other.initialsymbol:
-            return False
-        for index in range(len(self.productions)):
-            if self.productions[index] != other.productions[index]:
-                return False
-        return True
 
     @property
     def initialsymbol(self):
@@ -167,12 +167,7 @@ class BNFGrammar(Grammar):
         raise IndexError
 
     def getProductionsBySide(self, symbol):
-        result = []
-        for rule in self.productions:
-            if len(rule.leftside) != 1:
-                continue
-            if rule.leftside[0] == symbol:
-                result.append(rule)
+        result = [rule for rule in self.productions if len(rule.leftside) == 1 and rule.leftside[0] == symbol]
         if not result:
             raise IndexError("Symbol: %s" % str(symbol))
         return result

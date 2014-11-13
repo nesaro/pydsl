@@ -4,4 +4,4 @@ nose
 pyparsing
 git+https://github.com/nltk/nltk.git
 networkx
-parsley
+git+https://github.com/python-parsley/parsley.git

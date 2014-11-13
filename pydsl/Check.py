@@ -22,6 +22,7 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 from collections import Iterable
+from jsonschema import FormatChecker
 LOG = logging.getLogger(__name__)
 
 
@@ -32,12 +33,14 @@ def check(definition, data):
 def checker_factory(grammar):
     from pydsl.Grammar.BNF import BNFGrammar
     from pydsl.Grammar.PEG import Sequence, Choice, OneOrMore, ZeroOrMore
-    from pydsl.Grammar.Definition import PLYGrammar, RegularExpression, String, PythonGrammar
-    from pydsl.Alphabet import Encoding
+    from pydsl.Grammar.Definition import PLYGrammar, RegularExpression, String, PythonGrammar, JsonSchema
     from pydsl.Grammar.Parsley import ParsleyGrammar
-    from collections import Iterable
+    if isinstance(grammar, str) and not isinstance(grammar, String):
+        raise TypeError(grammar)
     if isinstance(grammar, BNFGrammar):
         return BNFChecker(grammar)
+    elif isinstance(grammar, JsonSchema):
+        return JsonSchemaChecker(grammar)
     elif isinstance(grammar, RegularExpression):
         return RegularExpressionChecker(grammar)
     elif isinstance(grammar, PythonGrammar) or isinstance(grammar, dict) and "matchFun" in grammar:
@@ -50,8 +53,6 @@ def checker_factory(grammar):
         return ParsleyChecker(grammar)
     elif isinstance(grammar, String):
         return StringChecker(grammar)
-    elif isinstance(grammar, Encoding):
-        return EncodingChecker(grammar)
     elif isinstance(grammar, Sequence):
         return SequenceChecker(grammar)
     elif isinstance(grammar, OneOrMore):
@@ -75,6 +76,16 @@ class Checker(object):
     def check(self, value):# -> bool:
         raise NotImplementedError
 
+    def _normalize_input(self, data):
+        result = []
+        for x in data:
+            from pydsl.Token import Token, PositionToken
+            if isinstance(x, (Token, PositionToken)):
+                result.append(x.content)
+            else:
+                result.append(x)
+        return result
+
 class RegularExpressionChecker(Checker):
     def __init__(self, regexp, flags = ""):
         Checker.__init__(self)
@@ -96,9 +107,7 @@ class RegularExpressionChecker(Checker):
             data = str(data)
         except UnicodeDecodeError:
             return False
-        if not data:
-            return False
-        return bool(self.__regexp.match(data))
+        return bool(data and self.__regexp.match(data))
 
 
 class BNFChecker(Checker):
@@ -126,15 +135,15 @@ class BNFChecker(Checker):
 class ParsleyChecker(Checker):
     def __init__(self, grammar):
         Checker.__init__(self)
-        self.g=grammar
+        self.gd=grammar
+
     def check(self, data):
         from parsley import ParseError
         try:
-            self.g.match(data)
+            getattr(self.gd.grammar(data), self.gd.root_rule)() #call grammar(data).root_rule()
             return True
         except ParseError:
             return False
-
 
 class PythonChecker(Checker):
     def __init__(self, module):
@@ -142,10 +151,7 @@ class PythonChecker(Checker):
         self._matchFun = module["matchFun"]
 
     def check(self, data):
-        try:
-            return self._matchFun(data)
-        except UnicodeDecodeError:
-            return False
+        return self._matchFun(data)
 
 
 class PLYChecker(Checker):
@@ -176,16 +182,28 @@ class StringChecker(Checker):
             data = "".join([str(x) for x in data])
         return self.gd == str(data)
 
+def formatchecker_factory(**checkerdict):
+    """Converts a dictionary of strings:checkers into a formatchecker object"""
+    fc = FormatChecker()
+    for format_name, checker in checkerdict.items():
+        fc.checks(format_name)(checker)
+    return fc
+
+
 class JsonSchemaChecker(Checker):
-    def __init__(self, gd):
+    def __init__(self, gd, formatdict = None):
         Checker.__init__(self)
         self.gd = gd
+        formatdict = formatdict or {}
+        self.formatchecker = formatchecker_factory(**formatdict)
 
-    def check(self, data):
+    def check(self, data, raise_exceptions = False):
         from jsonschema import validate, ValidationError
         try:
-            validate(data, self.gd)
+            validate(data, self.gd, format_checker = self.formatchecker)
         except ValidationError:
+            if raise_exceptions:
+                raise
             return False
         return True
 
@@ -196,43 +214,23 @@ class ChoiceChecker(Checker):
         self.checkerinstances = [checker_factory(x) for x in self.gd]
 
     def check(self, data):
+        data = self._normalize_input(data)
         return any((x.check(data) for x in self.checkerinstances))
-
-class EncodingChecker(Checker):
-    def __init__(self, gd):
-        Checker.__init__(self)
-        self.gd = gd
-
-    def check(self,data):
-        encoding = self.gd.encoding
-        if isinstance(data, Iterable):
-            data = "".join([str(x) for x in data])
-        if isinstance(data, str):
-            try:
-                data.encode(encoding)
-            except UnicodeEncodeError:
-                return False
-            return True
-        if isinstance(data, bytes):
-            try:
-                data.decode(encoding)
-            except UnicodeDecodeError:
-                return False
-            return True
-        return False
 
 class SequenceChecker(Checker):
     def __init__(self, sequence):
         Checker.__init__(self)
+        from pydsl.Grammar import Grammar
+        for x in sequence:
+            if not isinstance(x, Grammar):
+                raise TypeError("Expected grammar, got %s" % (x.__class__.__name__,))
         self.sequence = sequence
 
     def check(self,data):
         if len(self.sequence) != len(data):
             return False
-        for index in range(len(self.sequence)):
-            if not check(self.sequence[index], data[index]):
-                return False
-        return True
+        data = self._normalize_input(data)
+        return all(check(self.sequence[x], data[x]) for x in range(len(self.sequence)))
 
 
 class OneOrMoreChecker(Checker):
@@ -241,12 +239,7 @@ class OneOrMoreChecker(Checker):
         self.element = element
 
     def check(self, data):
-        if not data:
-            return False
-        for element in data:
-            if not check(self.element.element, element):
-                return False
-        return True
+        return bool(data) and all(check(self.element.element, x) for x in data)
 
 class ZeroOrMoreChecker(Checker):
     def __init__(self, element):
@@ -254,9 +247,4 @@ class ZeroOrMoreChecker(Checker):
         self.element = element
 
     def check(self, data):
-        if not data:
-            return True
-        for element in data:
-            if not check(self.element.element, element):
-                return False
-        return True
+        return all(check(self.element.element, x) for x in data)

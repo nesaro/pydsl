@@ -25,10 +25,8 @@ __author__ = "Ptolom"
 __copyright__ = "Copyright 2014, Ptolom"
 __email__ = "ptolom@hexifact.co.uk"
 
-@unittest.skipIf(sys.version_info > (3,0), "parsley not available for python 3")
 class TestParsley(unittest.TestCase):
-    """Loading a bnf instance from a .bnf file"""
-    def testFileLoader(self):
+    def testDate(self):
         import parsley
         from pydsl.File.Parsley import load_parsley_grammar_file
         repository = {'DayOfMonth':load_python_file('pydsl/contrib/grammar/DayOfMonth.py')} #DayOfMonth loaded as checker
@@ -38,6 +36,12 @@ class TestParsley(unittest.TestCase):
         self.assertTrue(C("2/4/12"))
         self.assertEqual(T("2/4/12"),(2,4,12))
         self.assertRaises(parsley.ParseError,T, "40/4/12")
+        
+    def testCalculator(self):
+        import parsley
+        G=load_python_file("pydsl/contrib/translator/calculator.py")
+        T=translator_factory(G)
+        self.assertEqual(T("1+1"),2)
         
 
 if __name__ == '__main__':

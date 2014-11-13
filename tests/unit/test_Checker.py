@@ -16,11 +16,13 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2013, Nestor Arocha"
+__copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
+from pydsl.Check import checker_factory
 from pydsl.Grammar.Definition import String
+from pydsl.Grammar.PEG import Sequence
 import sys
 
 class TestBNFChecker(unittest.TestCase):
@@ -73,39 +75,30 @@ class TestJsonSchemaChecker(unittest.TestCase):
         from pydsl.Grammar.Definition import JsonSchema
         from pydsl.Check import JsonSchemaChecker
         schema = {
-            "type" : "string",
-            "items" : {
-                "type" : ["string", "object"],
+                "type" : "object",
+                "required":["foo"],
                 "properties" : {
                     "foo" : {"enum" : [1, 3]},
-                    #"bar" : { #See https://github.com/Julian/jsonschema/issues/89
-                    #    "type" : "array",
-                    #    "properties" : {
-                    #        "bar" : {"required" : True},
-                    #        "baz" : {"minItems" : 2},
-                    #    }
-                    #}
+                    "bar" : {"format": "number_three"} #Ignored by jsonschema
                 }
-            }
         }
         grammardef = JsonSchema(schema)
         checker = JsonSchemaChecker(grammardef)
-        self.assertTrue(checker.check("a"))
+        self.assertFalse(checker.check("a"))
+        self.assertTrue(checker.check({"foo":1}))
+        self.assertFalse(checker.check({"foo":2}))
+        self.assertTrue(checker.check({"foo":3}))
         self.assertFalse(checker.check([1, {"foo" : 2, "bar" : {"baz" : [1]}}, "quux"]))
+        self.assertRaises(Exception, checker.check, [1, {"foo" : 2, "bar" : {"baz" : [1]}}, "quux"], raise_exceptions=True)
+        number_three = checker_factory(String("3"))
+        fc = {"number_three":number_three}
+        grammardef = JsonSchema(schema)
+        checker = JsonSchemaChecker(grammardef, fc) # Adds a format checker
+        self.assertFalse(checker.check({"foo" : 1, "bar" : "123456"}))
+        self.assertTrue(checker.check({"foo" : 1, "bar" : "3"}))
 
 
-class TestEncodingChecker(unittest.TestCase):
-    @unittest.skipIf(sys.version_info < (3,0), "Full encoding support not available for python 2")
-    def testCheck(self):
-        from pydsl.Check import EncodingChecker
-        from pydsl.Alphabet import Encoding
-        a = Encoding('ascii')
-        checker = EncodingChecker(a)
-        self.assertTrue(checker.check('1234'))
-        self.assertTrue(checker.check([x for x in '1234']))
-        self.assertTrue(checker.check('asdf'))
-        self.assertFalse(checker.check('£'))
-        #self.assertFalse(checker.check('')) #FIXME
+
 
 
 class TestChoiceChecker(unittest.TestCase):
@@ -124,15 +117,10 @@ class TestStringChecker(unittest.TestCase):
     def testCheck(self):
         """Test checker instantiation and call"""
         from pydsl.Check import StringChecker
-        grammarchecker = StringChecker(String("string123"))
-        self.assertTrue(grammarchecker("string123"))
-        self.assertTrue(grammarchecker(["string123"]))
-        self.assertTrue(grammarchecker(("string123",)))
-        list_version = ["s","t","r","i","n","g","1","2","3"]
-        self.assertTrue(grammarchecker(("s","t","r","i","n","g","1","2","3",)))
-        self.assertTrue(grammarchecker(list_version))
-        self.assertTrue(grammarchecker([String(x) for x in list_version]))
-        self.assertTrue(grammarchecker([x for x in list_version]))
+        grammarchecker = StringChecker(String("3"))
+        self.assertTrue(grammarchecker("3"))
+        self.assertTrue(grammarchecker(["3"]))
+        self.assertTrue(grammarchecker(("3",)))
         self.assertFalse(grammarchecker(''))
 
 class TestSequenceChecker(unittest.TestCase):

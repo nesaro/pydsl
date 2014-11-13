@@ -1,6 +1,5 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-
 #This file is part of pydsl.
 #
 #pydsl is free software: you can redistribute it and/or modify
@@ -16,24 +15,23 @@
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
-
-""" guess which types are the input data.  """
-
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
-from pydsl.Check import check
 
-class Guesser(object):
-    """Returns every grammar and alphabet definition that matches the input"""
-    def __init__(self, grammarlist):
-        self.grammarlist = grammarlist
+def lcs(list1, list2):
+    import difflib
+    differences = difflib.SequenceMatcher(None, list1, list2)
+    return [x for x in differences.get_matching_blocks()]
 
-    def __call__(self, data):
-        return [x for x in self.grammarlist if check(x,data)]
+def diff_factory(definition):
+    from pydsl.Alphabet import Alphabet
+    if isinstance(definition, Alphabet):
+        return lcs
+    raise ValueError
 
-def guess(grammarlist, data):
-    return Guesser(grammarlist)(data)
+def diff(definition, element1, element2):
+    return diff_factory(definition)(element1, element2)

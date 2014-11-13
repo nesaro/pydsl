@@ -24,7 +24,7 @@ __email__ = "nesaro@gmail.com"
 from pydsl.contrib.bnfgrammar import *
 from pydsl.Parser.Backtracing import BacktracingErrorRecursiveDescentParser
 from pydsl.Parser.LR0 import LR0Parser
-from pydsl.Lex import EncodingLexer
+from pydsl.Lex import DummyLexer
 from pydsl.Parser.LL import LL1RecursiveDescentParser
 import unittest
 
@@ -72,8 +72,8 @@ class TestBacktracingRecursiveDescentParser(unittest.TestCase):
     def testRecursiveDescentParserNullBad(self):
         descentparser = BacktracingErrorRecursiveDescentParser(productionset2)
         from pydsl.Lex import lex
-        from pydsl.Alphabet import Encoding
-        ascii_encoding = Encoding('ascii')
+        from pydsl.Encoding import ascii_encoding
+        ascii_encoding = ascii_encoding
         lexed_string4 = [x[0] for x in lex(productionset2.alphabet, ascii_encoding, string4)]
         result = descentparser(lexed_string4)
         self.assertFalse(result)
@@ -105,7 +105,7 @@ class TestLR0Parser(unittest.TestCase):
 
     def testLR0ParserStore(self):
         parser = LR0Parser(productionset0)
-        tokelist = [x.content for x in EncodingLexer('utf8')(p0good)]
+        tokelist = [x.content for x in DummyLexer()(p0good)]
         result = parser(tokelist)
         self.assertTrue(result)
 
@@ -175,11 +175,11 @@ class TestParse(unittest.TestCase):
     def testverb(self):
         """Tests the lr0 table generation"""
         from pydsl.Parser.Parser import parse, parser_factory
-        tokelist = [x.content for x in EncodingLexer('utf8')(p0good)]
+        tokelist = [x.content for x in DummyLexer()(p0good)]
         self.assertTrue(parse(productionset0, tokelist , "default"))
         self.assertTrue(parse(productionset0, tokelist , "lr0"))
         self.assertTrue(parse(productionset0, tokelist , "ll1"))
-        tokelist = [x.content for x in EncodingLexer('utf8')(p0bad)]
+        tokelist = [x.content for x in DummyLexer()(p0bad)]
         self.assertFalse(parse(productionset0, tokelist , "default"))
         self.assertFalse(parse(productionset0, tokelist , "lr0"))
         self.assertFalse(parse(productionset0, tokelist , "ll1"))

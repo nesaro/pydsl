@@ -15,7 +15,7 @@
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Python Transformers"""
+"""Python Translators"""
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2014, Nestor Arocha"
@@ -53,9 +53,10 @@ class PyParsingTranslator(object):
 
 class ParsleyTranslator(object):
     def __init__(self, grammar):
-        self.g=grammar
+        self.gd=grammar
+
     def __call__(self, input):
-        return self.g.match(input)
+        return getattr(self.gd.grammar(input), self.gd.root_rule)() #call grammar(data).root_rule()
 
 
 def translator_factory(function):
