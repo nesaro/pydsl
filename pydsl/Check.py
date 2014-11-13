@@ -22,6 +22,7 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 from collections import Iterable
+from jsonschema import FormatChecker
 LOG = logging.getLogger(__name__)
 
 
@@ -32,12 +33,14 @@ def check(definition, data):
 def checker_factory(grammar):
     from pydsl.Grammar.BNF import BNFGrammar
     from pydsl.Grammar.PEG import Sequence, Choice, OneOrMore, ZeroOrMore
-    from pydsl.Grammar.Definition import PLYGrammar, RegularExpression, String, PythonGrammar
+    from pydsl.Grammar.Definition import PLYGrammar, RegularExpression, String, PythonGrammar, JsonSchema
     from pydsl.Grammar.Parsley import ParsleyGrammar
     if isinstance(grammar, str) and not isinstance(grammar, String):
         raise TypeError(grammar)
     if isinstance(grammar, BNFGrammar):
         return BNFChecker(grammar)
+    elif isinstance(grammar, JsonSchema):
+        return JsonSchemaChecker(grammar)
     elif isinstance(grammar, RegularExpression):
         return RegularExpressionChecker(grammar)
     elif isinstance(grammar, PythonGrammar) or isinstance(grammar, dict) and "matchFun" in grammar:
@@ -179,16 +182,28 @@ class StringChecker(Checker):
             data = "".join([str(x) for x in data])
         return self.gd == str(data)
 
+def formatchecker_factory(**checkerdict):
+    """Converts a dictionary of strings:checkers into a formatchecker object"""
+    fc = FormatChecker()
+    for format_name, checker in checkerdict.items():
+        fc.checks(format_name)(checker)
+    return fc
+
+
 class JsonSchemaChecker(Checker):
-    def __init__(self, gd):
+    def __init__(self, gd, formatdict = None):
         Checker.__init__(self)
         self.gd = gd
+        formatdict = formatdict or {}
+        self.formatchecker = formatchecker_factory(**formatdict)
 
-    def check(self, data):
+    def check(self, data, raise_exceptions = False):
         from jsonschema import validate, ValidationError
         try:
-            validate(data, self.gd)
+            validate(data, self.gd, format_checker = self.formatchecker)
         except ValidationError:
+            if raise_exceptions:
+                raise
             return False
         return True
 

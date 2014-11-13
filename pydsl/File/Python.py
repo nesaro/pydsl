@@ -55,7 +55,7 @@ def load_python_file(moduleobject):
     elif iclass in ["PythonGrammar"]:
         from pydsl.Grammar.Definition import PythonGrammar
         return PythonGrammar(resultdic)
-    elif iclass == "PythonTransformer":
+    elif iclass == "PythonTranslator":
         return resultdic
     elif iclass == "parsley":
         from pydsl.Grammar.Parsley import ParsleyGrammar
