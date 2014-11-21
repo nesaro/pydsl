@@ -21,10 +21,10 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
-from pydsl.Check import checker_factory
-from pydsl.Lex import lexer_factory
-from pydsl.Alphabet import Alphabet
-from pydsl.Token import PositionToken, Token
+from pydsl.check import checker_factory
+from pydsl.lex import lexer_factory
+from pydsl.alphabet import Alphabet
+from pydsl.token import PositionToken, Token
 
 
 def filter_subsets(lst):

@@ -21,8 +21,8 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
-from pydsl.Grammar.Definition import Grammar, String
-from pydsl.Check import check
+from pydsl.grammar.definition import Grammar, String
+from pydsl.check import check
 
 class Symbol(object):
     pass

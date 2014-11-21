@@ -20,11 +20,11 @@ __copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
-from pydsl.Alphabet import Alphabet
-from pydsl.Grammar import String
-from pydsl.Grammar.Parsley import ParsleyGrammar
-from pydsl.Grammar.PEG import OneOrMore
-from pydsl.Translator import ParsleyTranslator
+from pydsl.alphabet import Alphabet
+from pydsl.grammar import String
+from pydsl.grammar.parsley import ParsleyGrammar
+from pydsl.grammar.PEG import OneOrMore
+from pydsl.translator import ParsleyTranslator
 
 
 class TestBinaryAlphabet(unittest.TestCase):

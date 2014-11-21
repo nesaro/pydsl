@@ -31,8 +31,8 @@ See also http://en.wikipedia.org/wiki/Parsing_expression_grammar
 
 """
 
-from .Definition import Grammar, String
-from pydsl.Alphabet import Alphabet
+from .definition import Grammar, String
+from pydsl.alphabet import Alphabet
 
 class ZeroOrMore(Grammar):
     def __init__(self, element):

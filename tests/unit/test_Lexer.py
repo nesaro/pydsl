@@ -20,12 +20,12 @@ __copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
-from pydsl.Lex import DummyLexer, lexer_factory
+from pydsl.lex import DummyLexer, lexer_factory
 from pydsl.contrib.bnfgrammar import *
-from pydsl.Grammar.Definition import String
-from pydsl.Alphabet import Alphabet
-from pydsl.Grammar.PEG import Sequence, Choice
-from pydsl.File.BNF import load_bnf_file
+from pydsl.grammar.definition import String
+from pydsl.alphabet import Alphabet
+from pydsl.grammar.PEG import Sequence, Choice
+from pydsl.file.BNF import load_bnf_file
 
 
 class TestEncodingLexer(unittest.TestCase):
@@ -93,7 +93,7 @@ class TestChoiceLexer(unittest.TestCase):
 
     def testSimpleChoiceLexer(self):
         a1 = Choice([String('a'), String('b'), String('c')])
-        from pydsl.Lex import ChoiceLexer
+        from pydsl.lex import ChoiceLexer
         lexer = ChoiceLexer(a1)
         self.assertListEqual(lexer("abc"), [("a", String('a'))])
 

@@ -31,10 +31,10 @@ def check(definition, data):
     return checker(data)
 
 def checker_factory(grammar):
-    from pydsl.Grammar.BNF import BNFGrammar
-    from pydsl.Grammar.PEG import Sequence, Choice, OneOrMore, ZeroOrMore
-    from pydsl.Grammar.Definition import PLYGrammar, RegularExpression, String, PythonGrammar, JsonSchema
-    from pydsl.Grammar.Parsley import ParsleyGrammar
+    from pydsl.grammar.BNF import BNFGrammar
+    from pydsl.grammar.PEG import Sequence, Choice, OneOrMore, ZeroOrMore
+    from pydsl.grammar.definition import PLYGrammar, RegularExpression, String, PythonGrammar, JsonSchema
+    from pydsl.grammar.parsley import ParsleyGrammar
     if isinstance(grammar, str) and not isinstance(grammar, String):
         raise TypeError(grammar)
     if isinstance(grammar, BNFGrammar):
@@ -79,7 +79,7 @@ class Checker(object):
     def _normalize_input(self, data):
         result = []
         for x in data:
-            from pydsl.Token import Token, PositionToken
+            from pydsl.token import Token, PositionToken
             if isinstance(x, (Token, PositionToken)):
                 result.append(x.content)
             else:
@@ -117,7 +117,7 @@ class BNFChecker(Checker):
         self.gd = bnf
         parser = bnf.options.get("parser",parser)
         if parser in ("descent", "auto", "default", None):
-            from pydsl.Parser.Backtracing import BacktracingErrorRecursiveDescentParser
+            from pydsl.parser.backtracing import BacktracingErrorRecursiveDescentParser
             self.__parser = BacktracingErrorRecursiveDescentParser(bnf)
         else:
             raise ValueError("Unknown parser : " + parser)
@@ -165,7 +165,7 @@ class PLYChecker(Checker):
         from ply import yacc, lex
         lexer = lex.lex(self.module)
         parser = yacc.yacc(module = self.module)
-        from pydsl.Exceptions import ParseError
+        from pydsl.exceptions import ParseError
         try:
             parser.parse(data, lexer = lexer)
         except ParseError:
@@ -220,7 +220,7 @@ class ChoiceChecker(Checker):
 class SequenceChecker(Checker):
     def __init__(self, sequence):
         Checker.__init__(self)
-        from pydsl.Grammar import Grammar
+        from pydsl.grammar import Grammar
         for x in sequence:
             if not isinstance(x, Grammar):
                 raise TypeError("Expected grammar, got %s" % (x.__class__.__name__,))

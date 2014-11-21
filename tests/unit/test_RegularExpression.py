@@ -21,7 +21,7 @@ __copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
-from pydsl.Grammar.Definition import RegularExpression
+from pydsl.grammar.definition import RegularExpression
 import re
 
 class TestRegularExpression(unittest.TestCase):
@@ -38,7 +38,7 @@ class TestRegularExpression(unittest.TestCase):
     def testFirst(self):
         re1 = RegularExpression(re.compile('^a$'))
         self.assertEqual(len(re1.first()),1)
-        from pydsl.Grammar.Definition import String
+        from pydsl.grammar.definition import String
         self.assertEqual(re1.first()[0],String('a'))
 
     def testMin(self):
@@ -50,7 +50,7 @@ class TestRegularExpression(unittest.TestCase):
         re1.maxsize
 
     def testAlphabet(self):
-        from pydsl.Encoding import ascii_encoding
+        from pydsl.encoding import ascii_encoding
         re1 = RegularExpression(re.compile('^a$'))
         self.assertEqual(re1.alphabet, ascii_encoding)
 

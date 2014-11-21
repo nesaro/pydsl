@@ -24,16 +24,16 @@ __copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
-from pydsl.Grammar.Definition import String
-from pydsl.Encoding import ascii_encoding
-from pydsl.Alphabet import Alphabet
+from pydsl.grammar.definition import String
+from pydsl.encoding import ascii_encoding
+from pydsl.alphabet import Alphabet
 
 
 @unittest.skip
 class TestGrammarDefinitionPLY(unittest.TestCase):
     def setUp(self):
         import plye
-        from pydsl.Grammar.Definition import PLYGrammar
+        from pydsl.grammar.definition import PLYGrammar
         self.grammardef = PLYGrammar(plye)
 
     @unittest.skip
@@ -57,7 +57,7 @@ class TestGrammarDefinitionPLY(unittest.TestCase):
 
 class TestGrammarDefinitionJson(unittest.TestCase):
     def setUp(self):
-        from pydsl.Grammar.Definition import JsonSchema
+        from pydsl.grammar.definition import JsonSchema
         self.grammardef = JsonSchema({})
 
     def testEnumerate(self):
