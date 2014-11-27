@@ -70,8 +70,8 @@ class Checker(object):
     def __init__(self):
         pass
 
-    def __call__(self, value):
-        return self.check(value)
+    def __call__(self, *args, **kwargs):
+        return self.check(*args, **kwargs)
 
     def check(self, value):# -> bool:
         raise NotImplementedError
