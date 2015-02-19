@@ -26,9 +26,9 @@ from jsonschema import FormatChecker
 LOG = logging.getLogger(__name__)
 
 
-def check(definition, data):
+def check(definition, *args, **kwargs):
     checker = checker_factory(definition)
-    return checker(data)
+    return checker(*args, **kwargs)
 
 def checker_factory(grammar):
     from pydsl.grammar.BNF import BNFGrammar

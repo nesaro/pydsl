@@ -16,7 +16,7 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2013, Nestor Arocha"
+__copyright__ = "Copyright 2008-2015, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
@@ -29,6 +29,6 @@ class TestTranslate(unittest.TestCase):
         cstring = checker_factory(RegularExpression('.*'))
         def function(my_input):
             return my_input
-        pt = PythonTranslator({'my_input':cstring}, {'output':cstring}, function)
+        pt = PythonTranslator(function)
         self.assertEqual(translate(pt,{'my_input':"1234"}),"1234")
 

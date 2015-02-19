@@ -18,7 +18,7 @@
 """Python Translators"""
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2014, Nestor Arocha"
+__copyright__ = "Copyright 2008-2015, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
@@ -26,10 +26,8 @@ LOG = logging.getLogger(__name__)
 
 class PythonTranslator(object):
     """ Python function based translator """
-    def __init__(self, inputdic, outputdic, function):
+    def __init__(self, function):
         self._function = function
-        self.inputchanneldic = inputdic
-        self.outputchanneldic = outputdic
 
     def __call__(self, *args, **kwargs):
         return self._function(*args, **kwargs)
