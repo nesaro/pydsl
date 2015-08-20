@@ -17,7 +17,7 @@
 
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2014, Nestor Arocha"
+__copyright__ = "Copyright 2008-2015, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
@@ -26,9 +26,10 @@ from jsonschema import FormatChecker
 LOG = logging.getLogger(__name__)
 
 
-def check(definition, *args, **kwargs):
+def check(definition, data, *args, **kwargs):
+    """Checks if the input follows the definition"""
     checker = checker_factory(definition)
-    return checker(*args, **kwargs)
+    return checker(data, *args, **kwargs)
 
 def checker_factory(grammar):
     from pydsl.grammar.BNF import BNFGrammar
