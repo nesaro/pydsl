@@ -6,7 +6,7 @@ setup(name='pydsl',
       author_email='nesaro@gmail.com',
       url='https://github.com/nesaro/pydsl',
       packages = find_packages(exclude=['tests.*']),
-      install_requires=['ply'],
+      install_requires=['ply', 'jsonschema'],
       package_dir={'pydsl.contrib': 'pydsl/contrib'},
       package_data={'pydsl.contrib': ['grammar/*.re','grammar/*.bnf','grammar/*.parsley','dict/*.dict']},
       classifiers=[
