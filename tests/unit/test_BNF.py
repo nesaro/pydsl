@@ -41,12 +41,12 @@ class TestBNF(unittest.TestCase):
         self.assertEqual(self.grammardef.maxsize,2)
 
     def testFirstLookup(self):
-        from pydsl.Grammar.Symbol import NonTerminalSymbol, TerminalSymbol
-        from pydsl.Grammar.PEG import Choice
+        from pydsl.grammar.symbol import NonTerminalSymbol, TerminalSymbol
+        from pydsl.grammar.PEG import Choice
         self.assertEqual(self.grammardef.first_lookup(NonTerminalSymbol("exp")),Choice([String("S")]))
 
     def testNextLookup(self):
-        from pydsl.Grammar.Symbol import NonTerminalSymbol, EndSymbol
+        from pydsl.grammar.symbol import NonTerminalSymbol, EndSymbol
         self.grammardef.next_lookup(NonTerminalSymbol("exp"))[0]
         self.assertListEqual(self.grammardef.next_lookup(NonTerminalSymbol("exp")),[EndSymbol()])
 

@@ -14,21 +14,21 @@
 #
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
-from pydsl.Check import checker_factory
-from pydsl.Lex import lexer_factory
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
-from pydsl.Grammar import String
-from pydsl.Grammar.PEG import Sequence, Choice
-from pydsl.Alphabet import Alphabet
-from pydsl.Encoding import ascii_encoding
-from pydsl.Grammar import RegularExpression
-from pydsl.File.BNF import load_bnf_file
-from pydsl.File.Python import load_python_file
+from pydsl.check import checker_factory
+from pydsl.lex import lexer_factory
+from pydsl.grammar import String
+from pydsl.grammar.PEG import Sequence, Choice
+from pydsl.alphabet import Alphabet
+from pydsl.encoding import ascii_encoding
+from pydsl.grammar import RegularExpression
+from pydsl.file.BNF import load_bnf_file
+from pydsl.file.python import load_python_file
 import sys
 
 

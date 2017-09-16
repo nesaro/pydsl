@@ -49,7 +49,7 @@ class Grammar(object):
     def alphabet(self):
         """Returns the alphabet used by this grammar"""
         if self.__base_alphabet is None:
-            from pydsl.Encoding import ascii_encoding
+            from pydsl.encoding import ascii_encoding
             self.__base_alphabet = ascii_encoding
         return self.__base_alphabet
 
@@ -161,7 +161,7 @@ class PythonGrammar(Grammar, dict):
     def alphabet(self):
         if "alphabet" in self:
             return self['alphabet']
-        from pydsl.Encoding import ascii_encoding
+        from pydsl.encoding import ascii_encoding
         return ascii_encoding
 
 def grammar_factory(input_definition):

@@ -20,14 +20,14 @@ __copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
-from pydsl.Grammar import RegularExpression
+from pydsl.grammar import RegularExpression
+from pydsl.guess import Guesser
 
 class TestGuesser(unittest.TestCase):
     def testGuesser(self):
         cstring = RegularExpression('.*')
         g1234 = RegularExpression('1234')
         memorylist = [cstring, g1234 ]
-        from pydsl.Guess import Guesser
         guesser = Guesser(memorylist)
         self.assertListEqual(guesser('1234'), [cstring, g1234])
         self.assertListEqual(guesser([x for x in '1234']), [cstring, g1234])

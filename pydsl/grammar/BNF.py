@@ -17,9 +17,9 @@
 
 """Production rules"""
 
-from pydsl.Grammar.Symbol import Symbol, TerminalSymbol, NullSymbol, EndSymbol
-from pydsl.Grammar.Definition import Grammar
-from pydsl.Grammar.PEG import Choice
+from pydsl.grammar.symbol import Symbol, TerminalSymbol, NullSymbol, EndSymbol
+from pydsl.grammar.definition import Grammar
+from pydsl.grammar.PEG import Choice
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2014, Nestor Arocha"
@@ -79,7 +79,7 @@ class BNFGrammar(Grammar):
 
     @property
     def alphabet(self):
-        from pydsl.Alphabet import Alphabet
+        from pydsl.alphabet import Alphabet
         return Alphabet([x.gd for x in self.terminal_symbols])
 
     @property
@@ -110,7 +110,7 @@ class BNFGrammar(Grammar):
                     break
                 current_symbol_first = self.first_lookup(right_symbol, size)
                 import collections
-                from pydsl.Grammar.Definition import String
+                from pydsl.grammar.definition import String
                 if isinstance(current_symbol_first, collections.Iterable) and not isinstance(current_symbol_first, String):
                     result += current_symbol_first
                 else:

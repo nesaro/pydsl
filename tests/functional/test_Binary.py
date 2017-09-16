@@ -1,6 +1,5 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-
 #This file is part of pydsl.
 #
 #pydsl is free software: you can redistribute it and/or modify
@@ -16,24 +15,26 @@
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
-
-""" guess which types are the input data.  """
-
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
-import logging
-LOG = logging.getLogger(__name__)
-from pydsl.Check import check
+import unittest
+from pydsl.alphabet import Alphabet
+from pydsl.grammar import String
+from pydsl.grammar.parsley import ParsleyGrammar
+from pydsl.grammar.PEG import OneOrMore
+from pydsl.translator import ParsleyTranslator
 
-class Guesser(object):
-    """Returns every grammar and alphabet definition that matches the input"""
-    def __init__(self, grammarlist):
-        self.grammarlist = grammarlist
 
-    def __call__(self, data):
-        return [x for x in self.grammarlist if check(x,data)]
+class TestBinaryAlphabet(unittest.TestCase):
+    def test_binaryAlphabet(self):
+        binary_alphabet = Alphabet([String('0'), String('1')])
+        binary_number = OneOrMore(binary_alphabet)
+        parsley_grammar = ParsleyGrammar("""digit = anything:x ?(x in '01')
+number = <digit+>:ds -> int(ds)
+expr = number:left ( '+' number:right -> left + right 
+                   | -> left)""", "expr")
+        binary_addition = ParsleyTranslator(parsley_grammar)
+        self.assertEqual(binary_addition('01+10'), 11)
 
-def guess(grammarlist, data):
-    return Guesser(grammarlist)(data)

@@ -23,12 +23,12 @@ import unittest
 
 class TestDiff(unittest.TestCase):
     def testDiffSimple(self):
-        from pydsl.Alphabet import Alphabet
-        from pydsl.Grammar.Definition import String
+        from pydsl.alphabet import Alphabet
+        from pydsl.grammar.definition import String
         alphabet = Alphabet([String(x) for x in "abcde1"])
         elem1 = "abcde"
         elem2 = "abcd1"
-        from pydsl.Diff import diff
+        from pydsl.diff import diff
         self.assertEqual(diff(alphabet, elem1, elem2)[0].a, 0)
         self.assertEqual(diff(alphabet, elem1, elem2)[0].b, 0)
         self.assertEqual(diff(alphabet, elem1, elem2)[0].size, 4)

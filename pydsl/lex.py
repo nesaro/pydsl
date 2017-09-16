@@ -21,11 +21,12 @@ __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
-from pydsl.Grammar.PEG import Choice
-from pydsl.Alphabet import Alphabet
-from pydsl.Check import checker_factory
-from pydsl.Token import Token, PositionToken
-from pydsl.Tree import PositionResultList
+from pydsl.grammar.PEG import Choice
+from pydsl.alphabet import Alphabet
+from pydsl.check import checker_factory
+from pydsl.token import Token, PositionToken
+from pydsl.tree import PositionResultList
+from pydsl.encoding import ascii_encoding
 
 
 class DummyLexer(object):
@@ -57,7 +58,6 @@ class DummyLexer(object):
 def graph_from_alphabet(alphabet, base):
     """Creates a graph that connects the base with the target through alphabets
     If every target is connected to any inputs, create the independent paths"""
-    from pydsl.Alphabet import Alphabet
     if not isinstance(alphabet, Alphabet):
         raise TypeError(alphabet.__class__.__name__)
     if not isinstance(base, Alphabet):
@@ -97,7 +97,6 @@ def print_graph(result):
 class GeneralLexer(object):
     """Multi level lexer"""
     def __init__(self, alphabet, base):
-        from pydsl.Alphabet import Alphabet
         if not isinstance(alphabet, Alphabet):
             raise TypeError
         if not alphabet:
@@ -109,13 +108,12 @@ class GeneralLexer(object):
 
 
     def __call__(self, data, include_gd=False):
-        from pydsl.Encoding import ascii_encoding
         if self.base == ascii_encoding:
             data = [Token(x, x) for x in data]
-            from pydsl.Token import append_position_to_token_list
+            from pydsl.token import append_position_to_token_list
             data = append_position_to_token_list(data)
         for element in data:
-            from pydsl.Check import check
+            from pydsl.check import check
             if not check(self.base, [element]):
                 raise ValueError('Unexpected input %s for alphabet %s' % (element, self.base))
         if self.base == self.alphabet:
@@ -183,7 +181,7 @@ def my_call_back(graph, element):
             raise Exception("Non contiguous parsing from sucessors")
         prev_right = right
         lexed_list.append(Token(string, gd))
-    from pydsl.Extract import extract
+    from pydsl.extract import extract
     gne['parsed'] = extract(element, lexed_list)
 
 
@@ -293,7 +291,6 @@ def lexer_factory(alphabet, base = None):
         return ChoiceBruteForceLexer(alphabet)
     else:
         if base is None:
-            from pydsl.Encoding import ascii_encoding
             base = ascii_encoding
         return GeneralLexer(alphabet, base)
 

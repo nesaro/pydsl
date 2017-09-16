@@ -23,10 +23,10 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
-from pydsl.Parser.Parser import BottomUpParser
-from pydsl.Grammar.Symbol import NonTerminalSymbol, TerminalSymbol, EndSymbol, Symbol
-from pydsl.Grammar.BNF import Production
-from pydsl.Grammar.Definition import Grammar
+from pydsl.parser.parser import BottomUpParser
+from pydsl.grammar.symbol import NonTerminalSymbol, TerminalSymbol, EndSymbol, Symbol
+from pydsl.grammar.BNF import Production
+from pydsl.grammar.definition import Grammar
 from collections import Iterable, defaultdict
 
 Extended_S = NonTerminalSymbol("EI")
@@ -165,7 +165,7 @@ class ParserTable(defaultdict):
         """change internal state, return action"""
         if token == EndSymbol():
             return self[state][EndSymbol()]
-        from pydsl.Check import check
+        from pydsl.check import check
         symbol_list = [x for x in self[state] if isinstance(x, TerminalSymbol) and check(x.gd,token)]
         if not symbol_list:
             return {"action":"Fail"}

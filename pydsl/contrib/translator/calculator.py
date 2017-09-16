@@ -6,7 +6,7 @@ expr = number:left ( '+' number:right -> left + right
 
 root_rule="expr"
 
-from pydsl.Grammar.PEG import Sequence
+from pydsl.grammar.PEG import Sequence
 repository={'string':Sequence.from_string('fas')}
 iclass="parsley"
 

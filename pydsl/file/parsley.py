@@ -15,20 +15,13 @@
 # You should have received a copy of the GNU General Public License
 # along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
-from pydsl.Grammar.Definition import Grammar
-from pydsl.Check import checker_factory
+
+from pydsl.grammar.parsley import ParsleyGrammar
 
 __author__ = "Ptolom"
 __copyright__ = "Copyright 2014, Ptolom"
 __email__ = "ptolom@hexifact.co.uk"
 
-class ParsleyGrammar(Grammar):
-    def __init__(self, rules, root_rule="expr", repository=None):
-        import parsley
-        Grammar.__init__(self)
-        repo=dict(repository or {})
-        for key in repo:
-            if isinstance(repo[key], Grammar):
-                repo[key] = checker_factory(repo[key])
-        self.grammar=parsley.makeGrammar(rules, repo)
-        self.root_rule=root_rule 
+def load_parsley_grammar_file(filepath, root_rule="expr", repository=None):
+    with open(filepath,'r') as file:
+        return ParsleyGrammar(file.read(), root_rule, repository)
