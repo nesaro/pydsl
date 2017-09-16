@@ -41,7 +41,7 @@ class TestGrammarDefinitionPLY(unittest.TestCase):
 
     @unittest.skip
     def testFirst(self):
-        self.grammardef.first()
+        self.grammardef.first
 
     @unittest.skip
     def testMin(self):
@@ -62,7 +62,7 @@ class TestGrammarDefinitionString(unittest.TestCase):
         self.assertListEqual(['abc'], [x for x in self.grammardef.enum()])
 
     def testFirst(self):
-        self.assertEqual(self.grammardef.first(), Alphabet([String('a')]))
+        self.assertEqual(self.grammardef.first, Alphabet([String('a')]))
 
     def testMin(self):
         self.assertEqual(self.grammardef.minsize, 3)
@@ -83,7 +83,7 @@ class TestGrammarDefinitionJson(unittest.TestCase):
         self.assertRaises(NotImplementedError, self.grammardef.enum)
 
     def testFirst(self):
-        self.assertEqual(self.grammardef.first(), Encoding('ascii'))
+        self.assertEqual(self.grammardef.first, Encoding('ascii'))
 
     def testMin(self):
         self.grammardef.minsize
