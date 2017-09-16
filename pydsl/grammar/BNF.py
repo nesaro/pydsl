@@ -91,13 +91,8 @@ class BNFGrammar(Grammar):
 
     @property
     def first(self):
-        """Returns the a grammar definition that includes all first elements of this grammar""" #TODO
-        result = []
-        for x in self.first_lookup(self.initialsymbol):
-            result += x.first()
-        if len(result) == 1:
-            return result[0]
-        return Choice(result)
+        """Returns the a grammar definition that includes all first elements of this grammar"""
+        return self.first_lookup(self.initialsymbol)
 
     def first_lookup(self, symbol, size=1):
         """

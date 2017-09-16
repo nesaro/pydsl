@@ -29,7 +29,7 @@ class TestBNF(unittest.TestCase):
         self.assertListEqual([x for x in self.grammardef.enum()], ["SR"])
 
     def testFirst(self):
-        self.assertEqual(self.grammardef.first, String("S"))
+        self.assertSetEqual(self.grammardef.first, set([String("S")]))
 
     @unittest.skip("Not implemented")
     def testMin(self):

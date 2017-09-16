@@ -30,8 +30,9 @@ class Grammar(object):
         """Generates every possible accepted string"""
         raise NotImplementedError
 
-    def first(self):# -> set:
-        """Grammar definition that matches every possible first element.
+    @property
+    def first(self):
+        """Alphabet that matches every possible first element.
         the returned value is a subset of the base_alphabet"""
         return self.alphabet
 
@@ -87,15 +88,16 @@ class RegularExpression(Grammar):
     def __str__(self):
         return self.regexpstr
 
-    def first(self):# -> set:
+    @property
+    def first(self):
         i = 0
         while True:
             if self.regexpstr[i] == "^":
                 i+=1
                 continue
             if self.regexpstr[i] == "[":
-                return [String(x) for x in self.regexpstr[i+1:self.regexpstr.find("]")]]
-            return [String(self.regexpstr[i])]
+                return frozenset([String(x) for x in self.regexpstr[i+1:self.regexpstr.find("]")]])
+            return frozenset([String(self.regexpstr[i])])
 
     def __getattr__(self, attr):
         return getattr(self.regexp, attr)
@@ -106,8 +108,9 @@ class String(Grammar, str):
             raise TypeError('Attempted to initialize a String with a list %s' % (string, ) )
         Grammar.__init__(self)
 
+    @property
     def first(self):
-        return [String(self[0])]
+        return frozenset([String(self[0])])
 
     def enum(self):
         yield self
@@ -119,11 +122,6 @@ class String(Grammar, str):
     @property
     def minsize(self):
         return len(self)
-
-    @property
-    def alphabet(self):
-        #Dead end :)
-        return None
 
 class JsonSchema(Grammar, dict):
     def __init__(self, *args, **kwargs):
