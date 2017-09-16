@@ -22,5 +22,4 @@ __copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 from pydsl.grammar import String
-from pydsl.alphabet import Alphabet
-ascii_encoding = Alphabet([String(chr(x)) for x in range(128)])
+ascii_encoding = frozenset([String(chr(x)) for x in range(128)])

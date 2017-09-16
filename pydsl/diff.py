@@ -28,8 +28,7 @@ def lcs(list1, list2):
     return [x for x in differences.get_matching_blocks()]
 
 def diff_factory(definition):
-    from pydsl.alphabet import Alphabet
-    if isinstance(definition, Alphabet):
+    if isinstance(definition, frozenset):
         return lcs
     raise ValueError
 

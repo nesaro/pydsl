@@ -79,8 +79,7 @@ class BNFGrammar(Grammar):
 
     @property
     def alphabet(self):
-        from pydsl.alphabet import Alphabet
-        return Alphabet([x.gd for x in self.terminal_symbols])
+        return frozenset([x.gd for x in self.terminal_symbols])
 
     @property
     def productions(self):

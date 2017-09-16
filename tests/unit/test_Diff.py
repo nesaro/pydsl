@@ -16,16 +16,15 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2014, Nestor Arocha"
+__copyright__ = "Copyright 2008-2017, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
 
 class TestDiff(unittest.TestCase):
     def testDiffSimple(self):
-        from pydsl.alphabet import Alphabet
         from pydsl.grammar.definition import String
-        alphabet = Alphabet([String(x) for x in "abcde1"])
+        alphabet = frozenset([String(x) for x in "abcde1"])
         elem1 = "abcde"
         elem2 = "abcd1"
         from pydsl.diff import diff
