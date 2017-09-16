@@ -4,3 +4,4 @@ nose
 pyparsing
 networkx
 git+https://github.com/python-parsley/parsley.git
+pylint
