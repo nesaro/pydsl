@@ -123,11 +123,6 @@ class String(Grammar, str):
     def minsize(self):
         return len(self)
 
-    @property
-    def alphabet(self):
-        #Dead end :)
-        return None
-
 class JsonSchema(Grammar, dict):
     def __init__(self, *args, **kwargs):
         Grammar.__init__(self)

@@ -20,7 +20,7 @@
 
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2014, Nestor Arocha"
+__copyright__ = "Copyright 2008-2017, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
@@ -62,7 +62,7 @@ class TestGrammarDefinitionString(unittest.TestCase):
         self.assertListEqual(['abc'], [x for x in self.grammardef.enum()])
 
     def testFirst(self):
-        self.assertEqual(self.grammardef.first, Alphabet([String('a')]))
+        self.assertSetEqual(self.grammardef.first, set([String('a')]))
 
     def testMin(self):
         self.assertEqual(self.grammardef.minsize, 3)
@@ -71,7 +71,7 @@ class TestGrammarDefinitionString(unittest.TestCase):
         self.assertEqual(self.grammardef.maxsize, 3)
 
     def testAlphabet(self):
-        self.assertEqual(self.grammardef.alphabet, ascii_encoding)
+        self.assertSetEqual(self.grammardef.alphabet, ascii_encoding)
 
 
 class TestGrammarDefinitionJson(unittest.TestCase):
@@ -83,7 +83,8 @@ class TestGrammarDefinitionJson(unittest.TestCase):
         self.assertRaises(NotImplementedError, self.grammardef.enum)
 
     def testFirst(self):
-        self.assertEqual(self.grammardef.first, Encoding('ascii'))
+        from pydsl.encoding import ascii_encoding
+        self.assertSetEqual(self.grammardef.first, ascii_encoding)
 
     def testMin(self):
         self.grammardef.minsize

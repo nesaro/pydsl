@@ -37,9 +37,9 @@ class TestRegularExpression(unittest.TestCase):
 
     def testFirst(self):
         re1 = RegularExpression(re.compile('^a$'))
-        self.assertEqual(len(re1.first()),1)
+        self.assertEqual(len(re1.first),1)
         from pydsl.grammar.definition import String
-        self.assertEqual(re1.first()[0],String('a'))
+        self.assertIn(String('a'), re1.first)
 
     def testMin(self):
         re1 = RegularExpression(re.compile('^a$'))
