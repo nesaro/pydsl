@@ -22,7 +22,6 @@ __copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 from pydsl.grammar.PEG import Choice
-from pydsl.alphabet import Alphabet
 from pydsl.check import checker_factory
 from pydsl.token import Token, PositionToken
 from pydsl.tree import PositionResultList
@@ -58,9 +57,9 @@ class DummyLexer(object):
 def graph_from_alphabet(alphabet, base):
     """Creates a graph that connects the base with the target through alphabets
     If every target is connected to any inputs, create the independent paths"""
-    if not isinstance(alphabet, Alphabet):
+    if not isinstance(alphabet, (frozenset, Choice)):
         raise TypeError(alphabet.__class__.__name__)
-    if not isinstance(base, Alphabet):
+    if not isinstance(base, frozenset):
         raise TypeError(base.__class__.__name__)
             
     import networkx
@@ -73,7 +72,7 @@ def graph_from_alphabet(alphabet, base):
             continue
         if current_alphabet in base:
             result.add_edge(current_alphabet, base)
-        elif isinstance(current_alphabet, (Alphabet, list)):
+        elif isinstance(current_alphabet, (frozenset, list)):
             for element in current_alphabet:
                 if element in base:
                     result.add_edge(current_alphabet, base)
@@ -97,8 +96,8 @@ def print_graph(result):
 class GeneralLexer(object):
     """Multi level lexer"""
     def __init__(self, alphabet, base):
-        if not isinstance(alphabet, Alphabet):
-            raise TypeError
+        if not isinstance(alphabet, (frozenset, Choice)):
+            raise TypeError(alphabet.__class__.__name__)
         if not alphabet:
             raise ValueError
         if not base:

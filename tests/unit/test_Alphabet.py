@@ -24,7 +24,6 @@ from pydsl.check import checker_factory
 from pydsl.lex import lexer_factory
 from pydsl.grammar import String
 from pydsl.grammar.PEG import Sequence, Choice
-from pydsl.alphabet import Alphabet
 from pydsl.encoding import ascii_encoding
 from pydsl.grammar import RegularExpression
 from pydsl.file.BNF import load_bnf_file
@@ -38,7 +37,7 @@ class TestAlphabet(unittest.TestCase):
         self.date = load_bnf_file("pydsl/contrib/grammar/Date.bnf", {'integer':self.integer, 'DayOfMonth':load_python_file('pydsl/contrib/grammar/DayOfMonth.py')})
 
     def testChecker(self):
-        alphabet = Alphabet([self.integer,self.date])
+        alphabet = frozenset([self.integer,self.date])
         checker = checker_factory(alphabet)
         self.assertTrue(checker.check("1234"))
         self.assertTrue(checker.check([x for x in "1234"]))
