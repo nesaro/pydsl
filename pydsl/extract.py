@@ -87,6 +87,7 @@ def extract(grammar, inputdata, fixed_start = False, return_first=False):
 
     if isinstance(inputdata[0], (Token, PositionToken)):
         inputdata = [x.content for x in inputdata]
+        print("CONVERTED {}".format(inputdata))
 
     totallen = len(inputdata)
     from pydsl.grammar.PEG import Choice
@@ -109,7 +110,8 @@ def extract(grammar, inputdata, fixed_start = False, return_first=False):
     result = []
     for i in range(max_start):
         for j in range(i+minl, min(i+maxl, totallen) + 1):
-            check = checker.check(inputdata[i:j])
+            check = checker.check([Token(inputdata[i:j], None)])
+            print("TESTING {}, grammar{}, result {}".format(inputdata[i:j], grammar, check))
             if check:
                 this_pt = PositionToken(inputdata[i:j], None, i, j)
                 if return_first:

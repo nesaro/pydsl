@@ -23,3 +23,4 @@ __email__ = "nesaro@gmail.com"
 
 from pydsl.grammar import String
 ascii_encoding = frozenset([String(chr(x)) for x in range(128)])
+

@@ -23,6 +23,8 @@ __email__ = "nesaro@gmail.com"
 import logging
 from collections import Iterable
 from jsonschema import FormatChecker
+from pydsl.exceptions import ParseError, UnknownAlphabet
+from pydsl.token import Token
 LOG = logging.getLogger(__name__)
 
 
@@ -79,10 +81,13 @@ class Checker(object):
 
     def _normalize_input(self, data):
         result = []
+        if isinstance(data, str):
+            return data
+        if isinstance(data, Token):
+            return data.content_as_string
         for x in data:
-            from pydsl.token import Token, PositionToken
-            if isinstance(x, (Token, PositionToken)):
-                result.append(x.content)
+            if isinstance(x, Token):
+                result.append(x.content_as_string)
             else:
                 result.append(x)
         return result
@@ -116,7 +121,7 @@ class BNFChecker(Checker):
     def __init__(self, bnf, parser = None):
         Checker.__init__(self)
         self.gd = bnf
-        parser = bnf.options.get("parser",parser)
+        parser = bnf.options.get("parser", parser)
         if parser in ("descent", "auto", "default", None):
             from pydsl.parser.backtracing import BacktracingErrorRecursiveDescentParser
             self.__parser = BacktracingErrorRecursiveDescentParser(bnf)
@@ -124,13 +129,19 @@ class BNFChecker(Checker):
             raise ValueError("Unknown parser : " + parser)
 
     def check(self, data):
-        for element in data:
-            if not check(self.gd.alphabet, element):
-                LOG.warning("Invalid input: %s,%s" % (self.gd.alphabet, element))
-                return False
+        if not isinstance(data, Iterable):
+            raise TypeError(data)
+        if not check(self.gd.alphabet, data):
+            print("CHECKING BNF FAILED {} {} data {}".format(self.gd, data, data))
+            LOG.warning("Invalid input: %s,%s" % (self.gd.alphabet, data))
+            return False
+        print("CHECKING BNF 2 {} {}".format(self.gd, [x.content for x in data]))
         try:
-            return len(self.__parser.get_trees(data)) > 0
-        except IndexError:
+            result = self.__parser.get_trees(data)
+            print("TREES {}".format(result))
+            print("TREES {}".format(len(result) > 0))
+            return len(result) > 0
+        except (IndexError, UnknownAlphabet):
             return False 
 
 class ParsleyChecker(Checker):
@@ -166,7 +177,6 @@ class PLYChecker(Checker):
         from ply import yacc, lex
         lexer = lex.lex(self.module)
         parser = yacc.yacc(module = self.module)
-        from pydsl.exceptions import ParseError
         try:
             parser.parse(data, lexer = lexer)
         except ParseError:
@@ -179,8 +189,14 @@ class StringChecker(Checker):
         self.gd = gd
 
     def check(self, data):
-        if isinstance(data, Iterable):
-            data = "".join([str(x) for x in data])
+        if isinstance(data, str):
+            return self.gd == data
+        elif isinstance(data, Iterable) and all(isinstance(x, Token) for x in data):
+            data = "".join([x.content_as_string for x in data])
+        elif isinstance(data, Token):
+            data = data.content_as_string
+        else:
+            raise ValueError(data)
         return self.gd == str(data)
 
 def formatchecker_factory(**checkerdict):
@@ -215,7 +231,11 @@ class ChoiceChecker(Checker):
         self.checkerinstances = [checker_factory(x) for x in self.gd]
 
     def check(self, data):
-        data = self._normalize_input(data)
+        print("checking Choice {}, {}".format(self.gd, data))
+        for x in self.checkerinstances:
+            if x.check(data):
+                return True
+            print("FAILED {}, {}".format(x.gd, data))
         return any((x.check(data) for x in self.checkerinstances))
 
 class SequenceChecker(Checker):

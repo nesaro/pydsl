@@ -21,12 +21,39 @@ __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2017, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
-from collections import namedtuple
+class Token:
+    def __init__(self, content, grammar_definition):
+        self.content = content
+        self.gd = grammar_definition
 
-Token = namedtuple('Token', ('content','gd'))
-PositionToken = namedtuple('PositionToken', ('content','gd','left','right'))
+    @property
+    def content_as_string(self):
+        from pydsl.grammar.definition import String
+        if isinstance(self.gd, String):
+            return "".join(self.content)
+        is_encoding = self.gd is None
+        if is_encoding:
+            print(self.content)
+            return "".join(self.content)
+        raise AttributeError
 
+    def __str__(self):
+        return str((self.content, self.gd))
+
+class PositionToken(Token):
+    def __init__(self, content, grammar_definition, left, right):
+        super().__init__(content, grammar_definition)
+        self.left = left
+        self.right = right
+
+    def __str__(self):
+        return str((self.content, self.gd, self.left, self.right))
 
 def append_position_to_token_list(token_list):
     """Converts a list of Token into a list of PositionToken, asuming size == 1"""
     return [PositionToken(value.content, value.gd, index, index+1) for (index, value) in enumerate(token_list)]
+
+
+def tokenize_string(string):
+    return [Token(x, None) for x in string]
+

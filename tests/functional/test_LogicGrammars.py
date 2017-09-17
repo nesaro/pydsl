@@ -16,7 +16,6 @@ from pydsl.check import checker_factory
 
 class TestLogicGrammars(unittest.TestCase):
     def setUp(self):
-        #tokenlist definition
         self.tokelist5 = "True"
 
     def testLogicalExp(self):
@@ -25,7 +24,6 @@ class TestLogicGrammars(unittest.TestCase):
         parser = BacktracingErrorRecursiveDescentParser(productionrulesetlogical)
         tokens = [x[0] for x in lex(repository['TrueFalse'].alphabet, ascii_encoding, self.tokelist5)]
         self.assertEqual(len(tokens), 1)
-        #tokens = [x[0] for x in lex(productionrulesetlogical.alphabet, Encoding('ascii'), tokens)] #FIXME
         tokens = [['True']]
         result = parser.get_trees(tokens)
         self.assertTrue(result)
@@ -37,13 +35,16 @@ class TestLogicGrammars(unittest.TestCase):
         result = parser.get_trees(tokens)
         self.assertTrue(result)
 
-    @unittest.skip('overlapping input')
     def testLogicalExpression(self):
         repository = {'TrueFalse':load_bnf_file("pydsl/contrib/grammar/TrueFalse.bnf")}
         productionrulesetlogical = load_bnf_file("pydsl/contrib/grammar/LogicalExpression.bnf", repository)
         parser = BacktracingErrorRecursiveDescentParser(productionrulesetlogical)
-        tokens = [x[0] for x in lex(productionrulesetlogical.alphabet, ascii_encoding, "True&&False")]
+        print("YYY")
+        print(productionrulesetlogical.alphabet)
+        tokens = [x for x in lex(productionrulesetlogical.alphabet, ascii_encoding, "True&&False")]
+        print("TOKENS {}".format([x.content for x in tokens]))
         result = parser.get_trees(tokens)
+        print("Result {}".format(result))
         self.assertTrue(result)
         result = parser.get_trees("True&|False")
         self.assertFalse(result)

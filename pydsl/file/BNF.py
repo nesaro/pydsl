@@ -24,7 +24,7 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 import re
-from pydsl.grammar.symbol import TerminalSymbol,  NonTerminalSymbol, NullSymbol
+from pydsl.grammar.symbol import TerminalSymbol, NonTerminalSymbol, NullSymbol
 from pydsl.grammar.BNF import Production
 LOG = logging.getLogger(__name__)
 
@@ -37,8 +37,8 @@ def __generateStringSymbol(rightside):
     content = tail
     if len(tail) > 2 and tail[1][0] == "'" and tail[1][-1] == "'":
         content = tail[1][1:-1]
-    from pydsl.grammar.PEG import Sequence
-    return TerminalSymbol(Sequence.from_string(content))
+    from pydsl.grammar.definition import String
+    return TerminalSymbol(String(content))
 
 def __generateWordSymbol(rightside, repository):
     args = rightside.split(",")

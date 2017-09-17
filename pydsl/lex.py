@@ -26,6 +26,11 @@ from pydsl.check import checker_factory
 from pydsl.token import Token, PositionToken
 from pydsl.tree import PositionResultList
 from pydsl.encoding import ascii_encoding
+from networkx.exception import NetworkXError
+from itertools import chain
+import logging
+
+LOG = logging.getLogger(__name__)
 
 
 class DummyLexer(object):
@@ -53,7 +58,6 @@ class DummyLexer(object):
 #Call the lexers following the graph
 
 
-#TODO: test
 def graph_from_alphabet(alphabet, base):
     """Creates a graph that connects the base with the target through alphabets
     If every target is connected to any inputs, create the independent paths"""
@@ -65,24 +69,24 @@ def graph_from_alphabet(alphabet, base):
     import networkx
     result = networkx.DiGraph()
     current_alphabet = alphabet
-    pending_stack = list(current_alphabet)
+    pending_stack = set(current_alphabet)
     while pending_stack:
         current_alphabet = pending_stack.pop()
         if current_alphabet == base:
             continue
         if current_alphabet in base:
             result.add_edge(current_alphabet, base)
-        elif isinstance(current_alphabet, (frozenset, list)):
+        elif isinstance(current_alphabet, (frozenset, Choice)):
             for element in current_alphabet:
                 if element in base:
                     result.add_edge(current_alphabet, base)
                 else:
                     result.add_edge(current_alphabet, element)
-                    pending_stack.append(element)
-        elif current_alphabet.alphabet: #A Grammar
+                    pending_stack.add(element)
+        elif current_alphabet.alphabet:
             result.add_edge(current_alphabet, current_alphabet.alphabet)
-            pending_stack.append(current_alphabet.alphabet)
-    #print_graph(result)
+            pending_stack.add(current_alphabet.alphabet)
+    print_graph(result)
     return result
 
 def print_graph(result):
@@ -102,41 +106,73 @@ class GeneralLexer(object):
             raise ValueError
         if not base:
             raise ValueError
-        self.alphabet = alphabet
+        self.target_alphabet = alphabet
         self.base = base
 
 
     def __call__(self, data, include_gd=False):
-        if self.base == ascii_encoding:
-            data = [Token(x, x) for x in data]
+        if isinstance(data, str):
+            data = [Token(x, None) for x in data]
             from pydsl.token import append_position_to_token_list
             data = append_position_to_token_list(data)
         for element in data:
+            print("CHECKING data for lexer {}".format(data))
             from pydsl.check import check
             if not check(self.base, [element]):
                 raise ValueError('Unexpected input %s for alphabet %s' % (element, self.base))
-        if self.base == self.alphabet:
+        if self.base == self.target_alphabet:
             return data
-        graph = graph_from_alphabet(self.alphabet, self.base)
+        graph = graph_from_alphabet(self.target_alphabet, self.base)
+        print("graph {}".format(graph))
         solved_elements = {}
+        print("data {}".format(data))
         graph.node[self.base]['parsed'] = data #Attach data to every element in the graph
-        digraph_walker_backwards(graph, self.base, my_call_back)
+        print("base {}".format(self.base))
+        digraph_walker_backwards(graph, self.base, populate_element_node)
+        #print_graph(graph)
         result = []
-        for output_alphabet in self.alphabet:
-            if output_alphabet in self.base:
-                output_alphabet = self.base
-            if output_alphabet not in graph.node or 'parsed' not in graph.node[output_alphabet]:
-                raise Exception("alphabet not initialized:%s" % output_alphabet)
-            for token in graph.node[output_alphabet]['parsed']:
-                #This step needs to flat the token so it matches the signature of the function (base -> alphabet)
-                def flat_token(token):
-                    while hasattr(token, 'content'):
-                        token = token.content
-                    return token
-                result.append(PositionToken(flat_token(token), output_alphabet, token.left, token.right))
-        result = sorted(result, key=lambda x: x.left)
-        result = remove_subsets(result)
-        result = remove_duplicates(result)
+        print("SADSADSA")
+        print("SADSADSA")
+        print("SADSADSA")
+        print("SADSADSA")
+        print("SADSADSA")
+        def visit_graph_inorder(node):
+            try:
+                predecessors = graph.predecessors(node)
+            except NetworkXError:
+                pass
+            else:
+                for child in predecessors:
+                    print("CHILD {}".format(child))
+                    yield from visit_graph_inorder(child)
+            try:
+                print("CURRENT {}".format(node))
+                tokens = graph.node[node]['parsed']
+                print("tokens {}".format(tokens and tokens[0].gd))
+                if tokens and tokens[0].gd in self.target_alphabet:
+                    yield tokens
+            except KeyError:
+                pass
+
+        result = list(chain.from_iterable(x for x in visit_graph_inorder(self.base)))
+        raise Exception(result)
+            
+
+
+        #for output_alphabet in self.target_alphabet:
+        #    print("output_alphabet {}, parsed: {}".format(output_alphabet, graph.node[output_alphabet]['parsed']))
+        #    if output_alphabet not in graph.node or 'parsed' not in graph.node[output_alphabet]:
+        #        raise Exception("alphabet not initialized:%s" % output_alphabet)
+        #    node_results = graph.node[output_alphabet]['parsed']
+        #    for token in node_results:
+        #        print("after TOKEN: {}".format(token))
+        #        #This step needs to flat the token so it matches the signature of the function (base -> alphabet)
+        #        result.append(PositionToken(token.content_as_string, output_alphabet, token.left, token.right))
+        #result = remove_subsets(result)
+        #result = remove_duplicates(result)
+        #result = sorted(result, key=lambda x: x.left)
+        print(str(x.content) for x in result)
+
         return [Token(x.content, x.gd) for x in result]
 
 
@@ -161,37 +197,52 @@ def remove_duplicates(ptoken_list):
             result.append(x)
     return result
 
-def my_call_back(graph, element):
+def populate_element_node(graph, element):
     gne = graph.node[element]
     if 'parsed' in gne:
         return  # Already parsed
     flat_list = []
+    print("CALLBACK element: {}".format(element))
     for successor in graph.successors(element):
+        print("CALLBACK successor: {}".format(successor))
         if successor not in graph.node or 'parsed' not in graph.node[successor]:
             raise Exception("Uninitialized graph %s" % successor)
-        for string, gd, left, right in graph.node[successor]['parsed']:
-            flat_list.append(PositionToken(string, gd, left, right))
+        for pt in graph.node[successor]['parsed']:
+            print(("OUTPUT", pt.content, pt.gd, pt.left, pt.right))
+            flat_list.append(pt) #This is the alternative point to consolidate
+
     sorted_flat_list = sorted(flat_list, key=lambda x: x.left) #Orders elements from all sucessors
+    print("CALLBACK sorted_flat_list before removing subsets: {}".format(sorted_flat_list))
     sorted_flat_list = remove_subsets(sorted_flat_list)
+    print("CALLBACK sorted_flat_list: {}".format(sorted_flat_list))
     lexed_list = []
     prev_right = 0
-    for string, gd, left, right in sorted_flat_list:
-        if prev_right != left:
-            raise Exception("Non contiguous parsing from sucessors")
-        prev_right = right
-        lexed_list.append(Token(string, gd))
+    for pt in sorted_flat_list:
+        #if prev_right != left:
+        #    LOG.error("Non contiguous parsing from sucessors {} , current: {}".format(sorted_flat_list, element))
+        #    gne['parsed'] = []
+        #    return
+        #prev_right = right
+        lexed_list.append(Token(pt.content, pt.gd))
     from pydsl.extract import extract
-    gne['parsed'] = extract(element, lexed_list)
+    result = extract(element, lexed_list)
+    for x in result:
+        x.gd = element
+    print("CALLBACK element: {} lexed_list {}: extract:{}".format(element, lexed_list, result))
+    gne['parsed'] = result #QUESTION : are the positions on the current element indexes or the higher level indexes. In other words, is a join needed?
 
 
 
 def digraph_walker_backwards(graph, element, call_back):
     """Visits every element guaranteeing that the previous elements have been visited before"""
+    print("digraph_walker_backwards {}".format(element))
     call_back(graph, element)
     for predecessor in graph.predecessors(element):
+        print("predecessor {}".format(predecessor))
         call_back(graph, predecessor)
     for predecessor in graph.predecessors(element):
         digraph_walker_backwards(graph, predecessor, call_back)
+        print("predecessor 2nd pass {}, {}".format(predecessor, graph.node[predecessor]['parsed']))
 
 
 
