@@ -40,7 +40,7 @@ class LLkRecursiveDescentParser(TopDownParser):
         return [self.__aux_parser(self._productionset.initialsymbol)]
 
     def __aux_parser(self, symbol):
-        from pydsl.Grammar.Symbol import TerminalSymbol
+        from pydsl.grammar.symbol import TerminalSymbol
         if isinstance(symbol, TerminalSymbol):
             LOG.debug("matching symbol %s, data:%s, index:%s" % (symbol,self.data,self.index ))
             result= self.match(symbol)
@@ -113,7 +113,7 @@ class LL1RecursiveDescentParser(TopDownParser):
         left = childlist[0].left
         right = childlist[-1].right
         content = [x.content for x in childlist]
-        return ParseTree(left, right, symbol, content, childlist=childlist)
+        return ParseTree(left, right, symbol, content, childlist)
 
 
     def consume(self):
