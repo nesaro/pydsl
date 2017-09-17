@@ -242,16 +242,10 @@ class ChoiceLexer(object):
 
 
 class ChoiceBruteForceLexer(object):
-
     """Attempts to generate the smallest token sequence by evaluating every accepted sequence"""
 
     def __init__(self, alphabet):
         self.alphabet = alphabet
-
-    @property
-    def current(self):
-        """Returns the element under the cursor until the end of the string"""
-        return self.string[self.index:]
 
     def __call__(self, string, include_gd=True):  # -> "TokenList":
         """Tokenizes input, generating a list of tokens"""
@@ -288,10 +282,9 @@ class ChoiceBruteForceLexer(object):
 def lexer_factory(alphabet, base = None):
     if isinstance(alphabet, Choice) and alphabet.alphabet == base:
         return ChoiceBruteForceLexer(alphabet)
-    else:
-        if base is None:
-            base = ascii_encoding
-        return GeneralLexer(alphabet, base)
+    if base is None:
+        base = ascii_encoding
+    return GeneralLexer(alphabet, base)
 
 def lex(alphabet, base, data):
     return lexer_factory(alphabet, base)(data)
