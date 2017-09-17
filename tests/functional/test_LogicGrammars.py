@@ -16,7 +16,6 @@ from pydsl.check import checker_factory
 
 class TestLogicGrammars(unittest.TestCase):
     def setUp(self):
-        #tokenlist definition
         self.tokelist5 = "True"
 
     def testLogicalExp(self):

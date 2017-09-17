@@ -116,7 +116,7 @@ class BNFChecker(Checker):
     def __init__(self, bnf, parser = None):
         Checker.__init__(self)
         self.gd = bnf
-        parser = bnf.options.get("parser",parser)
+        parser = bnf.options.get("parser", parser)
         if parser in ("descent", "auto", "default", None):
             from pydsl.parser.backtracing import BacktracingErrorRecursiveDescentParser
             self.__parser = BacktracingErrorRecursiveDescentParser(bnf)

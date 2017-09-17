@@ -24,7 +24,7 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 import re
-from pydsl.grammar.symbol import TerminalSymbol,  NonTerminalSymbol, NullSymbol
+from pydsl.grammar.symbol import TerminalSymbol, NonTerminalSymbol, NullSymbol
 from pydsl.grammar.BNF import Production
 LOG = logging.getLogger(__name__)
 

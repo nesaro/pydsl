@@ -16,10 +16,8 @@
 # along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 
-"""Exceptions definitions"""
-
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2014, Nestor Arocha"
+__copyright__ = "Copyright 2008-2017, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 
