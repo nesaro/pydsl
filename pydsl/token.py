@@ -22,11 +22,14 @@ __copyright__ = "Copyright 2008-2017, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 class Token:
-    def __init__(self, content, grammar_definition, left=None, right=None):
+    def __init__(self, content, gd, left=None, right=None):
         self.content = content
-        self.gd = grammar_definition
+        self.gd = gd
         self.__left = left
         self.__right = right
+
+    def __eq__(self, other):
+        return self.content == other.content and self.gd == other.gd
 
     @property
     def left(self):

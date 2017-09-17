@@ -106,7 +106,7 @@ class TestCase(unittest.TestCase):
         from pydsl.encoding import ascii_encoding
         math_alphabet = Choice([RegularExpression("^[0123456789]*$"),Choice([String('+')])])
         from pydsl.lex import lex
-        tokens = [x[0] for x in lex(math_alphabet, ascii_encoding, "11+2")]
+        tokens = [x.content for x in lex(math_alphabet, ascii_encoding, "11+2")]
         parse_tree = rdp(tokens)
         result = parse_tree_walker(parse_tree[0])
         self.assertEqual(result, 13)

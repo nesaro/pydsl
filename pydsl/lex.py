@@ -23,7 +23,7 @@ __email__ = "nesaro@gmail.com"
 
 from pydsl.grammar.PEG import Choice
 from pydsl.check import checker_factory
-from pydsl.token import Token, PositionToken
+from pydsl.token import Token
 from pydsl.tree import PositionResultList
 from pydsl.encoding import ascii_encoding
 
@@ -131,7 +131,7 @@ class GeneralLexer(object):
                     while hasattr(token, 'content'):
                         token = token.content
                     return token
-                result.append(PositionToken(flat_token(token), output_alphabet, token.left, token.right))
+                result.append(Token(flat_token(token), output_alphabet, token.left, token.right))
         result = sorted(result, key=lambda x: x.left)
         result = remove_subsets(result)
         result = remove_duplicates(result)
@@ -167,17 +167,17 @@ def my_call_back(graph, element):
     for successor in graph.successors(element):
         if successor not in graph.node or 'parsed' not in graph.node[successor]:
             raise Exception("Uninitialized graph %s" % successor)
-        for string, gd, left, right in graph.node[successor]['parsed']:
-            flat_list.append(PositionToken(string, gd, left, right))
+        for token in graph.node[successor]['parsed']:
+            flat_list.append(token)
     sorted_flat_list = sorted(flat_list, key=lambda x: x.left) #Orders elements from all sucessors
     sorted_flat_list = remove_subsets(sorted_flat_list)
     lexed_list = []
     prev_right = 0
-    for string, gd, left, right in sorted_flat_list:
-        if prev_right != left:
+    for token in sorted_flat_list:
+        if prev_right != token.left:
             raise Exception("Non contiguous parsing from sucessors")
-        prev_right = right
-        lexed_list.append(Token(string, gd))
+        prev_right = token.right
+        lexed_list.append(Token(token.content, token.gd))
     from pydsl.extract import extract
     gne['parsed'] = extract(element, lexed_list)
 

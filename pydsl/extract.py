@@ -23,7 +23,7 @@ import logging
 LOG = logging.getLogger(__name__)
 from pydsl.check import checker_factory
 from pydsl.lex import lexer_factory
-from pydsl.token import PositionToken, Token
+from pydsl.token import Token
 
 
 def filter_subsets(lst):
@@ -44,14 +44,14 @@ def filter_subsets(lst):
 def extract_alphabet(alphabet, inputdata, fixed_start = False):
     """
     Receives a sequence and an alphabet, 
-    returns a list of PositionTokens with all of the parts of the sequence that 
+    returns a list of Tokens with all of the parts of the sequence that 
     are a subset of the alphabet
     """
     if not inputdata:
         return []
     base_alphabet = alphabet.alphabet
 
-    if isinstance(inputdata[0], (Token, PositionToken)):
+    if isinstance(inputdata[0], Token):
         inputdata = [x.content for x in inputdata]
 
 
@@ -73,7 +73,7 @@ def extract_alphabet(alphabet, inputdata, fixed_start = False):
             except:
                 continue
     result = filter_subsets(result)
-    return [PositionToken(content, None, left, right) for (left, right, content) in result]
+    return [Token(content, None, left, right) for (left, right, content) in result]
 
 def extract(grammar, inputdata, fixed_start = False, return_first=False):
     """
@@ -85,7 +85,7 @@ def extract(grammar, inputdata, fixed_start = False, return_first=False):
         return []
     checker = checker_factory(grammar)
 
-    if isinstance(inputdata[0], (Token, PositionToken)):
+    if isinstance(inputdata[0], Token):
         inputdata = [x.content for x in inputdata]
 
     totallen = len(inputdata)
@@ -111,7 +111,7 @@ def extract(grammar, inputdata, fixed_start = False, return_first=False):
         for j in range(i+minl, min(i+maxl, totallen) + 1):
             check = checker.check(inputdata[i:j])
             if check:
-                this_pt = PositionToken(inputdata[i:j], None, i, j)
+                this_pt = Token(inputdata[i:j], None, i, j)
                 if return_first:
                     return this_pt
                 result.append(this_pt)

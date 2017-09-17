@@ -25,6 +25,7 @@ from pydsl.contrib.bnfgrammar import *
 from pydsl.grammar.definition import String
 from pydsl.grammar.PEG import Sequence, Choice
 from pydsl.file.BNF import load_bnf_file
+from pydsl.token import Token
 
 
 class TestEncodingLexer(unittest.TestCase):
@@ -55,8 +56,8 @@ class TestChoiceBruteForceLexer(unittest.TestCase):
         date = load_bnf_file("pydsl/contrib/grammar/Date.bnf", {'integer':integer, 'DayOfMonth':load_python_file('pydsl/contrib/grammar/DayOfMonth.py')})
         mydef = frozenset([integer,date])
         lexer = lexer_factory(mydef)
-        self.assertListEqual(lexer("1234"), [(["1","2","3","4"], integer)])
-        self.assertListEqual(lexer([x for x in "1234"]), [(["1","2","3","4"], integer)])
+        self.assertListEqual(lexer("1234"), [Token(["1","2","3","4"], integer)])
+        self.assertListEqual(lexer([x for x in "1234"]), [Token(["1","2","3","4"], integer)])
 
     @unittest.skip('FIXME:  Non contiguous parsing from sucessors')
     def testOverlappingLexing(self):
@@ -106,7 +107,8 @@ class TestPythonLexer(unittest.TestCase):
 
         def concept_translator_fun(inputtokens):
             result = []
-            for x,_ in inputtokens:
+            for token in inputtokens:
+                x = token.content
                 if x == "red" or x == ["r","e","d"]:
                     result.append("color red")
                 elif x == "green" or x == ["g","r","e","e","n"]:

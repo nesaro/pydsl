@@ -80,8 +80,8 @@ class Checker(object):
     def _normalize_input(self, data):
         result = []
         for x in data:
-            from pydsl.token import Token, PositionToken
-            if isinstance(x, (Token, PositionToken)):
+            from pydsl.token import Token
+            if isinstance(x, Token):
                 result.append(x.content)
             else:
                 result.append(x)
