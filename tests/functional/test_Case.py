@@ -20,9 +20,9 @@ __copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
-from pydsl.Encoding import ascii_encoding
-from pydsl.Lex import lexer_factory
-from pydsl.Parser.LL import LL1RecursiveDescentParser
+from pydsl.encoding import ascii_encoding
+from pydsl.lex import lexer_factory
+from pydsl.parser.LL import LL1RecursiveDescentParser
 
 class TestCase(unittest.TestCase):
     def test_main_case(self):
@@ -59,12 +59,12 @@ class TestCase(unittest.TestCase):
                 "two := String,two",
                 "addition := String,addition",
                 ]
-        from pydsl.File.BNF import strlist_to_production_set
+        from pydsl.file.BNF import strlist_to_production_set
         production_set = strlist_to_production_set(grammar_def, {})
-        from pydsl.Parser.Backtracing import BacktracingErrorRecursiveDescentParser
+        from pydsl.parser.backtracing import BacktracingErrorRecursiveDescentParser
         rdp = BacktracingErrorRecursiveDescentParser(production_set)
         parse_tree = rdp(math_expression_concepts)
-        from pydsl.Grammar.Symbol import NonTerminalSymbol
+        from pydsl.grammar.symbol import NonTerminalSymbol
         def parse_tree_walker(tree):
             if tree.symbol == NonTerminalSymbol("S"):
                 return parse_tree_walker(tree.childlist[0])
@@ -83,15 +83,15 @@ class TestCase(unittest.TestCase):
                 "number := Word,integer,max",
                 "operator := String,+",
                 ]
-        from pydsl.File.BNF import strlist_to_production_set
-        from pydsl.Grammar import RegularExpression
+        from pydsl.file.BNF import strlist_to_production_set
+        from pydsl.grammar import RegularExpression
         repository = {'integer':RegularExpression("^[0123456789]*$")}
         production_set = strlist_to_production_set(grammar_def, repository)
         rdp = LL1RecursiveDescentParser(production_set)
         parse_tree = rdp("1+2")
 
         def parse_tree_walker(tree):
-            from pydsl.Grammar.Symbol import NonTerminalSymbol
+            from pydsl.grammar.symbol import NonTerminalSymbol
             if tree.symbol == NonTerminalSymbol("S"):
                 return parse_tree_walker(tree.childlist[0])
             if tree.symbol == NonTerminalSymbol("E"):
@@ -101,11 +101,11 @@ class TestCase(unittest.TestCase):
             
         result = parse_tree_walker(parse_tree[0])
         self.assertEqual(result, 3)
-        from pydsl.Grammar.PEG import Choice
-        from pydsl.Grammar.Definition import String, RegularExpression
-        from pydsl.Encoding import ascii_encoding
+        from pydsl.grammar.PEG import Choice
+        from pydsl.grammar.definition import String, RegularExpression
+        from pydsl.encoding import ascii_encoding
         math_alphabet = Choice([RegularExpression("^[0123456789]*$"),Choice([String('+')])])
-        from pydsl.Lex import lex
+        from pydsl.lex import lex
         tokens = [x[0] for x in lex(math_alphabet, ascii_encoding, "11+2")]
         parse_tree = rdp(tokens)
         result = parse_tree_walker(parse_tree[0])

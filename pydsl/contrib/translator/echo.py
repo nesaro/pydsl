@@ -3,5 +3,3 @@ def function(input):
 
 
 iclass = "PythonTranslator"
-inputdic = {"input":"cstring"}
-outputdic = {"output":"cstring"}

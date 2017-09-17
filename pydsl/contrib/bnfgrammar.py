@@ -1,10 +1,10 @@
 """BNF grammars for testing"""
 
-from pydsl.Grammar.Symbol import TerminalSymbol, NonTerminalSymbol, NullSymbol
-from pydsl.Grammar.BNF import Production, BNFGrammar
-from pydsl.File.BNF import strlist_to_production_set
-from pydsl.File.Python import load_python_file
-from pydsl.Grammar.Definition import String, RegularExpression
+from pydsl.grammar.symbol import TerminalSymbol, NonTerminalSymbol, NullSymbol
+from pydsl.grammar.BNF import Production, BNFGrammar
+from pydsl.file.BNF import strlist_to_production_set
+from pydsl.file.python import load_python_file
+from pydsl.grammar.definition import String, RegularExpression
 
 leftrecursive=["S ::= E","E ::= E dot | dot","dot := String,."]
 rightrecursive=["S ::= E","E ::= dot E | dot","dot := String,."]

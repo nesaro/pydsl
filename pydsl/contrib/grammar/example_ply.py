@@ -9,7 +9,7 @@ See http://www.dalkescientific.com/writings/NBN/parsing_with_ply.html
 # ply_mw.py
 
 from ply.lex import TOKEN
-from pydsl.Exceptions import ParseError
+from pydsl.exceptions import ParseError
 
 
 ### Define the lexer

@@ -16,7 +16,7 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 """Parser module"""
-from pydsl.Lex import lexer_factory
+from pydsl.lex import lexer_factory
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2014, Nestor Arocha"
@@ -29,6 +29,8 @@ LOG = logging.getLogger(__name__)
 class Parser(object):
     """Expands an input based on grammar rules
     At this time, all parsers are tree based"""
+    def __init__(self, productionset):
+        self._productionset = productionset
     def get_trees(self, word): # -> list:
         """ returns a ParseTree list with all guesses """
         raise NotImplementedError
@@ -43,12 +45,9 @@ class Parser(object):
 
 class TopDownParser(Parser):
     """Top down parser like descent parser"""
-    def __init__(self, bnfgrammar):
-        self._productionset = bnfgrammar
-
     def _reduce_terminal(self, symbol, data, showerrors = False):
-        from pydsl.Check import check
-        from pydsl.Tree import ParseTree
+        from pydsl.check import check
+        from pydsl.tree import ParseTree
         result = check(symbol.gd, data)
         if result:
             return [ParseTree(0,1, symbol , data)]
@@ -60,20 +59,20 @@ class BottomUpParser(Parser):
     """ leaf to root parser"""
     def __init__(self, bnfgrammar):
         self._lexer = lexer_factory(bnfgrammar.alphabet)
-        self._productionset = bnfgrammar
+        super().__init__(bnfgrammar)
 
 
 def parser_factory(grammar, parser = None):
-    from pydsl.Grammar.BNF import BNFGrammar
+    from pydsl.grammar.BNF import BNFGrammar
     if isinstance(grammar, BNFGrammar):
         if parser in ("auto" , "default" , "descent", None):
-            from pydsl.Parser.Backtracing import BacktracingErrorRecursiveDescentParser
+            from pydsl.parser.backtracing import BacktracingErrorRecursiveDescentParser
             return BacktracingErrorRecursiveDescentParser(grammar)
         elif parser == "lr0":
-            from pydsl.Parser.LR0 import LR0Parser
+            from pydsl.parser.LR0 import LR0Parser
             return LR0Parser(grammar)
         elif parser == "ll1":
-            from pydsl.Parser.LL import LL1RecursiveDescentParser
+            from pydsl.parser.LL import LL1RecursiveDescentParser
             return LL1RecursiveDescentParser(grammar)
         else:
             raise Exception("Wrong parser name: " + str(parser))
