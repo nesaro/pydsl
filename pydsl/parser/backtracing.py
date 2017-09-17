@@ -114,7 +114,7 @@ class BacktracingErrorRecursiveDescentParser(TopDownParser):
                 erroresult = ParseTree(0,len(data), onlysymbol , data, valid = False)
                 for invalid in invalidstack:
                     if invalid.content in production.rightside:
-                        erroresult.append_child(invalid)
+                        erroresult.append(invalid)
                 return [erroresult]
             return result
         raise Exception("Unknown symbol:" + str(onlysymbol))

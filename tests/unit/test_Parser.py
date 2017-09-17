@@ -160,7 +160,7 @@ class TestLL1RecursiveDescentParser(unittest.TestCase):
 @unittest.skip
 class TestPEGParser(unittest.TestCase):
     def testBasicChoice(self):
-        from pydsl.grammar.alphabet import Choice
+        from pydsl.grammar.PEG import Choice
         from pydsl.tree import ParseTree
         from pydsl.parser.PEG import PEGParser
         gd = Choice([String('a'), String('b')])

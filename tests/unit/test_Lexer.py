@@ -78,7 +78,7 @@ class TestChoiceBruteForceLexer(unittest.TestCase):
         first_level = Choice([a,b,c])
         first_levelb = Choice([x,y,z])
         second_level = Sequence([a,b], base_alphabet=first_level)
-        from pydsl.Check import checker_factory
+        from pydsl.check import checker_factory
         checker = checker_factory(second_level)
         self.assertTrue(checker([a,b]))
         second_level_alphabet = Choice([first_level, first_levelb]) 

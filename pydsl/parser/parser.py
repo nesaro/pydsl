@@ -29,6 +29,8 @@ LOG = logging.getLogger(__name__)
 class Parser(object):
     """Expands an input based on grammar rules
     At this time, all parsers are tree based"""
+    def __init__(self, productionset):
+        self._productionset = productionset
     def get_trees(self, word): # -> list:
         """ returns a ParseTree list with all guesses """
         raise NotImplementedError
@@ -43,9 +45,6 @@ class Parser(object):
 
 class TopDownParser(Parser):
     """Top down parser like descent parser"""
-    def __init__(self, bnfgrammar):
-        self._productionset = bnfgrammar
-
     def _reduce_terminal(self, symbol, data, showerrors = False):
         from pydsl.check import check
         from pydsl.tree import ParseTree
@@ -60,7 +59,7 @@ class BottomUpParser(Parser):
     """ leaf to root parser"""
     def __init__(self, bnfgrammar):
         self._lexer = lexer_factory(bnfgrammar.alphabet)
-        self._productionset = bnfgrammar
+        super().__init__(bnfgrammar)
 
 
 def parser_factory(grammar, parser = None):

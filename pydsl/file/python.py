@@ -49,9 +49,6 @@ def load_python_file(moduleobject):
     elif iclass == "PLY":
         from pydsl.grammar.definition import PLYGrammar
         return PLYGrammar(moduleobject)
-    elif iclass == "MongoDict":
-        from pydsl.grammar.definition import MongoGrammar
-        return MongoGrammar(resultdic)
     elif iclass in ["PythonGrammar"]:
         from pydsl.grammar.definition import PythonGrammar
         return PythonGrammar(resultdic)

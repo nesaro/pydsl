@@ -84,7 +84,7 @@ class Choice(set, Grammar):
         return str([str(x) for x in self])
 
     def __add__(self, other):
-        return Choice(GrammarCollection.__add__(self,other))
+        return Choice([x for x in self] + [x for x in other])
 
     def __hash__(self):
         return hash(tuple(x for x in self))
