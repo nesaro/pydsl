@@ -16,13 +16,13 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2014, Nestor Arocha"
+__copyright__ = "Copyright 2008-2017, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
 from pydsl.encoding import ascii_encoding
 from pydsl.lex import lexer_factory
-from pydsl.Parser.LL import LLkRecursiveDescentParser
+from pydsl.parser.LL import LLkRecursiveDescentParser
 from pydsl.parser.LL import LL1RecursiveDescentParser
 
 class TestCase(unittest.TestCase):
