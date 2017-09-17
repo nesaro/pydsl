@@ -60,7 +60,7 @@ class LLkRecursiveDescentParser(TopDownParser):
         left = childlist[0].leftpos
         right = childlist[-1].rightpos
         content = [x.content for x in childlist]
-        return ParseTree(left, right, [symbol], content, valid_firsts[0], childlist=childlist)
+        return ParseTree(left, right, [symbol], content, valid_firsts[0], childlist)
 
 
     def consume(self):

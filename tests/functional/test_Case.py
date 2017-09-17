@@ -113,8 +113,6 @@ class TestCase(unittest.TestCase):
         self.assertEqual(result, 13)
 
     def test_calculator(self):
-        from pydsl.Config import load_default_memory
-        load_default_memory()
         grammar_def = [
                 "S ::= E",
                 "E ::= E operator E | number",
