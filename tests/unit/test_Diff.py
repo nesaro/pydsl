@@ -1,4 +1,3 @@
-
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 #This file is part of pydsl.
@@ -16,11 +15,19 @@
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
-from pydsl.Parser.Parser import Parser
+__author__ = "Nestor Arocha"
+__copyright__ = "Copyright 2008-2017, Nestor Arocha"
+__email__ = "nesaro@gmail.com"
 
-class PEGParser(Parser):
-    def __init__(self, gd):
-        self.gd = gd
+import unittest
 
-    def get_trees(self, data):
-        pass
+class TestDiff(unittest.TestCase):
+    def testDiffSimple(self):
+        from pydsl.grammar.definition import String
+        alphabet = frozenset([String(x) for x in "abcde1"])
+        elem1 = "abcde"
+        elem2 = "abcd1"
+        from pydsl.diff import diff
+        self.assertEqual(diff(alphabet, elem1, elem2)[0].a, 0)
+        self.assertEqual(diff(alphabet, elem1, elem2)[0].b, 0)
+        self.assertEqual(diff(alphabet, elem1, elem2)[0].size, 4)

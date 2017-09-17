@@ -20,20 +20,19 @@
 
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2014, Nestor Arocha"
+__copyright__ = "Copyright 2008-2017, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
-from pydsl.Grammar.Definition import String
-from pydsl.Alphabet import Encoding
-from pydsl.Alphabet import Alphabet
+from pydsl.grammar.definition import String
+from pydsl.encoding import ascii_encoding
 
 
 @unittest.skip
 class TestGrammarDefinitionPLY(unittest.TestCase):
     def setUp(self):
         import plye
-        from pydsl.Grammar.Definition import PLYGrammar
+        from pydsl.grammar.definition import PLYGrammar
         self.grammardef = PLYGrammar(plye)
 
     @unittest.skip
@@ -53,18 +52,39 @@ class TestGrammarDefinitionPLY(unittest.TestCase):
         self.grammardef.maxsize
 
     def testAlphabet(self):
-        self.assertListEqual(self.grammardef.alphabet, Alphabet)
+        self.assertListEqual(self.grammardef.alphabet, frozenset)
+
+class TestGrammarDefinitionString(unittest.TestCase):
+    def setUp(self):
+        self.grammardef = String('abc')
+
+    def testEnumerate(self):
+        self.assertListEqual(['abc'], [x for x in self.grammardef.enum()])
+
+    def testFirst(self):
+        self.assertSetEqual(self.grammardef.first, set([String('a')]))
+
+    def testMin(self):
+        self.assertEqual(self.grammardef.minsize, 3)
+
+    def testMax(self):
+        self.assertEqual(self.grammardef.maxsize, 3)
+
+    def testAlphabet(self):
+        self.assertSetEqual(self.grammardef.alphabet, ascii_encoding)
+
 
 class TestGrammarDefinitionJson(unittest.TestCase):
     def setUp(self):
-        from pydsl.Grammar.Definition import JsonSchema
+        from pydsl.grammar.definition import JsonSchema
         self.grammardef = JsonSchema({})
 
     def testEnumerate(self):
         self.assertRaises(NotImplementedError, self.grammardef.enum)
 
     def testFirst(self):
-        self.grammardef.first
+        from pydsl.encoding import ascii_encoding
+        self.assertSetEqual(self.grammardef.first, ascii_encoding)
 
     def testMin(self):
         self.grammardef.minsize
@@ -73,5 +93,5 @@ class TestGrammarDefinitionJson(unittest.TestCase):
         self.grammardef.maxsize
 
     def testAlphabet(self):
-        self.assertEqual(self.grammardef.alphabet, Encoding('ascii'))
+        self.assertEqual(self.grammardef.alphabet, ascii_encoding)
 

@@ -16,21 +16,19 @@
 # along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
-from pydsl.Translator import translator_factory
-from pydsl.Check import checker_factory
-from pydsl.File.Python import load_python_file
+from pydsl.translator import translator_factory
+from pydsl.check import checker_factory
+from pydsl.file.python import load_python_file
+import parsley
 import sys
 
 __author__ = "Ptolom"
 __copyright__ = "Copyright 2014, Ptolom"
 __email__ = "ptolom@hexifact.co.uk"
 
-@unittest.skipIf(sys.version_info > (3,0), "parsley not available for python 3")
 class TestParsley(unittest.TestCase):
-    """Loading a bnf instance from a .bnf file"""
-    def testFileLoader(self):
-        import parsley
-        from pydsl.File.Parsley import load_parsley_grammar_file
+    def testDate(self):
+        from pydsl.file.parsley import load_parsley_grammar_file
         repository = {'DayOfMonth':load_python_file('pydsl/contrib/grammar/DayOfMonth.py')} #DayOfMonth loaded as checker
         G=load_parsley_grammar_file("pydsl/contrib/grammar/Date.parsley", "expr", repository)
         C=checker_factory(G)
@@ -38,6 +36,11 @@ class TestParsley(unittest.TestCase):
         self.assertTrue(C("2/4/12"))
         self.assertEqual(T("2/4/12"),(2,4,12))
         self.assertRaises(parsley.ParseError,T, "40/4/12")
+        
+    def testCalculator(self):
+        G=load_python_file("pydsl/contrib/translator/calculator.py")
+        T=translator_factory(G)
+        self.assertEqual(T("1+1"),2)
         
 
 if __name__ == '__main__':

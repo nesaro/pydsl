@@ -20,16 +20,20 @@ __copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
-from pydsl.grammar import RegularExpression
-from pydsl.guess import Guesser
+from pydsl.grammar import String
+from pydsl.grammar.parsley import ParsleyGrammar
+from pydsl.grammar.PEG import OneOrMore
+from pydsl.translator import ParsleyTranslator
 
-class TestGuesser(unittest.TestCase):
-    def testGuesser(self):
-        cstring = RegularExpression('.*')
-        g1234 = RegularExpression('1234')
-        memorylist = [cstring, g1234 ]
-        guesser = Guesser(memorylist)
-        self.assertListEqual(guesser('1234'), [cstring, g1234])
-        self.assertListEqual(guesser([x for x in '1234']), [cstring, g1234])
-        self.assertListEqual(guesser('134'), [cstring])
+
+class TestBinaryAlphabet(unittest.TestCase):
+    def test_binaryAlphabet(self):
+        binary_alphabet = frozenset([String('0'), String('1')])
+        binary_number = OneOrMore(binary_alphabet)
+        parsley_grammar = ParsleyGrammar("""digit = anything:x ?(x in '01')
+number = <digit+>:ds -> int(ds)
+expr = number:left ( '+' number:right -> left + right 
+                   | -> left)""", "expr")
+        binary_addition = ParsleyTranslator(parsley_grammar)
+        self.assertEqual(binary_addition('01+10'), 11)
 

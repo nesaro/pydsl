@@ -15,10 +15,10 @@
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Python Transformers"""
+"""Python Translators"""
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2014, Nestor Arocha"
+__copyright__ = "Copyright 2008-2015, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
@@ -26,10 +26,8 @@ LOG = logging.getLogger(__name__)
 
 class PythonTranslator(object):
     """ Python function based translator """
-    def __init__(self, inputdic, outputdic, function):
+    def __init__(self, function):
         self._function = function
-        self.inputchanneldic = inputdic
-        self.outputchanneldic = outputdic
 
     def __call__(self, *args, **kwargs):
         return self._function(*args, **kwargs)
@@ -53,14 +51,15 @@ class PyParsingTranslator(object):
 
 class ParsleyTranslator(object):
     def __init__(self, grammar):
-        self.g=grammar
+        self.gd=grammar
+
     def __call__(self, input):
-        return self.g.match(input)
+        return getattr(self.gd.grammar(input), self.gd.root_rule)() #call grammar(data).root_rule()
 
 
 def translator_factory(function):
-    from pydsl.Grammar.Definition import PLYGrammar
-    from pydsl.Grammar.Parsley import ParsleyGrammar
+    from pydsl.grammar.definition import PLYGrammar
+    from pydsl.grammar.parsley import ParsleyGrammar
     if isinstance(function, PLYGrammar):
         return PLYTranslator(function)
     if isinstance(function, ParsleyGrammar):

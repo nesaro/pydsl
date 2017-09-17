@@ -1,5 +1,6 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
+
 #This file is part of pydsl.
 #
 #pydsl is free software: you can redistribute it and/or modify
@@ -15,20 +16,10 @@
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
+
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2015, Nestor Arocha"
+__copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
-import unittest
-
-class TestTranslate(unittest.TestCase):
-    def testEcho(self):
-        from pydsl.translator import translate, PythonTranslator
-        from pydsl.grammar.definition import RegularExpression
-        from pydsl.check import checker_factory
-        cstring = checker_factory(RegularExpression('.*'))
-        def function(my_input):
-            return my_input
-        pt = PythonTranslator(function)
-        self.assertEqual(translate(pt,{'my_input':"1234"}),"1234")
-
+from pydsl.grammar import String
+ascii_encoding = frozenset([String(chr(x)) for x in range(128)])

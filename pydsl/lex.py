@@ -21,19 +21,16 @@ __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
-from pydsl.Grammar.PEG import Choice
-from pydsl.Alphabet import Encoding, GrammarCollection
-from pydsl.Check import checker_factory
-from pydsl.Token import Token, PositionToken
-from pydsl.Tree import PositionResultList
+from pydsl.grammar.PEG import Choice
+from pydsl.check import checker_factory
+from pydsl.token import Token, PositionToken
+from pydsl.tree import PositionResultList
+from pydsl.encoding import ascii_encoding
 
 
-class EncodingLexer(object):
+class DummyLexer(object):
 
     """Special Lexer that encodes from a string a reads a string"""
-
-    def __init__(self, encoding):
-        self.encoding = encoding
 
     def __call__(self, string): #TODO! make all the lexers work the same
         for x in string:
@@ -60,30 +57,29 @@ class EncodingLexer(object):
 def graph_from_alphabet(alphabet, base):
     """Creates a graph that connects the base with the target through alphabets
     If every target is connected to any inputs, create the independent paths"""
-    from pydsl.Alphabet import Alphabet
-    if not isinstance(alphabet, Alphabet):
+    if not isinstance(alphabet, (frozenset, Choice)):
         raise TypeError(alphabet.__class__.__name__)
-    if not isinstance(base, Alphabet):
+    if not isinstance(base, frozenset):
         raise TypeError(base.__class__.__name__)
             
     import networkx
     result = networkx.DiGraph()
     current_alphabet = alphabet
-    if isinstance(current_alphabet, GrammarCollection):
-        pending_stack = list(current_alphabet)
-    else:
-        pending_stack = [current_alphabet]
+    pending_stack = list(current_alphabet)
     while pending_stack:
         current_alphabet = pending_stack.pop()
-        if isinstance(current_alphabet, Encoding) or \
-                (isinstance(current_alphabet, GrammarCollection) and current_alphabet in base):
+        if current_alphabet == base:
             continue
-        if isinstance(current_alphabet, GrammarCollection):
+        if current_alphabet in base:
+            result.add_edge(current_alphabet, base)
+        elif isinstance(current_alphabet, (frozenset, list)):
             for element in current_alphabet:
-                result.add_edge(current_alphabet, element)
-                result.add_edge(element, element.alphabet)
-                pending_stack.append(element.alphabet)
-        else: #A Grammar
+                if element in base:
+                    result.add_edge(current_alphabet, base)
+                else:
+                    result.add_edge(current_alphabet, element)
+                    pending_stack.append(element)
+        elif current_alphabet.alphabet: #A Grammar
             result.add_edge(current_alphabet, current_alphabet.alphabet)
             pending_stack.append(current_alphabet.alphabet)
     #print_graph(result)
@@ -100,9 +96,8 @@ def print_graph(result):
 class GeneralLexer(object):
     """Multi level lexer"""
     def __init__(self, alphabet, base):
-        from pydsl.Alphabet import Alphabet
-        if not isinstance(alphabet, Alphabet):
-            raise TypeError
+        if not isinstance(alphabet, (frozenset, Choice)):
+            raise TypeError(alphabet.__class__.__name__)
         if not alphabet:
             raise ValueError
         if not base:
@@ -112,20 +107,24 @@ class GeneralLexer(object):
 
 
     def __call__(self, data, include_gd=False):
-        if isinstance(self.base, Encoding):
-            data = [x for x in EncodingLexer(self.base)(data)]
-            from pydsl.Token import append_position_to_token_list
+        if self.base == ascii_encoding:
+            data = [Token(x, x) for x in data]
+            from pydsl.token import append_position_to_token_list
             data = append_position_to_token_list(data)
         for element in data:
-            from pydsl.Check import check
-            if not check(self.base, element):
-                raise ValueError('Unexpected input grammar')
+            from pydsl.check import check
+            if not check(self.base, [element]):
+                raise ValueError('Unexpected input %s for alphabet %s' % (element, self.base))
+        if self.base == self.alphabet:
+            return data
         graph = graph_from_alphabet(self.alphabet, self.base)
         solved_elements = {}
         graph.node[self.base]['parsed'] = data #Attach data to every element in the graph
         digraph_walker_backwards(graph, self.base, my_call_back)
         result = []
         for output_alphabet in self.alphabet:
+            if output_alphabet in self.base:
+                output_alphabet = self.base
             if output_alphabet not in graph.node or 'parsed' not in graph.node[output_alphabet]:
                 raise Exception("alphabet not initialized:%s" % output_alphabet)
             for token in graph.node[output_alphabet]['parsed']:
@@ -181,7 +180,7 @@ def my_call_back(graph, element):
             raise Exception("Non contiguous parsing from sucessors")
         prev_right = right
         lexed_list.append(Token(string, gd))
-    from pydsl.Extract import extract
+    from pydsl.extract import extract
     gne['parsed'] = extract(element, lexed_list)
 
 
@@ -243,16 +242,10 @@ class ChoiceLexer(object):
 
 
 class ChoiceBruteForceLexer(object):
-
     """Attempts to generate the smallest token sequence by evaluating every accepted sequence"""
 
     def __init__(self, alphabet):
         self.alphabet = alphabet
-
-    @property
-    def current(self):
-        """Returns the element under the cursor until the end of the string"""
-        return self.string[self.index:]
 
     def __call__(self, string, include_gd=True):  # -> "TokenList":
         """Tokenizes input, generating a list of tokens"""
@@ -289,48 +282,9 @@ class ChoiceBruteForceLexer(object):
 def lexer_factory(alphabet, base = None):
     if isinstance(alphabet, Choice) and alphabet.alphabet == base:
         return ChoiceBruteForceLexer(alphabet)
-    elif isinstance(alphabet, Encoding):
-        if base is not None:
-            raise ValueError
-        return EncodingLexer(alphabet)
-    else:
-        if base is None:
-            base = Encoding('ascii')
-        return GeneralLexer(alphabet, base)
+    if base is None:
+        base = ascii_encoding
+    return GeneralLexer(alphabet, base)
 
 def lex(alphabet, base, data):
     return lexer_factory(alphabet, base)(data)
-
-def common_ancestor(alphabet):
-    """Discovers the alphabet common to every element in the input"""
-    expanded_alphabet_list = []
-    for gd in alphabet:
-        expanded_alphabet_list_entry = []
-        from pydsl.Alphabet import Alphabet
-        if isinstance(gd, Alphabet):
-            expanded_alphabet_list_entry.append(gd)
-        current_alphabet = gd.alphabet
-        while current_alphabet is not None:
-            expanded_alphabet_list_entry.append(current_alphabet)
-            current_alphabet = getattr(current_alphabet,"alphabet", None)
-        expanded_alphabet_list.append(expanded_alphabet_list_entry)
-    flat_alphabet_list = []
-    for entry in expanded_alphabet_list:
-        for alphabet in entry:
-            if alphabet not in flat_alphabet_list:
-                flat_alphabet_list.append(alphabet)
-    common_alphabets = [x for x in flat_alphabet_list if all((x in y for y in expanded_alphabet_list))]
-    if not common_alphabets:
-        return None
-    if len(common_alphabets) != 1:
-        raise NotImplementedError("Expected only one common ancestor, got %s " % str(common_alphabets))
-    return common_alphabets[0]
-
-def is_ancestor(parent_alphabet, child_alphabet):
-    """Tests if parent_alphabet is an ancestor of the child_alphabet"""
-    alphabet = parent_alphabet
-    while alphabet:
-        if child_alphabet == alphabet:
-            return True
-        alphabet = alphabet.alphabet
-    return False

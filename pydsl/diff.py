@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 #This file is part of pydsl.
 #
@@ -16,19 +16,21 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2015, Nestor Arocha"
+__copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
-import unittest
+import logging
+LOG = logging.getLogger(__name__)
 
-class TestTranslate(unittest.TestCase):
-    def testEcho(self):
-        from pydsl.translator import translate, PythonTranslator
-        from pydsl.grammar.definition import RegularExpression
-        from pydsl.check import checker_factory
-        cstring = checker_factory(RegularExpression('.*'))
-        def function(my_input):
-            return my_input
-        pt = PythonTranslator(function)
-        self.assertEqual(translate(pt,{'my_input':"1234"}),"1234")
+def lcs(list1, list2):
+    import difflib
+    differences = difflib.SequenceMatcher(None, list1, list2)
+    return [x for x in differences.get_matching_blocks()]
 
+def diff_factory(definition):
+    if isinstance(definition, frozenset):
+        return lcs
+    raise ValueError
+
+def diff(definition, element1, element2):
+    return diff_factory(definition)(element1, element2)

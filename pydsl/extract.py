@@ -16,15 +16,14 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2014, Nestor Arocha"
+__copyright__ = "Copyright 2008-2017, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
-from pydsl.Check import checker_factory
-from pydsl.Lex import lexer_factory
-from pydsl.Alphabet import Alphabet, Encoding
-from pydsl.Token import PositionToken, Token
+from pydsl.check import checker_factory
+from pydsl.lex import lexer_factory
+from pydsl.token import PositionToken, Token
 
 
 def filter_subsets(lst):
@@ -50,10 +49,7 @@ def extract_alphabet(alphabet, inputdata, fixed_start = False):
     """
     if not inputdata:
         return []
-    if isinstance(alphabet, Encoding):
-        base_alphabet = None
-    else:
-        base_alphabet = alphabet.alphabet
+    base_alphabet = alphabet.alphabet
 
     if isinstance(inputdata[0], (Token, PositionToken)):
         inputdata = [x.content for x in inputdata]
@@ -79,7 +75,7 @@ def extract_alphabet(alphabet, inputdata, fixed_start = False):
     result = filter_subsets(result)
     return [PositionToken(content, None, left, right) for (left, right, content) in result]
 
-def extract(grammar, inputdata, fixed_start = False):
+def extract(grammar, inputdata, fixed_start = False, return_first=False):
     """
     Receives a sequence and a grammar, 
     returns a list of PositionTokens with all of the parts of the sequence that 
@@ -93,10 +89,14 @@ def extract(grammar, inputdata, fixed_start = False):
         inputdata = [x.content for x in inputdata]
 
     totallen = len(inputdata)
-    try:
-        maxl = grammar.maxsize or totallen
-    except NotImplementedError:
-        maxl = totallen
+    from pydsl.grammar.PEG import Choice
+    if isinstance(grammar, (frozenset, Choice)):
+        maxl = 1
+    else:
+        try:
+            maxl = grammar.maxsize or totallen
+        except NotImplementedError:
+            maxl = totallen
     try:
         #minl = grammar.minsize #FIXME: It won't work with incompatible alphabets
         minl = 1
@@ -111,6 +111,15 @@ def extract(grammar, inputdata, fixed_start = False):
         for j in range(i+minl, min(i+maxl, totallen) + 1):
             check = checker.check(inputdata[i:j])
             if check:
-                result.append(PositionToken(inputdata[i:j], None, i, j))
+                this_pt = PositionToken(inputdata[i:j], None, i, j)
+                if return_first:
+                    return this_pt
+                result.append(this_pt)
     return result
+
+def search(grammar, inputdata):
+    return extract(grammar, inputdata, return_first=True)
+
+def match(grammar, inputdata):
+    return extract(grammar, inputdata, fixed_start=True, return_first=True)
 

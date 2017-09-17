@@ -38,24 +38,25 @@ def load_python_file(moduleobject):
     if not hasattr(moduleobject, "iclass"):
         raise KeyError("Element" + str(moduleobject))
     iclass = getattr(moduleobject, "iclass")
+    mylist = getattr(moduleobject, "__all__", None) or list(filter(lambda x:x[:1] != "_", (dir(moduleobject))))
+    mylist.remove('iclass')
     resultdic = {}
-    mylist = list(filter(lambda x:x[:1] != "_" and x != "iclass", (dir(moduleobject))))
     for x in mylist:
         resultdic[x] = getattr(moduleobject, x)
     if iclass == "SymbolGrammar":
-        from pydsl.Grammar.BNF import BNFGrammar
+        from pydsl.grammar.BNF import BNFGrammar
         return BNFGrammar(**resultdic)
     elif iclass == "PLY":
-        from pydsl.Grammar.Definition import PLYGrammar
+        from pydsl.grammar.definition import PLYGrammar
         return PLYGrammar(moduleobject)
-    elif iclass == "MongoDict":
-        from pydsl.Grammar.Definition import MongoGrammar
-        return MongoGrammar(resultdic)
     elif iclass in ["PythonGrammar"]:
-        from pydsl.Grammar.Definition import PythonGrammar
+        from pydsl.grammar.definition import PythonGrammar
         return PythonGrammar(resultdic)
-    elif iclass == "PythonTransformer":
+    elif iclass == "PythonTranslator":
         return resultdic
+    elif iclass == "parsley":
+        from pydsl.grammar.parsley import ParsleyGrammar
+        return ParsleyGrammar(**resultdic)
     elif iclass == "pyparsing":
         return resultdic['root_symbol']
     else:

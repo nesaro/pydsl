@@ -16,7 +16,7 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
-from pydsl.Grammar.Definition import String
+from pydsl.grammar.definition import String
 
 
 class TestBNF(unittest.TestCase):
@@ -29,7 +29,7 @@ class TestBNF(unittest.TestCase):
         self.assertListEqual([x for x in self.grammardef.enum()], ["SR"])
 
     def testFirst(self):
-        self.assertEqual(self.grammardef.first, String("S"))
+        self.assertSetEqual(self.grammardef.first, set([String("S")]))
 
     @unittest.skip("Not implemented")
     def testMin(self):
@@ -40,15 +40,14 @@ class TestBNF(unittest.TestCase):
         self.assertEqual(self.grammardef.maxsize,2)
 
     def testFirstLookup(self):
-        from pydsl.Grammar.Symbol import NonTerminalSymbol, TerminalSymbol
-        from pydsl.Grammar.PEG import Choice
-        self.grammardef.first_lookup(NonTerminalSymbol("exp"))[0]
+        from pydsl.grammar.symbol import NonTerminalSymbol, TerminalSymbol
+        from pydsl.grammar.PEG import Choice
         self.assertEqual(self.grammardef.first_lookup(NonTerminalSymbol("exp")),Choice([String("S")]))
 
     def testNextLookup(self):
-        from pydsl.Grammar.Symbol import NonTerminalSymbol, EndSymbol
+        from pydsl.grammar.symbol import NonTerminalSymbol, EndSymbol
         self.grammardef.next_lookup(NonTerminalSymbol("exp"))[0]
         self.assertListEqual(self.grammardef.next_lookup(NonTerminalSymbol("exp")),[EndSymbol()])
 
     def testAlphabet(self):
-        self.assertListEqual(list(self.grammardef.alphabet), [String(x) for x in ["S","R"]])
+        self.assertEqual(self.grammardef.alphabet, set([String(x) for x in ["S","R"]]))

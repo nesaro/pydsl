@@ -16,19 +16,21 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2013, Nestor Arocha"
+__copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
-from pydsl.Grammar.Definition import String
+from pydsl.check import checker_factory
+from pydsl.grammar.definition import String
+from pydsl.grammar.PEG import Sequence
 import sys
 
 class TestBNFChecker(unittest.TestCase):
     """BNF Checker"""
     def testStringInput(self):
         """Test checker instantiation and call"""
-        from pydsl.Check import BNFChecker
         from pydsl.contrib.bnfgrammar import productionset0
+        from pydsl.check import BNFChecker
         grammardef = productionset0
         checker = BNFChecker(grammardef)
         self.assertTrue(checker.check("SR"))
@@ -42,7 +44,7 @@ class TestRegularExpressionChecker(unittest.TestCase):
     """BNF Checker"""
     def testCheck(self):
         """Test checker instantiation and call"""
-        from pydsl.Check import RegularExpressionChecker
+        from pydsl.check import RegularExpressionChecker
         input_str = "abc"
         checker = RegularExpressionChecker(input_str)
         self.assertTrue(checker.check(input_str))
@@ -55,9 +57,9 @@ class TestRegularExpressionChecker(unittest.TestCase):
 class TestPLYChecker(unittest.TestCase):
     def testCheck(self):
         """Test checker instantiation and call"""
-        from pydsl.Check import PLYChecker
+        from pydsl.check import PLYChecker
         from pydsl.contrib.grammar import example_ply
-        from pydsl.Grammar.Definition import PLYGrammar
+        from pydsl.grammar.definition import PLYGrammar
         grammardef = PLYGrammar(example_ply)
         checker = PLYChecker(grammardef)
         self.assertTrue(checker.check("O"))
@@ -70,49 +72,40 @@ class TestPLYChecker(unittest.TestCase):
 class TestJsonSchemaChecker(unittest.TestCase):
     def testCheck(self):
         """Test checker instantiation and call"""
-        from pydsl.Grammar.Definition import JsonSchema
-        from pydsl.Check import JsonSchemaChecker
+        from pydsl.grammar.definition import JsonSchema
+        from pydsl.check import JsonSchemaChecker
         schema = {
-            "type" : "string",
-            "items" : {
-                "type" : ["string", "object"],
+                "type" : "object",
+                "required":["foo"],
                 "properties" : {
                     "foo" : {"enum" : [1, 3]},
-                    #"bar" : { #See https://github.com/Julian/jsonschema/issues/89
-                    #    "type" : "array",
-                    #    "properties" : {
-                    #        "bar" : {"required" : True},
-                    #        "baz" : {"minItems" : 2},
-                    #    }
-                    #}
+                    "bar" : {"format": "number_three"} #Ignored by jsonschema
                 }
-            }
         }
         grammardef = JsonSchema(schema)
         checker = JsonSchemaChecker(grammardef)
-        self.assertTrue(checker.check("a"))
+        self.assertFalse(checker.check("a"))
+        self.assertTrue(checker.check({"foo":1}))
+        self.assertFalse(checker.check({"foo":2}))
+        self.assertTrue(checker.check({"foo":3}))
         self.assertFalse(checker.check([1, {"foo" : 2, "bar" : {"baz" : [1]}}, "quux"]))
+        self.assertRaises(Exception, checker.check, [1, {"foo" : 2, "bar" : {"baz" : [1]}}, "quux"], raise_exceptions=True)
+        number_three = checker_factory(String("3"))
+        fc = {"number_three":number_three}
+        grammardef = JsonSchema(schema)
+        checker = JsonSchemaChecker(grammardef, fc) # Adds a format checker
+        self.assertFalse(checker.check({"foo" : 1, "bar" : "123456"}))
+        self.assertTrue(checker.check({"foo" : 1, "bar" : "3"}))
 
 
-class TestEncodingChecker(unittest.TestCase):
-    @unittest.skipIf(sys.version_info < (3,0), "Full encoding support not available for python 2")
-    def testCheck(self):
-        from pydsl.Check import EncodingChecker
-        from pydsl.Alphabet import Encoding
-        a = Encoding('ascii')
-        checker = EncodingChecker(a)
-        self.assertTrue(checker.check('1234'))
-        self.assertTrue(checker.check([x for x in '1234']))
-        self.assertTrue(checker.check('asdf'))
-        self.assertFalse(checker.check('£'))
-        #self.assertFalse(checker.check('')) #FIXME
+
 
 
 class TestChoiceChecker(unittest.TestCase):
     def testCheck(self):
-        from pydsl.Check import ChoiceChecker
-        from pydsl.Grammar.PEG import Choice
-        from pydsl.Grammar import RegularExpression
+        from pydsl.check import ChoiceChecker
+        from pydsl.grammar.PEG import Choice
+        from pydsl.grammar import RegularExpression
         a = Choice([RegularExpression('^[0123456789]*$')])
         checker = ChoiceChecker(a)
         self.assertTrue(checker.check([x for x in '1234']))
@@ -123,22 +116,17 @@ class TestChoiceChecker(unittest.TestCase):
 class TestStringChecker(unittest.TestCase):
     def testCheck(self):
         """Test checker instantiation and call"""
-        from pydsl.Check import StringChecker
-        grammarchecker = StringChecker(String("string123"))
-        self.assertTrue(grammarchecker("string123"))
-        self.assertTrue(grammarchecker(["string123"]))
-        self.assertTrue(grammarchecker(("string123",)))
-        list_version = ["s","t","r","i","n","g","1","2","3"]
-        self.assertTrue(grammarchecker(("s","t","r","i","n","g","1","2","3",)))
-        self.assertTrue(grammarchecker(list_version))
-        self.assertTrue(grammarchecker([String(x) for x in list_version]))
-        self.assertTrue(grammarchecker([x for x in list_version]))
+        from pydsl.check import StringChecker
+        grammarchecker = StringChecker(String("3"))
+        self.assertTrue(grammarchecker("3"))
+        self.assertTrue(grammarchecker(["3"]))
+        self.assertTrue(grammarchecker(("3",)))
         self.assertFalse(grammarchecker(''))
 
 class TestSequenceChecker(unittest.TestCase):
     def testCheck(self):
-        from pydsl.Grammar.PEG import Sequence
-        from pydsl.Check import SequenceChecker
+        from pydsl.grammar.PEG import Sequence
+        from pydsl.check import SequenceChecker
         sequence = Sequence((String("a"), String("b"), String("c")))
         checker = SequenceChecker(sequence)
         self.assertTrue(checker.check("abc"))

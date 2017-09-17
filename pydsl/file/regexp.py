@@ -19,7 +19,7 @@
 """Regular expression file parser"""
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2013, Nestor Arocha"
+__copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 
@@ -44,5 +44,5 @@ def load_re_from_file(filepath):
     flags = 0
     if "i" in flagstr:
         flags |= re.I
-    from pydsl.Grammar.Definition import RegularExpression
+    from pydsl.grammar.definition import RegularExpression
     return RegularExpression(regexp, flags)

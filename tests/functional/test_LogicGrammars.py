@@ -1,18 +1,17 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from pydsl.Check import checker_factory
 
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
-from pydsl.Parser.Backtracing import BacktracingErrorRecursiveDescentParser
-from pydsl.File.BNF import load_bnf_file
-from pydsl.Lex import lex
-from pydsl.Grammar import RegularExpression
-from pydsl.Alphabet import Encoding
-ascii_encoding = Encoding("ascii")
+from pydsl.parser.backtracing import BacktracingErrorRecursiveDescentParser
+from pydsl.file.BNF import load_bnf_file
+from pydsl.lex import lex
+from pydsl.grammar import RegularExpression
+from pydsl.encoding import ascii_encoding
+from pydsl.check import checker_factory
 
 
 class TestLogicGrammars(unittest.TestCase):
@@ -26,8 +25,6 @@ class TestLogicGrammars(unittest.TestCase):
         parser = BacktracingErrorRecursiveDescentParser(productionrulesetlogical)
         tokens = [x[0] for x in lex(repository['TrueFalse'].alphabet, ascii_encoding, self.tokelist5)]
         self.assertEqual(len(tokens), 1)
-        from pydsl.Lex import common_ancestor
-        self.assertEqual(common_ancestor(productionrulesetlogical.alphabet), None)
         #tokens = [x[0] for x in lex(productionrulesetlogical.alphabet, Encoding('ascii'), tokens)] #FIXME
         tokens = [['True']]
         result = parser.get_trees(tokens)

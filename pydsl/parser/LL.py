@@ -20,10 +20,10 @@
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
-from pydsl.Check import check
-from pydsl.Parser.Parser import TopDownParser
-from pydsl.Tree import ParseTree
-from pydsl.Exceptions import ParseError
+from pydsl.check import check
+from pydsl.parser.parser import TopDownParser
+from pydsl.tree import ParseTree
+from pydsl.exceptions import ParseError
 import logging
 LOG = logging.getLogger(__name__)
 
@@ -42,7 +42,7 @@ class LL1RecursiveDescentParser(TopDownParser):
             return []
 
     def __aux_parser(self, symbol):
-        from pydsl.Grammar.Symbol import TerminalSymbol
+        from pydsl.grammar.symbol import TerminalSymbol
         if isinstance(symbol, TerminalSymbol):
             LOG.debug("matching symbol %s, data:%s, index:%s" % (symbol,self.data,self.index ))
             result= self.match(symbol)
@@ -56,9 +56,7 @@ class LL1RecursiveDescentParser(TopDownParser):
                 valid_firsts.append(production)
         if len(valid_firsts) != 1:
             raise ParseError("Expected only one valid production, found %s" % len(valid_firsts), 0)
-        childlist = []
-        for element in valid_firsts[0].rightside:
-            childlist.append(self.__aux_parser(element))
+        childlist = [self.__aux_parser(x) for x in valid_firsts[0].rightside]
         left = childlist[0].left
         right = childlist[-1].right
         content = [x.content for x in childlist]
@@ -72,13 +70,11 @@ class LL1RecursiveDescentParser(TopDownParser):
 
     @property
     def current(self):
-        result = self.data[self.index]
-        return result
+        return self.data[self.index]
 
     def match(self, symbol):
         if symbol.check(self.current):
             current = self.current
             self.consume()
             return ParseTree(self.index-1, self.index, symbol, current)
-        else:
-            raise Exception("Not matched")
+        raise Exception("Not matched")

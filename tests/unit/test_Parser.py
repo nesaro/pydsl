@@ -22,10 +22,10 @@ __email__ = "nesaro@gmail.com"
 
 
 from pydsl.contrib.bnfgrammar import *
-from pydsl.Parser.Backtracing import BacktracingErrorRecursiveDescentParser
-from pydsl.Parser.LR0 import LR0Parser
-from pydsl.Lex import EncodingLexer
-from pydsl.Parser.LL import LL1RecursiveDescentParser
+from pydsl.parser.backtracing import BacktracingErrorRecursiveDescentParser
+from pydsl.parser.LR0 import LR0Parser
+from pydsl.lex import DummyLexer, lex
+from pydsl.parser.LL import LL1RecursiveDescentParser
 import unittest
 
 class TestBacktracingRecursiveDescentParser(unittest.TestCase):
@@ -71,9 +71,8 @@ class TestBacktracingRecursiveDescentParser(unittest.TestCase):
 
     def testRecursiveDescentParserNullBad(self):
         descentparser = BacktracingErrorRecursiveDescentParser(productionset2)
-        from pydsl.Lex import lex
-        from pydsl.Alphabet import Encoding
-        ascii_encoding = Encoding('ascii')
+        from pydsl.encoding import ascii_encoding
+        ascii_encoding = ascii_encoding
         lexed_string4 = [x[0] for x in lex(productionset2.alphabet, ascii_encoding, string4)]
         result = descentparser(lexed_string4)
         self.assertFalse(result)
@@ -84,7 +83,7 @@ class TestBacktracingRecursiveDescentParser(unittest.TestCase):
 class TestLR0Parser(unittest.TestCase):
     def testLR0ParseTable(self):
         """Tests the lr0 table generation"""
-        from pydsl.Parser.LR0 import _slr_build_parser_table, build_states_sets
+        from pydsl.parser.LR0 import _slr_build_parser_table, build_states_sets
         state_sets = build_states_sets(productionset0)
         self.assertEqual(len(state_sets), 5)
         #0 . EI: : . exp $ , 
@@ -105,7 +104,7 @@ class TestLR0Parser(unittest.TestCase):
 
     def testLR0ParserStore(self):
         parser = LR0Parser(productionset0)
-        tokelist = [x.content for x in EncodingLexer('utf8')(p0good)]
+        tokelist = [x.content for x in DummyLexer()(p0good)]
         result = parser(tokelist)
         self.assertTrue(result)
 
@@ -161,9 +160,9 @@ class TestLL1RecursiveDescentParser(unittest.TestCase):
 @unittest.skip
 class TestPEGParser(unittest.TestCase):
     def testBasicChoice(self):
-        from pydsl.Grammar.Alphabet import Choice
-        from pydsl.Tree import ParseTree
-        from pydsl.Parser.PEG import PEGParser
+        from pydsl.grammar.PEG import Choice
+        from pydsl.tree import ParseTree
+        from pydsl.parser.PEG import PEGParser
         gd = Choice([String('a'), String('b')])
         parser = PEGParser(gd)
         result = parser('a')
@@ -174,12 +173,12 @@ class TestPEGParser(unittest.TestCase):
 class TestParse(unittest.TestCase):
     def testverb(self):
         """Tests the lr0 table generation"""
-        from pydsl.Parser.Parser import parse, parser_factory
-        tokelist = [x.content for x in EncodingLexer('utf8')(p0good)]
+        from pydsl.parser.parser import parse, parser_factory
+        tokelist = [x.content for x in DummyLexer()(p0good)]
         self.assertTrue(parse(productionset0, tokelist , "default"))
         self.assertTrue(parse(productionset0, tokelist , "lr0"))
         self.assertTrue(parse(productionset0, tokelist , "ll1"))
-        tokelist = [x.content for x in EncodingLexer('utf8')(p0bad)]
+        tokelist = [x.content for x in DummyLexer()(p0bad)]
         self.assertFalse(parse(productionset0, tokelist , "default"))
         self.assertFalse(parse(productionset0, tokelist , "lr0"))
         self.assertFalse(parse(productionset0, tokelist , "ll1"))

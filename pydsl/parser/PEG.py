@@ -1,4 +1,5 @@
-#!/usr/bin/env python
+
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 #This file is part of pydsl.
 #
@@ -15,20 +16,11 @@
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
-__author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2015, Nestor Arocha"
-__email__ = "nesaro@gmail.com"
+from pydsl.parser.parser import Parser
 
-import unittest
+class PEGParser(Parser):
+    def __init__(self, gd):
+        self.gd = gd
 
-class TestTranslate(unittest.TestCase):
-    def testEcho(self):
-        from pydsl.translator import translate, PythonTranslator
-        from pydsl.grammar.definition import RegularExpression
-        from pydsl.check import checker_factory
-        cstring = checker_factory(RegularExpression('.*'))
-        def function(my_input):
-            return my_input
-        pt = PythonTranslator(function)
-        self.assertEqual(translate(pt,{'my_input':"1234"}),"1234")
-
+    def get_trees(self, data):
+        pass

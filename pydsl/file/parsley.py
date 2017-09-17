@@ -15,19 +15,13 @@
 # You should have received a copy of the GNU General Public License
 # along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Token classes"""
 
-__author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2014, Nestor Arocha"
-__email__ = "nesaro@gmail.com"
+from pydsl.grammar.parsley import ParsleyGrammar
 
-from pydsl.Check import checker_factory
-from collections import namedtuple
+__author__ = "Ptolom"
+__copyright__ = "Copyright 2014, Ptolom"
+__email__ = "ptolom@hexifact.co.uk"
 
-Token = namedtuple('Token', ('content','gd'))
-PositionToken = namedtuple('PositionToken', ('content','gd','left','right'))
-
-
-def append_position_to_token_list(token_list):
-    """Converts a list of Token into a list of PositionToken, asuming size == 1"""
-    return [PositionToken(value.content, value.gd, index, index+1) for (index, value) in enumerate(token_list)]
+def load_parsley_grammar_file(filepath, root_rule="expr", repository=None):
+    with open(filepath,'r') as file:
+        return ParsleyGrammar(file.read(), root_rule, repository)
