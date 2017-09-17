@@ -1,5 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+
 #This file is part of pydsl.
 #
 #pydsl is free software: you can redistribute it and/or modify
@@ -15,19 +16,10 @@
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
+
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2017, Nestor Arocha"
+__copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
-import unittest
-
-class TestDiff(unittest.TestCase):
-    def testDiffSimple(self):
-        from pydsl.grammar.definition import String
-        alphabet = frozenset([String(x) for x in "abcde1"])
-        elem1 = "abcde"
-        elem2 = "abcd1"
-        from pydsl.diff import diff
-        self.assertEqual(diff(alphabet, elem1, elem2)[0].a, 0)
-        self.assertEqual(diff(alphabet, elem1, elem2)[0].b, 0)
-        self.assertEqual(diff(alphabet, elem1, elem2)[0].size, 4)
+from pydsl.grammar import String
+ascii_encoding = frozenset([String(chr(x)) for x in range(128)])

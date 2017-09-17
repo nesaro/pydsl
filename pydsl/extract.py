@@ -16,15 +16,14 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2014, Nestor Arocha"
+__copyright__ = "Copyright 2008-2017, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
-from pydsl.Check import checker_factory
-from pydsl.Lex import lexer_factory
-from pydsl.Alphabet import Alphabet
-from pydsl.Token import PositionToken, Token
+from pydsl.check import checker_factory
+from pydsl.lex import lexer_factory
+from pydsl.token import PositionToken, Token
 
 
 def filter_subsets(lst):
@@ -90,10 +89,14 @@ def extract(grammar, inputdata, fixed_start = False, return_first=False):
         inputdata = [x.content for x in inputdata]
 
     totallen = len(inputdata)
-    try:
-        maxl = grammar.maxsize or totallen
-    except NotImplementedError:
-        maxl = totallen
+    from pydsl.grammar.PEG import Choice
+    if isinstance(grammar, (frozenset, Choice)):
+        maxl = 1
+    else:
+        try:
+            maxl = grammar.maxsize or totallen
+        except NotImplementedError:
+            maxl = totallen
     try:
         #minl = grammar.minsize #FIXME: It won't work with incompatible alphabets
         minl = 1

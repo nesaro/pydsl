@@ -4,7 +4,7 @@
 # A simple calculator with variables -- all in one file.
 # -----------------------------------------------------------------------------
 
-from pydsl.Exceptions import ParseError
+from pydsl.exceptions import ParseError
 
 tokens = (
     'NAME','NUMBER',

@@ -24,8 +24,8 @@ __email__ = "nesaro@gmail.com"
 
 import logging
 import re
-from pydsl.Grammar.Symbol import TerminalSymbol,  NonTerminalSymbol, NullSymbol
-from pydsl.Grammar.BNF import Production
+from pydsl.grammar.symbol import TerminalSymbol,  NonTerminalSymbol, NullSymbol
+from pydsl.grammar.BNF import Production
 LOG = logging.getLogger(__name__)
 
 """ pydsl Grammar definition file parser """
@@ -37,7 +37,7 @@ def __generateStringSymbol(rightside):
     content = tail
     if len(tail) > 2 and tail[1][0] == "'" and tail[1][-1] == "'":
         content = tail[1][1:-1]
-    from pydsl.Grammar.PEG import Sequence
+    from pydsl.grammar.PEG import Sequence
     return TerminalSymbol(Sequence.from_string(content))
 
 def __generateWordSymbol(rightside, repository):
@@ -134,7 +134,7 @@ def strlist_to_production_set(linelist, repository = None, start_symbol = "S"):
             del nonterminalrulelist[myindex]
     for terminal in terminalrulelist:
         rulelist.append(terminal)
-    from pydsl.Grammar.BNF import BNFGrammar
+    from pydsl.grammar.BNF import BNFGrammar
     return BNFGrammar(symboldict[start_symbol], rulelist, macrodict)
 
 

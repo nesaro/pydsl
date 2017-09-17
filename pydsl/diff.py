@@ -1,6 +1,5 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-
 #This file is part of pydsl.
 #
 #pydsl is free software: you can redistribute it and/or modify
@@ -16,11 +15,22 @@
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
-
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
-from pydsl.Grammar import String
-from pydsl.Alphabet import Alphabet
-ascii_encoding = Alphabet([String(chr(x)) for x in range(128)])
+import logging
+LOG = logging.getLogger(__name__)
+
+def lcs(list1, list2):
+    import difflib
+    differences = difflib.SequenceMatcher(None, list1, list2)
+    return [x for x in differences.get_matching_blocks()]
+
+def diff_factory(definition):
+    if isinstance(definition, frozenset):
+        return lcs
+    raise ValueError
+
+def diff(definition, element1, element2):
+    return diff_factory(definition)(element1, element2)

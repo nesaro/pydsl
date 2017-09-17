@@ -16,7 +16,7 @@
 #You should have received a copy of the GNU General Public License
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
-from pydsl.Parser.Parser import Parser
+from pydsl.parser.parser import Parser
 
 class PEGParser(Parser):
     def __init__(self, gd):

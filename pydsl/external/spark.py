@@ -725,7 +725,7 @@ class GenericASTBuilder(GenericParser):
 #  preorder traversal.  Node type is determined via the typestring() method.
 #
 
-class GenericASTTraversalPruningException:
+class GenericASTTraversalPruningException(Exception):
     pass
 
 class GenericASTTraversal:

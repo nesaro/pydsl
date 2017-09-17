@@ -20,10 +20,10 @@
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
-from pydsl.Check import check
-from pydsl.Parser.Parser import TopDownParser
-from pydsl.Tree import ParseTree
-from pydsl.Exceptions import ParseError
+from pydsl.check import check
+from pydsl.parser.parser import TopDownParser
+from pydsl.tree import ParseTree
+from pydsl.exceptions import ParseError
 import logging
 LOG = logging.getLogger(__name__)
 
@@ -95,7 +95,7 @@ class LL1RecursiveDescentParser(TopDownParser):
             return []
 
     def __aux_parser(self, symbol):
-        from pydsl.Grammar.Symbol import TerminalSymbol
+        from pydsl.grammar.symbol import TerminalSymbol
         if isinstance(symbol, TerminalSymbol):
             LOG.debug("matching symbol %s, data:%s, index:%s" % (symbol,self.data,self.index ))
             result= self.match(symbol)
