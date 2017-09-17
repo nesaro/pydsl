@@ -124,10 +124,11 @@ class BNFChecker(Checker):
             raise ValueError("Unknown parser : " + parser)
 
     def check(self, data):
-        for element in data:
-            if not check(self.gd.alphabet, element):
-                LOG.warning("Invalid input: %s,%s" % (self.gd.alphabet, element))
-                return False
+        if not isinstance(data, Iterable):
+            raise TypeError(data)
+        if not check(self.gd.alphabet, data):
+            LOG.warning("Invalid input: %s,%s" % (self.gd.alphabet, data))
+            return False
         try:
             return len(self.__parser.get_trees(data)) > 0
         except IndexError:
