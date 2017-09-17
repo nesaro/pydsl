@@ -23,13 +23,21 @@ __email__ = "nesaro@gmail.com"
 
 class Token:
     def __init__(self, content, gd, left=None, right=None):
+        if not gd:
+            raise ValueError
         self.content = content
         self.gd = gd
         self.__left = left
         self.__right = right
 
+    def __str__(self):
+        return self.content
+
     def __eq__(self, other):
-        return self.content == other.content and self.gd == other.gd
+        return self.content == other.content and \
+               self.gd == other.gd and \
+               getattr(self, 'left', None) == getattr(other, 'left', None)  and \
+               getattr(self, 'right', None) == getattr(other, 'right', None) 
 
     @property
     def left(self):

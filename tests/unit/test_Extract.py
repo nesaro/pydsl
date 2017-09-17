@@ -31,41 +31,42 @@ import sys
 class TestGrammarExtract(unittest.TestCase):
 
     def testRegularExpressionExtract(self):
+        self.maxDiff = None
         gd = RegularExpression('^[0123456789]*$')
         expected_result = [
-                Token(content='1', gd=None, left=3, right=4), 
-                Token(content='12', gd=None, left=3, right=5), 
-                Token(content='123', gd=None, left=3, right=6), 
-                Token(content='1234', gd=None, left=3, right=7), 
-                Token(content='2', gd=None, left=4, right=5), 
-                Token(content='23', gd=None, left=4, right=6), 
-                Token(content='234', gd=None, left=4, right=7), 
-                Token(content='3', gd=None, left=5, right=6), 
-                Token(content='34', gd=None, left=5, right=7), 
-                Token(content='4', gd=None, left=6, right=7)]
+                Token(content='1', gd=gd, left=3, right=4), 
+                Token(content='12', gd=gd, left=3, right=5), 
+                Token(content='123', gd=gd, left=3, right=6), 
+                Token(content='1234', gd=gd, left=3, right=7), 
+                Token(content='2', gd=gd, left=4, right=5), 
+                Token(content='23', gd=gd, left=4, right=6), 
+                Token(content='234', gd=gd, left=4, right=7), 
+                Token(content='3', gd=gd, left=5, right=6), 
+                Token(content='34', gd=gd, left=5, right=7), 
+                Token(content='4', gd=gd, left=6, right=7)]
         self.assertListEqual(extract(gd,'abc1234abc'), expected_result)
         expected_result = [
-                Token(content=['1'], gd=None, left=3, right=4), 
-                Token(content=['1','2'], gd=None, left=3, right=5), 
-                Token(content=['1','2','3'], gd=None, left=3, right=6), 
-                Token(content=['1','2','3','4'], gd=None, left=3, right=7), 
-                Token(content=['2'], gd=None, left=4, right=5), 
-                Token(content=['2','3'], gd=None, left=4, right=6), 
-                Token(content=['2','3','4'], gd=None, left=4, right=7), 
-                Token(content=['3'], gd=None, left=5, right=6), 
-                Token(content=['3','4'], gd=None, left=5, right=7), 
-                Token(content=['4'], gd=None, left=6, right=7)]
-        self.assertListEqual(extract(gd,[Token(x, None) for x in 'abc1234abc']), expected_result)
+                Token(content=['1'], gd=gd, left=3, right=4), 
+                Token(content=['1','2'], gd=gd, left=3, right=5), 
+                Token(content=['1','2','3'], gd=gd, left=3, right=6), 
+                Token(content=['1','2','3','4'], gd=gd, left=3, right=7), 
+                Token(content=['2'], gd=gd, left=4, right=5), 
+                Token(content=['2','3'], gd=gd, left=4, right=6), 
+                Token(content=['2','3','4'], gd=gd, left=4, right=7), 
+                Token(content=['3'], gd=gd, left=5, right=6), 
+                Token(content=['3','4'], gd=gd, left=5, right=7), 
+                Token(content=['4'], gd=gd, left=6, right=7)]
+        self.assertListEqual(extract(gd,[Token(x, gd) for x in 'abc1234abc']), expected_result)
         self.assertListEqual(extract(gd,[x for x in 'abc1234abc']), expected_result)
         self.assertRaises(Exception, extract, None)
         self.assertListEqual(extract(gd,''), []) #Empty input
 
     def testRegularExpressionSearch(self):
         gd = RegularExpression('^[0123456789]*$')
-        expected_result = Token(content='1', gd=None, left=3, right=4)
+        expected_result = Token(content='1', gd=gd, left=3, right=4)
         self.assertEqual(search(gd,'abc1234abc'), expected_result)
-        expected_result = Token(content=['1'], gd=None, left=3, right=4)
-        self.assertEqual(search(gd,[Token(x, None) for x in 'abc1234abc']), expected_result)
+        expected_result = Token(content=['1'], gd=gd, left=3, right=4)
+        self.assertEqual(search(gd,[Token(x, ascii_encoding) for x in 'abc1234abc']), expected_result)
         self.assertEqual(search(gd,[x for x in 'abc1234abc']), expected_result)
         self.assertRaises(Exception, search, None)
         self.assertListEqual(search(gd,''), []) #Empty input
@@ -74,7 +75,7 @@ class TestGrammarExtract(unittest.TestCase):
         gd = RegularExpression('^[0123456789]*$')
         expected_result = []
         self.assertEqual(match(gd,'abc1234abc'), expected_result)
-        self.assertEqual(match(gd,[Token(x, None) for x in 'abc1234abc']), expected_result)
+        self.assertEqual(match(gd,[Token(x, ascii_encoding) for x in 'abc1234abc']), expected_result)
         self.assertEqual(match(gd,[x for x in 'abc1234abc']), expected_result)
         self.assertRaises(Exception, match, None)
         self.assertListEqual(match(gd,''), []) #Empty input
@@ -86,15 +87,17 @@ class TestAlphabetExtract(unittest.TestCase):
     def testEncoding(self):
         ad = ascii_encoding
         self.assertListEqual(extract(ad,''), [])
-        self.assertListEqual(extract(ad,'a£'), [Token('a', None, 0,1)])
-        self.assertListEqual(extract(ad,['a','£']), [Token(['a'], None, 0,1)])
+        self.assertListEqual(extract(ad,'a£'), [Token('a', ad, 0,1)])
+        self.assertListEqual(extract(ad,['a','£']), [Token(['a'], ad, 0,1)])
         self.assertRaises(Exception, extract, None)
 
     def testChoices(self):
         gd = Choice([String('a'), String('b'), String('c')])
-        self.assertListEqual(extract_alphabet(gd,'axbycz'), [Token('a', None,0,1), Token('b', None, 2,3), Token('c', None, 4,5)])
-        self.assertListEqual(extract_alphabet(gd,'xyzabcxyz'), [Token('abc', None, 3,6)])
-        self.assertListEqual(extract_alphabet(gd,'abcxyz'), [Token('abc', None, 0,3)])
-        self.assertListEqual(extract_alphabet(gd,[Token(x, None) for x in 'abcxyz']), [Token(['a','b','c'], None, 0,3)])
-        self.assertListEqual(extract_alphabet(gd,'abc'), [Token('abc', None, 0,3)])
+        self.assertListEqual(extract_alphabet(gd,'axbycz'), [Token('a', String('a'),0,1), Token('b', String('b'), 2,3), Token('c', String('c'), 4,5)])
+        self.assertListEqual(extract_alphabet(gd,'xyzabcxyz'), [Token('a', String('a'),3,4), Token('b', String('b'), 4,5), Token('c', String('c'), 5,6)])
+        first_three = [Token('a', String('a'),0,1), Token('b', String('b'), 1,2), Token('c', String('c'), 2,3)]
+        self.assertListEqual(extract_alphabet(gd,'abcxyz'), first_three)
+        first_three_list = [Token(['a'], String('a'),0,1), Token(['b'], String('b'), 1,2), Token(['c'], String('c'), 2,3)]
+        self.assertListEqual(extract_alphabet(gd,[Token(x, ascii_encoding) for x in 'abcxyz']), first_three_list)
+        self.assertListEqual(extract_alphabet(gd,'abc'), first_three)
         self.assertListEqual(extract_alphabet(gd,''), [])
