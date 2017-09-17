@@ -124,6 +124,10 @@ class BNFChecker(Checker):
             raise ValueError("Unknown parser : " + parser)
 
     def check(self, data):
+        if isinstance(data, str):
+            from pydsl.token import PositionToken
+            from pydsl.encoding import ascii_encoding
+            data = [PositionToken(x, ascii_encoding, i, i+1) for i,x in enumerate(data)]
         if not isinstance(data, Iterable):
             raise TypeError(data)
         if not check(self.gd.alphabet, data):
@@ -180,8 +184,9 @@ class StringChecker(Checker):
         self.gd = gd
 
     def check(self, data):
-        if isinstance(data, Iterable):
-            data = "".join([str(x) for x in data])
+        from pydsl.token import Token, PositionToken
+        if isinstance(data[0], (Token, PositionToken)):
+            data = "".join(x.content for x in data)
         return self.gd == str(data)
 
 def formatchecker_factory(**checkerdict):
@@ -216,7 +221,6 @@ class ChoiceChecker(Checker):
         self.checkerinstances = [checker_factory(x) for x in self.gd]
 
     def check(self, data):
-        data = self._normalize_input(data)
         return any((x.check(data) for x in self.checkerinstances))
 
 class SequenceChecker(Checker):

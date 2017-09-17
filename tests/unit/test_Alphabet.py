@@ -22,12 +22,12 @@ __email__ = "nesaro@gmail.com"
 import unittest
 from pydsl.check import checker_factory
 from pydsl.lex import lexer_factory
-from pydsl.grammar import String
+from pydsl.grammar import String, RegularExpression
 from pydsl.grammar.PEG import Sequence, Choice
 from pydsl.encoding import ascii_encoding
-from pydsl.grammar import RegularExpression
 from pydsl.file.BNF import load_bnf_file
 from pydsl.file.python import load_python_file
+from pydsl.token import Token
 import sys
 
 
@@ -43,7 +43,7 @@ class TestAlphabet(unittest.TestCase):
         self.assertTrue(checker.check([x for x in "1234"]))
         self.assertFalse(checker.check("11/11/1991")) #Non tokenized input
         self.assertFalse(checker.check([x for x in "11/11/1991"])) #Non tokenized input
-        self.assertTrue(checker.check(["11","/","11","/","1991"])) #tokenized input
+        self.assertTrue(checker.check([Token(x, ascii_encoding) for x in ["11","/","11","/","1991"])])
         self.assertFalse(checker.check("bcdf"))
         self.assertFalse(checker.check([x for x in "bcdf"]))
 

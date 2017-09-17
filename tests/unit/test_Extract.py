@@ -88,7 +88,7 @@ class TestAlphabetExtract(unittest.TestCase):
         ad = ascii_encoding
         self.assertListEqual(extract(ad,''), [])
         self.assertListEqual(extract(ad,'a£'), [PositionToken('a', None, 0,1)])
-        self.assertListEqual(extract(ad,['a','£']), [PositionToken(['a'], None, 0,1)])
+        self.assertListEqual(extract(ad, [Token('a', ascii_encoding), Token('£', ascii_encoding)]), [PositionToken(['a'], None, 0,1)])
         self.assertRaises(Exception, extract, None)
 
     def testChoices(self):
