@@ -25,13 +25,12 @@ class Token:
     def __init__(self, content, gd, left=None, right=None):
         if not gd:
             raise ValueError
+        if isinstance(content, str):
+            content = [x for x in content]
         self.content = content
         self.gd = gd
         self.__left = left
         self.__right = right
-
-    def __str__(self):
-        return self.content
 
     def __eq__(self, other):
         return self.content == other.content and \
@@ -51,19 +50,8 @@ class Token:
             raise AttributeError
         return self.__right
 
-    @property
-    def content_as_string(self):
-        from pydsl.grammar.definition import String
-        if isinstance(self.gd, String):
-            return "".join(self.content)
-        is_encoding = self.gd is None
-        if is_encoding:
-            print(self.content)
-            return "".join(self.content)
-        raise AttributeError
-
     def __str__(self):
-        return str((self.content, self.gd))
+        return "".join(str(x) for x in self.content)
 
 def append_position_to_token_list(token_list):
     """Converts a list of Token into a list of Token, asuming size == 1"""

@@ -17,7 +17,7 @@
 
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2015, Nestor Arocha"
+__copyright__ = "Copyright 2008-2017, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
@@ -103,7 +103,7 @@ class RegularExpressionChecker(Checker):
     def check(self, data):
         """returns True if any match any regexp"""
         if isinstance(data, Iterable):
-            data = "".join([str(x) for x in data])
+            data = "".join(str(x) for x in data)
         try:
             data = str(data)
         except UnicodeDecodeError:
@@ -215,7 +215,8 @@ class ChoiceChecker(Checker):
         self.checkerinstances = [checker_factory(x) for x in self.gd]
 
     def check(self, data):
-        data = self._normalize_input(data)
+        if not isinstance(data, Iterable):
+            raise TypeError(data.__class__.__name__)
         return any((x.check(data) for x in self.checkerinstances))
 
 class SequenceChecker(Checker):
@@ -227,7 +228,9 @@ class SequenceChecker(Checker):
                 raise TypeError("Expected grammar, got %s" % (x.__class__.__name__,))
         self.sequence = sequence
 
-    def check(self,data):
+    def check(self, data):
+        if not isinstance(data, Iterable):
+            raise TypeError(data.__class__.__name__)
         if len(self.sequence) != len(data):
             return False
         data = self._normalize_input(data)

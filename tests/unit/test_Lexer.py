@@ -26,6 +26,7 @@ from pydsl.grammar.definition import String
 from pydsl.grammar.PEG import Sequence, Choice
 from pydsl.file.BNF import load_bnf_file
 from pydsl.token import Token
+from pydsl.encoding import ascii_encoding
 
 
 class TestEncodingLexer(unittest.TestCase):
@@ -108,12 +109,12 @@ class TestPythonLexer(unittest.TestCase):
         def concept_translator_fun(inputtokens):
             result = []
             for token in inputtokens:
-                x = token.content
-                if x == "red" or x == ["r","e","d"]:
+                x = str(token)
+                if x == "red":
                     result.append("color red")
-                elif x == "green" or x == ["g","r","e","e","n"]:
+                elif x == "green":
                     result.append("color green")
-                elif x == "blue" or x == ["b","l","u","e"]:
+                elif x == "blue":
                     result.append("color blue")
                 else:
                     raise Exception("%s,%s" % (x, x.__class__.__name__))
@@ -122,5 +123,7 @@ class TestPythonLexer(unittest.TestCase):
 
         ct = concept_translator_fun
 
+
         self.assertListEqual(ct(lexer("red")), ["color red"])
-        self.assertListEqual(ct(lexer([x for x in "red"])), ["color red"])
+        red_list = [Token(content=character, gd=ascii_encoding, left=i, right=i+1) for i, character in enumerate("red")]
+        self.assertListEqual(ct(lexer(red_list)), ["color red"])

@@ -105,10 +105,12 @@ class GeneralLexer(object):
 
 
     def __call__(self, data):
-        if self.base == ascii_encoding:
-            data = [Token(x, x) for x in data]
+        if isinstance(data, str):
+            data = [Token(x, ascii_encoding) for x in data]
             from pydsl.token import append_position_to_token_list
             data = append_position_to_token_list(data)
+        if not all(isinstance(x, Token) for x in data):
+            raise TypeError
         for element in data:
             from pydsl.check import check
             if not check(self.base, [element]):
@@ -194,7 +196,6 @@ def digraph_walker_backwards(graph, element, call_back):
 
 
 class ChoiceLexer(object):
-
     """Lexer receives an Alphabet in the initialization (A1).
     Receives an input that belongs to A1 and generates a list of tokens in a different Alphabet A2
     It is always described with a regular grammar"""
@@ -207,9 +208,9 @@ class ChoiceLexer(object):
         self.string = string
         self.index = 0
 
-    def __call__(self, string):  # -> "TokenList":
+    def __call__(self, string):
         """Tokenizes input, generating a list of tokens"""
-        self.load(string)
+        self.load(str(string))
         result = []
         while True:
             try:

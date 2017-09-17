@@ -51,10 +51,6 @@ def extract_alphabet(alphabet, inputdata, fixed_start = False):
         return []
     base_alphabet = alphabet.alphabet
 
-    if isinstance(inputdata[0], Token):
-        inputdata = [x.content for x in inputdata]
-
-
     lexer = lexer_factory(alphabet, base_alphabet)
     totallen = len(inputdata)
     maxl = totallen
@@ -87,9 +83,6 @@ def extract(grammar, inputdata, fixed_start = False, return_first=False):
         return []
     checker = checker_factory(grammar)
 
-    if isinstance(inputdata[0], Token):
-        inputdata = [x.content for x in inputdata]
-
     totallen = len(inputdata)
     from pydsl.grammar.PEG import Choice
     if isinstance(grammar, (frozenset, Choice)):
@@ -111,9 +104,9 @@ def extract(grammar, inputdata, fixed_start = False, return_first=False):
     result = []
     for i in range(max_start):
         for j in range(i+minl, min(i+maxl, totallen) + 1):
-            check = checker.check(inputdata[i:j])
+            this_pt = Token(inputdata[i:j], grammar, i, j)
+            check = checker.check([this_pt])
             if check:
-                this_pt = Token(inputdata[i:j], grammar, i, j)
                 if return_first:
                     return this_pt
                 result.append(this_pt)
