@@ -20,12 +20,11 @@ __copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
-from pydsl.Lex import DummyLexer, lexer_factory
+from pydsl.lex import DummyLexer, lexer_factory
 from pydsl.contrib.bnfgrammar import *
-from pydsl.Grammar.Definition import String
-from pydsl.Alphabet import Alphabet
-from pydsl.Grammar.PEG import Sequence, Choice
-from pydsl.File.BNF import load_bnf_file
+from pydsl.grammar.definition import String
+from pydsl.grammar.PEG import Sequence, Choice
+from pydsl.file.BNF import load_bnf_file
 
 
 class TestEncodingLexer(unittest.TestCase):
@@ -46,7 +45,7 @@ class TestChoiceBruteForceLexer(unittest.TestCase):
     def testEmptyInput(self):
         integer = RegularExpression("^[0123456789]*$")
         date = load_bnf_file("pydsl/contrib/grammar/Date.bnf", {'integer':integer, 'DayOfMonth':load_python_file('pydsl/contrib/grammar/DayOfMonth.py')})
-        mydef = Alphabet([integer,date])
+        mydef = frozenset([integer,date])
         lexer = lexer_factory(mydef)
         self.assertFalse(lexer(""))
 
@@ -54,7 +53,7 @@ class TestChoiceBruteForceLexer(unittest.TestCase):
         """Test checker instantiation and call"""
         integer = RegularExpression("^[0123456789]*$")
         date = load_bnf_file("pydsl/contrib/grammar/Date.bnf", {'integer':integer, 'DayOfMonth':load_python_file('pydsl/contrib/grammar/DayOfMonth.py')})
-        mydef = Alphabet([integer,date])
+        mydef = frozenset([integer,date])
         lexer = lexer_factory(mydef)
         self.assertListEqual(lexer("1234"), [(["1","2","3","4"], integer)])
         self.assertListEqual(lexer([x for x in "1234"]), [(["1","2","3","4"], integer)])
@@ -63,7 +62,7 @@ class TestChoiceBruteForceLexer(unittest.TestCase):
     def testOverlappingLexing(self):
         integer = RegularExpression("^[0123456789]*$")
         date = load_bnf_file("pydsl/contrib/grammar/Date.bnf", {'integer':integer, 'DayOfMonth':load_python_file('pydsl/contrib/grammar/DayOfMonth.py')})
-        mydef = Alphabet([integer,date])
+        mydef = frozenset([integer,date])
         lexer = lexer_factory(mydef)
         self.assertListEqual(lexer("123411/11/2001"), [("1234", integer),("11/11/2001", date)])
         self.assertListEqual(lexer([x for x in "123411/11/2001"]), [("1234", integer),("11/11/2001", date)])
@@ -79,7 +78,7 @@ class TestChoiceBruteForceLexer(unittest.TestCase):
         first_level = Choice([a,b,c])
         first_levelb = Choice([x,y,z])
         second_level = Sequence([a,b], base_alphabet=first_level)
-        from pydsl.Check import checker_factory
+        from pydsl.check import checker_factory
         checker = checker_factory(second_level)
         self.assertTrue(checker([a,b]))
         second_level_alphabet = Choice([first_level, first_levelb]) 
@@ -93,7 +92,7 @@ class TestChoiceLexer(unittest.TestCase):
 
     def testSimpleChoiceLexer(self):
         a1 = Choice([String('a'), String('b'), String('c')])
-        from pydsl.Lex import ChoiceLexer
+        from pydsl.lex import ChoiceLexer
         lexer = ChoiceLexer(a1)
         self.assertListEqual(lexer("abc"), [("a", String('a'))])
 

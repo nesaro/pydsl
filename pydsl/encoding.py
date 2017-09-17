@@ -17,23 +17,9 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 
-""" guess which types are the input data.  """
-
 __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
-import logging
-LOG = logging.getLogger(__name__)
-from pydsl.Check import check
-
-class Guesser(object):
-    """Returns every grammar and alphabet definition that matches the input"""
-    def __init__(self, grammarlist):
-        self.grammarlist = grammarlist
-
-    def __call__(self, data):
-        return [x for x in self.grammarlist if check(x,data)]
-
-def guess(grammarlist, data):
-    return Guesser(grammarlist)(data)
+from pydsl.grammar import String
+ascii_encoding = frozenset([String(chr(x)) for x in range(128)])

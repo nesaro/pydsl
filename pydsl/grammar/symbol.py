@@ -16,13 +16,13 @@
 # along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2014, Nestor Arocha"
+__copyright__ = "Copyright 2008-2015, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
 LOG = logging.getLogger(__name__)
-from pydsl.Grammar.Definition import Grammar, String
-from pydsl.Check import check
+from pydsl.grammar.definition import Grammar
+from pydsl.check import check
 
 class Symbol(object):
     pass

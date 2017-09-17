@@ -6,9 +6,9 @@
 """Test BNF file loading"""
 
 import unittest
-from pydsl.File.BNF import load_bnf_file
-from pydsl.File.Python import load_python_file
-from pydsl.Grammar.Definition import RegularExpression
+from pydsl.file.BNF import load_bnf_file
+from pydsl.file.python import load_python_file
+from pydsl.grammar.definition import RegularExpression
 
 class TestFileLoader(unittest.TestCase):
     """Loading a bnf instance from a .bnf file"""
