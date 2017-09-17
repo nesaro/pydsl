@@ -53,7 +53,6 @@ class DummyLexer(object):
 #Call the lexers following the graph
 
 
-#TODO: test
 def graph_from_alphabet(alphabet, base):
     """Creates a graph that connects the base with the target through alphabets
     If every target is connected to any inputs, create the independent paths"""
@@ -65,24 +64,23 @@ def graph_from_alphabet(alphabet, base):
     import networkx
     result = networkx.DiGraph()
     current_alphabet = alphabet
-    pending_stack = list(current_alphabet)
+    pending_stack = set(current_alphabet)
     while pending_stack:
         current_alphabet = pending_stack.pop()
         if current_alphabet == base:
             continue
         if current_alphabet in base:
             result.add_edge(current_alphabet, base)
-        elif isinstance(current_alphabet, (frozenset, list)):
+        elif isinstance(current_alphabet, (frozenset, Choice)):
             for element in current_alphabet:
                 if element in base:
                     result.add_edge(current_alphabet, base)
                 else:
                     result.add_edge(current_alphabet, element)
-                    pending_stack.append(element)
-        elif current_alphabet.alphabet: #A Grammar
+                    pending_stack.add(element)
+        elif current_alphabet.alphabet:
             result.add_edge(current_alphabet, current_alphabet.alphabet)
-            pending_stack.append(current_alphabet.alphabet)
-    #print_graph(result)
+            pending_stack.add(current_alphabet.alphabet)
     return result
 
 def print_graph(result):
