@@ -22,38 +22,49 @@ __copyright__ = "Copyright 2008-2017, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 class Token:
-    def __init__(self, content, grammar_definition):
+    def __init__(self, content, gd):
+        if not gd:
+            raise ValueError
+        if isinstance(content, str):
+            content = [x for x in content]
+        elif isinstance(content[0], Token):
+            content = [str(x) for x in content]
         self.content = content
-        self.gd = grammar_definition
+        self.gd = gd
 
-    @property
-    def content_as_string(self):
-        from pydsl.grammar.definition import String
-        if isinstance(self.gd, String):
-            return "".join(self.content)
-        is_encoding = self.gd is None
-        if is_encoding:
-            print(self.content)
-            return "".join(self.content)
-        raise AttributeError
+    def __eq__(self, other):
+        try:
+            return self.content == other.content and \
+                   self.gd == other.gd
+        except AttributeError:
+            return False
 
     def __str__(self):
-        return str((self.content, self.gd))
+        return "".join(str(x) for x in self.content)
 
 class PositionToken(Token):
-    def __init__(self, content, grammar_definition, left, right):
-        super().__init__(content, grammar_definition)
+    def __init__(self, content, gd, left=None, right=None):
+        super().__init__(content, gd)
         self.left = left
         self.right = right
 
+    def __eq__(self, other):
+        return self.content == other.content and \
+               self.gd == other.gd and \
+               self.left == other.left and \
+               self.right == other.right
+               
+
     def __str__(self):
-        return str((self.content, self.gd, self.left, self.right))
+        return "".join(str(x) for x in self.content)
+
 
 def append_position_to_token_list(token_list):
-    """Converts a list of Token into a list of PositionToken, asuming size == 1"""
+    """Converts a list of Token into a list of Token, asuming size == 1"""
     return [PositionToken(value.content, value.gd, index, index+1) for (index, value) in enumerate(token_list)]
 
 
 def tokenize_string(string):
-    return [Token(x, None) for x in string]
+    from .encoding import ascii_encoding
+    return [Token(x, ascii_encoding) for x in string]
 

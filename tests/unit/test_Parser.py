@@ -73,7 +73,7 @@ class TestBacktracingRecursiveDescentParser(unittest.TestCase):
         descentparser = BacktracingErrorRecursiveDescentParser(productionset2)
         from pydsl.encoding import ascii_encoding
         ascii_encoding = ascii_encoding
-        lexed_string4 = [x[0] for x in lex(productionset2.alphabet, ascii_encoding, string4)]
+        lexed_string4 = lex(productionset2.alphabet, ascii_encoding, string4)
         result = descentparser(lexed_string4)
         self.assertFalse(result)
         result = descentparser(list(string4))
@@ -104,7 +104,7 @@ class TestLR0Parser(unittest.TestCase):
 
     def testLR0ParserStore(self):
         parser = LR0Parser(productionset0)
-        tokelist = [x.content for x in DummyLexer()(p0good)]
+        tokelist = [x for x in DummyLexer()(p0good)]
         result = parser(tokelist)
         self.assertTrue(result)
 
@@ -174,11 +174,11 @@ class TestParse(unittest.TestCase):
     def testverb(self):
         """Tests the lr0 table generation"""
         from pydsl.parser.parser import parse, parser_factory
-        tokelist = [x.content for x in DummyLexer()(p0good)]
+        tokelist = [x for x in DummyLexer()(p0good)]
         self.assertTrue(parse(productionset0, tokelist , "default"))
         self.assertTrue(parse(productionset0, tokelist , "lr0"))
         self.assertTrue(parse(productionset0, tokelist , "ll1"))
-        tokelist = [x.content for x in DummyLexer()(p0bad)]
+        tokelist = [x for x in DummyLexer()(p0bad)]
         self.assertFalse(parse(productionset0, tokelist , "default"))
         self.assertFalse(parse(productionset0, tokelist , "lr0"))
         self.assertFalse(parse(productionset0, tokelist , "ll1"))

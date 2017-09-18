@@ -34,13 +34,9 @@ class BacktracingErrorRecursiveDescentParser(TopDownParser):
     """Recursive descent parser implementation. Backtracing. Null support. Error support"""
     def get_trees(self, tokens, showerrors = False):
         """ returns a list of trees with valid guesses """
-        for token in tokens:
-            if not isinstance(token, Token):
-                raise TypeError
-            if not check(self.productionset.alphabet, [token]):
-                raise UnknownAlphabet("Unknown element {} in alphabet {}".format(str(token), self.productionset.alphabet))
-        print("BEFORE recursion tokens {}, initial {}".format([x.content for x in tokens], self.productionset.initialsymbol))
-        result = self.__recursive_parser(self._productionset.initialsymbol, tokens, self._productionset.main_production, showerrors)
+        if not all(check(self._productionset.alphabet, [x]) for x in data):
+            raise ValueError("Unknown element in {}, alphabet:{}".format(str(data), self.productionset.alphabet))
+        result = self.__recursive_parser(self._productionset.initialsymbol, data, self._productionset.main_production, showerrors)
         finalresult = []
         print("MID recursion{}".format(result))
         for eresult in result:

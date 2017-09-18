@@ -18,7 +18,7 @@
 """Lexer classes. Receives and input sequences and returns a list of Tokens"""
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2014, Nestor Arocha"
+__copyright__ = "Copyright 2008-2017, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 from pydsl.grammar.PEG import Choice
@@ -37,9 +37,9 @@ class DummyLexer(object):
 
     """Special Lexer that encodes from a string a reads a string"""
 
-    def __call__(self, string): #TODO! make all the lexers work the same
+    def __call__(self, string):
         for x in string:
-            yield Token(x, None)
+            yield Token(x, ascii_encoding)
 
 
 #A1 A2
@@ -110,11 +110,14 @@ class GeneralLexer(object):
         self.base = base
 
 
-    def __call__(self, data, include_gd=False):
+    def __call__(self, data):
         if isinstance(data, str):
-            data = [Token(x, None) for x in data]
-            from pydsl.token import append_position_to_token_list
-            data = append_position_to_token_list(data)
+            data = [Token(x, ascii_encoding) for x in data]
+        from pydsl.token import append_position_to_token_list
+        data = append_position_to_token_list(data)
+
+        if not all(isinstance(x, Token) for x in data):
+            raise TypeError
         for element in data:
             print("CHECKING data for lexer {}".format(data))
             from pydsl.check import check
@@ -247,7 +250,6 @@ def digraph_walker_backwards(graph, element, call_back):
 
 
 class ChoiceLexer(object):
-
     """Lexer receives an Alphabet in the initialization (A1).
     Receives an input that belongs to A1 and generates a list of tokens in a different Alphabet A2
     It is always described with a regular grammar"""
@@ -260,18 +262,18 @@ class ChoiceLexer(object):
         self.string = string
         self.index = 0
 
-    def __call__(self, string, include_gd=True):  # -> "TokenList":
+    def __call__(self, string):
         """Tokenizes input, generating a list of tokens"""
-        self.load(string)
+        self.load(str(string))
         result = []
         while True:
             try:
-                result.append(self.nextToken(include_gd))
+                result.append(self.nextToken())
             except:
                 break
         return result
 
-    def nextToken(self, include_gd=False):
+    def nextToken(self):
         best_right = 0
         best_gd = None
         for gd in self.alphabet:
@@ -284,10 +286,7 @@ class ChoiceLexer(object):
                         best_gd = gd
         if not best_gd:
             raise Exception("Nothing consumed")
-        if include_gd:
-            result = self.string[self.index:best_right], best_gd
-        else:
-            result = self.string[self.index:best_right]
+        result = self.string[self.index:best_right], best_gd
         self.index = right
         return result
 
@@ -298,12 +297,12 @@ class ChoiceBruteForceLexer(object):
     def __init__(self, alphabet):
         self.alphabet = alphabet
 
-    def __call__(self, string, include_gd=True):  # -> "TokenList":
+    def __call__(self, string):  # -> "TokenList":
         """Tokenizes input, generating a list of tokens"""
         self.string = string
-        return [x for x in self.nextToken(include_gd)]
+        return [x for x in self.nextToken()]
 
-    def nextToken(self, include_gd=False):
+    def nextToken(self):
         tree = PositionResultList()  # This is the extract algorithm
         valid_alternatives = []
         for gd in self.alphabet:
@@ -325,10 +324,7 @@ class ChoiceBruteForceLexer(object):
         if not right_length_seq:
             raise Exception("No sequence found for input %s alphabet %s" % (self.string,self.alphabet))
         for y in sorted(right_length_seq, key=lambda x:len(x))[0]: #Always gets the match with less tokens
-            if include_gd:
-                yield Token(y['content'], y.get('gd'))
-            else:
-                yield Token(y['content'], None)
+            yield Token(y['content'], y.get('gd'))
 
 def lexer_factory(alphabet, base = None):
     if isinstance(alphabet, Choice) and alphabet.alphabet == base:
