@@ -18,7 +18,7 @@
 """Lexer classes. Receives and input sequences and returns a list of Tokens"""
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2014, Nestor Arocha"
+__copyright__ = "Copyright 2008-2017, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 from pydsl.grammar.PEG import Choice
@@ -32,9 +32,9 @@ class DummyLexer(object):
 
     """Special Lexer that encodes from a string a reads a string"""
 
-    def __call__(self, string): #TODO! make all the lexers work the same
+    def __call__(self, string):
         for x in string:
-            yield Token(x, None)
+            yield Token(x, ascii_encoding)
 
 
 #A1 A2
@@ -104,11 +104,14 @@ class GeneralLexer(object):
         self.base = base
 
 
-    def __call__(self, data, include_gd=False):
-        if self.base == ascii_encoding:
-            data = [Token(x, x) for x in data]
-            from pydsl.token import append_position_to_token_list
-            data = append_position_to_token_list(data)
+    def __call__(self, data):
+        if isinstance(data, str):
+            data = [Token(x, ascii_encoding) for x in data]
+        from pydsl.token import append_position_to_token_list
+        data = append_position_to_token_list(data)
+
+        if not all(isinstance(x, Token) for x in data):
+            raise TypeError
         for element in data:
             from pydsl.check import check
             if not check(self.base, [element]):
@@ -118,6 +121,7 @@ class GeneralLexer(object):
         graph = graph_from_alphabet(self.alphabet, self.base)
         solved_elements = {}
         graph.node[self.base]['parsed'] = data #Attach data to every element in the graph
+        #print_graph(graph)
         digraph_walker_backwards(graph, self.base, my_call_back)
         result = []
         for output_alphabet in self.alphabet:
@@ -126,12 +130,8 @@ class GeneralLexer(object):
             if output_alphabet not in graph.node or 'parsed' not in graph.node[output_alphabet]:
                 raise Exception("alphabet not initialized:%s" % output_alphabet)
             for token in graph.node[output_alphabet]['parsed']:
-                #This step needs to flat the token so it matches the signature of the function (base -> alphabet)
-                def flat_token(token):
-                    while hasattr(token, 'content'):
-                        token = token.content
-                    return token
-                result.append(PositionToken(flat_token(token), output_alphabet, token.left, token.right))
+                result.append(PositionToken(str(token), output_alphabet, token.left, token.right))
+
         result = sorted(result, key=lambda x: x.left)
         result = remove_subsets(result)
         result = remove_duplicates(result)
@@ -166,18 +166,17 @@ def my_call_back(graph, element):
     flat_list = []
     for successor in graph.successors(element):
         if successor not in graph.node or 'parsed' not in graph.node[successor]:
-            raise Exception("Uninitialized graph %s" % successor)
-        for string, gd, left, right in graph.node[successor]['parsed']:
-            flat_list.append(PositionToken(string, gd, left, right))
-    sorted_flat_list = sorted(flat_list, key=lambda x: x.left) #Orders elements from all sucessors
-    sorted_flat_list = remove_subsets(sorted_flat_list)
+            my_call_back(graph, successor)
+        for token in graph.node[successor]['parsed']:
+            flat_list.append(token)
+    sorted_flat_list = remove_subsets(flat_list)
     lexed_list = []
     prev_right = 0
-    for string, gd, left, right in sorted_flat_list:
-        if prev_right != left:
+    for token in sorted_flat_list:
+        if prev_right != token.left:
             raise Exception("Non contiguous parsing from sucessors")
-        prev_right = right
-        lexed_list.append(Token(string, gd))
+        prev_right = token.right
+        lexed_list.append(token)
     from pydsl.extract import extract
     gne['parsed'] = extract(element, lexed_list)
 
@@ -194,7 +193,6 @@ def digraph_walker_backwards(graph, element, call_back):
 
 
 class ChoiceLexer(object):
-
     """Lexer receives an Alphabet in the initialization (A1).
     Receives an input that belongs to A1 and generates a list of tokens in a different Alphabet A2
     It is always described with a regular grammar"""
@@ -207,18 +205,18 @@ class ChoiceLexer(object):
         self.string = string
         self.index = 0
 
-    def __call__(self, string, include_gd=True):  # -> "TokenList":
+    def __call__(self, string):
         """Tokenizes input, generating a list of tokens"""
-        self.load(string)
+        self.load(str(string))
         result = []
         while True:
             try:
-                result.append(self.nextToken(include_gd))
+                result.append(self.nextToken())
             except:
                 break
         return result
 
-    def nextToken(self, include_gd=False):
+    def nextToken(self):
         best_right = 0
         best_gd = None
         for gd in self.alphabet:
@@ -231,10 +229,7 @@ class ChoiceLexer(object):
                         best_gd = gd
         if not best_gd:
             raise Exception("Nothing consumed")
-        if include_gd:
-            result = self.string[self.index:best_right], best_gd
-        else:
-            result = self.string[self.index:best_right]
+        result = self.string[self.index:best_right], best_gd
         self.index = right
         return result
 
@@ -245,12 +240,12 @@ class ChoiceBruteForceLexer(object):
     def __init__(self, alphabet):
         self.alphabet = alphabet
 
-    def __call__(self, string, include_gd=True):  # -> "TokenList":
+    def __call__(self, string):  # -> "TokenList":
         """Tokenizes input, generating a list of tokens"""
         self.string = string
-        return [x for x in self.nextToken(include_gd)]
+        return [x for x in self.nextToken()]
 
-    def nextToken(self, include_gd=False):
+    def nextToken(self):
         tree = PositionResultList()  # This is the extract algorithm
         valid_alternatives = []
         for gd in self.alphabet:
@@ -272,10 +267,7 @@ class ChoiceBruteForceLexer(object):
         if not right_length_seq:
             raise Exception("No sequence found for input %s alphabet %s" % (self.string,self.alphabet))
         for y in sorted(right_length_seq, key=lambda x:len(x))[0]: #Always gets the match with less tokens
-            if include_gd:
-                yield Token(y['content'], y.get('gd'))
-            else:
-                yield Token(y['content'], None)
+            yield Token(y['content'], y.get('gd'))
 
 def lexer_factory(alphabet, base = None):
     if isinstance(alphabet, Choice) and alphabet.alphabet == base:

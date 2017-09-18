@@ -25,6 +25,8 @@ from pydsl.contrib.bnfgrammar import *
 from pydsl.grammar.definition import String
 from pydsl.grammar.PEG import Sequence, Choice
 from pydsl.file.BNF import load_bnf_file
+from pydsl.token import Token, PositionToken
+from pydsl.encoding import ascii_encoding
 
 
 class TestEncodingLexer(unittest.TestCase):
@@ -55,8 +57,8 @@ class TestChoiceBruteForceLexer(unittest.TestCase):
         date = load_bnf_file("pydsl/contrib/grammar/Date.bnf", {'integer':integer, 'DayOfMonth':load_python_file('pydsl/contrib/grammar/DayOfMonth.py')})
         mydef = frozenset([integer,date])
         lexer = lexer_factory(mydef)
-        self.assertListEqual(lexer("1234"), [(["1","2","3","4"], integer)])
-        self.assertListEqual(lexer([x for x in "1234"]), [(["1","2","3","4"], integer)])
+        self.assertListEqual(lexer("1234"), [Token("1234", integer)])
+        self.assertListEqual(lexer([Token(x, ascii_encoding) for x in "1234"]), [Token("1234", integer)])
 
     @unittest.skip('FIXME:  Non contiguous parsing from sucessors')
     def testOverlappingLexing(self):
@@ -101,17 +103,18 @@ class TestPythonLexer(unittest.TestCase):
         red = Sequence.from_string("red")
         green = Sequence.from_string("green")
         blue = Sequence.from_string("blue")
-        alphabet = Choice([red,green,blue])
+        alphabet = Choice([red, green, blue])
         lexer = lexer_factory(alphabet)
 
         def concept_translator_fun(inputtokens):
             result = []
-            for x,_ in inputtokens:
-                if x == "red" or x == ["r","e","d"]:
+            for token in inputtokens:
+                x = str(token)
+                if x == "red":
                     result.append("color red")
-                elif x == "green" or x == ["g","r","e","e","n"]:
+                elif x == "green":
                     result.append("color green")
-                elif x == "blue" or x == ["b","l","u","e"]:
+                elif x == "blue":
                     result.append("color blue")
                 else:
                     raise Exception("%s,%s" % (x, x.__class__.__name__))
@@ -120,5 +123,7 @@ class TestPythonLexer(unittest.TestCase):
 
         ct = concept_translator_fun
 
+
         self.assertListEqual(ct(lexer("red")), ["color red"])
-        self.assertListEqual(ct(lexer([x for x in "red"])), ["color red"])
+        red_list = [PositionToken(content=character, gd=ascii_encoding, left=i, right=i+1) for i, character in enumerate("red")]
+        self.assertListEqual(ct(lexer(red_list)), ["color red"])

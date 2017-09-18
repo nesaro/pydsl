@@ -22,7 +22,7 @@ from pydsl.grammar.definition import Grammar
 from pydsl.grammar.PEG import Choice
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2014, Nestor Arocha"
+__copyright__ = "Copyright 2008-2017, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 def list_eq(list1, list2):
@@ -39,7 +39,6 @@ class Production(object):
         self.rightside = tuple(rightside)
 
     def __str__(self):
-        """Pretty print"""
         leftstr = " ".join([x for x in self.leftside])
         rightstr = " ".join([str(x) for x in self.rightside])
         return leftstr + "::=" + rightstr
@@ -100,7 +99,7 @@ class BNFGrammar(Grammar):
         produced by the input symbol
         """
         if isinstance(symbol, (TerminalSymbol, NullSymbol)):
-            return symbol.gd
+            return [symbol.gd]
         result = []
         for production in self.productions:
             if production.leftside[0] != symbol:

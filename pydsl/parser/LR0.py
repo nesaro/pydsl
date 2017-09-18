@@ -166,7 +166,7 @@ class ParserTable(defaultdict):
         if token == EndSymbol():
             return self[state][EndSymbol()]
         from pydsl.check import check
-        symbol_list = [x for x in self[state] if isinstance(x, TerminalSymbol) and check(x.gd,token)]
+        symbol_list = [x for x in self[state] if isinstance(x, TerminalSymbol) and check(x.gd, [token])]
         if not symbol_list:
             return {"action":"Fail"}
         if len(symbol_list) > 1:
