@@ -52,7 +52,7 @@ class LL1RecursiveDescentParser(TopDownParser):
         valid_firsts = []
         for production in productions:
             first_of_production = self._productionset.first_lookup(production.rightside[0])
-            if check(first_of_production, self.current):
+            if check(first_of_production, [self.current]):
                 valid_firsts.append(production)
         if len(valid_firsts) != 1:
             raise ParseError("Expected only one valid production, found %s" % len(valid_firsts), 0)
@@ -73,7 +73,7 @@ class LL1RecursiveDescentParser(TopDownParser):
         return self.data[self.index]
 
     def match(self, symbol):
-        if symbol.check(self.current):
+        if symbol.check([self.current]):
             current = self.current
             self.consume()
             return ParseTree(self.index-1, self.index, symbol, current)

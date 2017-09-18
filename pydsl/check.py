@@ -17,7 +17,7 @@
 
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2015, Nestor Arocha"
+__copyright__ = "Copyright 2008-2017, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
@@ -77,16 +77,6 @@ class Checker(object):
     def check(self, value):# -> bool:
         raise NotImplementedError
 
-    def _normalize_input(self, data):
-        result = []
-        for x in data:
-            from pydsl.token import Token, PositionToken
-            if isinstance(x, (Token, PositionToken)):
-                result.append(x.content)
-            else:
-                result.append(x)
-        return result
-
 class RegularExpressionChecker(Checker):
     def __init__(self, regexp, flags = ""):
         Checker.__init__(self)
@@ -103,7 +93,7 @@ class RegularExpressionChecker(Checker):
     def check(self, data):
         """returns True if any match any regexp"""
         if isinstance(data, Iterable):
-            data = "".join([str(x) for x in data])
+            data = "".join(str(x) for x in data)
         try:
             data = str(data)
         except UnicodeDecodeError:
@@ -184,9 +174,10 @@ class StringChecker(Checker):
         self.gd = gd
 
     def check(self, data):
-        from pydsl.token import Token, PositionToken
-        if isinstance(data[0], (Token, PositionToken)):
-            data = "".join(x.content for x in data)
+        if isinstance(data, Iterable) and not isinstance(data, str):
+            data = "".join([str(x) for x in data])
+        if not isinstance(data, str):
+            raise TypeError(data.__class__.__name__)
         return self.gd == str(data)
 
 def formatchecker_factory(**checkerdict):
@@ -221,6 +212,8 @@ class ChoiceChecker(Checker):
         self.checkerinstances = [checker_factory(x) for x in self.gd]
 
     def check(self, data):
+        if not isinstance(data, Iterable):
+            raise TypeError(data.__class__.__name__)
         return any((x.check(data) for x in self.checkerinstances))
 
 class SequenceChecker(Checker):
@@ -232,11 +225,12 @@ class SequenceChecker(Checker):
                 raise TypeError("Expected grammar, got %s" % (x.__class__.__name__,))
         self.sequence = sequence
 
-    def check(self,data):
+    def check(self, data):
+        if not isinstance(data, Iterable):
+            raise TypeError(data.__class__.__name__)
         if len(self.sequence) != len(data):
             return False
-        data = self._normalize_input(data)
-        return all(check(self.sequence[x], data[x]) for x in range(len(self.sequence)))
+        return all(check(self.sequence[x], [data[x]]) for x in range(len(self.sequence)))
 
 
 class OneOrMoreChecker(Checker):

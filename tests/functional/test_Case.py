@@ -28,26 +28,26 @@ class TestCase(unittest.TestCase):
     def test_main_case(self):
         input_data = "1+2"
         ascii_lexer = lexer_factory(ascii_encoding)
-        ascii_tokens = [x.content for x in ascii_lexer(input_data)]
+        ascii_tokens = [x for x in ascii_lexer(input_data)]
         self.assertListEqual([str(x) for x in ascii_tokens], ['1', '+', '2'])
 
         def concept_translator_fun(inputtokens):
             result = []
             for x in inputtokens:
-                if x == "1":
+                if str(x) == "1":
                     result.append("one")
-                elif x == "2":
+                elif str(x) == "2":
                     result.append("two")
-                elif x == "+":
+                elif str(x) == "+":
                     result.append("addition")
                 else:
                     raise Exception(x.__class__.__name__)
 
             return result
         def to_number(number):
-            if number == [x for x in "one"]:
+            if number == "one":
                 return 1
-            if number == [x for x in "two"]:
+            if number == "two":
                 return 2
  
         math_expression_concepts = concept_translator_fun(ascii_tokens)
@@ -106,7 +106,7 @@ class TestCase(unittest.TestCase):
         from pydsl.encoding import ascii_encoding
         math_alphabet = Choice([RegularExpression("^[0123456789]*$"),Choice([String('+')])])
         from pydsl.lex import lex
-        tokens = [x[0] for x in lex(math_alphabet, ascii_encoding, "11+2")]
+        tokens = [x for x in lex(math_alphabet, ascii_encoding, "11+2")]
         parse_tree = rdp(tokens)
         result = parse_tree_walker(parse_tree[0])
         self.assertEqual(result, 13)

@@ -28,8 +28,8 @@ from pydsl.token import PositionToken, Token
 
 def filter_subsets(lst):
     to_remove = []
-    for i, j, _ in lst:
-        for x,y, _ in lst:
+    for i, j, _, _ in lst:
+        for x,y, _, _ in lst:
             if (x < i and y >= j) or (x <= i and y > j):
                 to_remove.append((i,j))
                 break
@@ -51,10 +51,6 @@ def extract_alphabet(alphabet, inputdata, fixed_start = False):
         return []
     base_alphabet = alphabet.alphabet
 
-    if isinstance(inputdata[0], (Token, PositionToken)):
-        inputdata = [x.content for x in inputdata]
-
-
     lexer = lexer_factory(alphabet, base_alphabet)
     totallen = len(inputdata)
     maxl = totallen
@@ -68,12 +64,14 @@ def extract_alphabet(alphabet, inputdata, fixed_start = False):
         for j in range(i+minl, min(i+maxl, totallen) + 1):
             try:
                 lexed = lexer(inputdata[i:j])
-                if lexed:
-                    result.append((i,j, inputdata[i:j]))
+                if lexed and len(lexed) == 1:
+                    result.append((i,j, inputdata[i:j], lexed[0].gd))
+                elif lexed:
+                    raise Exception
             except:
                 continue
     result = filter_subsets(result)
-    return [PositionToken(content, None, left, right) for (left, right, content) in result]
+    return [PositionToken(content, gd, left, right) for (left, right, content, gd) in result]
 
 def extract(grammar, inputdata, fixed_start = False, return_first=False):
     """
@@ -84,9 +82,6 @@ def extract(grammar, inputdata, fixed_start = False, return_first=False):
     if not inputdata:
         return []
     checker = checker_factory(grammar)
-
-    if isinstance(inputdata[0], (Token, PositionToken)):
-        inputdata = [x.content for x in inputdata]
 
     totallen = len(inputdata)
     from pydsl.grammar.PEG import Choice
@@ -109,9 +104,10 @@ def extract(grammar, inputdata, fixed_start = False, return_first=False):
     result = []
     for i in range(max_start):
         for j in range(i+minl, min(i+maxl, totallen) + 1):
-            check = checker.check(inputdata[i:j])
+            slice = inputdata[i:j]
+            check = checker.check(slice)
             if check:
-                this_pt = PositionToken(inputdata[i:j], None, i, j)
+                this_pt = PositionToken(slice, grammar, i, j)
                 if return_first:
                     return this_pt
                 result.append(this_pt)

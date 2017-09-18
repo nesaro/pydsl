@@ -48,7 +48,7 @@ class TopDownParser(Parser):
     def _reduce_terminal(self, symbol, data, showerrors = False):
         from pydsl.check import check
         from pydsl.tree import ParseTree
-        result = check(symbol.gd, data)
+        result = check(symbol.gd, [data])
         if result:
             return [ParseTree(0,1, symbol , data)]
         if showerrors and not result:

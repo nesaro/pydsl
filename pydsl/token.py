@@ -21,12 +21,50 @@ __author__ = "Nestor Arocha"
 __copyright__ = "Copyright 2008-2017, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
-from collections import namedtuple
+class Token:
+    def __init__(self, content, gd):
+        if not gd:
+            raise ValueError
+        if isinstance(content, str):
+            content = [x for x in content]
+        elif isinstance(content[0], Token):
+            content = [str(x) for x in content]
+        self.content = content
+        self.gd = gd
 
-Token = namedtuple('Token', ('content','gd'))
-PositionToken = namedtuple('PositionToken', ('content','gd','left','right'))
+    def __eq__(self, other):
+        try:
+            return self.content == other.content and \
+                   self.gd == other.gd
+        except AttributeError:
+            return False
+
+    def __str__(self):
+        return "".join(str(x) for x in self.content)
+
+class PositionToken(Token):
+    def __init__(self, content, gd, left=None, right=None):
+        super().__init__(content, gd)
+        self.left = left
+        self.right = right
+
+    def __eq__(self, other):
+        return self.content == other.content and \
+               self.gd == other.gd and \
+               self.left == other.left and \
+               self.right == other.right
+               
+
+    def __str__(self):
+        return "".join(str(x) for x in self.content)
 
 
 def append_position_to_token_list(token_list):
-    """Converts a list of Token into a list of PositionToken, asuming size == 1"""
+    """Converts a list of Token into a list of Token, asuming size == 1"""
     return [PositionToken(value.content, value.gd, index, index+1) for (index, value) in enumerate(token_list)]
+
+
+def tokenize_string(string):
+    from .encoding import ascii_encoding
+    return [Token(x, ascii_encoding) for x in string]
+

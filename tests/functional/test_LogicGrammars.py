@@ -12,6 +12,7 @@ from pydsl.lex import lex
 from pydsl.grammar import RegularExpression
 from pydsl.encoding import ascii_encoding
 from pydsl.check import checker_factory
+from pydsl.token import Token
 
 
 class TestLogicGrammars(unittest.TestCase):
@@ -22,17 +23,17 @@ class TestLogicGrammars(unittest.TestCase):
         repository = {'TrueFalse':load_bnf_file("pydsl/contrib/grammar/TrueFalse.bnf")}
         productionrulesetlogical = load_bnf_file("pydsl/contrib/grammar/LogicalExpression.bnf", repository)
         parser = BacktracingErrorRecursiveDescentParser(productionrulesetlogical)
-        tokens = [x[0] for x in lex(repository['TrueFalse'].alphabet, ascii_encoding, self.tokelist5)]
+        tokens = [x for x in lex(repository['TrueFalse'].alphabet, ascii_encoding, self.tokelist5)]
         self.assertEqual(len(tokens), 1)
         #tokens = [x[0] for x in lex(productionrulesetlogical.alphabet, Encoding('ascii'), tokens)] #FIXME
-        tokens = [['True']]
+        tokens = [Token('True', repository['TrueFalse'])]
         result = parser.get_trees(tokens)
         self.assertTrue(result)
 
     def testTrueFalse(self):
         productionrulesetlogical = load_bnf_file("pydsl/contrib/grammar/TrueFalse.bnf")
         parser = BacktracingErrorRecursiveDescentParser(productionrulesetlogical)
-        tokens = [x[0] for x in lex(productionrulesetlogical.alphabet, ascii_encoding, self.tokelist5)]
+        tokens = [x for x in lex(productionrulesetlogical.alphabet, ascii_encoding, self.tokelist5)]
         result = parser.get_trees(tokens)
         self.assertTrue(result)
 
@@ -56,10 +57,9 @@ class TestHTMLGrammars(unittest.TestCase):
         parser = BacktracingErrorRecursiveDescentParser(productionrulesetlogical)
         lexed = lex(productionrulesetlogical.alphabet, ascii_encoding, "<table><tr><td>1</td></tr></table>")
         self.assertTrue(lexed)
-        lexed = [x.content for x in lexed]
         result = parser.get_trees(lexed)
         self.assertTrue(result)
-        lexed = [x[0] for x in lex(productionrulesetlogical.alphabet, ascii_encoding, "<table><td>1</td></tr></table>")]
+        lexed = [x for x in lex(productionrulesetlogical.alphabet, ascii_encoding, "<table><td>1</td></tr></table>")]
         result = parser.get_trees(lexed)
         self.assertFalse(result)
 
