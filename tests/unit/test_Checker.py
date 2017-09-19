@@ -119,8 +119,8 @@ class TestStringChecker(unittest.TestCase):
         from pydsl.check import StringChecker
         grammarchecker = StringChecker(String("3"))
         self.assertTrue(grammarchecker("3"))
-        self.assertFalse(grammarchecker(["3"]))
-        self.assertFalse(grammarchecker(("3",)))
+        self.assertTrue(grammarchecker(["3"]))
+        self.assertTrue(grammarchecker(("3",)))
         self.assertFalse(grammarchecker(''))
 
 class TestSequenceChecker(unittest.TestCase):

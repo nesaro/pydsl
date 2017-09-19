@@ -120,7 +120,7 @@ class BNFChecker(Checker):
             data = [PositionToken(x, ascii_encoding, i, i+1) for i,x in enumerate(data)]
         if not isinstance(data, Iterable):
             raise TypeError(data)
-        if not check(self.gd.alphabet, data):
+        if not all(check(self.gd.alphabet, [x]) for x in data):
             LOG.warning("Invalid input: %s,%s" % (self.gd.alphabet, data))
             return False
         try:

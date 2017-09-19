@@ -43,7 +43,7 @@ class TestAlphabet(unittest.TestCase):
         self.assertTrue(checker.check([x for x in "1234"]))
         self.assertFalse(checker.check("11/11/1991")) #Non tokenized input
         self.assertFalse(checker.check([x for x in "11/11/1991"])) #Non tokenized input
-        self.assertTrue(checker.check([Token(x, ascii_encoding) for x in ["11","/","11","/","1991"])])
+        self.assertTrue(checker.check([Token(x, ascii_encoding) for x in ["11","/","11","/","1991"]]))
         self.assertFalse(checker.check("bcdf"))
         self.assertFalse(checker.check([x for x in "bcdf"]))
 
