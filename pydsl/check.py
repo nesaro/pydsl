@@ -114,10 +114,15 @@ class BNFChecker(Checker):
             raise ValueError("Unknown parser : " + parser)
 
     def check(self, data):
-        for element in data:
-            if not check(self.gd.alphabet, [element]):
-                LOG.warning("Invalid input: %s,%s" % (self.gd.alphabet, element))
-                return False
+        if isinstance(data, str):
+            from pydsl.token import PositionToken
+            from pydsl.encoding import ascii_encoding
+            data = [PositionToken(x, ascii_encoding, i, i+1) for i,x in enumerate(data)]
+        if not isinstance(data, Iterable):
+            raise TypeError(data)
+        if not all(check(self.gd.alphabet, [x]) for x in data):
+            LOG.warning("Invalid input: %s,%s" % (self.gd.alphabet, data))
+            return False
         try:
             return len(self.__parser.get_trees(data)) > 0
         except IndexError:
