@@ -19,9 +19,10 @@
 from pydsl.lex import lexer_factory
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2014, Nestor Arocha"
+__copyright__ = "Copyright 2008-2017, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
+from pydsl.encoding import ascii_encoding
 import logging
 LOG = logging.getLogger(__name__)
 
@@ -58,7 +59,7 @@ class TopDownParser(Parser):
 class BottomUpParser(Parser):
     """ leaf to root parser"""
     def __init__(self, bnfgrammar):
-        self._lexer = lexer_factory(bnfgrammar.alphabet)
+        self._lexer = lexer_factory(bnfgrammar.alphabet, ascii_encoding)
         super().__init__(bnfgrammar)
 
 
