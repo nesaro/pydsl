@@ -269,11 +269,11 @@ class ChoiceBruteForceLexer(object):
         for y in sorted(right_length_seq, key=lambda x:len(x))[0]: #Always gets the match with less tokens
             yield Token(y['content'], y.get('gd'))
 
-def lexer_factory(alphabet, base = None):
+def lexer_factory(alphabet, base):
+    if alphabet == ascii_encoding:
+        return ChoiceBruteForceLexer(alphabet)
     if isinstance(alphabet, Choice) and alphabet.alphabet == base:
         return ChoiceBruteForceLexer(alphabet)
-    if base is None:
-        base = ascii_encoding
     return GeneralLexer(alphabet, base)
 
 def lex(alphabet, base, data):
