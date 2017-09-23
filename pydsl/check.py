@@ -116,9 +116,13 @@ class BNFChecker(Checker):
             raise ValueError("Unknown parser : " + parser)
 
     def check(self, data):
+        if isinstance(data, str):
+            from pydsl.token import PositionToken
+            from pydsl.encoding import ascii_encoding
+            data = [PositionToken(x, ascii_encoding, i, i+1) for i,x in enumerate(data)]
         if not isinstance(data, Iterable):
             raise TypeError(data)
-        if not check(self.gd.alphabet, data):
+        if not all(check(self.gd.alphabet, [x]) for x in data):
             print("CHECKING BNF FAILED {} {} data {}".format(self.gd, data, data))
             LOG.warning("Invalid input: %s,%s" % (self.gd.alphabet, data))
             return False

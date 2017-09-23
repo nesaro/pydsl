@@ -27,7 +27,7 @@ from pydsl.parser.LL import LL1RecursiveDescentParser
 class TestCase(unittest.TestCase):
     def test_main_case(self):
         input_data = "1+2"
-        ascii_lexer = lexer_factory(ascii_encoding)
+        ascii_lexer = lexer_factory(ascii_encoding, None)
         ascii_tokens = [x for x in ascii_lexer(input_data)]
         self.assertListEqual([str(x) for x in ascii_tokens], ['1', '+', '2'])
 

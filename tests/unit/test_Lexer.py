@@ -16,7 +16,7 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2014, Nestor Arocha"
+__copyright__ = "Copyright 2008-2017, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
@@ -32,7 +32,7 @@ from pydsl.encoding import ascii_encoding
 class TestEncodingLexer(unittest.TestCase):
     def testLexer(self):
         """Lexer call"""
-        lexer = lexer_factory(productionset1.alphabet)
+        lexer = lexer_factory(productionset1.alphabet, ascii_encoding)
         result = list(lexer(string1))
         self.assertTrue(result)
 
@@ -48,7 +48,7 @@ class TestChoiceBruteForceLexer(unittest.TestCase):
         integer = RegularExpression("^[0123456789]*$")
         date = load_bnf_file("pydsl/contrib/grammar/Date.bnf", {'integer':integer, 'DayOfMonth':load_python_file('pydsl/contrib/grammar/DayOfMonth.py')})
         mydef = frozenset([integer,date])
-        lexer = lexer_factory(mydef)
+        lexer = lexer_factory(mydef, ascii_encoding)
         self.assertFalse(lexer(""))
 
     def testSimpleLexing(self):
@@ -56,7 +56,7 @@ class TestChoiceBruteForceLexer(unittest.TestCase):
         integer = RegularExpression("^[0123456789]*$")
         date = load_bnf_file("pydsl/contrib/grammar/Date.bnf", {'integer':integer, 'DayOfMonth':load_python_file('pydsl/contrib/grammar/DayOfMonth.py')})
         mydef = frozenset([integer,date])
-        lexer = lexer_factory(mydef)
+        lexer = lexer_factory(mydef, ascii_encoding)
         self.assertListEqual(lexer("1234"), [Token("1234", integer)])
         self.assertListEqual(lexer([Token(x, ascii_encoding) for x in "1234"]), [Token("1234", integer)])
 
@@ -65,7 +65,7 @@ class TestChoiceBruteForceLexer(unittest.TestCase):
         integer = RegularExpression("^[0123456789]*$")
         date = load_bnf_file("pydsl/contrib/grammar/Date.bnf", {'integer':integer, 'DayOfMonth':load_python_file('pydsl/contrib/grammar/DayOfMonth.py')})
         mydef = frozenset([integer,date])
-        lexer = lexer_factory(mydef)
+        lexer = lexer_factory(mydef, ascii_encoding)
         self.assertListEqual(lexer("123411/11/2001"), [("1234", integer),("11/11/2001", date)])
         self.assertListEqual(lexer([x for x in "123411/11/2001"]), [("1234", integer),("11/11/2001", date)])
 
@@ -104,7 +104,7 @@ class TestPythonLexer(unittest.TestCase):
         green = Sequence.from_string("green")
         blue = Sequence.from_string("blue")
         alphabet = Choice([red, green, blue])
-        lexer = lexer_factory(alphabet)
+        lexer = lexer_factory(alphabet, ascii_encoding)
 
         def concept_translator_fun(inputtokens):
             result = []
