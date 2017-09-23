@@ -83,7 +83,6 @@ class TestGrammarDefinitionJson(unittest.TestCase):
         self.assertRaises(NotImplementedError, self.grammardef.enum)
 
     def testFirst(self):
-        from pydsl.encoding import ascii_encoding
         self.assertSetEqual(self.grammardef.first, ascii_encoding)
 
     def testMin(self):
