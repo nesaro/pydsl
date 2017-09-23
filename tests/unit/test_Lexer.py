@@ -69,7 +69,6 @@ class TestChoiceBruteForceLexer(unittest.TestCase):
         self.assertListEqual(lexer("123411/11/2001"), [("1234", integer),("11/11/2001", date)])
         self.assertListEqual(lexer([x for x in "123411/11/2001"]), [("1234", integer),("11/11/2001", date)])
 
-    @unittest.skip('GeneralLexer doesn\'t know how to get from the base to the target')
     def testSecondLevelGrammar(self):
         a = String("a")
         b = String("b")
@@ -85,7 +84,7 @@ class TestChoiceBruteForceLexer(unittest.TestCase):
         self.assertTrue(checker([a,b]))
         second_level_alphabet = Choice([first_level, first_levelb]) 
         lexer = lexer_factory(second_level_alphabet, base=first_level+first_levelb)
-        self.assertListEqual(lexer("ab"), [("a",first_level),("b",first_level)])
+        self.assertListEqual(lexer("ab"), [Token("a",first_level),Token("b",first_level)])
 
 
 class TestChoiceLexer(unittest.TestCase):

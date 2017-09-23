@@ -58,7 +58,7 @@ def graph_from_alphabet(alphabet, base):
     If every target is connected to any inputs, create the independent paths"""
     if not isinstance(alphabet, (frozenset, Choice)):
         raise TypeError(alphabet.__class__.__name__)
-    if not isinstance(base, frozenset):
+    if not isinstance(base, (frozenset, Choice)):
         raise TypeError(base.__class__.__name__)
             
     import networkx
