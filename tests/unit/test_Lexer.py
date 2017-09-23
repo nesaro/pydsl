@@ -95,7 +95,7 @@ class TestChoiceLexer(unittest.TestCase):
         a1 = Choice([String('a'), String('b'), String('c')])
         from pydsl.lex import ChoiceLexer
         lexer = ChoiceLexer(a1)
-        self.assertListEqual(lexer("abc"), [("a", String('a'))])
+        self.assertListEqual(lexer("abc"), [Token("a", String('a')), Token("b", String("b")), Token("c", String("c"))])
 
 class TestPythonLexer(unittest.TestCase):
     def test_Concept(self):
