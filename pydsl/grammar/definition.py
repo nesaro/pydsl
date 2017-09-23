@@ -16,7 +16,7 @@
 # along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2014, Nestor Arocha"
+__copyright__ = "Copyright 2008-2017, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import collections
@@ -48,10 +48,8 @@ class Grammar(object):
 
     @property
     def alphabet(self):
-        """Returns the alphabet used by this grammar"""
-        if self.__base_alphabet is None:
-            from pydsl.encoding import ascii_encoding
-            self.__base_alphabet = ascii_encoding
+        if not self.__base_alphabet:
+            raise AttributeError
         return self.__base_alphabet
 
 class PLYGrammar(Grammar):
@@ -62,7 +60,7 @@ class PLYGrammar(Grammar):
 
 class RegularExpression(Grammar):
     def __init__(self, regexp, flags = 0):
-        Grammar.__init__(self)
+        Grammar.__init__(self, None)
         import re
         retype = type(re.compile('hello, world'))
         if isinstance(regexp, retype):
@@ -96,21 +94,28 @@ class RegularExpression(Grammar):
                 i+=1
                 continue
             if self.regexpstr[i] == "[":
-                return frozenset([String(x) for x in self.regexpstr[i+1:self.regexpstr.find("]")]])
-            return frozenset([String(self.regexpstr[i])])
+                from .PEG import Choice
+                return Choice([String(x) for x in self.regexpstr[i+1:self.regexpstr.find("]")]])
+            return String(self.regexpstr[i])
 
     def __getattr__(self, attr):
         return getattr(self.regexp, attr)
+
+    @property
+    def alphabet(self):
+        from pydsl.encoding import ascii_encoding
+        return ascii_encoding
+
 
 class String(Grammar, str):
     def __init__(self, string):
         if isinstance(string, list):
             raise TypeError('Attempted to initialize a String with a list %s' % (string, ) )
-        Grammar.__init__(self)
+        Grammar.__init__(self, None)
 
     @property
     def first(self):
-        return frozenset([String(self[0])])
+        return String(self[0])
 
     def enum(self):
         yield self
@@ -123,9 +128,15 @@ class String(Grammar, str):
     def minsize(self):
         return len(self)
 
+    @property
+    def alphabet(self):
+        from pydsl.encoding import ascii_encoding
+        return ascii_encoding
+
 class JsonSchema(Grammar, dict):
     def __init__(self, *args, **kwargs):
-        Grammar.__init__(self)
+        from pydsl.encoding import ascii_encoding
+        Grammar.__init__(self, ascii_encoding)
         dict.__init__(self, *args, **kwargs)
 
 class PythonGrammar(Grammar, dict):

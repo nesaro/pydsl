@@ -93,23 +93,86 @@ class PositionResultList(object):
         self.possible_items.append(result)
 
     def valid_sequences(self):
-        """Returns list"""
-        valid_sets = [[x] for x in self.possible_items if x['left'] == 0]
-        change = True
-        niter = 200
-        while change and niter > 0:
-            change = False
-            niter -=1
-            for possible in self.possible_items:
-                for current_valid in valid_sets[:]:
-                    if possible['left'] == current_valid[-1]['right']:
-                        if current_valid + [possible] not in valid_sets:
-                            if current_valid[-1]['left'] != current_valid[-1]['right'] or possible['left'] != possible['right']: #avoids Null insertion twice
-                                valid_sets.append(current_valid + [possible])
-                                change = True
-        if not niter:
-            raise Exception('too many iterations')
-        return valid_sets
+        positions = set((x['left'], x['right']) for x in self.possible_items)
+        sorted_entries = sorted(positions, key= lambda x:x[0])
+
+        class RTree:
+            def __init__(self, content):
+                self.content = content
+                self.childrenset = set()
+
+            @property
+            def children(self):
+                return [node_cache[x] for x in self.childrenset]
+
+            @property
+            def max_length(self):
+                if self.children:
+                    return 1 + max(x.max_length for x in self.children)
+                return 1
+
+            @property
+            def min_length(self):
+                if self.children:
+                    return 1 + min(x.min_length for x in self.children)
+                return 1
+
+            @property
+            def shortest_flat_tree(self):
+                if not self.childrenset:
+                    return [self.content]
+                shortest_child = min((x for x in self.children), key=lambda x: x.min_length)
+                return [self.content] + shortest_child.shortest_flat_tree
+    
+            def clean(self, threshold):
+                for value in set(self.childrenset):
+                    child = node_cache[value]
+                    child.clean(threshold)
+                    if not child.children and child.content < threshold:
+                        self.childrenset.remove(value)
+            
+            def get_or_create_child(self, value):
+                if not isinstance(value, int):
+                    raise ValueError
+                self.childrenset.add(value)
+                if value not in node_cache:
+                    new_tree = RTree(value)
+                    node_cache[value] = new_tree
+                return node_cache[value]
+
+
+        starting_tree = RTree(0)
+        from collections import defaultdict
+        node_cache = {}
+        node_cache[0] = starting_tree
+    
+        def add_node(left, right):
+            if left > right:
+                return
+            if left not in node_cache:
+                node_cache[left] = RTree(left)
+            node_cache[left].get_or_create_child(right)
+
+        last_left = 0
+        for index in range(len(sorted_entries)):
+            left, right = sorted_entries[index]
+            if left != last_left:
+                starting_tree.clean(left)
+                last_left = left
+            add_node(left, right)
+        flat_tree = starting_tree.shortest_flat_tree
+        
+        def convert_back():
+            for x in range(len(flat_tree) - 1):
+                left, right = flat_tree[x:x+2]
+                for element in self.possible_items:
+                    if element['left'] == left and element['right'] == right:
+                        yield element
+                        break
+
+        result = [x for x in convert_back()]
+        return [result]
+
 
     def right_limit_list(self):
         if not self.possible_items:

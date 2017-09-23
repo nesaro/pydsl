@@ -78,7 +78,7 @@ class BNFGrammar(Grammar):
 
     @property
     def alphabet(self):
-        return frozenset([x.gd for x in self.terminal_symbols])
+        return Choice([x.gd for x in self.terminal_symbols])
 
     @property
     def productions(self):
