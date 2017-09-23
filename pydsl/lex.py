@@ -219,18 +219,18 @@ class ChoiceLexer(object):
     def nextToken(self):
         best_right = 0
         best_gd = None
+        matches = []
         for gd in self.alphabet:
             checker = checker_factory(gd)
-            left = self.index
-            for right in range(left +1, len(self.string) +1):
-                if checker.check(self.string[left:right]): #TODO: Use match
-                    if right > best_right:
-                        best_right = right
-                        best_gd = gd
-        if not best_gd:
-            raise Exception("Nothing consumed")
-        result = self.string[self.index:best_right], best_gd
-        self.index = right
+            if checker.check(self.string[self.index:self.index+1]):
+                matches.append(gd)
+        if not matches:
+            raise Exception("Unmatched Token")
+        elif len(matches) > 1:
+            raise Exception("Too many matches")
+        gd = matches[0]
+        result = Token(self.string[self.index:self.index+1], gd)
+        self.index += 1
         return result
 
 
@@ -271,7 +271,7 @@ class ChoiceBruteForceLexer(object):
 
 def lexer_factory(alphabet, base):
     if alphabet == ascii_encoding:
-        return ChoiceBruteForceLexer(alphabet)
+        return ChoiceLexer(alphabet)
     if isinstance(alphabet, Choice) and alphabet.alphabet == base:
         return ChoiceBruteForceLexer(alphabet)
     return GeneralLexer(alphabet, base)
