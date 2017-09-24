@@ -264,10 +264,12 @@ class ChoiceBruteForceLexer(object):
 
         right_length_seq = []
         valid_sequences = tree.valid_sequences()
-        print(valid_sequences)
+        print("VALID {}".format(valid_sequences))
         for x in valid_sequences:
-            if x[-1]['right'] == len(self.string):
-                right_length_seq.append(x)
+            my_list = list(x)
+            print("MYLIST{}".format(my_list))
+            if my_list[-1]['right'] == len(self.string):
+                right_length_seq.append(my_list)
         if not right_length_seq:
             raise Exception("No sequence found for input %s alphabet %s" % (self.string,self.alphabet))
         for y in sorted(right_length_seq, key=lambda x:len(x))[0]: #Always gets the match with less tokens

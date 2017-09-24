@@ -94,6 +94,7 @@ class PositionResultList(object):
 
     def valid_sequences(self):
         positions = set((x['left'], x['right']) for x in self.possible_items)
+        max_right = max(x[1] for x in positions)
         sorted_entries = sorted(positions, key= lambda x:x[0])
 
         class RTree:
@@ -103,7 +104,7 @@ class PositionResultList(object):
 
             @property
             def children(self):
-                return [node_cache[x] for x in self.childrenset]
+                return [node_cache[x] for x in self.childrenset if x in node_cache]
 
             @property
             def max_length(self):
@@ -124,13 +125,15 @@ class PositionResultList(object):
                 shortest_child = min((x for x in self.children), key=lambda x: x.min_length)
                 return [self.content] + shortest_child.shortest_flat_tree
     
-            def clean(self, threshold):
-                for value in set(self.childrenset):
-                    child = node_cache[value]
-                    child.clean(threshold)
-                    if not child.children and child.content < threshold:
-                        self.childrenset.remove(value)
-            
+            def generate_content(self):
+                if not self.children:
+                    yield [self.content]
+                else:
+                    for x in self.children:
+                        child_result = list(x.generate_content())
+                        result = [self.content] + child_result[0]
+                        yield result
+
             def get_or_create_child(self, value):
                 if not isinstance(value, int):
                     raise ValueError
@@ -139,6 +142,21 @@ class PositionResultList(object):
                     new_tree = RTree(value)
                     node_cache[value] = new_tree
                 return node_cache[value]
+
+        def clean(value):
+            print("clean {}".format(value))
+            print([(x,y.childrenset) for x,y in node_cache.items()])
+            for x in range(value-1, 0, -1):
+                if x not in node_cache:
+                    continue
+                for y in range(x):
+                    if y not in node_cache:
+                        continue
+                    if x in node_cache[y].childrenset:
+                        break
+                else:
+                    print("removing {}".format(x))
+                    del node_cache[x]
 
 
         starting_tree = RTree(0)
@@ -149,29 +167,34 @@ class PositionResultList(object):
         def add_node(left, right):
             if left > right:
                 return
+            print("adding {} {}".format(left, right))
             if left not in node_cache:
                 node_cache[left] = RTree(left)
             node_cache[left].get_or_create_child(right)
 
         last_left = 0
         for index in range(len(sorted_entries)):
+            print(index)
             left, right = sorted_entries[index]
             if left != last_left:
-                starting_tree.clean(left)
+                clean(last_left)
                 last_left = left
             add_node(left, right)
-        flat_tree = starting_tree.shortest_flat_tree
+        #starting_tree.clean(max_right)
         
-        def convert_back():
-            for x in range(len(flat_tree) - 1):
-                left, right = flat_tree[x:x+2]
+        def convert_back(flat_list):
+            print("CONVERT {}".format(flat_list))
+            for x in range(len(flat_list) - 1):
+                left, right = flat_list[x:x+2]
+                print((left,right))
                 for element in self.possible_items:
                     if element['left'] == left and element['right'] == right:
+                        #print(element)
                         yield element
                         break
 
-        result = [x for x in convert_back()]
-        return [result]
+        #yield from starting_tree.generate_content()
+        return [list(convert_back(y)) for y in starting_tree.generate_content()]
 
 
     def right_limit_list(self):
