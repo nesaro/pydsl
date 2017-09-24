@@ -47,7 +47,7 @@ class TestChoiceBruteForceLexer(unittest.TestCase):
     def testEmptyInput(self):
         integer = RegularExpression("^[0123456789]*$")
         date = load_bnf_file("pydsl/contrib/grammar/Date.bnf", {'integer':integer, 'DayOfMonth':load_python_file('pydsl/contrib/grammar/DayOfMonth.py')})
-        mydef = frozenset([integer,date])
+        mydef = Choice([integer, date])
         lexer = lexer_factory(mydef, ascii_encoding)
         self.assertFalse(lexer(""))
 
@@ -55,7 +55,7 @@ class TestChoiceBruteForceLexer(unittest.TestCase):
         """Test checker instantiation and call"""
         integer = RegularExpression("^[0123456789]*$")
         date = load_bnf_file("pydsl/contrib/grammar/Date.bnf", {'integer':integer, 'DayOfMonth':load_python_file('pydsl/contrib/grammar/DayOfMonth.py')})
-        mydef = frozenset([integer,date])
+        mydef = Choice([integer, date])
         lexer = lexer_factory(mydef, ascii_encoding)
         self.assertListEqual(lexer("1234"), [Token("1234", integer)])
         self.assertListEqual(lexer([Token(x, ascii_encoding) for x in "1234"]), [Token("1234", integer)])
@@ -64,7 +64,7 @@ class TestChoiceBruteForceLexer(unittest.TestCase):
     def testOverlappingLexing(self):
         integer = RegularExpression("^[0123456789]*$")
         date = load_bnf_file("pydsl/contrib/grammar/Date.bnf", {'integer':integer, 'DayOfMonth':load_python_file('pydsl/contrib/grammar/DayOfMonth.py')})
-        mydef = frozenset([integer,date])
+        mydef = Choice([integer,date])
         lexer = lexer_factory(mydef, ascii_encoding)
         self.assertListEqual(lexer("123411/11/2001"), [("1234", integer),("11/11/2001", date)])
         self.assertListEqual(lexer([x for x in "123411/11/2001"]), [("1234", integer),("11/11/2001", date)])
@@ -99,10 +99,10 @@ class TestChoiceLexer(unittest.TestCase):
 
 class TestPythonLexer(unittest.TestCase):
     def test_Concept(self):
-        red = Sequence.from_string("red")
-        green = Sequence.from_string("green")
-        blue = Sequence.from_string("blue")
-        alphabet = Choice([red, green, blue])
+        red = String("red")
+        green = String("green")
+        blue = String("blue")
+        alphabet = Choice([red, green, blue], ascii_encoding)
         lexer = lexer_factory(alphabet, ascii_encoding)
 
         def concept_translator_fun(inputtokens):

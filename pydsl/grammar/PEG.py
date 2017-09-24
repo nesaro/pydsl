@@ -16,7 +16,7 @@
 # along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2014, Nestor Arocha"
+__copyright__ = "Copyright 2008-2017, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 """
@@ -31,7 +31,8 @@ See also http://en.wikipedia.org/wiki/Parsing_expression_grammar
 
 """
 
-from .definition import Grammar, String
+from .definition import Grammar
+from itertools import chain
 
 class ZeroOrMore(Grammar):
     def __init__(self, element):
@@ -64,21 +65,20 @@ class Sequence(Grammar, list):
 
     @classmethod
     def from_string(cls, string):
+        from .definition import String
         return cls([String(x) for x in string])
 
 class Choice(set, Grammar):
     """Uses a list of grammar definitions with common base alphabets"""
-    def __init__(self, grammarlist):
+    def __init__(self, grammarlist, calculate_base_alphabet = True):
         set.__init__(self, grammarlist)
-        base_alphabet_list = []
-        for x in self:
-            if not isinstance(x, Grammar):
-                raise TypeError("Expected Grammar, Got %s:%s" % (x.__class__.__name__,x))
-            if x.alphabet not in base_alphabet_list:
-                base_alphabet_list.append(x.alphabet)
-        if len(base_alphabet_list) != 1:
-            raise ValueError('Different base alphabets from members %s' % base_alphabet_list)
-        Grammar.__init__(self, base_alphabet_list[0])
+        if calculate_base_alphabet:
+            base_alphabet = set()
+            for x in self:
+                base_alphabet = base_alphabet.union(x.alphabet)
+        else:
+            base_alphabet = None
+        Grammar.__init__(self, base_alphabet)
 
     def __str__(self):
         return str([str(x) for x in self])

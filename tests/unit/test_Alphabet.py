@@ -37,7 +37,7 @@ class TestAlphabet(unittest.TestCase):
         self.date = load_bnf_file("pydsl/contrib/grammar/Date.bnf", {'integer':self.integer, 'DayOfMonth':load_python_file('pydsl/contrib/grammar/DayOfMonth.py')})
 
     def testChecker(self):
-        alphabet = frozenset([self.integer,self.date])
+        alphabet = Choice([self.integer,self.date])
         checker = checker_factory(alphabet)
         self.assertTrue(checker.check("1234"))
         self.assertTrue(checker.check([x for x in "1234"]))

@@ -85,13 +85,10 @@ def extract(grammar, inputdata, fixed_start = False, return_first=False):
 
     totallen = len(inputdata)
     from pydsl.grammar.PEG import Choice
-    if isinstance(grammar, (frozenset, Choice)):
-        maxl = 1
-    else:
-        try:
-            maxl = grammar.maxsize or totallen
-        except NotImplementedError:
-            maxl = totallen
+    try:
+        maxl = grammar.maxsize or totallen
+    except NotImplementedError:
+        maxl = totallen
     try:
         #minl = grammar.minsize #FIXME: It won't work with incompatible alphabets
         minl = 1

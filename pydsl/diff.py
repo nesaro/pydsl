@@ -16,10 +16,11 @@
 #along with pydsl.  If not, see <http://www.gnu.org/licenses/>.
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2014, Nestor Arocha"
+__copyright__ = "Copyright 2008-2017, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import logging
+from pydsl.grammar.PEG import Choice
 LOG = logging.getLogger(__name__)
 
 def lcs(list1, list2):
@@ -28,7 +29,7 @@ def lcs(list1, list2):
     return [x for x in differences.get_matching_blocks()]
 
 def diff_factory(definition):
-    if isinstance(definition, frozenset):
+    if isinstance(definition, Choice):
         return lcs
     raise ValueError
 

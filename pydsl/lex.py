@@ -56,9 +56,9 @@ class DummyLexer(object):
 def graph_from_alphabet(alphabet, base):
     """Creates a graph that connects the base with the target through alphabets
     If every target is connected to any inputs, create the independent paths"""
-    if not isinstance(alphabet, (frozenset, Choice)):
+    if not isinstance(alphabet, Choice):
         raise TypeError(alphabet.__class__.__name__)
-    if not isinstance(base, (frozenset, Choice)):
+    if not isinstance(base, Choice):
         raise TypeError(base.__class__.__name__)
             
     import networkx
@@ -71,7 +71,7 @@ def graph_from_alphabet(alphabet, base):
             continue
         if current_alphabet in base:
             result.add_edge(current_alphabet, base)
-        elif isinstance(current_alphabet, (frozenset, Choice)):
+        elif isinstance(current_alphabet, Choice):
             for element in current_alphabet:
                 if element in base:
                     result.add_edge(current_alphabet, base)
@@ -94,7 +94,7 @@ def print_graph(result):
 class GeneralLexer(object):
     """Multi level lexer"""
     def __init__(self, alphabet, base):
-        if not isinstance(alphabet, (frozenset, Choice)):
+        if not isinstance(alphabet, Choice):
             raise TypeError(alphabet.__class__.__name__)
         if not alphabet:
             raise ValueError
@@ -250,35 +250,46 @@ class ChoiceBruteForceLexer(object):
         valid_alternatives = []
         for gd in self.alphabet:
             checker = checker_factory(gd)
-            for left in range(len(self.string)):
+            for left in range(0, len(self.string)):
                 if getattr(gd, 'maxsize', None):
                     max_right = left + gd.maxsize + 1
                 else:
                     max_right = len(self.string) +1 
-                for right in range(left +1, max_right):
-                    if checker.check(self.string[left:right]):
-                        valid_alternatives.append((left, right, gd))
-        if not valid_alternatives:
+                for right in range(left +1, min(max_right, len(self.string) +1)):
+                    slice = self.string[left:right]
+                    if checker.check(slice):
+                        tree.append(left, right, slice, gd, check_position=False)
+        if not tree:
             raise Exception("Nothing consumed")
-        for left, right, gd in valid_alternatives:
-            string = self.string[left:right]
-            tree.append(left, right, string, gd, check_position=False)
 
         right_length_seq = []
-        for x in tree.valid_sequences():
-            if x[-1]['right'] == len(self.string):
-                right_length_seq.append(x)
+        valid_sequences = tree.valid_sequences()
+        for x in valid_sequences:
+            my_list = list(x)
+            if my_list[-1]['right'] == len(self.string):
+                right_length_seq.append(my_list)
         if not right_length_seq:
             raise Exception("No sequence found for input %s alphabet %s" % (self.string,self.alphabet))
         for y in sorted(right_length_seq, key=lambda x:len(x))[0]: #Always gets the match with less tokens
             yield Token(y['content'], y.get('gd'))
 
-def lexer_factory(alphabet, base):
-    if alphabet == ascii_encoding:
+def lexer_factory(alphabet, base, force_lexer = None):
+    if force_lexer is None:
+        if alphabet == ascii_encoding:
+            force_lexer = "lexer"
+        elif isinstance(alphabet, Choice) and alphabet.alphabet == base:
+            force_lexer = "brute_force"
+        else:
+            force_lexer = "general"
+        
+    if force_lexer == "lexer":
         return ChoiceLexer(alphabet)
-    if isinstance(alphabet, Choice) and alphabet.alphabet == base:
+    elif force_lexer == "brute_force":
         return ChoiceBruteForceLexer(alphabet)
-    return GeneralLexer(alphabet, base)
+    elif force_lexer == "general":
+        return GeneralLexer(alphabet, base)
+    else:
+        raise ValueError
 
-def lex(alphabet, base, data):
-    return lexer_factory(alphabet, base)(data)
+def lex(alphabet, base, data, force_lexer = None):
+    return lexer_factory(alphabet, base, force_lexer)(data)
