@@ -100,7 +100,7 @@ class PositionResultList(object):
         while change and niter > 0:
             change = False
             niter -=1
-            for possible in self.possible_items:
+            for possible in sorted(self.possible_items, key=lambda x:x['left']):
                 for current_valid in valid_sets[:]:
                     if possible['left'] == current_valid[-1]['right']:
                         if current_valid + [possible] not in valid_sets:
