@@ -250,8 +250,12 @@ class ChoiceBruteForceLexer(object):
         valid_alternatives = []
         for gd in self.alphabet:
             checker = checker_factory(gd)
-            for left in range(0, len(self.string)):
-                for right in range(left +1, len(self.string) +1 ):
+            for left in range(len(self.string)):
+                if getattr(gd, 'maxsize', None):
+                    max_right = left + gd.maxsize + 1
+                else:
+                    max_right = len(self.string) +1 
+                for right in range(left +1, max_right):
                     if checker.check(self.string[left:right]):
                         valid_alternatives.append((left, right, gd))
         if not valid_alternatives:
