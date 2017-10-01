@@ -18,8 +18,10 @@
 
 
 __author__ = "Nestor Arocha"
-__copyright__ = "Copyright 2008-2014, Nestor Arocha"
+__copyright__ = "Copyright 2008-2017, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 from pydsl.grammar import String
-ascii_encoding = frozenset([String(chr(x)) for x in range(128)])
+from pydsl.grammar.PEG import Choice
+
+ascii_encoding = Choice([String(chr(x)) for x in range(128)], calculate_base_alphabet=False)

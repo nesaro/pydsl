@@ -93,7 +93,7 @@ class TestAlphabetExtract(unittest.TestCase):
 
     def testChoices(self):
         gd = Choice([String('a'), String('b'), String('c')])
-        self.assertListEqual(extract_alphabet(gd,'axbycz'), [PositionToken('a', String('a'),0,1), PositionToken('b', String('b'), 2,3), PositionToken('c', String('c'), 4,5)])
+        self.assertListEqual(extract_alphabet(gd, 'axbycz'), [PositionToken('a', String('a'),0,1), PositionToken('b', String('b'), 2,3), PositionToken('c', String('c'), 4,5)])
         self.assertListEqual(extract_alphabet(gd,'xyzabcxyz'), [PositionToken('a', String('a'),3,4), PositionToken('b', String('b'), 4,5), PositionToken('c', String('c'), 5,6)])
         first_three = [PositionToken('a', String('a'),0,1), PositionToken('b', String('b'), 1,2), PositionToken('c', String('c'), 2,3)]
         self.assertListEqual(extract_alphabet(gd,'abcxyz'), first_three)

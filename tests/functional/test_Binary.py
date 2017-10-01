@@ -22,13 +22,13 @@ __email__ = "nesaro@gmail.com"
 import unittest
 from pydsl.grammar import String
 from pydsl.grammar.parsley import ParsleyGrammar
-from pydsl.grammar.PEG import OneOrMore
+from pydsl.grammar.PEG import OneOrMore, Choice
 from pydsl.translator import ParsleyTranslator
 
 
 class TestBinaryAlphabet(unittest.TestCase):
     def test_binaryAlphabet(self):
-        binary_alphabet = frozenset([String('0'), String('1')])
+        binary_alphabet = Choice([String('0'), String('1')])
         binary_number = OneOrMore(binary_alphabet)
         parsley_grammar = ParsleyGrammar("""digit = anything:x ?(x in '01')
 number = <digit+>:ds -> int(ds)

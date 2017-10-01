@@ -20,11 +20,12 @@ __copyright__ = "Copyright 2008-2017, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
+from pydsl.grammar.PEG import Choice
+from pydsl.grammar.definition import String
 
 class TestDiff(unittest.TestCase):
     def testDiffSimple(self):
-        from pydsl.grammar.definition import String
-        alphabet = frozenset([String(x) for x in "abcde1"])
+        alphabet = Choice([String(x) for x in "abcde1"])
         elem1 = "abcde"
         elem2 = "abcd1"
         from pydsl.diff import diff

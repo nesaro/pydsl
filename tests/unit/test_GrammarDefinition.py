@@ -62,7 +62,7 @@ class TestGrammarDefinitionString(unittest.TestCase):
         self.assertListEqual(['abc'], [x for x in self.grammardef.enum()])
 
     def testFirst(self):
-        self.assertSetEqual(self.grammardef.first, set([String('a')]))
+        self.assertEqual(self.grammardef.first, String('a'))
 
     def testMin(self):
         self.assertEqual(self.grammardef.minsize, 3)
@@ -92,5 +92,5 @@ class TestGrammarDefinitionJson(unittest.TestCase):
         self.grammardef.maxsize
 
     def testAlphabet(self):
-        self.assertEqual(self.grammardef.alphabet, ascii_encoding)
+        self.assertSetEqual(self.grammardef.alphabet, ascii_encoding)
 
