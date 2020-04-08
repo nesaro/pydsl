@@ -27,11 +27,11 @@ from pydsl.token import PositionToken, Token
 
 
 def filter_subsets(lst):
-    to_remove = []
+    to_remove = set()
     for i, j, _, _ in lst:
-        for x,y, _, _ in lst:
+        for x, y, _, _ in lst:
             if (x < i and y >= j) or (x <= i and y > j):
-                to_remove.append((i,j))
+                to_remove.add((i,j))
                 break
     result = list(lst)
 
