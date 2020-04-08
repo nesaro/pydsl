@@ -20,12 +20,21 @@ __copyright__ = "Copyright 2008-2014, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
-from pydsl.extract import extract, extract_alphabet, match, search
+from pydsl.extract import extract, extract_alphabet, match, search, filter_subsets
 from pydsl.grammar import RegularExpression, String
 from pydsl.grammar.PEG import Choice
 from pydsl.encoding import ascii_encoding
 from pydsl.token import Token, PositionToken
 import sys
+
+
+class TestFilterSubsets(unittest.TestCase):
+    def testNoInputs(self):
+        self.assertFalse(filter_subsets([]))
+
+    def testNonOverlap(self):
+        non_overlapping_sequence = [(0, 1, None, None), (1, 2, None, None)]
+        self.assertListEqual(filter_subsets(non_overlapping_sequence), non_overlapping_sequence)
 
 
 class TestGrammarExtract(unittest.TestCase):
