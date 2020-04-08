@@ -2,6 +2,6 @@ jsonschema
 ply
 nose
 pyparsing
-networkx
+networkx==1.11
 git+https://github.com/python-parsley/parsley.git
 pylint
