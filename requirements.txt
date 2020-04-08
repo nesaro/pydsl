@@ -1,6 +1,5 @@
 jsonschema
 ply
-nose
 pyparsing
 networkx==1.11
 git+https://github.com/python-parsley/parsley.git
