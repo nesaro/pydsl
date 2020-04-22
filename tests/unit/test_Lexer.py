@@ -20,7 +20,7 @@ __copyright__ = "Copyright 2008-2017, Nestor Arocha"
 __email__ = "nesaro@gmail.com"
 
 import unittest
-from pydsl.lex import DummyLexer, lexer_factory
+from pydsl.lex import DummyLexer, lexer_factory, graph_from_alphabet
 from pydsl.contrib.bnfgrammar import *
 from pydsl.grammar.definition import String
 from pydsl.grammar.PEG import Sequence, Choice
@@ -126,3 +126,10 @@ class TestPythonLexer(unittest.TestCase):
         self.assertListEqual(ct(lexer("red")), ["color red"])
         red_list = [PositionToken(content=character, gd=ascii_encoding, left=i, right=i+1) for i, character in enumerate("red")]
         self.assertListEqual(ct(lexer(red_list)), ["color red"])
+
+class TestGraphFromAlphabet(unittest.TestCase):
+    def test_simple(self):
+        alphabet = Choice([String('a')])
+        base = Choice([String('a')])
+        graph = graph_from_alphabet(alphabet, base)
+        self.assertEqual(len(graph.node), 2)
