@@ -66,7 +66,7 @@ REQUIREMENTS
 
 ## Example
 
-See [examples](documentation/example)
+See [examples](documentation/example.md)
 
 ABOUT
 =====
