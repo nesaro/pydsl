@@ -64,6 +64,12 @@ REQUIREMENTS
  * python >= 3.4
  * optional: ply library ( http://www.dabeaz.com/ply/ )
 
+## Example
+
+See [examples](documentation/example.md)
+
 ABOUT
 =====
 Copyright (C) 2008-2015 Nestor Arocha (nesaro@gmail.com)
+
+
